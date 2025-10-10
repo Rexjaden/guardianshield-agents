@@ -4,6 +4,7 @@ Combines rule-based, knowledge-driven, and machine learning approaches for adapt
 """
 import json
 import random
+import time
 
 class MasterKeyAlgorithm:
     def __init__(self, knowledge_base_path="knowledge_base.json"):
@@ -66,12 +67,66 @@ class MasterKeyAlgorithm:
         for rule in self.rules:
             result, reason = rule(data)
             if result:
+                # Log decision for recursive learning
+                self.log_decision(data, "threat", reason, "rule-based")
                 return "threat", reason
         # Run ML model
         ml_result, ml_reason = self.ml_predict(data)
         if ml_result:
+            self.log_decision(data, "anomaly", ml_reason, "ml-based")
             return "anomaly", ml_reason
+        
+        self.log_decision(data, "safe", None, "default")
         return "safe", None
+
+    def log_decision(self, input_data, decision, reason, method):
+        """
+        Log decisions for recursive learning and algorithm improvement
+        """
+        if not hasattr(self, 'decision_log'):
+            self.decision_log = []
+        
+        self.decision_log.append({
+            'input': input_data,
+            'decision': decision,
+            'reason': reason,
+            'method': method,
+            'timestamp': time.time()
+        })
+        
+        # Trigger recursive improvement periodically
+        if len(self.decision_log) % 100 == 0:  # Every 100 decisions
+            self.recursive_improve()
+
+    def recursive_improve(self):
+        """
+        Recursively improve decision-making algorithms based on historical decisions
+        """
+        if len(self.decision_log) < 50:
+            return
+        
+        print("[MasterKeyAlgorithm] Analyzing decision patterns for recursive improvement...")
+        
+        # Analyze decision patterns
+        recent_decisions = self.decision_log[-100:]  # Last 100 decisions
+        
+        # Calculate accuracy metrics (placeholder - you'd implement real metrics)
+        threat_decisions = [d for d in recent_decisions if d['decision'] == 'threat']
+        false_positive_rate = len([d for d in threat_decisions if 'false' in str(d.get('reason', '')).lower()]) / max(len(threat_decisions), 1)
+        
+        if false_positive_rate > 0.3:  # >30% false positives
+            print("[MasterKeyAlgorithm] High false positive rate detected, adjusting sensitivity...")
+            self.adjust_sensitivity(-0.1)  # Reduce sensitivity
+        elif false_positive_rate < 0.05:  # <5% false positives  
+            print("[MasterKeyAlgorithm] Low false positive rate, can increase sensitivity...")
+            self.adjust_sensitivity(0.05)  # Increase sensitivity
+
+    def adjust_sensitivity(self, adjustment):
+        """
+        Adjust algorithm sensitivity based on recursive learning
+        """
+        # This is a placeholder - implement actual sensitivity adjustment
+        print(f"[MasterKeyAlgorithm] Adjusting sensitivity by {adjustment}")
 
 if __name__ == "__main__":
     mka = MasterKeyAlgorithm()

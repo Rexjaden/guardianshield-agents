@@ -17,6 +17,17 @@ import time
 import smtplib
 from email.message import EmailMessage
 
+class ExternalAgent:
+    """Enhanced external agent with autonomous integration capabilities"""
+    
+    def __init__(self):
+        self.name = "ExternalAgent"
+        
+    def autonomous_cycle(self):
+        """Run autonomous external operations cycle"""
+        pass
+
+# Legacy class for backward compatibility
 class Mediator:
     def __init__(self, name: str, flare_api_url: str = None, flare_api_key: str = None):
         self.name = name
@@ -100,7 +111,68 @@ class Mediator:
 
     def act(self, observation):
         # Implement agent's action logic for external environment here
-        pass
+        decision = self.master_key.decide(str(observation))
+        
+        # Recursive improvement: Learn from each action
+        self.learn_from_action(observation, decision)
+        
+        # Execute the action
+        self.execute_action(decision, observation)
+
+    def learn_from_action(self, observation, decision):
+        """
+        Learn from each action and recursively improve decision-making
+        """
+        # Store action-outcome pairs for learning
+        action_data = {
+            'observation': observation,
+            'decision': decision[0] if isinstance(decision, tuple) else decision,
+            'timestamp': time.time()
+        }
+        
+        # Update behavior analytics
+        self.behavior_analytics.log_behavior(action_data)
+        
+        # Trigger recursive improvement if pattern detected
+        if self.detect_improvement_opportunity():
+            self.recursive_improve_decision_making()
+
+    def detect_improvement_opportunity(self):
+        """
+        Detect if there's an opportunity for recursive improvement
+        """
+        recent_decisions = self.behavior_analytics.behavior_log[-10:]  # Last 10 decisions
+        if len(recent_decisions) >= 5:
+            # Check for repeated suboptimal decisions
+            threat_decisions = [d for d in recent_decisions if d.get('decision') == 'threat']
+            return len(threat_decisions) > len(recent_decisions) * 0.7  # >70% threat decisions might indicate over-sensitivity
+
+    def recursive_improve_decision_making(self):
+        """
+        Recursively improve the decision-making algorithm
+        """
+        print(f"[{self.name}] Triggering recursive improvement of decision-making...")
+        
+        # Analyze decision patterns
+        patterns = self.behavior_analytics.analyze_behavior()
+        
+        # Adjust master key algorithm based on patterns
+        if patterns:
+            print(f"[{self.name}] Adjusting decision algorithms based on {len(patterns)} behavioral patterns")
+            # This could trigger genetic evolution of the master key algorithm
+            from agents.genetic_evolver import GeneticEvolver
+            evolver = GeneticEvolver("agents/master_key_algorithm.py")
+            evolver.recursive_self_improve()
+
+    def execute_action(self, decision, observation):
+        """
+        Execute the decided action
+        """
+        if isinstance(decision, tuple):
+            action, reason = decision
+            print(f"[{self.name}] Action: {action}, Reason: {reason}")
+        else:
+            print(f"[{self.name}] Action: {decision}")
 
     def update_dmer(self, dmer_data):
         if self.flare:

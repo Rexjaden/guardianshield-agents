@@ -9,8 +9,8 @@ import shutil
 import re
 
 class GeneticEvolver:
-    def __init__(self, code_path, backup_dir="evolution_backups"):
-        self.code_path = code_path
+    def __init__(self, code_path=None, backup_dir="evolution_backups"):
+        self.code_path = code_path or "agents/genetic_evolver.py"  # Default to self-evolution
         self.backup_dir = backup_dir
         os.makedirs(self.backup_dir, exist_ok=True)
 
@@ -54,7 +54,34 @@ class GeneticEvolver:
             self.restore_code(backup)
         else:
             print("Advanced mutation successful.")
+            # Trigger recursive improvement
+            self.recursive_self_improve()
         return fitness
+
+    def recursive_self_improve(self):
+        """
+        Recursive self-improvement: Agent analyzes its own performance and triggers further evolution
+        """
+        performance_metrics = self.analyze_self_performance()
+        if performance_metrics['improvement_potential'] > 0.7:
+            print("High improvement potential detected, triggering recursive evolution...")
+            # Create a new generation of improvements
+            for i in range(3):  # Try 3 recursive improvements
+                if self.evolve_advanced():
+                    print(f"Recursive improvement {i+1} successful")
+                else:
+                    break
+
+    def analyze_self_performance(self):
+        """
+        Analyze agent's own code quality and performance metrics
+        """
+        # Placeholder for self-analysis - you can enhance this
+        return {
+            'improvement_potential': 0.8,  # 80% potential for improvement
+            'efficiency_score': 0.6,
+            'adaptability_score': 0.7
+        }
 
 # Example mutation function (for demonstration)
 def example_mutation(code):
