@@ -34,6 +34,13 @@ class GitAutoSync(FileSystemEventHandler):
             '.temp', '.bak', '.backup', 'node_modules', '.env'
         ]
         
+        # Determine git command
+        try:
+            subprocess.run(['git', '--version'], capture_output=True, check=True)
+            self.git_cmd = 'git'
+        except FileNotFoundError:
+            self.git_cmd = r'C:\Program Files\Git\bin\git.exe'
+        
         # Start background commit thread
         self.commit_thread = threading.Thread(target=self._commit_loop, daemon=True)
         self.commit_thread.start()
@@ -77,14 +84,14 @@ class GitAutoSync(FileSystemEventHandler):
             os.chdir(self.project_root)
             
             # Check if there are changes to commit
-            result = subprocess.run(['git', 'status', '--porcelain'], 
+            result = subprocess.run([self.git_cmd, 'status', '--porcelain'], 
                                   capture_output=True, text=True)
             
             if not result.stdout.strip():
                 return  # No changes to commit
             
             # Add all changes
-            subprocess.run(['git', 'add', '.'], check=True)
+            subprocess.run([self.git_cmd, 'add', '.'], check=True)
             
             # Create commit message with timestamp and file count
             timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -94,15 +101,15 @@ class GitAutoSync(FileSystemEventHandler):
             # Create detailed commit message
             commit_msg = f"🛡️ GuardianShield Auto-Sync: {file_count} file(s) updated - {timestamp}"
             
-            subprocess.run(['git', 'commit', '-m', commit_msg], check=True)
+            subprocess.run([self.git_cmd, 'commit', '-m', commit_msg], check=True)
             
             # Push to GitHub (try main, then master for compatibility)
             try:
-                subprocess.run(['git', 'push', 'origin', 'main'], check=True)
+                subprocess.run([self.git_cmd, 'push', 'origin', 'main'], check=True)
                 branch = 'main'
             except subprocess.CalledProcessError:
                 try:
-                    subprocess.run(['git', 'push', 'origin', 'master'], check=True)
+                    subprocess.run([self.git_cmd, 'push', 'origin', 'master'], check=True)
                     branch = 'master'
                 except subprocess.CalledProcessError:
                     raise Exception("Failed to push to both main and master branches")
@@ -125,8 +132,8 @@ class GitAutoSync(FileSystemEventHandler):
             # Try to pull and retry once
             try:
                 print("🔄 Attempting to resolve conflicts...")
-                subprocess.run(['git', 'pull', 'origin', 'main'], check=True)
-                subprocess.run(['git', 'push', 'origin', 'main'], check=True)
+                subprocess.run([self.git_cmd, 'pull', 'origin', 'main'], check=True)
+                subprocess.run([self.git_cmd, 'push', 'origin', 'main'], check=True)
                 print("✅ Resolved conflict and synced successfully")
             except:
                 print("⚠️ Manual intervention required - check git status")
@@ -138,14 +145,19 @@ class GitAutoSync(FileSystemEventHandler):
 def check_git_setup():
     """Check if Git is properly configured"""
     try:
-        # Check if git is available
-        subprocess.run(['git', '--version'], capture_output=True, check=True)
+        # Check if git is available (try both PATH and full path)
+        try:
+            subprocess.run(['git', '--version'], capture_output=True, check=True)
+            git_cmd = 'git'
+        except FileNotFoundError:
+            subprocess.run([r'C:\Program Files\Git\bin\git.exe', '--version'], capture_output=True, check=True)
+            git_cmd = r'C:\Program Files\Git\bin\git.exe'
         
         # Check if we're in a git repository
-        subprocess.run(['git', 'status'], capture_output=True, check=True)
+        subprocess.run([git_cmd, 'status'], capture_output=True, check=True)
         
         # Check if remote origin exists
-        result = subprocess.run(['git', 'remote', '-v'], capture_output=True, text=True)
+        result = subprocess.run([git_cmd, 'remote', '-v'], capture_output=True, text=True)
         if 'origin' not in result.stdout:
             print("⚠️ No GitHub remote configured!")
             print("   Run: git remote add origin [YOUR_GITHUB_REPO_URL]")
