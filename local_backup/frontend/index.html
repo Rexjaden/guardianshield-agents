@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GuardianShield - Admin Dashboard</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-shield-alt"></i>
+                    <h2>GuardianShield</h2>
+                </div>
+                <button class="sidebar-toggle" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            
+            <ul class="nav-menu">
+                <li class="nav-item active">
+                    <a href="#" onclick="showSection('dashboard')" class="nav-link">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" onclick="showSection('agents')" class="nav-link">
+                        <i class="fas fa-robot"></i>
+                        <span>Agents</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" onclick="showSection('threats')" class="nav-link">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span>Threat Monitor</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" onclick="showSection('analytics')" class="nav-link">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Analytics</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" onclick="showSection('logs')" class="nav-link">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Logs</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" onclick="showSection('settings')" class="nav-link">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+            </ul>
+            
+            <div class="sidebar-footer">
+                <div class="system-status">
+                    <div class="status-indicator online"></div>
+                    <span>System Online</span>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="top-header">
+                <div class="header-left">
+                    <h1 id="page-title">Dashboard</h1>
+                    <div class="breadcrumb">
+                        <span>Home</span> / <span id="breadcrumb-current">Dashboard</span>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="header-actions">
+                        <button class="btn-emergency" onclick="emergencyStop()">
+                            <i class="fas fa-stop"></i>
+                            Emergency Stop
+                        </button>
+                        <button class="notification-btn" onclick="toggleNotifications()">
+                            <i class="fas fa-bell"></i>
+                            <span class="notification-badge">3</span>
+                        </button>
+                        <div class="user-menu">
+                            <img src="assets/avatar.png" alt="Admin" class="user-avatar" onerror="this.style.display='none'">
+                            <span>Admin</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <div class="content-area">
+                <!-- Dashboard Section -->
+                <section id="dashboard-section" class="content-section active">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="active-agents">8</h3>
+                                <p>Active Agents</p>
+                                <span class="stat-change positive">+2 today</span>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="threats-blocked">247</h3>
+                                <p>Threats Blocked</p>
+                                <span class="stat-change positive">+12 today</span>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-brain"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="evolutions">15</h3>
+                                <p>Agent Evolutions</p>
+                                <span class="stat-change positive">+3 today</span>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-exclamation-circle"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="alerts">3</h3>
+                                <p>Active Alerts</p>
+                                <span class="stat-change neutral">No change</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-grid">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h3>Real-Time Agent Activity</h3>
+                                <button class="btn-refresh" onclick="refreshAgentActivity()">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button>
+                            </div>
+                            <div class="card-content">
+                                <div id="agent-activity-list" class="activity-list">
+                                    <!-- Dynamic content will be loaded here -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h3>Threat Intelligence Feed</h3>
+                                <div class="feed-controls">
+                                    <button class="btn-small" onclick="pauseFeed()">
+                                        <i class="fas fa-pause"></i>
+                                    </button>
+                                    <button class="btn-small" onclick="clearFeed()">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-content">
+                                <div id="threat-feed" class="threat-feed">
+                                    <!-- Dynamic threat feed content -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h3>System Performance</h3>
+                                <select class="time-range-select" onchange="updatePerformanceChart(this.value)">
+                                    <option value="1h">Last Hour</option>
+                                    <option value="24h">Last 24 Hours</option>
+                                    <option value="7d">Last 7 Days</option>
+                                </select>
+                            </div>
+                            <div class="card-content">
+                                <canvas id="performance-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Agents Section -->
+                <section id="agents-section" class="content-section">
+                    <div class="section-header">
+                        <div class="section-title">
+                            <h2>Agent Management</h2>
+                            <p>Monitor and control autonomous agents</p>
+                        </div>
+                        <div class="section-actions">
+                            <button class="btn-primary" onclick="deployNewAgent()">
+                                <i class="fas fa-plus"></i>
+                                Deploy Agent
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="agents-grid" class="agents-grid">
+                        <!-- Agent cards will be dynamically generated -->
+                    </div>
+                </section>
+
+                <!-- Threats Section -->
+                <section id="threats-section" class="content-section">
+                    <div class="section-header">
+                        <div class="section-title">
+                            <h2>Threat Monitoring</h2>
+                            <p>Real-time threat detection and analysis</p>
+                        </div>
+                        <div class="section-actions">
+                            <button class="btn-secondary" onclick="exportThreats()">
+                                <i class="fas fa-download"></i>
+                                Export Data
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="threats-dashboard">
+                        <div class="threat-map">
+                            <h3>Global Threat Map</h3>
+                            <div id="threat-map-container" class="map-container">
+                                <!-- Threat map visualization -->
+                            </div>
+                        </div>
+                        
+                        <div class="threat-timeline">
+                            <h3>Recent Threats</h3>
+                            <div id="threat-timeline-list" class="timeline-list">
+                                <!-- Timeline items -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Analytics Section -->
+                <section id="analytics-section" class="content-section">
+                    <div class="section-header">
+                        <div class="section-title">
+                            <h2>Analytics & Insights</h2>
+                            <p>Deep analysis and performance metrics</p>
+                        </div>
+                    </div>
+
+                    <div class="analytics-grid">
+                        <div class="analytics-card">
+                            <h3>Agent Evolution Trends</h3>
+                            <canvas id="evolution-chart"></canvas>
+                        </div>
+                        
+                        <div class="analytics-card">
+                            <h3>Threat Detection Accuracy</h3>
+                            <canvas id="accuracy-chart"></canvas>
+                        </div>
+                        
+                        <div class="analytics-card">
+                            <h3>Response Time Analytics</h3>
+                            <canvas id="response-chart"></canvas>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Logs Section -->
+                <section id="logs-section" class="content-section">
+                    <div class="section-header">
+                        <div class="section-title">
+                            <h2>System Logs</h2>
+                            <p>Detailed activity and debug information</p>
+                        </div>
+                        <div class="section-actions">
+                            <button class="btn-secondary" onclick="clearLogs()">
+                                <i class="fas fa-trash"></i>
+                                Clear Logs
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="logs-container">
+                        <div class="log-filters">
+                            <select id="log-level-filter" onchange="filterLogs()">
+                                <option value="all">All Levels</option>
+                                <option value="error">Error</option>
+                                <option value="warn">Warning</option>
+                                <option value="info">Info</option>
+                                <option value="debug">Debug</option>
+                            </select>
+                            <input type="text" id="log-search" placeholder="Search logs..." onkeyup="searchLogs()">
+                        </div>
+                        
+                        <div id="logs-display" class="logs-display">
+                            <!-- Log entries will be displayed here -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Settings Section -->
+                <section id="settings-section" class="content-section">
+                    <div class="section-header">
+                        <div class="section-title">
+                            <h2>System Settings</h2>
+                            <p>Configure GuardianShield parameters</p>
+                        </div>
+                    </div>
+
+                    <div class="settings-grid">
+                        <div class="settings-card">
+                            <h3>Agent Configuration</h3>
+                            <div class="setting-item">
+                                <label>Autonomy Level</label>
+                                <input type="range" id="autonomy-level" min="1" max="10" value="10" onchange="updateAutonomyLevel(this.value)">
+                                <span id="autonomy-value">10</span>
+                            </div>
+                            <div class="setting-item">
+                                <label>Auto Evolution</label>
+                                <input type="checkbox" id="auto-evolution" checked onchange="toggleAutoEvolution(this.checked)">
+                            </div>
+                        </div>
+                        
+                        <div class="settings-card">
+                            <h3>Security Settings</h3>
+                            <div class="setting-item">
+                                <label>Critical Action Threshold</label>
+                                <input type="number" id="critical-threshold" min="1" max="10" value="8" onchange="updateThreshold(this.value)">
+                            </div>
+                            <div class="setting-item">
+                                <label>Monitoring Interval (seconds)</label>
+                                <input type="number" id="monitoring-interval" min="5" max="300" value="30" onchange="updateInterval(this.value)">
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Notification Panel -->
+    <div id="notification-panel" class="notification-panel">
+        <div class="notification-header">
+            <h3>Notifications</h3>
+            <button onclick="toggleNotifications()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="notification-list">
+            <!-- Notifications will be loaded here -->
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/agents.js"></script>
+    <script src="js/threats.js"></script>
+    <script src="js/analytics.js"></script>
+    <script src="js/websocket.js"></script>
+</body>
+</html>
