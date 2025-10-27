@@ -1,0 +1,471 @@
+{
+  "audit_timestamp": "2025-10-16T23:10:33.537273",
+  "security_score": 0,
+  "critical_issues": [
+    {
+      "type": "Missing Environment Variable",
+      "description": "Required environment variable ENCRYPTION_PASSWORD not set",
+      "severity": "CRITICAL"
+    },
+    {
+      "type": "Missing Environment Variable",
+      "description": "Required environment variable FLARE_API_KEY not set",
+      "severity": "CRITICAL"
+    },
+    {
+      "type": "Missing Environment Variable",
+      "description": "Required environment variable DMER_API_KEY not set",
+      "severity": "CRITICAL"
+    },
+    {
+      "type": "Missing Environment Variable",
+      "description": "Required environment variable API_SECRET_KEY not set",
+      "severity": "CRITICAL"
+    }
+  ],
+  "high_issues": [
+    {
+      "type": "Environment Exposure",
+      "description": ".env file present - ensure it's in .gitignore",
+      "file": ".env",
+      "severity": "HIGH"
+    },
+    {
+      "type": "High Autonomy Risk",
+      "description": "Agent autonomy level 10 is very high - security risk",
+      "severity": "HIGH"
+    }
+  ],
+  "medium_issues": [
+    {
+      "type": "File Permissions",
+      "description": "File .env is world-readable",
+      "file": ".env",
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "File Permissions",
+      "description": "File agent_action_log.jsonl is world-readable",
+      "file": "agent_action_log.jsonl",
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "File Permissions",
+      "description": "File agent_decision_log.jsonl is world-readable",
+      "file": "agent_decision_log.jsonl",
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Code Security - crypto_issues",
+      "description": "Potential crypto_issues found: random.random(...",
+      "file": ".\\agent_introduction_system.py",
+      "line": 194,
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Code Security - dangerous_functions",
+      "description": "Potential dangerous_functions found: __import__(...",
+      "file": ".\\launch_dashboard.py",
+      "line": 20,
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Code Security - dangerous_functions",
+      "description": "Potential dangerous_functions found: __import__(...",
+      "file": ".\\setup_environment.py",
+      "line": 37,
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Code Security - crypto_issues",
+      "description": "Potential crypto_issues found: md5(...",
+      "file": ".\\agents\\dmer_monitor_agent.py",
+      "line": 104,
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Code Security - crypto_issues",
+      "description": "Potential crypto_issues found: md5(...",
+      "file": ".\\agents\\dmer_monitor_agent.py",
+      "line": 311,
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Code Security - crypto_issues",
+      "description": "Potential crypto_issues found: md5(...",
+      "file": ".\\agents\\dmer_monitor_agent.py",
+      "line": 344,
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Code Security - crypto_issues",
+      "description": "Potential crypto_issues found: md5(...",
+      "file": ".\\agents\\dmer_monitor_agent.py",
+      "line": 478,
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Code Security - crypto_issues",
+      "description": "Potential crypto_issues found: md5(...",
+      "file": ".\\agents\\flare_integration.py",
+      "line": 71,
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Code Security - crypto_issues",
+      "description": "Potential crypto_issues found: random.random(...",
+      "file": ".\\agents\\master_key_algorithm.py",
+      "line": 61,
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Code Security - crypto_issues",
+      "description": "Potential crypto_issues found: md5(...",
+      "file": ".\\agents\\utils.py",
+      "line": 185,
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Code Security - crypto_issues",
+      "description": "Potential crypto_issues found: md5(...",
+      "file": ".\\agents\\utils.py",
+      "line": 190,
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Code Security - crypto_issues",
+      "description": "Potential crypto_issues found: md5(...",
+      "file": ".\\agents\\utils.py",
+      "line": 198,
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Code Security - crypto_issues",
+      "description": "Potential crypto_issues found: random.random(...",
+      "file": ".\\local_backup\\agent_introduction_system.py",
+      "line": 194,
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Code Security - dangerous_functions",
+      "description": "Potential dangerous_functions found: os.system(...",
+      "file": ".\\local_backup\\guardianshield_main_menu.py",
+      "line": 21,
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Code Security - dangerous_functions",
+      "description": "Potential dangerous_functions found: __import__(...",
+      "file": ".\\local_backup\\launch_dashboard.py",
+      "line": 20,
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Code Security - dangerous_functions",
+      "description": "Potential dangerous_functions found: __import__(...",
+      "file": ".\\local_backup\\setup_environment.py",
+      "line": 37,
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Code Security - crypto_issues",
+      "description": "Potential crypto_issues found: md5(...",
+      "file": ".\\local_backup\\agents\\dmer_monitor_agent.py",
+      "line": 104,
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Code Security - crypto_issues",
+      "description": "Potential crypto_issues found: md5(...",
+      "file": ".\\local_backup\\agents\\dmer_monitor_agent.py",
+      "line": 311,
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Code Security - crypto_issues",
+      "description": "Potential crypto_issues found: md5(...",
+      "file": ".\\local_backup\\agents\\dmer_monitor_agent.py",
+      "line": 344,
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Code Security - crypto_issues",
+      "description": "Potential crypto_issues found: md5(...",
+      "file": ".\\local_backup\\agents\\dmer_monitor_agent.py",
+      "line": 478,
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Code Security - crypto_issues",
+      "description": "Potential crypto_issues found: md5(...",
+      "file": ".\\local_backup\\agents\\flare_integration.py",
+      "line": 71,
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Code Security - crypto_issues",
+      "description": "Potential crypto_issues found: random.random(...",
+      "file": ".\\local_backup\\agents\\master_key_algorithm.py",
+      "line": 61,
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Code Security - crypto_issues",
+      "description": "Potential crypto_issues found: md5(...",
+      "file": ".\\local_backup\\agents\\utils.py",
+      "line": 182,
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Code Security - crypto_issues",
+      "description": "Potential crypto_issues found: md5(...",
+      "file": ".\\local_backup\\agents\\utils.py",
+      "line": 187,
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Code Security - crypto_issues",
+      "description": "Potential crypto_issues found: md5(...",
+      "file": ".\\local_backup\\agents\\utils.py",
+      "line": 195,
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Unpinned Dependency",
+      "description": "Package web has no version specified",
+      "file": "requirements.txt",
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Unpinned Dependency",
+      "description": "Package eth-accoun has no version specified",
+      "file": "requirements.txt",
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Unpinned Dependency",
+      "description": "Package eth-util has no version specified",
+      "file": "requirements.txt",
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Unpinned Dependency",
+      "description": "Package scikit-lear has no version specified",
+      "file": "requirements.txt",
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Unpinned Dependency",
+      "description": "Package nump has no version specified",
+      "file": "requirements.txt",
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Unpinned Dependency",
+      "description": "Package matplotli has no version specified",
+      "file": "requirements.txt",
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Unpinned Dependency",
+      "description": "Package panda has no version specified",
+      "file": "requirements.txt",
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Unpinned Dependency",
+      "description": "Package fastap has no version specified",
+      "file": "requirements.txt",
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Unpinned Dependency",
+      "description": "Package uvicorn has no version specified",
+      "file": "requirements.txt",
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Unpinned Dependency",
+      "description": "Package websocket has no version specified",
+      "file": "requirements.txt",
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Unpinned Dependency",
+      "description": "Package request has no version specified",
+      "file": "requirements.txt",
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Unpinned Dependency",
+      "description": "Package http has no version specified",
+      "file": "requirements.txt",
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Unpinned Dependency",
+      "description": "Package aiohtt has no version specified",
+      "file": "requirements.txt",
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Unpinned Dependency",
+      "description": "Package spac has no version specified",
+      "file": "requirements.txt",
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Unpinned Dependency",
+      "description": "Package beautifulsoup has no version specified",
+      "file": "requirements.txt",
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Unpinned Dependency",
+      "description": "Package cryptograph has no version specified",
+      "file": "requirements.txt",
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Unpinned Dependency",
+      "description": "Package python-doten has no version specified",
+      "file": "requirements.txt",
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Unpinned Dependency",
+      "description": "Package pycryptodom has no version specified",
+      "file": "requirements.txt",
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Unpinned Dependency",
+      "description": "Package rege has no version specified",
+      "file": "requirements.txt",
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Unpinned Dependency",
+      "description": "Package secure-smtpli has no version specified",
+      "file": "requirements.txt",
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Unpinned Dependency",
+      "description": "Package pyyam has no version specified",
+      "file": "requirements.txt",
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Unpinned Dependency",
+      "description": "Package tom has no version specified",
+      "file": "requirements.txt",
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Unpinned Dependency",
+      "description": "Package structlo has no version specified",
+      "file": "requirements.txt",
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Unpinned Dependency",
+      "description": "Package sqlalchem has no version specified",
+      "file": "requirements.txt",
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Unpinned Dependency",
+      "description": "Package pydanti has no version specified",
+      "file": "requirements.txt",
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Unpinned Dependency",
+      "description": "Package torc has no version specified",
+      "file": "requirements.txt",
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Unpinned Dependency",
+      "description": "Package transformer has no version specified",
+      "file": "requirements.txt",
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Unpinned Dependency",
+      "description": "Package pytes has no version specified",
+      "file": "requirements.txt",
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Unpinned Dependency",
+      "description": "Package pytest-asynci has no version specified",
+      "file": "requirements.txt",
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Unpinned Dependency",
+      "description": "Package pytest-co has no version specified",
+      "file": "requirements.txt",
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Unpinned Dependency",
+      "description": "Package blac has no version specified",
+      "file": "requirements.txt",
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Unpinned Dependency",
+      "description": "Package flake has no version specified",
+      "file": "requirements.txt",
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Unpinned Dependency",
+      "description": "Package myp has no version specified",
+      "file": "requirements.txt",
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Unpinned Dependency",
+      "description": "Package psuti has no version specified",
+      "file": "requirements.txt",
+      "severity": "MEDIUM"
+    },
+    {
+      "type": "Unpinned Dependency",
+      "description": "Package dnspytho has no version specified",
+      "file": "requirements.txt",
+      "severity": "MEDIUM"
+    }
+  ],
+  "low_issues": [
+    {
+      "type": "Template Values",
+      "description": ".env.example contains template values",
+      "file": ".env.example",
+      "severity": "LOW"
+    },
+    {
+      "type": "Security Tool Missing",
+      "description": "Safety package not available for dependency scanning",
+      "severity": "LOW"
+    }
+  ],
+  "recommendations": [
+    "\ud83d\udea8 CRITICAL: Fix all critical issues immediately before production use",
+    "\u26a0\ufe0f HIGH: Address high-severity issues as soon as possible",
+    "\ud83d\udcdd MEDIUM: Multiple medium-severity issues detected - plan remediation",
+    "\ud83d\udd10 Implement proper secret management (e.g., HashiCorp Vault)",
+    "\ud83d\udee1\ufe0f Enable comprehensive logging and monitoring",
+    "\ud83d\udd12 Use strong encryption for all sensitive data",
+    "\ud83d\udea6 Implement rate limiting and input validation",
+    "\ud83d\udd04 Regular security audits and penetration testing",
+    "\ud83d\udc65 Implement principle of least privilege",
+    "\ud83d\udd27 Keep all dependencies updated and patched"
+  ],
+  "compliance_status": {},
+  "security_grade": "F"
+}

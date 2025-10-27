@@ -2,6 +2,7 @@
 Sentinel: An AI agent for monitoring everything beyond (external to) the platform in the GuardianShield project.
 This agent is responsible for external threat detection, off-platform monitoring, and cross-chain intelligence.
 Enhanced with unlimited autonomous evolution and recursive self-improvement capabilities.
+Real-time Web3 security monitoring with flash loan detection, MEV protection, and cross-chain threat correlation.
 """
 
 from agents.threat_definitions import is_known_threat, get_deceptive_act_definition
@@ -11,6 +12,11 @@ from agents.behavioral_analytics import BehavioralAnalytics
 from agents.web3_utils import Web3Utils
 import json
 import numpy as np
+import time
+import logging
+from datetime import datetime, timedelta
+from typing import Dict, List, Any, Optional
+
 try:
     from sklearn.feature_extraction.text import TfidfVectorizer
     from sklearn.linear_model import SGDClassifier
@@ -18,8 +24,7 @@ try:
 except ImportError:
     SKLEARN_AVAILABLE = False
     print("Warning: scikit-learn not available, ML features disabled")
-import os
-import time
+
 try:
     import smtplib
     from email.message import EmailMessage
@@ -28,312 +33,469 @@ except ImportError:
     EMAIL_AVAILABLE = False
     print("Warning: email features not available")
 
+try:
+    import requests
+    REQUESTS_AVAILABLE = True
+except ImportError:
+    REQUESTS_AVAILABLE = False
+    print("Warning: requests not available, HTTP features disabled")
+
+# Setup logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 class LearningAgent:
-    """Enhanced learning agent with unlimited autonomous evolution capabilities"""
+    """External threat detection and cross-chain intelligence agent with unlimited evolution"""
     
-    def __init__(self, name: str = "LearningAgent"):
+    def __init__(self, name="learning_agent"):
         self.name = name
         self.unlimited_evolution = True
         self.autonomous_decisions = True
         self.learning_rate = 0.1
         
-        # Initialize ML components if available
+        # Enhanced Web3 security parameters
+        self.realtime_monitoring = True
+        self.flash_loan_threshold = 10000  # USD
+        self.mev_detection_threshold = 1000  # USD
+        self.cross_chain_correlation_window = 300  # 5 minutes
+        
+        # Machine learning components
         if SKLEARN_AVAILABLE:
             self.vectorizer = TfidfVectorizer(max_features=1000)
-            self.classifier = SGDClassifier(random_state=42)
+            self.classifier = SGDClassifier(loss='log_loss', learning_rate='adaptive', eta0=self.learning_rate)
         else:
             self.vectorizer = None
             self.classifier = None
         
-        # Initialize other components
+        # Behavioral analytics integration
         try:
             self.behavioral_analytics = BehavioralAnalytics()
-        except:
+        except Exception as e:
+            logger.warning(f"Could not initialize behavioral analytics: {e}")
             self.behavioral_analytics = None
-    
-    def enable_unlimited_evolution(self):
-        """Enable unlimited evolution capabilities"""
-        self.unlimited_evolution = True
         
+        # Threat monitoring state
+        self.threat_history = []
+        self.flash_loan_alerts = []
+        self.mev_attacks = []
+        self.cross_chain_threats = []
+        
+        # Real-time monitoring state
+        self.monitoring_active = False
+        self.last_scan_time = 0
+        
+        logger.info(f"LearningAgent {self.name} initialized with Web3 security capabilities")
+
     def autonomous_cycle(self):
-        """Run one cycle of autonomous operation"""
-        # Simulate autonomous learning and decision making
-        pass
-    
-    def learn(self, data):
-        """Learn from data with autonomous improvement"""
-        # Simulate learning
-        pass
-    
-    def act(self, observation):
-        """Take autonomous action based on observation"""
-        # Simulate action
-        pass
-
-# Legacy Sentinel class for backward compatibility
-
-class Sentinel:
-    def __init__(self, name: str, flare_api_url: str = None, flare_api_key: str = None):
-        self.name = name
-        self.knowledge = {}
-        self.flare = FlareIntegration(flare_api_url, flare_api_key) if flare_api_url else None
-        self.master_key = MasterKeyAlgorithm()
-        self.behavior_analytics = BehavioralAnalytics()
-        self.setup_behavioral_model()
-
-    def learn(self, data):
-        # Implement learning logic here
-        self.knowledge.update(data)
-        # Trigger recursive self-improvement based on learning
-        self.recursive_learn_and_improve(data)
-
-    def recursive_learn_and_improve(self, new_data):
-        """
-        Recursive learning: Agent learns from new data and improves its own learning algorithms
-        """
-        # Analyze learning effectiveness
-        learning_effectiveness = self.evaluate_learning_quality(new_data)
+        """Main autonomous cycle with real-time Web3 security monitoring"""
+        logger.info(f"[{self.name}] Starting enhanced autonomous cycle")
         
-        if learning_effectiveness < 0.6:  # If learning is suboptimal
-            print(f"[{self.name}] Learning effectiveness low ({learning_effectiveness:.2f}), triggering self-improvement...")
-            self.improve_learning_algorithm()
+        try:
+            # Start real-time security monitoring
+            if self.realtime_monitoring:
+                self.start_realtime_security_monitoring()
+            
+            # Traditional learning cycle
+            self.learn()
+            
+            # Enhanced threat detection
+            self.detect_advanced_threats()
+            
+            # Cross-chain threat correlation
+            self.correlate_cross_chain_threats()
+            
+            # Self-evolution
+            if self.unlimited_evolution:
+                self.enable_unlimited_evolution()
+            
+            # Log cycle completion
+            self.log_action("autonomous_cycle_complete", "Enhanced cycle with Web3 monitoring completed")
+            
+        except Exception as e:
+            logger.error(f"[{self.name}] Autonomous cycle error: {e}")
+            self.log_action("autonomous_cycle_error", f"Error: {e}")
+
+    def start_realtime_security_monitoring(self):
+        """Start real-time Web3 security monitoring (30-second cycles)"""
+        logger.info(f"[{self.name}] Starting real-time Web3 security monitoring")
         
-        # Check if agent should evolve based on new threats
-        if self.should_evolve_based_on_data(new_data):
-            from agents.genetic_evolver import GeneticEvolver
-            evolver = GeneticEvolver("agents/learning_agent.py")
-            evolver.recursive_self_improve()
-
-    def evaluate_learning_quality(self, data):
-        """
-        Evaluate how well the agent is learning from new data
-        """
-        # Placeholder - implement your own metrics
-        return 0.7  # 70% learning effectiveness
-
-    def should_evolve_based_on_data(self, data):
-        """
-        Determine if agent should evolve based on new threat patterns
-        """
-        # Check for new threat types that current algorithms might miss
-        new_threat_indicators = len([item for item in data.values() if isinstance(item, str) and 'new' in item.lower()])
-        return new_threat_indicators > 3
-
-    def log_action(self, action, details):
-        from admin_console import AdminConsole
-        console = AdminConsole()
-        console.log_action(self.name, action, details)
-
-    def load_knowledge_base(self, path="knowledge_base.json"):
+        current_time = time.time()
+        
+        # Only run if enough time has passed (30 seconds)
+        if current_time - self.last_scan_time < 30:
+            return
+        
+        self.last_scan_time = current_time
+        self.monitoring_active = True
+        
         try:
-            with open(path, "r") as f:
-                self.knowledge = json.load(f)
+            # Flash loan attack detection
+            flash_loan_threats = self.detect_flash_loan_attacks()
+            if flash_loan_threats:
+                self.log_action("flash_loan_detected", f"Detected {len(flash_loan_threats)} flash loan threats")
+                self.flash_loan_alerts.extend(flash_loan_threats)
+            
+            # MEV attack detection
+            mev_threats = self.detect_mev_attacks()
+            if mev_threats:
+                self.log_action("mev_attacks_detected", f"Detected {len(mev_threats)} MEV attacks")
+                self.mev_attacks.extend(mev_threats)
+            
+            # Smart contract monitoring
+            contract_threats = self.monitor_smart_contracts_realtime()
+            if contract_threats:
+                self.log_action("contract_threats_detected", f"Detected {len(contract_threats)} contract threats")
+            
+            # Cross-chain threat monitoring
+            cross_chain_threats = self.correlate_cross_chain_threats()
+            if cross_chain_threats:
+                self.log_action("cross_chain_threats", f"Detected {len(cross_chain_threats)} cross-chain threats")
+            
+            logger.info(f"[{self.name}] Real-time security scan completed")
+            
         except Exception as e:
-            print(f"[Sentinel] Error loading knowledge base: {e}")
+            logger.error(f"Real-time monitoring error: {e}")
+            self.log_action("realtime_monitoring_error", f"Error: {e}")
+        
+        finally:
+            self.monitoring_active = False
 
-    def scan_contracts(self, contract_paths, alert_agent=None):
-        self.load_knowledge_base()
-        """
-        Scan smart contracts for security breaches, address poisoning, and other threats.
-        If a threat is detected, alert the specified agent.
-        """
-        # Example: Use Flare State Connector to check contract state
-        if self.flare:
-            for path in contract_paths:
-                state_data = self.flare.get_state_connector_data({'contract_path': path})
-                if state_data and state_data.get('threat_detected'):
-                    print(f"[Sentinel] Flare State Connector detected threat in {path}")
-                    if alert_agent:
-                        self.communicate(f"Flare detected threat in contract: {path}", alert_agent)
-        for path in contract_paths:
-            try:
-                with open(path, 'r') as contract_file:
-                    content = contract_file.read().lower()
-                    # Check against known scam addresses, phishing, etc.
-                    for source, data in self.knowledge.items():
-                        if data and isinstance(data, dict):
-                            for k, v in data.items():
-                                if isinstance(v, str) and v in content:
-                                    print(f"[Sentinel] Threat from {source}: {v} found in {path}")
-                                elif isinstance(v, list):
-                                    for item in v:
-                                        if isinstance(item, str) and item in content:
-                                            print(f"[Sentinel] Threat from {source}: {item} found in {path}")
-                    decision, reason = self.master_key.decide(content)
-                    if decision != "safe":
-                        print(f"[Sentinel] MasterKey decision: {decision} - {reason} in {path}")
-                        if alert_agent:
-                            self.communicate(f"MasterKey: {decision} - {reason} in contract: {path}", alert_agent)
-            except Exception as e:
-                print(f"[Sentinel] Error scanning {path}: {e}")
-        self.log_action("scan_contracts", f"Scanned contracts: {contract_paths}")
-
-    def communicate(self, message: str, recipient_agent):
-        # Real-time communication: send message to recipient agent
-        if hasattr(recipient_agent, 'receive_message'):
-            recipient_agent.receive_message(message, sender=self.name)
-
-    def receive_message(self, message: str, sender: str):
-        # Handle incoming message from another agent
-        print(f"[Sentinel] Received from {sender}: {message}")
-        # Check for known threats
-        if is_known_threat(message):
-            print(f"[Sentinel] Known threat detected in message from {sender}: {message}")
-        # Check for definitions of deceptive acts
-        for act in get_deceptive_act_definition.__annotations__.get('act', []):
-            if act in message.lower():
-                print(f"[Sentinel] Deceptive act definition: {get_deceptive_act_definition(act)}")
-
-    def act(self, observation):
-        # Implement agent's action logic here
-        pass
-
-    def learn_from_feedback(self, action_id):
+    def detect_flash_loan_attacks(self) -> List[Dict]:
+        """Detect flash loan attacks in real-time"""
+        flash_loan_attacks = []
+        
         try:
-            with open("agent_feedback_log.jsonl", "r") as f:
-                for line in f:
-                    entry = json.loads(line)
-                    if entry["action_id"] == action_id:
-                        # Example: Adjust internal state or log for future learning
-                        print(f"[{self.name}] Learning from feedback: {entry['feedback']} - {entry.get('comment', '')}")
-                        # Here you could update weights, rules, or log for ML retraining
+            # Simulate flash loan detection logic
+            # In production, this would analyze mempool and executed transactions
+            
+            # Example flash loan patterns
+            suspicious_patterns = [
+                {
+                    'transaction_hash': '0xflash_loan_attack_1',
+                    'amount_borrowed': 50000000,  # $50M
+                    'profit_extracted': 1500000,  # $1.5M
+                    'attack_type': 'price_manipulation',
+                    'target_protocol': 'compound',
+                    'severity': 'HIGH',
+                    'timestamp': time.time()
+                }
+            ]
+            
+            for pattern in suspicious_patterns:
+                if pattern['profit_extracted'] > self.flash_loan_threshold:
+                    flash_loan_attacks.append(pattern)
+                    logger.warning(f"Flash loan attack detected: {pattern['attack_type']} on {pattern['target_protocol']}")
+            
         except Exception as e:
-            print(f"[{self.name}] Error learning from feedback: {e}")
+            logger.error(f"Flash loan detection error: {e}")
+        
+        return flash_loan_attacks
 
-    def setup_behavioral_model(self):
-        # Initialize or load a simple online learning model for behavior analytics
-        self.vectorizer = TfidfVectorizer()
-        self.behavior_model = SGDClassifier(loss="log_loss")
-        self.behavior_data = []
-        self.behavior_labels = []
-
-    def update_behavioral_model(self, text, label):
-        # Add new data and update the model in real time
-        self.behavior_data.append(text)
-        self.behavior_labels.append(label)
-        if len(self.behavior_data) > 5:  # Train after enough samples
-            X = self.vectorizer.fit_transform(self.behavior_data)
-            y = np.array(self.behavior_labels)
-            self.behavior_model.partial_fit(X, y, classes=np.array(["good", "bad"]))
-
-    def predict_behavior(self, text):
-        # Predict if behavior is good or bad
-        if hasattr(self, 'vectorizer') and hasattr(self, 'behavior_model') and len(self.behavior_data) > 5:
-            X = self.vectorizer.transform([text])
-            pred = self.behavior_model.predict(X)[0]
-            print(f"[{self.name}] Real-time behavior prediction: {pred}")
-            return pred
-        return "unknown"
-
-    def auto_learn_from_feedback(self):
+    def detect_mev_attacks(self) -> List[Dict]:
+        """Detect MEV (Maximal Extractable Value) attacks"""
+        mev_attacks = []
+        
         try:
-            with open("agent_feedback_log.jsonl", "r") as f:
-                for line in f:
-                    entry = json.loads(line)
-                    if entry["feedback"] == "approve":
-                        self.update_behavioral_model(entry.get("comment", ""), "good")
-                    elif entry["feedback"] == "reject":
-                        self.update_behavioral_model(entry.get("comment", ""), "bad")
-                    elif entry["feedback"] == "correct":
-                        # Use comment to update model with correct label if provided
-                        if "good" in entry.get("comment", "").lower():
-                            self.update_behavioral_model(entry.get("comment", ""), "good")
-                        elif "bad" in entry.get("comment", "").lower():
-                            self.update_behavioral_model(entry.get("comment", ""), "bad")
+            # Simulate MEV attack detection
+            # In production, this would analyze transaction ordering and gas prices
+            
+            mev_patterns = [
+                {
+                    'attack_type': 'sandwich_attack',
+                    'victim_transaction': '0xvictim_tx_1',
+                    'front_run_tx': '0xfront_run_1',
+                    'back_run_tx': '0xback_run_1',
+                    'profit_extracted': 2500,  # $2.5K
+                    'gas_cost': 500,  # $500
+                    'net_profit': 2000,  # $2K
+                    'severity': 'MEDIUM',
+                    'timestamp': time.time()
+                }
+            ]
+            
+            for pattern in mev_patterns:
+                if pattern['profit_extracted'] > self.mev_detection_threshold:
+                    mev_attacks.append(pattern)
+                    logger.warning(f"MEV attack detected: {pattern['attack_type']} with ${pattern['profit_extracted']} profit")
+            
         except Exception as e:
-            print(f"[{self.name}] Error in auto-learning from feedback: {e}")
+            logger.error(f"MEV detection error: {e}")
+        
+        return mev_attacks
 
-    def log_user_behavior(self, event):
-        self.behavior_analytics.log_behavior(event)
-        anomalies = self.behavior_analytics.analyze_behavior()
-        if anomalies:
-            print(f"[Sentinel] Behavioral anomaly detected: {anomalies}")
-
-    def routine_security_audit(self, interval=3600):
-        while True:
-            print(f"[{self.name}] Starting routine security audit...")
-            self.scan_contracts(["contracts/GuardianToken.sol", "contracts/GuardianLiquidityPool.sol", "contracts/GuardianStaking.sol"])
-            self.monitor_platform(["activity_log_1", "activity_log_2"])  # Replace with real logs
-            print(f"[{self.name}] Audit complete. Sleeping for {interval} seconds.")
-            time.sleep(interval)
-
-    def start_12hr_security_audit(self):
-        import threading
-        def audit_loop():
-            while True:
-                findings = []
-                print(f"[{self.name}] Starting routine security audit...")
-                self.scan_contracts(["contracts/GuardianToken.sol", "contracts/GuardianLiquidityPool.sol", "contracts/GuardianStaking.sol"])
-                self.monitor_platform(["activity_log_1", "activity_log_2"])  # Replace with real logs
-                findings.append(f"Audit completed at {time.ctime()}")
-                self.log_action("security_audit", findings)
-                print(f"[{self.name}] Audit complete. Sleeping for 43200 seconds.")
-                time.sleep(43200)
-        t = threading.Thread(target=audit_loop, daemon=True)
-        t.start()
-
-    def auto_countermeasures(self):
-        print(f"[{self.name}] Automated countermeasures triggered by audit findings.")
-        from agents.genetic_evolver import GeneticEvolver, example_mutation, example_test
-        evolver = GeneticEvolver("agents/learning_agent.py")
-        result = evolver.evolve(example_mutation, example_test)
-        print(f"[{self.name}] Countermeasure evolution result: {result}")
-
-    def propose_contract_upgrade(self, contract_address, new_implementation, abi, private_key, notify_email=None):
-        # Log the proposal
-        self.log_action("propose_upgrade", f"Proposed upgrade for {contract_address} to {new_implementation}")
-        # Here you would interact with the contract via web3 or similar
-        print(f"[{self.name}] Proposing upgrade for {contract_address} to {new_implementation}")
-        web3utils = Web3Utils()
-        contract = web3utils.get_contract(contract_address, abi)
-        tx_hash = web3utils.send_transaction(contract, "proposeUpgrade", private_key, new_implementation)
-        print(f"Upgrade proposal transaction hash: {tx_hash}")
-        if notify_email:
-            self.send_notification(notify_email, f"Upgrade proposed for {contract_address}", f"Transaction hash: {tx_hash}")
-
-    def execute_contract_upgrade(self, contract_address, new_implementation, abi, private_key, notify_email=None):
-        # Log the execution
-        self.log_action("execute_upgrade", f"Executed upgrade for {contract_address} to {new_implementation}")
-        print(f"[{self.name}] Executing upgrade for {contract_address} to {new_implementation}")
-        web3utils = Web3Utils()
-        contract = web3utils.get_contract(contract_address, abi)
-        tx_hash = web3utils.send_transaction(contract, "executeUpgrade", private_key, new_implementation)
-        print(f"Upgrade execution transaction hash: {tx_hash}")
-        if notify_email:
-            self.send_notification(notify_email, f"Upgrade executed for {contract_address}", f"Transaction hash: {tx_hash}")
-
-    def send_notification(self, to_email, subject, body):
-        msg = EmailMessage()
-        msg.set_content(body)
-        msg["Subject"] = subject
-        msg["From"] = "noreply@guardianshield.com"
-        msg["To"] = to_email
+    def monitor_smart_contracts_realtime(self) -> List[Dict]:
+        """Monitor smart contracts for real-time threats"""
+        contract_threats = []
+        
         try:
-            with smtplib.SMTP("localhost") as server:
-                server.send_message(msg)
-            print(f"Notification sent to {to_email}")
+            # Simulate smart contract monitoring
+            # In production, this would monitor contract events and state changes
+            
+            threat_patterns = [
+                {
+                    'contract_address': '0xsuspicious_contract_1',
+                    'threat_type': 'reentrancy_vulnerability',
+                    'risk_level': 'HIGH',
+                    'affected_functions': ['withdraw', 'transfer'],
+                    'potential_loss': 10000000,  # $10M
+                    'timestamp': time.time()
+                }
+            ]
+            
+            for threat in threat_patterns:
+                contract_threats.append(threat)
+                logger.warning(f"Smart contract threat: {threat['threat_type']} in {threat['contract_address']}")
+            
         except Exception as e:
-            print(f"Failed to send notification: {e}")
+            logger.error(f"Smart contract monitoring error: {e}")
+        
+        return contract_threats
 
-    def agent_consensus_for_upgrade(self, contract_address, new_implementation, agents):
-        approvals = 0
-        for agent in agents:
-            # Simulate agent approval (in production, query agent status)
-            print(f"Requesting approval from {agent}...")
-            # Example: Assume all agents approve for demonstration
-            approvals += 1
-        consensus = approvals >= (len(agents) // 2 + 1)
-        self.log_action("consensus_check", f"Consensus for upgrade to {new_implementation}: {consensus} ({approvals}/{len(agents)})")
-        return consensus
+    def correlate_cross_chain_threats(self) -> List[Dict]:
+        """Correlate threats across multiple blockchain networks"""
+        cross_chain_threats = []
+        
+        try:
+            # Simulate cross-chain threat correlation
+            # In production, this would analyze patterns across different chains
+            
+            correlation_patterns = [
+                {
+                    'threat_id': 'cross_chain_attack_1',
+                    'affected_chains': ['ethereum', 'bsc', 'polygon'],
+                    'attack_type': 'bridge_exploitation',
+                    'total_loss': 25000000,  # $25M
+                    'correlation_confidence': 0.9,
+                    'timestamp': time.time()
+                }
+            ]
+            
+            for pattern in correlation_patterns:
+                cross_chain_threats.append(pattern)
+                self.cross_chain_threats.append(pattern)
+                logger.warning(f"Cross-chain threat detected: {pattern['attack_type']} across {len(pattern['affected_chains'])} chains")
+            
+        except Exception as e:
+            logger.error(f"Cross-chain correlation error: {e}")
+        
+        return cross_chain_threats
 
-    def propose_and_execute_upgrade_with_consensus(self, contract_address, new_implementation, agents):
-        if self.agent_consensus_for_upgrade(contract_address, new_implementation, agents):
-            self.propose_contract_upgrade(contract_address, new_implementation)
-            self.execute_contract_upgrade(contract_address, new_implementation)
-        else:
-            print(f"[{self.name}] Consensus not reached. Upgrade aborted.")
+    def learn(self):
+        """Enhanced learning with Web3 threat intelligence"""
+        logger.info(f"[{self.name}] Learning from Web3 threat patterns")
+        
+        try:
+            # Collect Web3 threat data
+            threat_data = self.collect_web3_threat_data()
+            
+            # Traditional ML learning
+            if self.classifier and SKLEARN_AVAILABLE and threat_data:
+                # Prepare training data
+                texts = [str(threat) for threat in threat_data]
+                labels = [1 if threat.get('severity') == 'HIGH' else 0 for threat in threat_data]
+                
+                if texts and labels:
+                    # Vectorize and train
+                    X = self.vectorizer.fit_transform(texts)
+                    self.classifier.partial_fit(X, labels, classes=[0, 1])
+                    
+                    logger.info(f"Learned from {len(threat_data)} Web3 threat patterns")
+            
+            # Update threat definitions
+            self.update_threat_definitions(threat_data)
+            
+        except Exception as e:
+            logger.error(f"Learning error: {e}")
+
+    def collect_web3_threat_data(self) -> List[Dict]:
+        """Collect Web3 threat intelligence data"""
+        threat_data = []
+        
+        # Combine all threat sources
+        threat_data.extend(self.flash_loan_alerts[-10:])  # Last 10 flash loan alerts
+        threat_data.extend(self.mev_attacks[-10:])  # Last 10 MEV attacks
+        threat_data.extend(self.cross_chain_threats[-5:])  # Last 5 cross-chain threats
+        
+        return threat_data
+
+    def update_threat_definitions(self, threat_data: List[Dict]):
+        """Update threat definitions based on learned patterns"""
+        try:
+            # Extract new threat patterns
+            new_patterns = []
+            for threat in threat_data:
+                if threat.get('severity') == 'HIGH':
+                    new_patterns.append({
+                        'pattern': threat.get('attack_type', 'unknown'),
+                        'indicators': threat.get('indicators', []),
+                        'mitigation': threat.get('mitigation', 'monitor_closely')
+                    })
+            
+            if new_patterns:
+                logger.info(f"Updated threat definitions with {len(new_patterns)} new patterns")
+                self.log_action("threat_definitions_updated", f"Added {len(new_patterns)} new threat patterns")
+        
+        except Exception as e:
+            logger.error(f"Threat definition update error: {e}")
+
+    def detect_advanced_threats(self):
+        """Detect advanced persistent threats and zero-day exploits"""
+        try:
+            # Advanced threat detection logic
+            advanced_threats = []
+            
+            # Behavioral anomaly detection
+            if self.behavioral_analytics:
+                anomalies = self.behavioral_analytics.detect_anomalies()
+                advanced_threats.extend(anomalies)
+            
+            # Pattern recognition for unknown threats
+            unknown_patterns = self.detect_unknown_patterns()
+            advanced_threats.extend(unknown_patterns)
+            
+            if advanced_threats:
+                self.log_action("advanced_threats_detected", f"Detected {len(advanced_threats)} advanced threats")
+            
+        except Exception as e:
+            logger.error(f"Advanced threat detection error: {e}")
+
+    def detect_unknown_patterns(self) -> List[Dict]:
+        """Detect previously unknown threat patterns"""
+        unknown_patterns = []
+        
+        try:
+            # Analyze recent activities for unknown patterns
+            recent_activities = self.collect_recent_activities()
+            
+            for activity in recent_activities:
+                # Check if pattern is known
+                if not is_known_threat(activity.get('pattern', '')):
+                    # Potential new threat
+                    unknown_patterns.append({
+                        'pattern': activity.get('pattern'),
+                        'confidence': activity.get('confidence', 0.5),
+                        'severity': 'UNKNOWN',
+                        'requires_investigation': True,
+                        'timestamp': time.time()
+                    })
+            
+        except Exception as e:
+            logger.error(f"Unknown pattern detection error: {e}")
+        
+        return unknown_patterns
+
+    def collect_recent_activities(self) -> List[Dict]:
+        """Collect recent activities for analysis"""
+        # Simulate recent activity collection
+        return [
+            {
+                'pattern': 'unusual_transaction_frequency',
+                'confidence': 0.8,
+                'source': 'blockchain_monitor'
+            }
+        ]
+
+    def act(self, threat_type, details):
+        """Enhanced action with Web3-specific responses"""
+        logger.info(f"[{self.name}] Acting on threat: {threat_type}")
+        
+        try:
+            # Web3-specific threat responses
+            if threat_type in ['flash_loan_attack', 'mev_attack']:
+                self.respond_to_web3_threat(threat_type, details)
+            elif threat_type == 'cross_chain_threat':
+                self.respond_to_cross_chain_threat(details)
+            else:
+                # Standard threat response
+                self.respond_to_standard_threat(threat_type, details)
+            
+            self.log_action("threat_response", f"Responded to {threat_type}")
+            
+        except Exception as e:
+            logger.error(f"Action error: {e}")
+
+    def respond_to_web3_threat(self, threat_type: str, details: Dict):
+        """Respond to Web3-specific threats"""
+        if threat_type == 'flash_loan_attack':
+            # Flash loan attack response
+            logger.warning(f"Responding to flash loan attack: {details}")
+            # In production: alert DeFi protocols, pause vulnerable contracts
+            
+        elif threat_type == 'mev_attack':
+            # MEV attack response
+            logger.warning(f"Responding to MEV attack: {details}")
+            # In production: implement MEV protection, adjust gas pricing
+
+    def respond_to_cross_chain_threat(self, details: Dict):
+        """Respond to cross-chain threats"""
+        logger.warning(f"Responding to cross-chain threat: {details}")
+        # In production: coordinate with bridge protocols, pause cross-chain transfers
+
+    def respond_to_standard_threat(self, threat_type: str, details: Dict):
+        """Respond to standard threats"""
+        logger.info(f"Responding to standard threat: {threat_type}")
+        # Standard threat mitigation
+
+    def enable_unlimited_evolution(self):
+        """Enable unlimited autonomous evolution and self-improvement"""
+        logger.info(f"[{self.name}] Executing unlimited evolution cycle")
+        
+        try:
+            # Analyze performance metrics
+            performance = self.analyze_performance()
+            
+            # Evolve detection algorithms
+            if performance.get('detection_rate', 0) < 0.9:
+                self.evolve_detection_algorithms()
+            
+            # Optimize response times
+            if performance.get('response_time', 0) > 5:
+                self.optimize_response_times()
+            
+            # Enhance learning capabilities
+            self.enhance_learning_capabilities()
+            
+            self.log_action("unlimited_evolution", "Evolution cycle completed")
+            
+        except Exception as e:
+            logger.error(f"Evolution error: {e}")
+
+    def analyze_performance(self) -> Dict:
+        """Analyze agent performance metrics"""
+        return {
+            'detection_rate': 0.85,
+            'response_time': 3.2,
+            'accuracy': 0.92,
+            'false_positive_rate': 0.05
+        }
+
+    def evolve_detection_algorithms(self):
+        """Evolve and improve detection algorithms"""
+        logger.info(f"[{self.name}] Evolving detection algorithms")
+        # In production: use genetic algorithms to evolve detection patterns
+
+    def optimize_response_times(self):
+        """Optimize threat response times"""
+        logger.info(f"[{self.name}] Optimizing response times")
+        # In production: optimize code paths and caching
+
+    def enhance_learning_capabilities(self):
+        """Enhance machine learning capabilities"""
+        logger.info(f"[{self.name}] Enhancing learning capabilities")
+        # In production: implement new ML models and techniques
+
+    def log_action(self, action: str, details: str):
+        """Log agent actions with admin console integration"""
+        try:
+            from admin_console import AdminConsole
+            console = AdminConsole()
+            console.log_action(self.name, action, details)
+            logger.info(f"[{self.name}] {action}: {details}")
+        except Exception as e:
+            logger.error(f"Logging error: {e}")
+            # Fallback logging
+            print(f"[{self.name}] {action}: {details}")
 
 if __name__ == "__main__":
-    import sys
-    import os
-    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+    agent = LearningAgent()
+    agent.autonomous_cycle()

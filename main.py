@@ -22,6 +22,10 @@ from agents.data_ingestion import DataIngestionAgent
 from agents.dmer_monitor_agent import DmerMonitorAgent
 from agents.external_agent import ExternalAgent
 from agents.flare_integration import FlareIntegrationAgent
+from agents.defi_security_agent import DeFiSecurityAgent
+from agents.smart_contract_auditor import SmartContractAuditor
+from agents.cross_chain_monitor import CrossChainMonitor
+from agents.mev_protection_agent import MEVProtectionAgent
 from agents.threat_definitions import evolving_threats
 from admin_console import AdminConsole
 
@@ -77,10 +81,24 @@ class AutonomousAgentOrchestrator:
             # Flare integration with autonomous blockchain monitoring
             self.agents["flare_integration"] = FlareIntegrationAgent()
             
+            # NEW SPECIALIZED WEB3 SECURITY AGENTS
+            # DeFi security agent with protocol monitoring
+            self.agents["defi_security"] = DeFiSecurityAgent()
+            
+            # Smart contract auditor with vulnerability scanning
+            self.agents["smart_contract_auditor"] = SmartContractAuditor()
+            
+            # Cross-chain monitor with multi-chain security
+            self.agents["cross_chain_monitor"] = CrossChainMonitor()
+            
+            # MEV protection agent with MEV attack detection
+            self.agents["mev_protection"] = MEVProtectionAgent()
+            
             # Threat intelligence with unlimited learning
             self.agents["threat_definitions"] = evolving_threats
             
             logger.info("All autonomous agents initialized with unlimited capabilities")
+            logger.info(f"Total agents active: {len(self.agents)}")
             
             # Log initialization
             for agent_name in self.agents.keys():

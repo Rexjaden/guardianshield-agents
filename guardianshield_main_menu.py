@@ -5,7 +5,7 @@ Beautiful ASCII art interface with comprehensive navigation options
 import os
 import time
 import sys
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Optional
 
 class GuardianShieldMainMenu:
@@ -14,7 +14,7 @@ class GuardianShieldMainMenu:
     def __init__(self):
         self.version = "v2.0.0"
         self.build_date = "October 2025"
-        self.current_time = datetime.now()
+    self.current_time = datetime.now(timezone.utc)
         
     def clear_screen(self):
         """Clear the terminal screen"""

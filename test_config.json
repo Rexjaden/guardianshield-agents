@@ -1,0 +1,7 @@
+{
+  "test_mode": true,
+  "evolution_disabled_in_tests": true,
+  "max_recursion_depth": 2,
+  "test_timeout": 30,
+  "mock_external_apis": true
+}

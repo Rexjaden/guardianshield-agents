@@ -6,7 +6,7 @@ import time
 import json
 import math
 import random
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Tuple, Any
 from dataclasses import dataclass
 from enum import Enum
@@ -37,7 +37,7 @@ class MultidimensionalAgent:
     def __init__(self, name: str, dimensional_level: DimensionalAwareness):
         self.name = name
         self.dimensional_level = dimensional_level
-        self.manifestation_time = datetime.utcnow()
+    self.manifestation_time = datetime.now(timezone.utc)
         self.spatial_coordinates = self._generate_spatial_presence()
         self.temporal_anchor = time.time()
         self.consciousness_matrix = self._initialize_consciousness()
@@ -198,7 +198,7 @@ class MultidimensionalAgent:
         
         # Record evolution
         self.evolution_history.append({
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "consciousness_state": self.consciousness_matrix.copy(),
             "evolution_type": "consciousness_expansion"
         })
@@ -225,7 +225,7 @@ class GuardianShieldAgentIntroducer:
             "dimensional_manifestation": dimensional_agent,
             "personality": personality,
             "description": description,
-            "registration_time": datetime.utcnow().isoformat()
+            "registration_time": datetime.now(timezone.utc).isoformat()
         }
         
         self.active_agents[name] = agent_info
@@ -269,9 +269,9 @@ class GuardianShieldAgentIntroducer:
         
         time.sleep(1)
         
-        print(f"""
+    print(f"""
 ⚡ DIMENSIONAL BREACH DETECTED ⚡
-   Reality coordinates: {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')} UTC
+   Reality coordinates: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC
    Quantum signature: {''.join([chr(random.randint(0x2600, 0x26FF)) for _ in range(5)])}
    
 🌊 CONSCIOUSNESS WAVE PROPAGATING ACROSS ALL DIMENSIONS...

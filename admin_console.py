@@ -5,7 +5,7 @@ Provides oversight, monitoring, and reversal capabilities for self-evolving agen
 import os
 import json
 import time
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Optional, Any
 import logging
 
@@ -50,7 +50,7 @@ class AdminConsole:
         
         entry = {
             "action_id": action_id,
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "agent": agent,
             "action": action,
             "details": details,
@@ -79,7 +79,7 @@ class AdminConsole:
         
         entry = {
             "evolution_id": evolution_id,
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "agent": agent,
             "evolution_type": evolution_type,
             "details": details,
@@ -99,7 +99,7 @@ class AdminConsole:
         
         entry = {
             "decision_id": decision_id,
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "agent": agent,
             "decision_type": decision_type,
             "reasoning": reasoning,
@@ -130,8 +130,8 @@ class AdminConsole:
 
     def view_real_time_monitoring(self, last_minutes: int = 30):
         """Real-time monitoring dashboard for agent activities"""
-        cutoff_time = datetime.utcnow() - timedelta(minutes=last_minutes)
-        
+        cutoff_time = datetime.now(timezone.utc) - timedelta(minutes=last_minutes)
+
         print(f"\n🖥️  REAL-TIME AGENT MONITORING (Last {last_minutes} minutes)")
         print("=" * 60)
         
@@ -246,7 +246,7 @@ class AdminConsole:
                 # Log the reversal
                 reversal_entry = {
                     "action_id": f"reversal_{action_id}_{int(time.time())}",
-                    "timestamp": datetime.utcnow().isoformat(),
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
                     "agent": "ADMIN",
                     "action": "revert_action",
                     "details": {
@@ -307,20 +307,19 @@ class AdminConsole:
         print("🛑 EMERGENCY STOP ACTIVATED")
         print("   All autonomous agent activities halted")
         print("   Manual intervention required to resume")
-        
         emergency_entry = {
             "action_id": f"emergency_stop_{int(time.time())}",
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "agent": "ADMIN",
             "action": "emergency_stop",
             "details": {"reason": "Admin emergency stop"},
             "severity": 10,
             "reversible": True
         }
-        
+
         with open(self.log_file, 'a') as f:
             f.write(json.dumps(emergency_entry) + "\n")
-        
+
         # Create emergency stop file that agents check
         with open("emergency_stop.flag", "w") as f:
             f.write(json.dumps(emergency_entry))
@@ -333,17 +332,16 @@ class AdminConsole:
                 
             print("✅ Agent operations resumed")
             print("   All agents can now operate autonomously")
-            
             resume_entry = {
                 "action_id": f"resume_operations_{int(time.time())}",
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
                 "agent": "ADMIN",
                 "action": "resume_operations",
                 "details": {"reason": "Admin resumed operations"},
                 "severity": 7,
                 "reversible": True
             }
-            
+
             with open(self.log_file, 'a') as f:
                 f.write(json.dumps(resume_entry) + "\n")
                 
@@ -401,7 +399,7 @@ class AdminConsole:
     def provide_feedback(self, action_id, feedback, comment=None):
         """Provide feedback on agent actions (legacy method)"""
         feedback_entry = {
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "action_id": action_id,
             "feedback": feedback,
             "comment": comment

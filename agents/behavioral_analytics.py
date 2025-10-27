@@ -30,6 +30,17 @@ class BehavioralAnalyticsAgent:
             'true_positives': 0,
             'total_predictions': 0
         }
+        
+        # Web3-specific behavioral tracking
+        self.wallet_behaviors = {}
+        self.defi_transaction_patterns = {}
+        self.cross_chain_behaviors = {}
+        self.crypto_anomaly_thresholds = {
+            'large_transaction': 100000,  # USD
+            'rapid_transactions': 10,     # per minute
+            'suspicious_contracts': 0.8,  # confidence threshold
+            'wallet_risk_score': 7.0      # out of 10
+        }
 
     def log_behavior(self, event: Dict):
         """Enhanced behavior logging with validation"""
@@ -186,6 +197,142 @@ class BehavioralAnalyticsAgent:
         
         if total_predictions > 0:
             self.performance_metrics['accuracy'] = total_tp / (total_tp + total_fp + 1)
+
+    def analyze_wallet_behavior(self, wallet_address: str, transactions: List[Dict]) -> Dict:
+        """Analyze wallet behavior patterns for suspicious activity"""
+        analysis = {
+            'wallet_address': wallet_address,
+            'risk_score': 0.0,
+            'suspicious_patterns': [],
+            'transaction_analysis': {},
+            'recommendations': []
+        }
+        
+        try:
+            if not transactions:
+                return analysis
+            
+            # Transaction frequency analysis
+            tx_frequency = len(transactions) / max(1, len(set(tx.get('date', '') for tx in transactions)))
+            if tx_frequency > self.crypto_anomaly_thresholds['rapid_transactions']:
+                analysis['suspicious_patterns'].append('high_frequency_trading')
+                analysis['risk_score'] += 2.0
+            
+            # Large transaction detection
+            large_txs = [tx for tx in transactions if tx.get('value_usd', 0) > self.crypto_anomaly_thresholds['large_transaction']]
+            if large_txs:
+                analysis['suspicious_patterns'].append('large_value_transactions')
+                analysis['risk_score'] += 1.5
+            
+            # Contract interaction analysis
+            contract_interactions = [tx for tx in transactions if tx.get('to_contract', False)]
+            suspicious_contracts = sum(1 for tx in contract_interactions if tx.get('contract_risk', 0) > 0.7)
+            if suspicious_contracts > 0:
+                analysis['suspicious_patterns'].append('suspicious_contract_interactions')
+                analysis['risk_score'] += 3.0
+            
+            # Pattern analysis
+            analysis['transaction_analysis'] = {
+                'total_transactions': len(transactions),
+                'large_transactions': len(large_txs),
+                'contract_interactions': len(contract_interactions),
+                'suspicious_contracts': suspicious_contracts,
+                'frequency_score': tx_frequency
+            }
+            
+            # Generate recommendations
+            if analysis['risk_score'] > self.crypto_anomaly_thresholds['wallet_risk_score']:
+                analysis['recommendations'].extend([
+                    'enhanced_monitoring',
+                    'transaction_verification',
+                    'potential_investigation'
+                ])
+            
+            # Store wallet behavior
+            self.wallet_behaviors[wallet_address] = analysis
+            
+        except Exception as e:
+            logger.error(f"Wallet behavior analysis error: {e}")
+            
+        return analysis
+    
+    def detect_defi_transaction_patterns(self, transactions: List[Dict]) -> List[Dict]:
+        """Detect suspicious DeFi transaction patterns"""
+        suspicious_patterns = []
+        
+        try:
+            # Flash loan detection
+            flash_loans = [tx for tx in transactions if tx.get('type') == 'flash_loan']
+            if flash_loans:
+                for loan in flash_loans:
+                    if loan.get('profit_margin', 0) > 100:  # Suspicious high profit
+                        suspicious_patterns.append({
+                            'type': 'suspicious_flash_loan',
+                            'transaction': loan,
+                            'confidence': 0.8
+                        })
+            
+            # Sandwich attack detection
+            for i in range(len(transactions) - 2):
+                tx1, tx2, tx3 = transactions[i], transactions[i+1], transactions[i+2]
+                if (tx1.get('type') == 'buy' and tx2.get('type') == 'user_transaction' and tx3.get('type') == 'sell'):
+                    suspicious_patterns.append({
+                        'type': 'potential_sandwich_attack',
+                        'transactions': [tx1, tx2, tx3],
+                        'confidence': 0.7
+                    })
+            
+            # Rugpull pattern detection
+            for tx in transactions:
+                if tx.get('type') == 'liquidity_removal' and tx.get('percentage_removed', 0) > 80:
+                    suspicious_patterns.append({
+                        'type': 'potential_rugpull',
+                        'transaction': tx,
+                        'confidence': 0.9
+                    })
+            
+        except Exception as e:
+            logger.error(f"DeFi pattern detection error: {e}")
+            
+        return suspicious_patterns
+    
+    def correlate_cross_chain_behavior(self, behaviors: Dict) -> Dict:
+        """Correlate behaviors across multiple chains"""
+        correlation = {
+            'cross_chain_risk_score': 0.0,
+            'correlated_patterns': [],
+            'chain_analysis': {}
+        }
+        
+        try:
+            chains = list(behaviors.keys())
+            
+            # Analyze patterns across chains
+            for chain in chains:
+                chain_behavior = behaviors[chain]
+                correlation['chain_analysis'][chain] = {
+                    'transaction_count': chain_behavior.get('transaction_count', 0),
+                    'risk_score': chain_behavior.get('risk_score', 0),
+                    'suspicious_patterns': len(chain_behavior.get('suspicious_patterns', []))
+                }
+            
+            # Detect cross-chain suspicious patterns
+            total_risk = sum(behavior.get('risk_score', 0) for behavior in behaviors.values())
+            if total_risk > 15.0:  # High combined risk
+                correlation['correlated_patterns'].append('high_cross_chain_risk')
+                correlation['cross_chain_risk_score'] = total_risk
+            
+            # Bridge usage analysis
+            bridge_usage = sum(1 for behavior in behaviors.values() 
+                             if 'bridge_usage' in behavior.get('patterns', []))
+            if bridge_usage > 3:
+                correlation['correlated_patterns'].append('excessive_bridge_usage')
+                correlation['cross_chain_risk_score'] += 2.0
+            
+        except Exception as e:
+            logger.error(f"Cross-chain correlation error: {e}")
+            
+        return correlation
 
     def recursive_improve(self):
         """Recursively improve anomaly detection based on performance"""
