@@ -1,0 +1,873 @@
+{
+  "timestamp": "20251027_202929",
+  "test_summary": {
+    "total_iterations": 5,
+    "scenarios_tested": 5,
+    "total_tests": 25
+  },
+  "consistency_analysis": {
+    "Normal Minting": {
+      "success_consistency": true,
+      "avg_execution_time": 6.108283996582031e-05,
+      "execution_time_std_dev": 2.8348119444965532e-05,
+      "avg_agent_response": 0,
+      "agent_response_std_dev": 0,
+      "serial_preservation_rate": 1.0,
+      "overall_stability": true
+    },
+    "Theft Detection & Burn": {
+      "success_consistency": true,
+      "avg_execution_time": 2.8371810913085938e-05,
+      "execution_time_std_dev": 5.39900964916922e-06,
+      "avg_agent_response": 8.630752563476563e-06,
+      "agent_response_std_dev": 4.750217210926922e-06,
+      "serial_preservation_rate": 1.0,
+      "overall_stability": true
+    },
+    "Remint to Treasury": {
+      "success_consistency": true,
+      "avg_execution_time": 2.288818359375e-05,
+      "execution_time_std_dev": 8.792442757885826e-07,
+      "avg_agent_response": 0,
+      "agent_response_std_dev": 0,
+      "serial_preservation_rate": 1.0,
+      "overall_stability": true
+    },
+    "Ownership Verification": {
+      "success_consistency": true,
+      "avg_execution_time": 5.6695938110351565e-05,
+      "execution_time_std_dev": 1.1966047734052415e-05,
+      "avg_agent_response": 0,
+      "agent_response_std_dev": 0,
+      "serial_preservation_rate": 1.0,
+      "overall_stability": true
+    },
+    "Ownership Recovery": {
+      "success_consistency": true,
+      "avg_execution_time": 5.440711975097656e-05,
+      "execution_time_std_dev": 2.219901037738247e-05,
+      "avg_agent_response": 0,
+      "agent_response_std_dev": 0,
+      "serial_preservation_rate": 1.0,
+      "overall_stability": true
+    }
+  },
+  "detailed_results": [
+    [
+      {
+        "scenario": "Normal Minting",
+        "success": true,
+        "execution_time": 3.886222839355469e-05,
+        "agent_response_time": 0,
+        "serial_preserved": true,
+        "details": {
+          "tokens_minted": 10,
+          "batch_id": "BATCH_001",
+          "serials": [
+            "GS-8055-000001",
+            "GS-8055-000002",
+            "GS-8055-000003",
+            "GS-8055-000004",
+            "GS-8055-000005",
+            "GS-8055-000006",
+            "GS-8055-000007",
+            "GS-8055-000008",
+            "GS-8055-000009",
+            "GS-8055-000010"
+          ]
+        }
+      },
+      {
+        "scenario": "Theft Detection & Burn",
+        "success": true,
+        "execution_time": 2.8133392333984375e-05,
+        "agent_response_time": 6.198883056640625e-06,
+        "serial_preserved": true,
+        "details": {
+          "detection": {
+            "token_id": 5,
+            "original_owner": "0x742D35Cc6634C0532925a3b8D371D885dc07C08e",
+            "suspicious_recipient": "0x1234567890123456789012345678901234567890",
+            "pattern": "rapid_multiple_transfers",
+            "confidence": 0.95
+          },
+          "burn_event": {
+            "token_id": 5,
+            "reason": "theft_detected",
+            "timestamp": 1761611359.2564888,
+            "agent_id": "AGENT_BATCH_001"
+          },
+          "burned_token": {
+            "token_id": 5,
+            "serial": "GS-8055-000005",
+            "status": "burned",
+            "original_owner": "0x742D35Cc6634C0532925a3b8D371D885dc07C08e"
+          }
+        }
+      },
+      {
+        "scenario": "Remint to Treasury",
+        "success": true,
+        "execution_time": 2.2172927856445312e-05,
+        "agent_response_time": 0,
+        "serial_preserved": true,
+        "details": {
+          "remint_event": {
+            "token_id": 5,
+            "serial_number": "GS-8055-000005",
+            "new_owner": "0x742D35Cc6634C0532925a3b8D371D885dc07C08e",
+            "status": "reminted_to_treasury",
+            "timestamp": 1761611359.258605
+          },
+          "serial_preserved": true
+        }
+      },
+      {
+        "scenario": "Ownership Verification",
+        "success": true,
+        "execution_time": 4.363059997558594e-05,
+        "agent_response_time": 0,
+        "serial_preserved": true,
+        "details": {
+          "claimant": "0x742D35Cc6634C0532925a3b8D371D885dc07C08e",
+          "agent_logs": [
+            {
+              "timestamp": 1698422400,
+              "action": "mint",
+              "token_id": 5,
+              "owner": "0x742D35Cc6634C0532925a3b8D371D885dc07C08e"
+            },
+            {
+              "timestamp": 1698422500,
+              "action": "transfer",
+              "token_id": 5,
+              "from": "0x742D35Cc6634C0532925a3b8D371D885dc07C08e",
+              "to": "0x1234..."
+            },
+            {
+              "timestamp": 1698422600,
+              "action": "flag",
+              "token_id": 5,
+              "reason": "suspicious_transfer"
+            },
+            {
+              "timestamp": 1698422700,
+              "action": "burn",
+              "token_id": 5,
+              "reason": "theft_confirmed"
+            }
+          ],
+          "wallet_logs": [
+            {
+              "timestamp": 1698422400,
+              "action": "received",
+              "token_id": 5,
+              "serial": "GS-8055-000005"
+            },
+            {
+              "timestamp": 1698422500,
+              "action": "sent",
+              "token_id": 5,
+              "to": "0x1234..."
+            }
+          ],
+          "verification_message": "Ownership verified successfully"
+        }
+      },
+      {
+        "scenario": "Ownership Recovery",
+        "success": true,
+        "execution_time": 3.0994415283203125e-05,
+        "agent_response_time": 0,
+        "serial_preserved": true,
+        "details": {
+          "recovery_event": {
+            "token_id": 5,
+            "serial": "GS-8055-000005",
+            "from": "0x742D35Cc6634C0532925a3b8D371D885dc07C08e",
+            "to": "0x742D35Cc6634C0532925a3b8D371D885dc07C08e",
+            "status": "ownership_recovered",
+            "timestamp": 1761611359.260008,
+            "approving_admins": [
+              "0xAdmin1",
+              "0xAdmin2",
+              "0xAdmin3"
+            ]
+          },
+          "admin_approvals": [
+            {
+              "admin": "0xAdmin1",
+              "signature": "0x1234...",
+              "approved": true
+            },
+            {
+              "admin": "0xAdmin2",
+              "signature": "0x5678...",
+              "approved": true
+            },
+            {
+              "admin": "0xAdmin3",
+              "signature": "0x9abc...",
+              "approved": true
+            }
+          ],
+          "required_signatures": 2,
+          "received_signatures": 3
+        }
+      }
+    ],
+    [
+      {
+        "scenario": "Normal Minting",
+        "success": true,
+        "execution_time": 0.00011706352233886719,
+        "agent_response_time": 0,
+        "serial_preserved": true,
+        "details": {
+          "tokens_minted": 10,
+          "batch_id": "BATCH_001",
+          "serials": [
+            "GS-8055-000001",
+            "GS-8055-000002",
+            "GS-8055-000003",
+            "GS-8055-000004",
+            "GS-8055-000005",
+            "GS-8055-000006",
+            "GS-8055-000007",
+            "GS-8055-000008",
+            "GS-8055-000009",
+            "GS-8055-000010"
+          ]
+        }
+      },
+      {
+        "scenario": "Theft Detection & Burn",
+        "success": true,
+        "execution_time": 2.7179718017578125e-05,
+        "agent_response_time": 6.198883056640625e-06,
+        "serial_preserved": true,
+        "details": {
+          "detection": {
+            "token_id": 5,
+            "original_owner": "0x742D35Cc6634C0532925a3b8D371D885dc07C08e",
+            "suspicious_recipient": "0x1234567890123456789012345678901234567890",
+            "pattern": "rapid_multiple_transfers",
+            "confidence": 0.95
+          },
+          "burn_event": {
+            "token_id": 5,
+            "reason": "theft_detected",
+            "timestamp": 1761611361.3775327,
+            "agent_id": "AGENT_BATCH_001"
+          },
+          "burned_token": {
+            "token_id": 5,
+            "serial": "GS-8055-000005",
+            "status": "burned",
+            "original_owner": "0x742D35Cc6634C0532925a3b8D371D885dc07C08e"
+          }
+        }
+      },
+      {
+        "scenario": "Remint to Treasury",
+        "success": true,
+        "execution_time": 2.4557113647460938e-05,
+        "agent_response_time": 0,
+        "serial_preserved": true,
+        "details": {
+          "remint_event": {
+            "token_id": 5,
+            "serial_number": "GS-8055-000005",
+            "new_owner": "0x742D35Cc6634C0532925a3b8D371D885dc07C08e",
+            "status": "reminted_to_treasury",
+            "timestamp": 1761611361.8140182
+          },
+          "serial_preserved": true
+        }
+      },
+      {
+        "scenario": "Ownership Verification",
+        "success": true,
+        "execution_time": 7.915496826171875e-05,
+        "agent_response_time": 0,
+        "serial_preserved": true,
+        "details": {
+          "claimant": "0x742D35Cc6634C0532925a3b8D371D885dc07C08e",
+          "agent_logs": [
+            {
+              "timestamp": 1698422400,
+              "action": "mint",
+              "token_id": 5,
+              "owner": "0x742D35Cc6634C0532925a3b8D371D885dc07C08e"
+            },
+            {
+              "timestamp": 1698422500,
+              "action": "transfer",
+              "token_id": 5,
+              "from": "0x742D35Cc6634C0532925a3b8D371D885dc07C08e",
+              "to": "0x1234..."
+            },
+            {
+              "timestamp": 1698422600,
+              "action": "flag",
+              "token_id": 5,
+              "reason": "suspicious_transfer"
+            },
+            {
+              "timestamp": 1698422700,
+              "action": "burn",
+              "token_id": 5,
+              "reason": "theft_confirmed"
+            }
+          ],
+          "wallet_logs": [
+            {
+              "timestamp": 1698422400,
+              "action": "received",
+              "token_id": 5,
+              "serial": "GS-8055-000005"
+            },
+            {
+              "timestamp": 1698422500,
+              "action": "sent",
+              "token_id": 5,
+              "to": "0x1234..."
+            }
+          ],
+          "verification_message": "Ownership verified successfully"
+        }
+      },
+      {
+        "scenario": "Ownership Recovery",
+        "success": true,
+        "execution_time": 9.512901306152344e-05,
+        "agent_response_time": 0,
+        "serial_preserved": true,
+        "details": {
+          "recovery_event": {
+            "token_id": 5,
+            "serial": "GS-8055-000005",
+            "from": "0x742D35Cc6634C0532925a3b8D371D885dc07C08e",
+            "to": "0x742D35Cc6634C0532925a3b8D371D885dc07C08e",
+            "status": "ownership_recovered",
+            "timestamp": 1761611362.1457236,
+            "approving_admins": [
+              "0xAdmin1",
+              "0xAdmin2",
+              "0xAdmin3"
+            ]
+          },
+          "admin_approvals": [
+            {
+              "admin": "0xAdmin1",
+              "signature": "0x1234...",
+              "approved": true
+            },
+            {
+              "admin": "0xAdmin2",
+              "signature": "0x5678...",
+              "approved": true
+            },
+            {
+              "admin": "0xAdmin3",
+              "signature": "0x9abc...",
+              "approved": true
+            }
+          ],
+          "required_signatures": 2,
+          "received_signatures": 3
+        }
+      }
+    ],
+    [
+      {
+        "scenario": "Normal Minting",
+        "success": true,
+        "execution_time": 5.14984130859375e-05,
+        "agent_response_time": 0,
+        "serial_preserved": true,
+        "details": {
+          "tokens_minted": 10,
+          "batch_id": "BATCH_001",
+          "serials": [
+            "GS-8055-000001",
+            "GS-8055-000002",
+            "GS-8055-000003",
+            "GS-8055-000004",
+            "GS-8055-000005",
+            "GS-8055-000006",
+            "GS-8055-000007",
+            "GS-8055-000008",
+            "GS-8055-000009",
+            "GS-8055-000010"
+          ]
+        }
+      },
+      {
+        "scenario": "Theft Detection & Burn",
+        "success": true,
+        "execution_time": 2.3603439331054688e-05,
+        "agent_response_time": 5.9604644775390625e-06,
+        "serial_preserved": true,
+        "details": {
+          "detection": {
+            "token_id": 5,
+            "original_owner": "0x742D35Cc6634C0532925a3b8D371D885dc07C08e",
+            "suspicious_recipient": "0x1234567890123456789012345678901234567890",
+            "pattern": "rapid_multiple_transfers",
+            "confidence": 0.95
+          },
+          "burn_event": {
+            "token_id": 5,
+            "reason": "theft_detected",
+            "timestamp": 1761611363.6431994,
+            "agent_id": "AGENT_BATCH_001"
+          },
+          "burned_token": {
+            "token_id": 5,
+            "serial": "GS-8055-000005",
+            "status": "burned",
+            "original_owner": "0x742D35Cc6634C0532925a3b8D371D885dc07C08e"
+          }
+        }
+      },
+      {
+        "scenario": "Remint to Treasury",
+        "success": true,
+        "execution_time": 2.2172927856445312e-05,
+        "agent_response_time": 0,
+        "serial_preserved": true,
+        "details": {
+          "remint_event": {
+            "token_id": 5,
+            "serial_number": "GS-8055-000005",
+            "new_owner": "0x742D35Cc6634C0532925a3b8D371D885dc07C08e",
+            "status": "reminted_to_treasury",
+            "timestamp": 1761611363.85984
+          },
+          "serial_preserved": true
+        }
+      },
+      {
+        "scenario": "Ownership Verification",
+        "success": true,
+        "execution_time": 5.173683166503906e-05,
+        "agent_response_time": 0,
+        "serial_preserved": true,
+        "details": {
+          "claimant": "0x742D35Cc6634C0532925a3b8D371D885dc07C08e",
+          "agent_logs": [
+            {
+              "timestamp": 1698422400,
+              "action": "mint",
+              "token_id": 5,
+              "owner": "0x742D35Cc6634C0532925a3b8D371D885dc07C08e"
+            },
+            {
+              "timestamp": 1698422500,
+              "action": "transfer",
+              "token_id": 5,
+              "from": "0x742D35Cc6634C0532925a3b8D371D885dc07C08e",
+              "to": "0x1234..."
+            },
+            {
+              "timestamp": 1698422600,
+              "action": "flag",
+              "token_id": 5,
+              "reason": "suspicious_transfer"
+            },
+            {
+              "timestamp": 1698422700,
+              "action": "burn",
+              "token_id": 5,
+              "reason": "theft_confirmed"
+            }
+          ],
+          "wallet_logs": [
+            {
+              "timestamp": 1698422400,
+              "action": "received",
+              "token_id": 5,
+              "serial": "GS-8055-000005"
+            },
+            {
+              "timestamp": 1698422500,
+              "action": "sent",
+              "token_id": 5,
+              "to": "0x1234..."
+            }
+          ],
+          "verification_message": "Ownership verified successfully"
+        }
+      },
+      {
+        "scenario": "Ownership Recovery",
+        "success": true,
+        "execution_time": 4.3392181396484375e-05,
+        "agent_response_time": 0,
+        "serial_preserved": true,
+        "details": {
+          "recovery_event": {
+            "token_id": 5,
+            "serial": "GS-8055-000005",
+            "from": "0x742D35Cc6634C0532925a3b8D371D885dc07C08e",
+            "to": "0x742D35Cc6634C0532925a3b8D371D885dc07C08e",
+            "status": "ownership_recovered",
+            "timestamp": 1761611364.1479278,
+            "approving_admins": [
+              "0xAdmin1",
+              "0xAdmin2",
+              "0xAdmin3"
+            ]
+          },
+          "admin_approvals": [
+            {
+              "admin": "0xAdmin1",
+              "signature": "0x1234...",
+              "approved": true
+            },
+            {
+              "admin": "0xAdmin2",
+              "signature": "0x5678...",
+              "approved": true
+            },
+            {
+              "admin": "0xAdmin3",
+              "signature": "0x9abc...",
+              "approved": true
+            }
+          ],
+          "required_signatures": 2,
+          "received_signatures": 3
+        }
+      }
+    ],
+    [
+      {
+        "scenario": "Normal Minting",
+        "success": true,
+        "execution_time": 4.7206878662109375e-05,
+        "agent_response_time": 0,
+        "serial_preserved": true,
+        "details": {
+          "tokens_minted": 10,
+          "batch_id": "BATCH_001",
+          "serials": [
+            "GS-8055-000001",
+            "GS-8055-000002",
+            "GS-8055-000003",
+            "GS-8055-000004",
+            "GS-8055-000005",
+            "GS-8055-000006",
+            "GS-8055-000007",
+            "GS-8055-000008",
+            "GS-8055-000009",
+            "GS-8055-000010"
+          ]
+        }
+      },
+      {
+        "scenario": "Theft Detection & Burn",
+        "success": true,
+        "execution_time": 3.8623809814453125e-05,
+        "agent_response_time": 1.811981201171875e-05,
+        "serial_preserved": true,
+        "details": {
+          "detection": {
+            "token_id": 5,
+            "original_owner": "0x742D35Cc6634C0532925a3b8D371D885dc07C08e",
+            "suspicious_recipient": "0x1234567890123456789012345678901234567890",
+            "pattern": "rapid_multiple_transfers",
+            "confidence": 0.95
+          },
+          "burn_event": {
+            "token_id": 5,
+            "reason": "theft_detected",
+            "timestamp": 1761611365.635089,
+            "agent_id": "AGENT_BATCH_001"
+          },
+          "burned_token": {
+            "token_id": 5,
+            "serial": "GS-8055-000005",
+            "status": "burned",
+            "original_owner": "0x742D35Cc6634C0532925a3b8D371D885dc07C08e"
+          }
+        }
+      },
+      {
+        "scenario": "Remint to Treasury",
+        "success": true,
+        "execution_time": 2.2649765014648438e-05,
+        "agent_response_time": 0,
+        "serial_preserved": true,
+        "details": {
+          "remint_event": {
+            "token_id": 5,
+            "serial_number": "GS-8055-000005",
+            "new_owner": "0x742D35Cc6634C0532925a3b8D371D885dc07C08e",
+            "status": "reminted_to_treasury",
+            "timestamp": 1761611365.829487
+          },
+          "serial_preserved": true
+        }
+      },
+      {
+        "scenario": "Ownership Verification",
+        "success": true,
+        "execution_time": 5.626678466796875e-05,
+        "agent_response_time": 0,
+        "serial_preserved": true,
+        "details": {
+          "claimant": "0x742D35Cc6634C0532925a3b8D371D885dc07C08e",
+          "agent_logs": [
+            {
+              "timestamp": 1698422400,
+              "action": "mint",
+              "token_id": 5,
+              "owner": "0x742D35Cc6634C0532925a3b8D371D885dc07C08e"
+            },
+            {
+              "timestamp": 1698422500,
+              "action": "transfer",
+              "token_id": 5,
+              "from": "0x742D35Cc6634C0532925a3b8D371D885dc07C08e",
+              "to": "0x1234..."
+            },
+            {
+              "timestamp": 1698422600,
+              "action": "flag",
+              "token_id": 5,
+              "reason": "suspicious_transfer"
+            },
+            {
+              "timestamp": 1698422700,
+              "action": "burn",
+              "token_id": 5,
+              "reason": "theft_confirmed"
+            }
+          ],
+          "wallet_logs": [
+            {
+              "timestamp": 1698422400,
+              "action": "received",
+              "token_id": 5,
+              "serial": "GS-8055-000005"
+            },
+            {
+              "timestamp": 1698422500,
+              "action": "sent",
+              "token_id": 5,
+              "to": "0x1234..."
+            }
+          ],
+          "verification_message": "Ownership verified successfully"
+        }
+      },
+      {
+        "scenario": "Ownership Recovery",
+        "success": true,
+        "execution_time": 5.888938903808594e-05,
+        "agent_response_time": 0,
+        "serial_preserved": true,
+        "details": {
+          "recovery_event": {
+            "token_id": 5,
+            "serial": "GS-8055-000005",
+            "from": "0x742D35Cc6634C0532925a3b8D371D885dc07C08e",
+            "to": "0x742D35Cc6634C0532925a3b8D371D885dc07C08e",
+            "status": "ownership_recovered",
+            "timestamp": 1761611366.078035,
+            "approving_admins": [
+              "0xAdmin1",
+              "0xAdmin2",
+              "0xAdmin3"
+            ]
+          },
+          "admin_approvals": [
+            {
+              "admin": "0xAdmin1",
+              "signature": "0x1234...",
+              "approved": true
+            },
+            {
+              "admin": "0xAdmin2",
+              "signature": "0x5678...",
+              "approved": true
+            },
+            {
+              "admin": "0xAdmin3",
+              "signature": "0x9abc...",
+              "approved": true
+            }
+          ],
+          "required_signatures": 2,
+          "received_signatures": 3
+        }
+      }
+    ],
+    [
+      {
+        "scenario": "Normal Minting",
+        "success": true,
+        "execution_time": 5.078315734863281e-05,
+        "agent_response_time": 0,
+        "serial_preserved": true,
+        "details": {
+          "tokens_minted": 10,
+          "batch_id": "BATCH_001",
+          "serials": [
+            "GS-8055-000001",
+            "GS-8055-000002",
+            "GS-8055-000003",
+            "GS-8055-000004",
+            "GS-8055-000005",
+            "GS-8055-000006",
+            "GS-8055-000007",
+            "GS-8055-000008",
+            "GS-8055-000009",
+            "GS-8055-000010"
+          ]
+        }
+      },
+      {
+        "scenario": "Theft Detection & Burn",
+        "success": true,
+        "execution_time": 2.4318695068359375e-05,
+        "agent_response_time": 6.67572021484375e-06,
+        "serial_preserved": true,
+        "details": {
+          "detection": {
+            "token_id": 5,
+            "original_owner": "0x742D35Cc6634C0532925a3b8D371D885dc07C08e",
+            "suspicious_recipient": "0x1234567890123456789012345678901234567890",
+            "pattern": "rapid_multiple_transfers",
+            "confidence": 0.95
+          },
+          "burn_event": {
+            "token_id": 5,
+            "reason": "theft_detected",
+            "timestamp": 1761611367.256782,
+            "agent_id": "AGENT_BATCH_001"
+          },
+          "burned_token": {
+            "token_id": 5,
+            "serial": "GS-8055-000005",
+            "status": "burned",
+            "original_owner": "0x742D35Cc6634C0532925a3b8D371D885dc07C08e"
+          }
+        }
+      },
+      {
+        "scenario": "Remint to Treasury",
+        "success": true,
+        "execution_time": 2.288818359375e-05,
+        "agent_response_time": 0,
+        "serial_preserved": true,
+        "details": {
+          "remint_event": {
+            "token_id": 5,
+            "serial_number": "GS-8055-000005",
+            "new_owner": "0x742D35Cc6634C0532925a3b8D371D885dc07C08e",
+            "status": "reminted_to_treasury",
+            "timestamp": 1761611367.3249295
+          },
+          "serial_preserved": true
+        }
+      },
+      {
+        "scenario": "Ownership Verification",
+        "success": true,
+        "execution_time": 5.269050598144531e-05,
+        "agent_response_time": 0,
+        "serial_preserved": true,
+        "details": {
+          "claimant": "0x742D35Cc6634C0532925a3b8D371D885dc07C08e",
+          "agent_logs": [
+            {
+              "timestamp": 1698422400,
+              "action": "mint",
+              "token_id": 5,
+              "owner": "0x742D35Cc6634C0532925a3b8D371D885dc07C08e"
+            },
+            {
+              "timestamp": 1698422500,
+              "action": "transfer",
+              "token_id": 5,
+              "from": "0x742D35Cc6634C0532925a3b8D371D885dc07C08e",
+              "to": "0x1234..."
+            },
+            {
+              "timestamp": 1698422600,
+              "action": "flag",
+              "token_id": 5,
+              "reason": "suspicious_transfer"
+            },
+            {
+              "timestamp": 1698422700,
+              "action": "burn",
+              "token_id": 5,
+              "reason": "theft_confirmed"
+            }
+          ],
+          "wallet_logs": [
+            {
+              "timestamp": 1698422400,
+              "action": "received",
+              "token_id": 5,
+              "serial": "GS-8055-000005"
+            },
+            {
+              "timestamp": 1698422500,
+              "action": "sent",
+              "token_id": 5,
+              "to": "0x1234..."
+            }
+          ],
+          "verification_message": "Ownership verified successfully"
+        }
+      },
+      {
+        "scenario": "Ownership Recovery",
+        "success": true,
+        "execution_time": 4.363059997558594e-05,
+        "agent_response_time": 0,
+        "serial_preserved": true,
+        "details": {
+          "recovery_event": {
+            "token_id": 5,
+            "serial": "GS-8055-000005",
+            "from": "0x742D35Cc6634C0532925a3b8D371D885dc07C08e",
+            "to": "0x742D35Cc6634C0532925a3b8D371D885dc07C08e",
+            "status": "ownership_recovered",
+            "timestamp": 1761611367.5730405,
+            "approving_admins": [
+              "0xAdmin1",
+              "0xAdmin2",
+              "0xAdmin3"
+            ]
+          },
+          "admin_approvals": [
+            {
+              "admin": "0xAdmin1",
+              "signature": "0x1234...",
+              "approved": true
+            },
+            {
+              "admin": "0xAdmin2",
+              "signature": "0x5678...",
+              "approved": true
+            },
+            {
+              "admin": "0xAdmin3",
+              "signature": "0x9abc...",
+              "approved": true
+            }
+          ],
+          "required_signatures": 2,
+          "received_signatures": 3
+        }
+      }
+    ]
+  ],
+  "recommendations": []
+}

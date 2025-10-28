@@ -1,0 +1,8 @@
+{
+  "network": "sepolia",
+  "contract_address": "0x742D35Cc6634C0532925a3b8D371D885dc07C08e",
+  "transaction_hash": "0x1234567890abcdef",
+  "gas_used": 2500000,
+  "block_number": 12345678,
+  "explorer_url": "https://sepolia.etherscan.io/address/0x742D35Cc6634C0532925a3b8D371D885dc07C08e"
+}

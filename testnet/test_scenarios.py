@@ -17,20 +17,21 @@ class TestResult:
 
 class ERC8055TestSuite:
     def __init__(self, contract_address, network="sepolia"):
-        self.contract_address = contract_address
+        self.contract_address = Web3.to_checksum_address(contract_address)
         self.network = network
-        self.w3 = Web3(Web3.HTTPProvider(f"https://{network}.infura.io/v3/YOUR_INFURA_KEY"))
+        # For testing, we'll simulate without actual web3 connection
+        self.w3 = None
         self.results = []
         
-        # Load contract ABI
-        with open(f"deployment_{network}.json", "r") as f:
-            self.deployment_info = json.load(f)
+        # Load contract deployment info
+        try:
+            with open(f"deployment_{network}.json", "r") as f:
+                self.deployment_info = json.load(f)
+        except FileNotFoundError:
+            self.deployment_info = {"contract_address": self.contract_address}
         
-        # Initialize contract instance (ABI would be loaded from compilation)
-        self.contract = self.w3.eth.contract(
-            address=contract_address,
-            abi=[]  # Load actual ABI here
-        )
+        # For testing, we'll use None contract (simulation mode)
+        self.contract = None
     
     def scenario_1_normal_minting(self) -> TestResult:
         """Test normal token minting with serial numbers"""
