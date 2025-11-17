@@ -1,8 +1,8 @@
-# Funding Information
-
-"github":
-  - "patreon: your-patreon-username"
-  - "open-collective: your-open-collective-url"
-  - "liberapay: your-liberapay-username"
-
-# Please replace the placeholders with your actual funding information.
+github: https://github.com/sponsors/Rexjaden
+patreon: https://www.patreon.com/Rexjaden
+open_collective: https://opencollective.com/Rexjaden
+ko_fi: https://ko-fi.com/Rexjaden
+liberapay: https://liberapay.com/Rexjaden
+custom:
+  - url: https://example.com/support
+    description: "Support my work directly"
