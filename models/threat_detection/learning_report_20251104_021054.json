@@ -1,0 +1,73 @@
+{
+  "timestamp": "2025-11-04T02:10:54.311150",
+  "learning_metrics": {
+    "patterns_learned": 480,
+    "accuracy_improvements": [],
+    "false_positive_reduction": [],
+    "detection_speed_improvements": []
+  },
+  "model_performance": {
+    "malware": {
+      "accuracy": 0.94,
+      "last_trained": "2025-11-04T02:10:54.311150",
+      "thresholds": {
+        "entropy": 0.98,
+        "suspicious_apis": 0.98,
+        "network_score": 0.8425351502948751
+      }
+    },
+    "phishing": {
+      "accuracy": 0.96,
+      "last_trained": "2025-11-04T02:10:54.311150",
+      "thresholds": {
+        "similarity_score": 0.8914301421632493,
+        "reputation_score": 0.3554286596347526
+      }
+    },
+    "ddos": {
+      "accuracy": 0.92,
+      "last_trained": "2025-11-04T02:10:54.311150",
+      "thresholds": {
+        "rate_threshold": 0.98,
+        "diversity_score": 0.13624233012736303
+      }
+    },
+    "insider_threat": {
+      "accuracy": 0.92,
+      "last_trained": "2025-11-04T02:10:54.311150",
+      "thresholds": {
+        "anomaly_score": 0.7978499298189646,
+        "risk_score": 0.8983988866628863
+      }
+    },
+    "smart_contract_vulnerability": {
+      "accuracy": 0.99,
+      "last_trained": "2025-11-04T02:10:54.311150",
+      "thresholds": {
+        "vulnerability_score": 0.8926210128057461,
+        "critical_score": 0.98
+      }
+    },
+    "defi_exploit": {
+      "accuracy": 0.93,
+      "last_trained": "2025-11-04T02:10:54.311150",
+      "thresholds": {
+        "exploit_probability": 0.8393137070852809,
+        "value_at_risk": 0.98
+      }
+    }
+  },
+  "pattern_statistics": {
+    "total_patterns": 515,
+    "patterns_by_type": {
+      "benign": 2,
+      "ddos": 7,
+      "defi_exploit": 2,
+      "insider_threat": 25,
+      "malware": 45,
+      "none": 186,
+      "phishing": 92,
+      "smart_contract_vulnerability": 156
+    }
+  }
+}

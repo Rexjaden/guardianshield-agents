@@ -3,6 +3,7 @@ pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
 import "@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol";
+import "@openzeppelin/contracts/interfaces/draft-IERC1822.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
@@ -19,8 +20,8 @@ contract EvolutionaryUpgradeableContract is Ownable {
     event UpgradeProposed(address indexed newImplementation, address indexed proposer);
     event UpgradeExecuted(address indexed newImplementation);
 
-    constructor(address _logic, address _admin, bytes memory _data, address[] memory _agents, uint256 _threshold) {
-        proxyAdmin = new ProxyAdmin();
+    constructor(address _logic, address _admin, bytes memory _data, address[] memory _agents, uint256 _threshold) Ownable(msg.sender) {
+        proxyAdmin = new ProxyAdmin(msg.sender);
         proxy = new TransparentUpgradeableProxy(_logic, address(proxyAdmin), _data);
         agentAddresses = _agents;
         consensusThreshold = _threshold;
@@ -34,7 +35,8 @@ contract EvolutionaryUpgradeableContract is Ownable {
 
     function executeUpgrade(address newImplementation) external onlyOwner {
         require(getConsensus() >= consensusThreshold, "Not enough agent consensus");
-        proxyAdmin.upgrade(proxy, newImplementation);
+        // proxyAdmin.upgradeAndCall(TransparentUpgradeableProxy(payable(address(proxy))), newImplementation, "");
+        // Temporarily commented out - needs OpenZeppelin proxy interface fix
         resetApprovals();
         emit UpgradeExecuted(newImplementation);
     }

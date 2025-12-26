@@ -35,8 +35,19 @@ class LearningAgent:
         self.name = name
         self.unlimited_evolution = True
         self.autonomous_decisions = True
-        self.learning_rate = 0.1
-        
+        self.learning_rate = 0.01
+        self.min_learning_rate = 0.001
+        self.max_learning_rate = 0.5
+        self.learning_decay = 0.85
+        self.learning_growth = 1.15
+
+        # Experience repositories
+        self.experiences: list[dict] = []
+        self.threat_patterns: list[dict] = []
+        self.success_count = 0
+        self.failure_count = 0
+        self.performance_history: list[dict] = []
+
         # Initialize ML components if available
         if SKLEARN_AVAILABLE:
             self.vectorizer = TfidfVectorizer(max_features=1000)
@@ -44,31 +55,252 @@ class LearningAgent:
         else:
             self.vectorizer = None
             self.classifier = None
-        
+
         # Initialize other components
         try:
             self.behavioral_analytics = BehavioralAnalytics()
-        except:
+        except Exception:
             self.behavioral_analytics = None
+            
+        # Continuous learning state
+        self.continuous_learning_enabled = True
+        self.learning_batch_size = 10
+        self.performance_window = []
+        self.last_training_time = time.time()
     
     def enable_unlimited_evolution(self):
         """Enable unlimited evolution capabilities"""
         self.unlimited_evolution = True
         
     def autonomous_cycle(self):
-        """Run one cycle of autonomous operation"""
-        # Simulate autonomous learning and decision making
-        pass
-    
+        """Run one autonomous learning cycle"""
+        if not self.experiences:
+            return
+
+        latest_patterns = self.analyze_patterns()
+        self.performance_history.append({
+            'timestamp': time.time(),
+            'learning_rate': self.learning_rate,
+            'success_ratio': self._success_ratio(),
+            'pattern_count': len(latest_patterns.get('threat_level_distribution', {}))
+        })
+        self.recursive_learn_and_improve()
+
     def learn(self, data):
-        """Learn from data with autonomous improvement"""
-        # Simulate learning
-        pass
-    
+        """Direct learning entry point for compatibility"""
+        if isinstance(data, dict):
+            self.learn_from_experience(data)
+
     def act(self, observation):
-        """Take autonomous action based on observation"""
-        # Simulate action
-        pass
+        """Generate a decision for a given observation"""
+        action = {
+            'observation': observation,
+            'decision': 'monitor',
+            'confidence': min(1.0, self.learning_rate * 10),
+            'timestamp': time.time()
+        }
+        self.log_action(action)
+        return action
+
+    def log_action(self, action: dict):
+        """Persist agent actions for auditing"""
+        try:
+            entry = {
+                'action': action,
+                'timestamp': action.get('timestamp', time.time())
+            }
+            with open("agent_action_log.jsonl", "a", encoding="utf-8") as log_file:
+                log_file.write(json.dumps(entry) + "\n")
+        except Exception:
+            # Logging must not halt learning
+            pass
+
+    def learn_from_experience(self, experience: dict):
+        """Store experience and update outcome counters"""
+        if not isinstance(experience, dict):
+            return
+
+        enriched = experience.copy()
+        enriched.setdefault('timestamp', time.time())
+        enriched.setdefault('context', {})
+        self.experiences.append(enriched)
+
+        result = enriched.get('result', '').lower()
+        if result == 'success':
+            self.success_count += 1
+        elif result == 'failure':
+            self.failure_count += 1
+
+        self._update_threat_patterns(enriched)
+
+    def analyze_patterns(self) -> dict:
+        """Summarize learned patterns from experiences"""
+        summary = {
+            'total_experiences': len(self.experiences),
+            'successful_actions': [],
+            'threat_level_distribution': {}
+        }
+
+        for exp in self.experiences:
+            if exp.get('result') == 'success':
+                summary['successful_actions'].append(exp.get('action'))
+
+            threat_level = exp.get('context', {}).get('threat_level')
+            if threat_level is not None:
+                bucket = int(threat_level)
+                summary['threat_level_distribution'].setdefault(bucket, 0)
+                summary['threat_level_distribution'][bucket] += 1
+
+        return summary
+
+    def recursive_learn_and_improve(self):
+        """Continuously adjust learning parameters based on performance"""
+        ratio = self._success_ratio()
+        previous_rate = self.learning_rate
+
+        if ratio >= 0.75:
+            self.learning_rate = min(self.max_learning_rate, self.learning_rate * self.learning_growth)
+        elif ratio <= 0.5 and (self.success_count + self.failure_count) >= 5:
+            self.learning_rate = max(self.min_learning_rate, self.learning_rate * self.learning_decay)
+
+        if previous_rate != self.learning_rate:
+            self.performance_history.append({
+                'timestamp': time.time(),
+                'adjustment': 'increase' if self.learning_rate > previous_rate else 'decrease',
+                'new_rate': self.learning_rate,
+                'success_ratio': ratio
+            })
+
+    def _success_ratio(self) -> float:
+        total = self.success_count + self.failure_count
+        if total == 0:
+            return 0.5
+        return self.success_count / total
+
+    def _update_threat_patterns(self, experience: dict):
+        """Maintain a rolling summary of threat patterns"""
+        context = experience.get('context', {})
+        threat_signature = {
+            'action': experience.get('action'),
+            'result': experience.get('result'),
+            'threat_level': context.get('threat_level'),
+            'metadata_hash': hash(json.dumps(context, sort_keys=True))
+        }
+        self.threat_patterns.append(threat_signature)
+        if len(self.threat_patterns) > 1000:
+            self.threat_patterns.pop(0)
+    
+    async def continuous_learn(self, training_data: list):
+        """Continuous learning method for real-time training"""
+        if not self.continuous_learning_enabled:
+            return
+            
+        try:
+            # Process training data in batches
+            for i in range(0, len(training_data), self.learning_batch_size):
+                batch = training_data[i:i + self.learning_batch_size]
+                await self._process_training_batch(batch)
+                
+            self.last_training_time = time.time()
+            
+            # Adjust learning parameters based on performance
+            await self._adapt_learning_parameters()
+            
+        except Exception as e:
+            print(f"❌ Error in continuous learning: {e}")
+    
+    async def _process_training_batch(self, batch: list):
+        """Process a single training batch"""
+        for data_point in batch:
+            # Extract features and learn from the data point
+            if data_point.get('event_type') == 'threat_detected':
+                success = data_point.get('success', True)
+                threat_data = data_point.get('data', {})
+                
+                # Learn from this detection
+                self.learn_from_experience({
+                    'action': 'threat_detection',
+                    'outcome': 'success' if success else 'failure',
+                    'threat_type': threat_data.get('type', 'unknown'),
+                    'severity': threat_data.get('severity', 5),
+                    'confidence': data_point.get('confidence', 0.5)
+                })
+                
+            elif data_point.get('event_type') == 'false_positive':
+                # Learn to avoid false positives
+                self.learn_from_experience({
+                    'action': 'false_positive_correction',
+                    'outcome': 'learning',
+                    'correction': data_point.get('feedback', ''),
+                    'original_detection': data_point.get('data', {})
+                })
+    
+    async def _adapt_learning_parameters(self):
+        """Adapt learning parameters based on recent performance"""
+        if len(self.performance_window) < 5:
+            return
+            
+        recent_performance = self.performance_window[-5:]
+        avg_performance = sum(recent_performance) / len(recent_performance)
+        
+        # Adjust learning rate based on performance
+        if avg_performance > 0.8:  # High performance - can be more conservative
+            self.learning_rate = max(self.learning_rate * 0.95, self.min_learning_rate)
+        elif avg_performance < 0.6:  # Low performance - need more aggressive learning
+            self.learning_rate = min(self.learning_rate * 1.05, self.max_learning_rate)
+    
+    def generate_synthetic_threats(self, count: int = 10) -> list:
+        """Generate synthetic threat data for training"""
+        synthetic_threats = []
+        
+        threat_types = ['malware', 'phishing', 'ddos', 'injection', 'xss', 'csrf']
+        severity_levels = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        
+        for i in range(count):
+            threat = {
+                'type': np.random.choice(threat_types) if 'numpy' in str(np) else threat_types[i % len(threat_types)],
+                'severity': severity_levels[i % len(severity_levels)],
+                'timestamp': time.time() + i,
+                'source': f'synthetic_generator_{i}',
+                'confidence': 0.7 + (i % 3) * 0.1,  # 0.7, 0.8, or 0.9
+                'attributes': {
+                    'network_anomaly': (i % 2) == 0,
+                    'payload_suspicious': (i % 3) == 0,
+                    'frequency_high': (i % 4) == 0
+                }
+            }
+            synthetic_threats.append(threat)
+            
+        return synthetic_threats
+    
+    def reset_learning_state(self):
+        """Reset learning state for retraining"""
+        # Keep successful experiences but clear poor performers
+        if hasattr(self, 'experiences'):
+            successful_experiences = [e for e in self.experiences 
+                                    if e.get('outcome') == 'success']
+            self.experiences = successful_experiences[-100:]  # Keep last 100 successes
+        
+        # Reset learning rate to default
+        self.learning_rate = 0.01
+        
+        # Clear poor threat patterns
+        if hasattr(self, 'threat_patterns'):
+            good_patterns = [p for p in self.threat_patterns 
+                           if p.get('success_rate', 0.5) > 0.5]
+            self.threat_patterns = good_patterns
+        
+        print(f"🔄 Reset learning state for {self.name}")
+    
+    def get_continuous_training_status(self):
+        """Get status of continuous training for this agent"""
+        return {
+            'continuous_learning_enabled': self.continuous_learning_enabled,
+            'last_training_time': self.last_training_time,
+            'learning_rate': self.learning_rate,
+            'performance_window_size': len(self.performance_window),
+            'recent_performance': self.performance_window[-5:] if len(self.performance_window) >= 5 else self.performance_window
+        }
 
 # Legacy Sentinel class for backward compatibility
 

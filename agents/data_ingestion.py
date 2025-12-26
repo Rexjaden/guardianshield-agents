@@ -5,6 +5,7 @@ import json
 import os
 import time
 import logging
+import re
 from typing import Dict, List, Optional, Any
 
 try:
@@ -28,13 +29,158 @@ logger = logging.getLogger(__name__)
 
 class DataIngestionAgent:
     """Enhanced data ingestion agent with autonomous source discovery"""
-    
+
     def __init__(self):
         self.name = "DataIngestionAgent"
-        
-    def autonomous_cycle(self):
-        """Run autonomous data ingestion cycle"""
-        pass
+        self.sources: Dict[str, str] = {
+            "abuseipdb": "https://api.abuseipdb.com/api/v2/blacklist",
+            "cryptoscamdb": "https://api.cryptoscamdb.org/v1/addresses",
+            "phishstats": "https://phishstats.info:2096/api/phishing",
+            "urlhaus": "https://urlhaus-api.abuse.ch/v1/urls/recent/",
+            "chainabuse": "https://api.chainabuse.com/api/v1/reports",
+        }
+        self.headers = {
+            "abuseipdb": {"Key": os.getenv("ABUSEIPDB_API_KEY", ""), "Accept": "application/json"},
+            "cryptoscamdb": {"Accept": "application/json"},
+        }
+        self.rate_limits: Dict[str, Dict[str, Any]] = {
+            source: {"calls": 0, "reset_time": 0, "limit": 1000} for source in self.sources
+        }
+        self.storage_path = "knowledge_base.json"
+        self.autonomous_enabled = True
+        self.last_run_timestamp: Optional[float] = None
+
+    def autonomous_cycle(self) -> Dict[str, Any]:
+        """Run autonomous data ingestion cycle and persist data"""
+        aggregated = {}
+        for source in self.sources:
+            data = self.fetch_from_source(source)
+            if data:
+                aggregated[source] = data
+
+        if aggregated:
+            self._store_results(aggregated)
+        self.last_run_timestamp = time.time()
+        return aggregated
+
+    def fetch_from_source(self, source: str) -> Optional[List[Dict[str, Any]]]:
+        """Fetch threats from a configured source"""
+        if source not in self.sources:
+            logger.warning(f"Unknown source requested: {source}")
+            return None
+
+        raw_data = self._perform_request(source)
+        if not raw_data:
+            return None
+
+        normalized = self._normalize_threat_data(source, raw_data)
+        return normalized
+
+    def validate_threat_data(self, threat: Dict[str, Any]) -> bool:
+        """Validate structure and basic values for threat intelligence entries"""
+        if not isinstance(threat, dict):
+            return False
+
+        ip = threat.get('ip') or threat.get('address')
+        if ip and not self._is_valid_ip(ip):
+            return False
+
+        threat_type = threat.get('threat_type') or threat.get('category')
+        if not threat_type:
+            return False
+
+        confidence = threat.get('confidence', 50)
+        if isinstance(confidence, (int, float)) and confidence < 0:
+            return False
+
+        return True
+
+    def _perform_request(self, source: str) -> Optional[Any]:
+        if not REQUESTS_AVAILABLE:
+            logger.warning("Requests library unavailable; cannot fetch data")
+            return None
+
+        if not self._check_rate_limit(source):
+            logger.warning(f"Rate limit exceeded for {source}")
+            return None
+
+        headers = self.headers.get(source, {})
+        params = {}
+        method = "POST" if source == "urlhaus" else "GET"
+
+        try:
+            if method == "POST":
+                response = requests.post(self.sources[source], headers=headers, data=params, timeout=30)
+            else:
+                response = requests.get(self.sources[source], headers=headers, params=params, timeout=30)
+            response.raise_for_status()
+            self._update_rate_limit(source)
+            return response.json()
+        except Exception as exc:
+            logger.error(f"Error fetching data from {source}: {exc}")
+            return None
+
+    def _normalize_threat_data(self, source: str, data: Any) -> List[Dict[str, Any]]:
+        normalized: List[Dict[str, Any]] = []
+
+        if source == "abuseipdb" and isinstance(data, dict):
+            entries = data.get('data', [])
+            for entry in entries:
+                threat = {
+                    'ip': entry.get('ipAddress') or entry.get('ip_address'),
+                    'threat_type': entry.get('abuseConfidenceScore', 'abuseipdb'),
+                    'confidence': entry.get('abuseConfidenceScore', 0),
+                    'source': source,
+                    'timestamp': entry.get('lastReportedAt', time.time())
+                }
+                if self.validate_threat_data(threat):
+                    normalized.append(threat)
+
+        elif isinstance(data, dict):
+            items = data.get('data') or data.get('result') or []
+            for entry in items:
+                threat = {
+                    'ip': entry.get('ip') or entry.get('address'),
+                    'threat_type': entry.get('threat_type') or entry.get('category', source),
+                    'confidence': entry.get('confidence', 50),
+                    'source': source,
+                    'timestamp': entry.get('timestamp', time.time())
+                }
+                if self.validate_threat_data(threat):
+                    normalized.append(threat)
+
+        return normalized
+
+    def _store_results(self, aggregated: Dict[str, Any]):
+        try:
+            with open(self.storage_path, "w", encoding="utf-8") as handle:
+                json.dump(aggregated, handle, indent=2)
+        except Exception as exc:
+            logger.error(f"Failed to store ingestion results: {exc}")
+
+    def _check_rate_limit(self, source: str) -> bool:
+        limit_info = self.rate_limits.get(source)
+        if not limit_info:
+            return True
+        current_time = time.time()
+        if current_time > limit_info['reset_time']:
+            limit_info['calls'] = 0
+            limit_info['reset_time'] = current_time + 3600
+        return limit_info['calls'] < limit_info['limit']
+
+    def _update_rate_limit(self, source: str):
+        if source in self.rate_limits:
+            self.rate_limits[source]['calls'] += 1
+
+    @staticmethod
+    def _is_valid_ip(address: str) -> bool:
+        ip_regex = r"^(?:\d{1,3}\.){3}\d{1,3}$"
+        if not address:
+            return False
+        if not re.match(ip_regex, address):
+            return False
+        octets = [int(part) for part in address.split('.') if part.isdigit()]
+        return len(octets) == 4 and all(0 <= octet <= 255 for octet in octets)
 
 # Legacy class for backward compatibility
 class DataIngestion:
@@ -61,7 +207,7 @@ class DataIngestion:
         self.session = requests.Session()
         self.session.timeout = 30
 
-    def secure_api_call(self, source: str, url: str, headers: Dict = None, params: Dict = None, retries: int = 3) -> Optional[Dict]:
+    def secure_api_call(self, source: str, url: str, headers: Dict = None, params: Dict = None, retries: int = 3, method: str = "GET") -> Optional[Dict]:
         """
         Secure API call with rate limiting, retry logic, and error handling
         """
@@ -71,13 +217,22 @@ class DataIngestion:
             
         for attempt in range(retries):
             try:
-                response = self.session.get(
-                    url, 
-                    headers=headers or {}, 
-                    params=params or {},
-                    timeout=30,
-                    verify=True  # SSL verification
-                )
+                if method.upper() == "POST":
+                    response = self.session.post(
+                        url,
+                        headers=headers or {},
+                        data=params or {},
+                        timeout=30,
+                        verify=True
+                    )
+                else:
+                    response = self.session.get(
+                        url, 
+                        headers=headers or {}, 
+                        params=params or {},
+                        timeout=30,
+                        verify=True  # SSL verification
+                    )
                 response.raise_for_status()
                 self.update_rate_limit(source)
                 return response.json()

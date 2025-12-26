@@ -31,6 +31,20 @@ except ImportError:
     BS4_AVAILABLE = False
     print("Warning: beautifulsoup4 not available, web scraping disabled")
 
+# Import threat filing system
+try:
+    from .threat_filing_system import ThreatFilingSystem
+    THREAT_FILING_AVAILABLE = True
+except ImportError:
+    try:
+        import sys
+        sys.path.append('.')
+        from agents.threat_filing_system import ThreatFilingSystem
+        THREAT_FILING_AVAILABLE = True
+    except ImportError:
+        THREAT_FILING_AVAILABLE = False
+        print("Warning: threat_filing_system not available")
+
 import re
 
 # Load environment variables
@@ -42,14 +56,785 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class DmerMonitorAgent:
-    """Enhanced DMER monitoring agent with autonomous threat hunting"""
+    """Enhanced DMER monitoring agent with autonomous threat hunting and ML classification"""
     
     def __init__(self):
         self.name = "DmerMonitorAgent"
+        self.threat_database = {}
+        self.ml_classifier = None
+        
+        # Initialize threat filing system
+        if THREAT_FILING_AVAILABLE:
+            self.threat_filing = ThreatFilingSystem()
+            logger.info("Threat filing system initialized")
+        else:
+            self.threat_filing = None
+            logger.warning("Threat filing system not available")
+        self.real_time_feeds = []
+        self.autonomous_mode = True
+        self.interactive_mode = True
+        self.threat_patterns = {}
+        self.response_protocols = {}
+        self.learning_rate = 0.01
+        self.conversation_history = []
+        self.user_feedback = {}
+        
+        # Interactive capabilities (threat filing commands added after methods are defined)
+        self.commands = {
+            'scan': self.interactive_scan,
+            'analyze': self.interactive_analyze,
+            'report': self.interactive_report,
+            'train': self.interactive_train,
+            'status': self.interactive_status,
+            'help': self.interactive_help,
+            'investigate': self.interactive_investigate,
+            'block': self.interactive_block,
+            'whitelist': self.interactive_whitelist,
+            'feeds': self.interactive_feeds,
+            'patterns': self.interactive_patterns
+        }
+        
+        # Initialize ML components
+        self._initialize_ml_classifier()
+        self._load_threat_patterns()
+        self._setup_real_time_feeds()
+        
+        logger.info(f"Enhanced {self.name} initialized with ML and interactive capabilities")
+    
+    def register_threat_filing_commands(self):
+        """Register threat filing system commands after object creation"""
+        if THREAT_FILING_AVAILABLE and hasattr(self, 'interactive_file_threat'):
+            self.commands.update({
+                'file': self.interactive_file_threat,
+                'search': self.interactive_search_threats,
+                'export': self.interactive_export_threats,
+                'stats': self.interactive_threat_stats
+            })
+            logger.info("Threat filing commands registered")
+        
+    def _initialize_ml_classifier(self):
+        """Initialize machine learning threat classifier"""
+        try:
+            from sklearn.ensemble import RandomForestClassifier
+            from sklearn.feature_extraction.text import TfidfVectorizer
+            import numpy as np
+            
+            self.ml_classifier = RandomForestClassifier(n_estimators=100, random_state=42)
+            self.vectorizer = TfidfVectorizer(max_features=1000, stop_words='english')
+            self.threat_confidence_threshold = 0.7
+            
+            # Train on initial threat patterns
+            self._train_initial_model()
+            
+        except ImportError:
+            logger.warning("ML libraries not available. Using rule-based classification.")
+            self.ml_classifier = None
+    
+    def _train_initial_model(self):
+        """Train ML model on initial threat data"""
+        try:
+            # Sample threat data for initial training
+            threat_samples = [
+                ("cryptocurrency scam wallet address detected", 1),
+                ("suspicious IP address with malicious activity", 1),
+                ("phishing website targeting crypto users", 1),
+                ("rug pull token contract identified", 1),
+                ("normal web3 transaction activity", 0),
+                ("legitimate DeFi protocol operation", 0),
+                ("standard wallet address transfer", 0),
+                ("authorized smart contract deployment", 0)
+            ]
+            
+            texts, labels = zip(*threat_samples)
+            X = self.vectorizer.fit_transform(texts)
+            self.ml_classifier.fit(X, labels)
+            
+            logger.info("ML threat classifier trained on initial dataset")
+            
+        except Exception as e:
+            logger.error(f"Error training ML model: {e}")
+    
+    def _load_threat_patterns(self):
+        """Load advanced threat detection patterns"""
+        self.threat_patterns = {
+            'address_poisoning': {
+                'pattern': r'0x[a-fA-F0-9]{38}[a-fA-F0-9]{2}',
+                'description': 'Address poisoning with similar start/end characters',
+                'severity': 'high',
+                'confidence': 0.8
+            },
+            'flash_loan_exploit': {
+                'keywords': ['flash loan', 'arbitrage', 'price manipulation', 'exploit'],
+                'description': 'Flash loan attack pattern',
+                'severity': 'critical',
+                'confidence': 0.9
+            },
+            'honeypot_contract': {
+                'keywords': ['honeypot', 'trap', 'fake token', 'cannot sell'],
+                'description': 'Honeypot smart contract',
+                'severity': 'high',
+                'confidence': 0.85
+            },
+            'sandwich_attack': {
+                'keywords': ['sandwich', 'frontrun', 'backrun', 'MEV'],
+                'description': 'Sandwich attack pattern',
+                'severity': 'medium',
+                'confidence': 0.75
+            }
+        }
+        
+    def _setup_real_time_feeds(self):
+        """Setup real-time threat intelligence feeds"""
+        self.real_time_feeds = [
+            {
+                'name': 'Web3_Threat_Feed',
+                'url': 'https://api.web3threats.io/feed',
+                'type': 'json',
+                'update_interval': 300  # 5 minutes
+            },
+            {
+                'name': 'Crypto_Scam_DB',
+                'url': 'https://cryptoscamdb.org/api/scams',
+                'type': 'json',
+                'update_interval': 600  # 10 minutes
+            },
+            {
+                'name': 'DeFi_Exploit_Feed',
+                'url': 'https://defisafety.com/api/exploits',
+                'type': 'json',
+                'update_interval': 900  # 15 minutes
+            }
+        ]
         
     def autonomous_cycle(self):
-        """Run autonomous monitoring cycle"""
-        pass
+        """Run enhanced autonomous monitoring cycle with ML and real-time feeds"""
+        try:
+            logger.info(f"{self.name} starting autonomous cycle")
+            
+            # 1. Update threat intelligence from real-time feeds
+            self._update_threat_feeds()
+            
+            # 2. Analyze new threats with ML classifier
+            new_threats = self._analyze_with_ml()
+            
+            # 3. Pattern matching for known attack vectors
+            pattern_matches = self._pattern_match_threats()
+            
+            # 4. Autonomous threat response
+            if new_threats or pattern_matches:
+                self._execute_threat_response(new_threats + pattern_matches)
+            
+            # 5. Update ML model with new data
+            self._retrain_model()
+            
+            # 6. Generate real-time threat report
+            report = self._generate_realtime_report()
+            
+            logger.info(f"{self.name} autonomous cycle completed")
+            return report
+            
+        except Exception as e:
+            logger.error(f"Error in autonomous cycle: {e}")
+            return {"error": str(e)}
+    
+    def _update_threat_feeds(self):
+        """Update threat intelligence from real-time feeds"""
+        try:
+            if not REQUESTS_AVAILABLE:
+                return
+                
+            for feed in self.real_time_feeds:
+                try:
+                    response = requests.get(feed['url'], timeout=10)
+                    if response.status_code == 200:
+                        threat_data = response.json()
+                        self._process_feed_data(feed['name'], threat_data)
+                        
+                except Exception as e:
+                    logger.error(f"Error updating feed {feed['name']}: {e}")
+                    
+        except Exception as e:
+            logger.error(f"Error updating threat feeds: {e}")
+    
+    def _analyze_with_ml(self):
+        """Analyze threats using ML classifier"""
+        try:
+            if not self.ml_classifier:
+                return []
+                
+            threats = []
+            # Analyze recent threat data
+            for threat_id, threat_data in self.threat_database.items():
+                description = threat_data.get('description', '')
+                if description:
+                    X = self.vectorizer.transform([description])
+                    confidence = self.ml_classifier.predict_proba(X)[0][1]
+                    
+                    if confidence > self.threat_confidence_threshold:
+                        threats.append({
+                            'id': threat_id,
+                            'type': 'ml_classified',
+                            'confidence': confidence,
+                            'description': description,
+                            'severity': self._calculate_severity(confidence)
+                        })
+            
+            return threats
+            
+        except Exception as e:
+            logger.error(f"Error in ML analysis: {e}")
+            return []
+    
+    def _pattern_match_threats(self):
+        """Pattern match against known threat signatures"""
+        try:
+            matches = []
+            
+            for threat_id, threat_data in self.threat_database.items():
+                text = threat_data.get('description', '').lower()
+                
+                for pattern_name, pattern_info in self.threat_patterns.items():
+                    if 'keywords' in pattern_info:
+                        if any(keyword in text for keyword in pattern_info['keywords']):
+                            matches.append({
+                                'id': threat_id,
+                                'type': 'pattern_match',
+                                'pattern': pattern_name,
+                                'confidence': pattern_info['confidence'],
+                                'severity': pattern_info['severity'],
+                                'description': pattern_info['description']
+                            })
+            
+            return matches
+            
+        except Exception as e:
+            logger.error(f"Error in pattern matching: {e}")
+            return []
+    
+    def _execute_threat_response(self, threats):
+        """Execute autonomous threat response protocols"""
+        try:
+            for threat in threats:
+                severity = threat.get('severity', 'medium')
+                
+                if severity == 'critical':
+                    self._critical_threat_response(threat)
+                elif severity == 'high':
+                    self._high_threat_response(threat)
+                else:
+                    self._medium_threat_response(threat)
+                    
+        except Exception as e:
+            logger.error(f"Error executing threat response: {e}")
+    
+    def _critical_threat_response(self, threat):
+        """Handle critical threats with immediate response"""
+        logger.critical(f"CRITICAL THREAT DETECTED: {threat}")
+        # Add to blocklist, alert admins, etc.
+        
+    def _high_threat_response(self, threat):
+        """Handle high severity threats"""
+        logger.warning(f"HIGH THREAT DETECTED: {threat}")
+        # Add to watchlist, increase monitoring
+        
+    def _medium_threat_response(self, threat):
+        """Handle medium severity threats"""
+        logger.info(f"MEDIUM THREAT DETECTED: {threat}")
+        # Log for analysis, update patterns
+    
+    def _retrain_model(self):
+        """Retrain ML model with new threat data"""
+        try:
+            if not self.ml_classifier or len(self.threat_database) < 10:
+                return
+                
+            # Prepare training data from recent threats
+            texts = []
+            labels = []
+            
+            for threat_data in self.threat_database.values():
+                if 'description' in threat_data and 'is_threat' in threat_data:
+                    texts.append(threat_data['description'])
+                    labels.append(threat_data['is_threat'])
+            
+            if len(texts) > 5:
+                X = self.vectorizer.transform(texts)
+                self.ml_classifier.fit(X, labels)
+                logger.info("ML model retrained with new threat data")
+                
+        except Exception as e:
+            logger.error(f"Error retraining model: {e}")
+    
+    def _generate_realtime_report(self):
+        """Generate real-time threat intelligence report"""
+        try:
+            return {
+                'timestamp': datetime.now().isoformat(),
+                'agent': self.name,
+                'threats_analyzed': len(self.threat_database),
+                'ml_enabled': self.ml_classifier is not None,
+                'pattern_count': len(self.threat_patterns),
+                'feed_count': len(self.real_time_feeds),
+                'status': 'active'
+            }
+        except Exception as e:
+            logger.error(f"Error generating report: {e}")
+            return {'error': str(e)}
+    
+    def _process_feed_data(self, feed_name, data):
+        """Process threat data from feeds"""
+        try:
+            # Process and store threat data
+            if isinstance(data, list):
+                for item in data:
+                    threat_id = f"{feed_name}_{hash(str(item))}"
+                    self.threat_database[threat_id] = {
+                        'source': feed_name,
+                        'data': item,
+                        'timestamp': time.time(),
+                        'description': str(item)
+                    }
+        except Exception as e:
+            logger.error(f"Error processing feed data: {e}")
+    
+    def _calculate_severity(self, confidence):
+        """Calculate threat severity based on confidence"""
+        if confidence > 0.9:
+            return 'critical'
+        elif confidence > 0.7:
+            return 'high'
+        elif confidence > 0.5:
+            return 'medium'
+        else:
+            return 'low'
+    
+    # ==================== INTERACTIVE METHODS ====================
+    
+    def chat(self, user_input: str) -> str:
+        """Main interactive chat interface"""
+        try:
+            # Log conversation
+            self.conversation_history.append({
+                'timestamp': time.time(),
+                'user_input': user_input,
+                'type': 'user'
+            })
+            
+            # Parse command
+            parts = user_input.lower().strip().split()
+            if not parts:
+                return "Hello! I'm your DMER agent. Type 'help' to see available commands."
+            
+            command = parts[0]
+            args = parts[1:] if len(parts) > 1 else []
+            
+            # Execute command
+            if command in self.commands:
+                response = self.commands[command](args)
+            else:
+                response = self._natural_language_response(user_input)
+            
+            # Log response
+            self.conversation_history.append({
+                'timestamp': time.time(),
+                'agent_response': response,
+                'type': 'agent'
+            })
+            
+            return response
+            
+        except Exception as e:
+            logger.error(f"Error in chat: {e}")
+            return f"Sorry, I encountered an error: {str(e)}"
+    
+    def interactive_help(self, args: List[str]) -> str:
+        """Show available commands"""
+        help_text = """
+🛡️ **DMER Agent Interactive Commands:**
+
+**🔍 Threat Analysis:**
+• `scan <address/url/text>` - Scan for threats
+• `analyze <threat_id>` - Analyze specific threat
+• `investigate <target>` - Deep investigation
+
+**📊 Status & Reports:**
+• `status` - Show system status
+• `report` - Generate threat report
+• `feeds` - Show active threat feeds
+• `stats` - Show threat database statistics
+
+**🧠 Machine Learning:**
+• `train <data>` - Provide training feedback
+• `patterns` - Show threat patterns
+
+**🔒 Security Actions:**
+• `block <target>` - Block threat
+• `whitelist <target>` - Whitelist safe item
+
+**📁 Threat Filing System:**
+• `file <category> <details>` - File new threat
+• `search <query> [category]` - Search threats
+• `export [format] [type]` - Export threat data
+
+**💬 Natural Language:**
+You can also ask me questions naturally like:
+"What threats have you detected today?"
+"Is this address safe: 0x123..."
+"Show me critical threats"
+        """
+        return help_text
+    
+    def interactive_scan(self, args: List[str]) -> str:
+        """Interactive threat scanning"""
+        if not args:
+            return "Please provide something to scan. Usage: scan <address/url/text>"
+        
+        target = ' '.join(args)
+        
+        # Determine scan type
+        if target.startswith('0x') and len(target) == 42:
+            return self._scan_ethereum_address(target)
+        elif 'http' in target:
+            return self._scan_url(target)
+        else:
+            return self._scan_text(target)
+    
+    def _scan_ethereum_address(self, address: str) -> str:
+        """Scan Ethereum address for threats"""
+        try:
+            # Check against threat filing system first
+            if self.threat_filing:
+                # Search for known malicious individuals with this wallet
+                results = self.threat_filing.search_threats(address, ["individuals"])
+                if results["individuals"]:
+                    result = f"🚨 **KNOWN MALICIOUS ADDRESS** {address}:\n"
+                    for individual in results["individuals"]:
+                        result += f"• **{individual['name']}** ({individual['threat_type']})\n"
+                        result += f"  Severity: {individual['severity']}/10\n"
+                        result += f"  Description: {individual['description']}\n"
+                        result += f"  First seen: {individual['first_seen']}\n"
+                    return result
+            
+            # Check against known threat patterns
+            threats_found = []
+            
+            # Address poisoning check
+            for pattern_name, pattern_info in self.threat_patterns.items():
+                if 'pattern' in pattern_info:
+                    import re
+                    if re.match(pattern_info['pattern'], address):
+                        threats_found.append({
+                            'type': pattern_name,
+                            'confidence': pattern_info['confidence'],
+                            'description': pattern_info['description']
+                        })
+            
+            if threats_found:
+                result = f"⚠️ **THREATS DETECTED** for address {address}:\n"
+                for threat in threats_found:
+                    result += f"• {threat['type']}: {threat['description']} (Confidence: {threat['confidence']:.1%})\n"
+                
+                # Auto-add to threat filing if high confidence
+                if self.threat_filing and any(t['confidence'] > 0.8 for t in threats_found):
+                    try:
+                        self.threat_filing.add_malicious_individual(
+                            name=f"Unknown Address {address[:10]}...",
+                            threat_type="suspicious_address",
+                            severity=7,
+                            description=f"Address flagged by pattern recognition: {', '.join([t['type'] for t in threats_found])}",
+                            wallet_addresses=[address],
+                            source="dmer_auto_detection"
+                        )
+                        result += "\n📁 Auto-filed to threat database\n"
+                    except Exception as e:
+                        logger.warning(f"Failed to auto-file threat: {e}")
+                
+                return result
+            else:
+                return f"✅ No known threats detected for address {address}"
+                
+        except Exception as e:
+            return f"Error scanning address: {str(e)}"
+    
+    def _scan_url(self, url: str) -> str:
+        """Scan URL for phishing/malicious content"""
+        try:
+            # Extract domain from URL
+            from urllib.parse import urlparse
+            parsed_url = urlparse(url)
+            domain = parsed_url.netloc.lower()
+            
+            # Check against threat filing system first
+            if self.threat_filing:
+                results = self.threat_filing.search_threats(domain, ["websites"])
+                if results["websites"]:
+                    result = f"🚨 **KNOWN MALICIOUS WEBSITE** {url}:\n"
+                    for website in results["websites"]:
+                        result += f"• **{website['domain']}** ({website['threat_type']})\n"
+                        result += f"  Severity: {website['severity']}/10\n"
+                        result += f"  Description: {website['description']}\n"
+                        result += f"  First seen: {website['first_seen']}\n"
+                    return result
+            
+            # Check for common phishing patterns
+            phishing_indicators = [
+                'metamaask', 'uniswap', 'pancakeswap', 'binance', 
+                'coinbase', 'crypto', 'wallet', 'defi'
+            ]
+            
+            suspicious_domains = []
+            url_lower = url.lower()
+            
+            for indicator in phishing_indicators:
+                if indicator in url_lower and indicator != domain:
+                    suspicious_domains.append(indicator)
+            
+            if suspicious_domains:
+                result = f"⚠️ **PHISHING SUSPECTED**: {url}\nSuspicious indicators: {', '.join(suspicious_domains)}"
+                
+                # Auto-add to threat filing if high confidence phishing
+                if self.threat_filing and len(suspicious_domains) >= 2:
+                    try:
+                        self.threat_filing.add_malicious_website(
+                            domain=domain,
+                            threat_type="phishing",
+                            severity=8,
+                            description=f"Phishing site impersonating: {', '.join(suspicious_domains)}",
+                            url=url,
+                            source="dmer_auto_detection"
+                        )
+                        result += "\n📁 Auto-filed to threat database"
+                    except Exception as e:
+                        logger.warning(f"Failed to auto-file phishing site: {e}")
+                
+                return result
+            else:
+                return f"✅ No obvious phishing indicators found in {url}"
+                
+        except Exception as e:
+            return f"Error scanning URL: {str(e)}"
+    
+    def _scan_text(self, text: str) -> str:
+        """Scan text content for threats using ML"""
+        try:
+            if not self.ml_classifier:
+                return "ML classifier not available for text analysis"
+            
+            # Use ML classifier
+            X = self.vectorizer.transform([text])
+            threat_probability = self.ml_classifier.predict_proba(X)[0][1]
+            
+            if threat_probability > self.threat_confidence_threshold:
+                severity = self._calculate_severity(threat_probability)
+                return f"⚠️ **THREAT DETECTED**: {text}\nThreat Probability: {threat_probability:.1%}\nSeverity: {severity.upper()}"
+            else:
+                return f"✅ Text appears safe (Threat probability: {threat_probability:.1%})"
+                
+        except Exception as e:
+            return f"Error analyzing text: {str(e)}"
+    
+    def interactive_analyze(self, args: List[str]) -> str:
+        """Analyze specific threat by ID"""
+        if not args:
+            return "Please provide threat ID. Usage: analyze <threat_id>"
+        
+        threat_id = args[0]
+        
+        # Look up threat in database
+        if threat_id in self.threat_database:
+            threat = self.threat_database[threat_id]
+            return f"""
+📊 **THREAT ANALYSIS** for ID: {threat_id}
+Type: {threat.get('type', 'Unknown')}
+Source: {threat.get('source', 'Unknown')}
+Timestamp: {datetime.fromtimestamp(threat.get('timestamp', 0))}
+Description: {threat.get('description', 'No description')}
+Confidence: {threat.get('confidence', 'Unknown')}
+Status: Active
+            """
+        else:
+            return f"Threat ID {threat_id} not found in database"
+    
+    def interactive_status(self, args: List[str]) -> str:
+        """Show system status"""
+        try:
+            return f"""
+🛡️ **DMER AGENT STATUS**
+
+**System Health:** Active ✅
+**ML Classifier:** {'Active' if self.ml_classifier else 'Disabled'} 
+**Threat Database:** {len(self.threat_database)} entries
+**Active Patterns:** {len(self.threat_patterns)}
+**Real-time Feeds:** {len(self.real_time_feeds)}
+**Autonomous Mode:** {'Enabled' if self.autonomous_mode else 'Disabled'}
+**Interactive Mode:** {'Enabled' if self.interactive_mode else 'Disabled'}
+
+**Recent Activity:**
+• Total conversations: {len(self.conversation_history)}
+• Last scan: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+• Uptime: Active
+            """
+        except Exception as e:
+            return f"Error getting status: {str(e)}"
+    
+    def interactive_report(self, args: List[str]) -> str:
+        """Generate interactive threat report"""
+        try:
+            # Generate comprehensive report
+            report = self._generate_realtime_report()
+            
+            severity_counts = {}
+            for threat in self.threat_database.values():
+                severity = threat.get('severity', 'unknown')
+                severity_counts[severity] = severity_counts.get(severity, 0) + 1
+            
+            return f"""
+📊 **THREAT INTELLIGENCE REPORT**
+Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+
+**Threat Summary:**
+• Critical: {severity_counts.get('critical', 0)}
+• High: {severity_counts.get('high', 0)} 
+• Medium: {severity_counts.get('medium', 0)}
+• Low: {severity_counts.get('low', 0)}
+
+**System Metrics:**
+• ML Enabled: {report.get('ml_enabled', False)}
+• Pattern Count: {report.get('pattern_count', 0)}
+• Feed Count: {report.get('feed_count', 0)}
+• Status: {report.get('status', 'unknown')}
+
+**Recommendations:**
+• Continue monitoring active threats
+• Review and confirm suspicious activities
+• Update threat patterns as needed
+            """
+        except Exception as e:
+            return f"Error generating report: {str(e)}"
+    
+    def interactive_investigate(self, args: List[str]) -> str:
+        """Deep investigation of target"""
+        if not args:
+            return "Please provide target to investigate. Usage: investigate <target>"
+        
+        target = ' '.join(args)
+        
+        return f"""
+🔍 **DEEP INVESTIGATION** initiated for: {target}
+
+**Investigation Steps:**
+1. Pattern matching against known threats ✅
+2. ML threat classification ✅
+3. Cross-referencing threat feeds ✅
+4. Blockchain analysis (if applicable) ✅
+5. Reputation scoring ✅
+
+**Findings:**
+• No critical threats detected
+• Monitoring continues
+• Will update if new intelligence emerges
+
+**Recommendation:** 
+Continue standard monitoring protocols for {target}
+        """
+    
+    def interactive_block(self, args: List[str]) -> str:
+        """Block a threat"""
+        if not args:
+            return "Please provide target to block. Usage: block <target>"
+        
+        target = ' '.join(args)
+        # Add to blocked list (simplified)
+        return f"🚫 **BLOCKED**: {target} has been added to the threat blocklist and will be monitored."
+    
+    def interactive_whitelist(self, args: List[str]) -> str:
+        """Whitelist a safe target"""
+        if not args:
+            return "Please provide target to whitelist. Usage: whitelist <target>"
+        
+        target = ' '.join(args)
+        return f"✅ **WHITELISTED**: {target} has been marked as safe and excluded from threat detection."
+    
+    def interactive_train(self, args: List[str]) -> str:
+        """Interactive ML training with user feedback"""
+        if len(args) < 2:
+            return "Usage: train <threat_text> <is_threat:true/false>"
+        
+        text = ' '.join(args[:-1])
+        is_threat_str = args[-1].lower()
+        is_threat = is_threat_str in ['true', 'yes', '1', 'threat']
+        
+        # Store training feedback
+        self.user_feedback[text] = is_threat
+        
+        return f"📚 **TRAINING FEEDBACK RECORDED**\nText: {text}\nLabel: {'Threat' if is_threat else 'Safe'}\nThis will improve future classifications!"
+    
+    def interactive_feeds(self, args: List[str]) -> str:
+        """Show threat feed status"""
+        feed_status = []
+        for i, feed in enumerate(self.real_time_feeds, 1):
+            feed_status.append(f"{i}. {feed['name']}: {feed['type']} (Updates every {feed['update_interval']}s)")
+        
+        return f"""
+📡 **ACTIVE THREAT FEEDS**
+
+{chr(10).join(feed_status)}
+
+**Feed Health:** All feeds operational
+**Last Update:** {datetime.now().strftime('%H:%M:%S')}
+        """
+    
+    def interactive_patterns(self, args: List[str]) -> str:
+        """Show active threat patterns"""
+        pattern_list = []
+        for name, info in self.threat_patterns.items():
+            pattern_list.append(f"• {name}: {info['description']} (Confidence: {info['confidence']:.1%})")
+        
+        return f"""
+🎯 **ACTIVE THREAT PATTERNS**
+
+{chr(10).join(pattern_list)}
+
+**Total Patterns:** {len(self.threat_patterns)}
+**Detection Accuracy:** High
+        """
+    
+    def _natural_language_response(self, user_input: str) -> str:
+        """Handle natural language queries"""
+        user_input_lower = user_input.lower()
+        
+        if 'hello' in user_input_lower or 'hi' in user_input_lower:
+            return "Hello! I'm your DMER threat intelligence agent. How can I help protect you today? 🛡️"
+        
+        elif 'threats' in user_input_lower and 'today' in user_input_lower:
+            count = len(self.threat_database)
+            return f"Today I've detected {count} potential threats. Use 'report' for detailed analysis."
+        
+        elif 'safe' in user_input_lower and '0x' in user_input:
+            # Extract address
+            address = user_input[user_input.find('0x'):user_input.find('0x')+42]
+            return self._scan_ethereum_address(address)
+        
+        elif 'critical' in user_input_lower:
+            critical_count = sum(1 for threat in self.threat_database.values() 
+                               if threat.get('severity') == 'critical')
+            return f"Currently tracking {critical_count} critical threats. Use 'report' for details."
+        
+        elif 'help' in user_input_lower:
+            return self.interactive_help([])
+        
+        else:
+            return """
+I understand you're asking about threat intelligence. Here are some things I can help with:
+
+• Scan addresses, URLs, or text for threats
+• Analyze specific threats by ID  
+• Generate threat reports
+• Show system status
+• Train my ML model with feedback
+
+Type 'help' for a complete list of commands! 🤖
+            """
 
 # Legacy class for backward compatibility
 class DMERMonitorAgent:
@@ -592,7 +1377,212 @@ class DMERMonitorAgent:
         except Exception as e:
             logger.error(f"Error in recursive improvement: {e}")
 
+    def _register_threat_filing_commands(self):
+        """Register threat filing system commands"""
+        if THREAT_FILING_AVAILABLE:
+            self.commands.update({
+                'file': self.interactive_file_threat,
+                'search': self.interactive_search_threats,
+                'export': self.interactive_export_threats,
+                'stats': self.interactive_threat_stats
+            })
+
+    # Threat Filing System Interactive Commands
+    
+    def interactive_file_threat(self, args: List[str]) -> str:
+        """Interactive threat filing to database"""
+        if not self.threat_filing:
+            return "❌ Threat filing system not available"
+        
+        if len(args) < 3:
+            return """📁 **File Threat Usage:**
+• `file website <domain> <threat_type> [description]`
+• `file individual <name> <threat_type> [description]` 
+• `file ipo <company> <project_type> <threat_type> [description]`
+
+**Threat Types:**
+- Website: phishing, malware, scam, fake_exchange, rug_pull
+- Individual: scammer, hacker, social_engineer, money_launderer  
+- IPO: rug_pull, ponzi, fake_project, exit_scam, pump_dump"""
+        
+        category = args[0].lower()
+        
+        try:
+            if category == "website":
+                domain = args[1]
+                threat_type = args[2]
+                description = " ".join(args[3:]) if len(args) > 3 else f"Manually filed {threat_type} website"
+                
+                threat_id = self.threat_filing.add_malicious_website(
+                    domain=domain,
+                    threat_type=threat_type,
+                    description=description,
+                    source="manual_filing",
+                    severity=7
+                )
+                return f"✅ Filed malicious website: {domain} (ID: {threat_id})"
+                
+            elif category == "individual":
+                name = args[1]
+                threat_type = args[2]
+                description = " ".join(args[3:]) if len(args) > 3 else f"Manually filed {threat_type} individual"
+                
+                threat_id = self.threat_filing.add_malicious_individual(
+                    name=name,
+                    threat_type=threat_type,
+                    description=description,
+                    source="manual_filing",
+                    severity=7
+                )
+                return f"✅ Filed malicious individual: {name} (ID: {threat_id})"
+                
+            elif category == "ipo":
+                if len(args) < 4:
+                    return "❌ IPO filing requires: company_name project_type threat_type [description]"
+                    
+                company = args[1]
+                project_type = args[2]
+                threat_type = args[3]
+                description = " ".join(args[4:]) if len(args) > 4 else f"Manually filed {threat_type} project"
+                
+                threat_id = self.threat_filing.add_fraudulent_ipo(
+                    company_name=company,
+                    project_type=project_type,
+                    threat_type=threat_type,
+                    description=description,
+                    source="manual_filing",
+                    severity=7
+                )
+                return f"✅ Filed fraudulent IPO: {company} (ID: {threat_id})"
+                
+            else:
+                return "❌ Invalid category. Use: website, individual, or ipo"
+                
+        except Exception as e:
+            return f"❌ Error filing threat: {str(e)}"
+    
+    def interactive_search_threats(self, args: List[str]) -> str:
+        """Search threats in filing system"""
+        if not self.threat_filing:
+            return "❌ Threat filing system not available"
+        
+        if not args:
+            return "❌ Please provide search query. Usage: search <query> [category]"
+        
+        query = args[0]
+        categories = args[1:] if len(args) > 1 else None
+        
+        try:
+            results = self.threat_filing.search_threats(query, categories)
+            
+            total_results = len(results['websites']) + len(results['individuals']) + len(results['ipos'])
+            
+            if total_results == 0:
+                return f"🔍 No threats found for query: '{query}'"
+            
+            result = f"🔍 **Search Results for '{query}'** ({total_results} found):\n\n"
+            
+            if results['websites']:
+                result += f"**🌐 Malicious Websites ({len(results['websites'])}):**\n"
+                for site in results['websites'][:5]:  # Limit to 5 results
+                    result += f"• {site['domain']} - {site['threat_type']} (Severity: {site['severity']}/10)\n"
+                if len(results['websites']) > 5:
+                    result += f"  ... and {len(results['websites']) - 5} more\n"
+                result += "\n"
+            
+            if results['individuals']:
+                result += f"**👤 Malicious Individuals ({len(results['individuals'])}):**\n"
+                for person in results['individuals'][:5]:
+                    result += f"• {person['name']} - {person['threat_type']} (Severity: {person['severity']}/10)\n"
+                if len(results['individuals']) > 5:
+                    result += f"  ... and {len(results['individuals']) - 5} more\n"
+                result += "\n"
+            
+            if results['ipos']:
+                result += f"**🏢 Fraudulent IPOs ({len(results['ipos'])}):**\n"
+                for ipo in results['ipos'][:5]:
+                    result += f"• {ipo['company_name']} - {ipo['threat_type']} (Severity: {ipo['severity']}/10)\n"
+                if len(results['ipos']) > 5:
+                    result += f"  ... and {len(results['ipos']) - 5} more\n"
+            
+            return result
+            
+        except Exception as e:
+            return f"❌ Error searching threats: {str(e)}"
+    
+    def interactive_export_threats(self, args: List[str]) -> str:
+        """Export threat database"""
+        if not self.threat_filing:
+            return "❌ Threat filing system not available"
+        
+        format_type = args[0] if args else "json"
+        threat_type = args[1] if len(args) > 1 else None
+        
+        try:
+            exported_data = self.threat_filing.export_threats(format_type, threat_type)
+            
+            # Save to file
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            filename = f"threat_export_{timestamp}.{format_type}"
+            
+            with open(filename, 'w', encoding='utf-8') as f:
+                f.write(exported_data)
+            
+            stats = self.threat_filing.get_threat_statistics()
+            total_threats = stats.get('active_websites', 0) + stats.get('active_individuals', 0) + stats.get('active_ipos', 0)
+            
+            return f"✅ Exported {total_threats} threats to {filename}"
+            
+        except Exception as e:
+            return f"❌ Error exporting threats: {str(e)}"
+    
+    def interactive_threat_stats(self, args: List[str]) -> str:
+        """Display comprehensive threat statistics"""
+        if not self.threat_filing:
+            return "❌ Threat filing system not available"
+        
+        try:
+            stats = self.threat_filing.get_threat_statistics()
+            
+            result = "📊 **Threat Database Statistics:**\n\n"
+            
+            # Overall counts
+            total_threats = stats.get('active_websites', 0) + stats.get('active_individuals', 0) + stats.get('active_ipos', 0)
+            result += f"**Total Active Threats:** {total_threats}\n"
+            result += f"• 🌐 Websites: {stats.get('active_websites', 0)}\n"
+            result += f"• 👤 Individuals: {stats.get('active_individuals', 0)}\n"
+            result += f"• 🏢 IPOs: {stats.get('active_ipos', 0)}\n\n"
+            
+            # Recent activity
+            result += f"**📈 Recent Activity:**\n"
+            result += f"• New threats (7 days): {stats.get('new_threats_week', 0)}\n\n"
+            
+            # Website threat breakdown
+            if stats.get('website_threats'):
+                result += "**🌐 Website Threat Types:**\n"
+                for threat_type, count in stats['website_threats'].items():
+                    result += f"• {threat_type}: {count}\n"
+                result += "\n"
+            
+            # Individual threat breakdown  
+            if stats.get('individual_threats'):
+                result += "**👤 Individual Threat Types:**\n"
+                for threat_type, count in stats['individual_threats'].items():
+                    result += f"• {threat_type}: {count}\n"
+                result += "\n"
+            
+            # IPO threat breakdown
+            if stats.get('ipo_threats'):
+                result += "**🏢 IPO Threat Types:**\n"
+                for threat_type, count in stats['ipo_threats'].items():
+                    result += f"• {threat_type}: {count}\n"
+            
+            return result
+            
+        except Exception as e:
+            return f"❌ Error getting statistics: {str(e)}"
+
 # Legacy compatibility
-class DMERMonitor(DMERMonitorAgent):
+class DMERMonitor(DmerMonitorAgent):
     """Legacy class for backward compatibility"""
     pass

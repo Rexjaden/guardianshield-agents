@@ -1,0 +1,90 @@
+# GuardianShield Production Deployment
+# Docker Compose configuration for DigitalOcean deployment
+
+version: '3.8'
+
+services:
+  guardianshield-app:
+    build: .
+    container_name: guardianshield-main
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=production
+      - DOMAIN=www.guardian-shield.io
+      - ETH_DOMAIN=guardianshield-eth.com
+      - DATABASE_URL=postgresql://guardianuser:${DB_PASSWORD}@db:5432/guardianshield
+      - REDIS_URL=redis://redis:6379
+      - EMAIL_SERVER=smtp.guardian-shield.io
+      - EMAIL_USER=system@guardian-shield.io
+      - EMAIL_PASSWORD=${EMAIL_PASSWORD}
+      - SECRET_KEY=${SECRET_KEY}
+      - CLAUDE_EMAIL=claude@guardian-shield.io
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./ssl:/app/ssl:ro
+    depends_on:
+      - db
+      - redis
+    networks:
+      - guardianshield-network
+
+  db:
+    image: postgres:15-alpine
+    container_name: guardianshield-db
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=guardianshield
+      - POSTGRES_USER=guardianuser
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backups:/backups
+    networks:
+      - guardianshield-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: guardianshield-redis
+    restart: unless-stopped
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - redis_data:/data
+    networks:
+      - guardianshield-network
+
+  nginx:
+    image: nginx:alpine
+    container_name: guardianshield-proxy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/ssl/certs:ro
+      - ./static:/var/www/static:ro
+    depends_on:
+      - guardianshield-app
+    networks:
+      - guardianshield-network
+
+  certbot:
+    image: certbot/certbot
+    container_name: guardianshield-certbot
+    volumes:
+      - ./ssl:/etc/letsencrypt
+      - ./static:/var/www/certbot
+    command: certonly --webroot --webroot-path=/var/www/certbot --email admin@guardian-shield.io --agree-tos --no-eff-email -d www.guardian-shield.io -d guardian-shield.io -d guardianshield-eth.com -d www.guardianshield-eth.com
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  guardianshield-network:
+    driver: bridge

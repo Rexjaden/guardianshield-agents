@@ -18,7 +18,7 @@ contract GuardianLiquidityPool is Ownable {
     event LiquidityAdded(address indexed provider, uint256 guardAmount, uint256 shieldAmount);
     event LiquidityRemoved(address indexed provider, uint256 guardAmount, uint256 shieldAmount);
 
-    constructor(address _guardToken, address _shieldToken) {
+    constructor(address _guardToken, address _shieldToken) Ownable(msg.sender) {
         guardToken = IERC20(_guardToken);
         shieldToken = IERC20(_shieldToken);
     }

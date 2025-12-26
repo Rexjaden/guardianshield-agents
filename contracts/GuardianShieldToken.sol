@@ -18,19 +18,22 @@ contract GuardianShieldToken is ERC721, Ownable {
     mapping(uint256 => string) private _tokenURIs;
     // Blacklist for stolen tokens
     mapping(uint256 => bool) public isStolen;
+    // Counter for token IDs
+    uint256 private _nextTokenId = 1;
 
     event TokenMinted(address indexed to, uint256 indexed tokenId, uint256 serial, string tokenURI);
     event TokenFlaggedStolen(uint256 indexed tokenId, address indexed by);
     event TokenRecovered(uint256 indexed tokenId, address indexed by);
 
-    constructor() ERC721("GuardianShieldToken", "GST") {}
+    constructor() ERC721("GuardianShieldToken", "GST") Ownable(msg.sender) {}
 
     /**
      * @dev Mint a new token with a unique serial number and metadata URI.
      */
     function mint(address to, uint256 serial, string memory tokenURI_) external onlyOwner returns (uint256) {
         require(serialToTokenId[serial] == 0, "Serial already used");
-        uint256 tokenId = totalSupply() + 1;
+        uint256 tokenId = _nextTokenId;
+        _nextTokenId++;
         _safeMint(to, tokenId);
         serialToTokenId[serial] = tokenId;
         tokenIdToSerial[tokenId] = serial;
@@ -67,11 +70,11 @@ contract GuardianShieldToken is ERC721, Ownable {
     }
 
     /**
-     * @dev Override transfer to prevent transfer of stolen tokens.
+     * @dev Override update to prevent transfer of stolen tokens.
      */
-    function _beforeTokenTransfer(address from, address to, uint256 tokenId, uint256 batchSize) internal override {
+    function _update(address to, uint256 tokenId, address auth) internal override returns (address) {
         require(!isStolen[tokenId], "Token is flagged as stolen");
-        super._beforeTokenTransfer(from, to, tokenId, batchSize);
+        return super._update(to, tokenId, auth);
     }
 
     // TODO: Add Flare integration hooks for metadata and multi-chain support

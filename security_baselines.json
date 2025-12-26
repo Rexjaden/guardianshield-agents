@@ -1,0 +1,47 @@
+{
+  "critical_files": [
+    "*.py",
+    "*.json",
+    "*.yaml",
+    "*.yml",
+    "*.env",
+    "requirements.txt",
+    "package.json",
+    "*.sol"
+  ],
+  "sensitive_patterns": [
+    "password\\s*[:=]\\s*['\\\"](.+)['\\\"]",
+    "api[_-]?key\\s*[:=]\\s*['\\\"](.+)['\\\"]",
+    "secret[_-]?key\\s*[:=]\\s*['\\\"](.+)['\\\"]",
+    "private[_-]?key\\s*[:=]\\s*['\\\"](.+)['\\\"]",
+    "token\\s*[:=]\\s*['\\\"](.+)['\\\"]"
+  ],
+  "max_file_size": 104857600,
+  "allowed_extensions": [
+    ".py",
+    ".js",
+    ".ts",
+    ".json",
+    ".yaml",
+    ".yml",
+    ".md",
+    ".txt",
+    ".sol",
+    ".html",
+    ".css"
+  ],
+  "forbidden_patterns": [
+    "eval(",
+    "exec(",
+    "__import__",
+    "subprocess.call",
+    "os.system",
+    "shell=True"
+  ],
+  "process_whitelist": [
+    "python",
+    "node",
+    "uvicorn",
+    "fastapi"
+  ]
+}

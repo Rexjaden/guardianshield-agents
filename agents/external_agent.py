@@ -22,6 +22,119 @@ class ExternalAgent:
     
     def __init__(self):
         self.name = "ExternalAgent"
+        self.training_specialization = 'external_threats'
+        self.external_threat_patterns = {}
+        self.network_signatures = []
+        self.malware_indicators = []
+        self.phishing_patterns = []
+        
+    async def continuous_learn(self, training_data: list):
+        """Specialized continuous learning for external threat detection"""
+        external_events = []
+        
+        # Filter for external threat relevant data
+        for data_point in training_data:
+            if self._is_external_threat_relevant(data_point):
+                external_events.append(data_point)
+        
+        if not external_events:
+            return
+            
+        # Process external threat training data
+        await self._train_on_network_patterns(external_events)
+        await self._update_malware_signatures(external_events)
+        await self._refine_phishing_detection(external_events)
+        
+    def _is_external_threat_relevant(self, data_point: dict) -> bool:
+        """Check if data point is relevant for external threat analysis"""
+        relevant_types = [
+            'network_intrusion', 'malware_detection', 'phishing_attempt',
+            'ddos_attack', 'port_scan', 'external_connection'
+        ]
+        
+        event_type = data_point.get('event_type', '')
+        data_content = data_point.get('data', {})
+        threat_type = data_content.get('type', '')
+        
+        return (event_type in relevant_types or 
+                threat_type in ['malware', 'phishing', 'ddos', 'intrusion'] or
+                any(keyword in str(data_content).lower() 
+                    for keyword in ['network', 'external', 'malware', 'phishing']))
+    
+    async def _train_on_network_patterns(self, events: list):
+        """Train on network-based threat patterns"""
+        for event in events:
+            if self._is_network_related(event):
+                pattern = self._extract_network_signature(event)
+                if pattern:
+                    self.network_signatures.append(pattern)
+                    
+        # Keep only recent signatures
+        self.network_signatures = self.network_signatures[-1000:]
+    
+    def _is_network_related(self, event: dict) -> bool:
+        """Check if event is network-related"""
+        data = event.get('data', {})
+        return any(key in data for key in ['ip', 'port', 'protocol', 'network', 'connection'])
+    
+    def _extract_network_signature(self, event: dict) -> dict:
+        """Extract network signature from event"""
+        data = event.get('data', {})
+        return {
+            'source_ip': data.get('source_ip', ''),
+            'destination_port': data.get('port', 0),
+            'protocol': data.get('protocol', 'unknown'),
+            'pattern_type': data.get('type', 'generic'),
+            'timestamp': data.get('timestamp', time.time()),
+            'severity': data.get('severity', 5)
+        }
+    
+    async def _update_malware_signatures(self, events: list):
+        """Update malware detection signatures"""
+        for event in events:
+            data = event.get('data', {})
+            if data.get('type') == 'malware':
+                signature = {
+                    'hash': data.get('hash', ''),
+                    'behavior': data.get('behavior', []),
+                    'file_type': data.get('file_type', ''),
+                    'detection_method': data.get('method', 'unknown'),
+                    'verified': event.get('verified', True)
+                }
+                self.malware_indicators.append(signature)
+                
+        # Keep only verified and recent indicators
+        self.malware_indicators = [ind for ind in self.malware_indicators[-500:] 
+                                 if ind.get('verified', True)]
+    
+    def generate_external_training_data(self, count: int = 25) -> list:
+        """Generate synthetic external threat training data"""
+        synthetic_data = []
+        
+        threat_scenarios = [
+            ('malware', {'hash': 'abc123', 'file_type': 'exe', 'behavior': ['network_call']}),
+            ('phishing', {'url': 'fake-bank.com', 'similarity': 0.95, 'target': 'banking'}),
+            ('ddos', {'source_ips': 1000, 'rate': 50000, 'target_port': 80}),
+            ('intrusion', {'method': 'brute_force', 'target_service': 'ssh', 'attempts': 100}),
+            ('port_scan', {'scanner_ip': '192.168.1.100', 'ports_scanned': 1000})
+        ]
+        
+        for i in range(count):
+            threat_type, threat_data = threat_scenarios[i % len(threat_scenarios)]
+            
+            synthetic_data.append({
+                'event_type': 'threat_detected',
+                'data': {
+                    'type': threat_type,
+                    'severity': 5 + (i % 5),
+                    'source': 'external_scanner',
+                    **threat_data
+                },
+                'verified': True,
+                'confidence': 0.75 + (i % 4) * 0.05
+            })
+            
+        return synthetic_data
         
     def autonomous_cycle(self):
         """Run autonomous external operations cycle"""

@@ -1,0 +1,329 @@
+{
+  "session_id": "overnight_training_20251103_211053",
+  "start_time": "2025-11-03T21:10:54.036335",
+  "end_time": "2025-11-04T03:12:13.185031",
+  "total_cycles": 30,
+  "performance_improvements": {
+    "malware": {
+      "initial": 0.94,
+      "current": 0.94
+    },
+    "phishing": {
+      "initial": 0.96,
+      "current": 0.96
+    },
+    "ddos": {
+      "initial": 0.92,
+      "current": 0.92
+    },
+    "insider_threat": {
+      "initial": 0.92,
+      "current": 0.92
+    },
+    "smart_contract_vulnerability": {
+      "initial": 0.964,
+      "current": 0.99
+    },
+    "defi_exploit": {
+      "initial": 0.93,
+      "current": 0.93
+    }
+  },
+  "training_log": [
+    {
+      "cycle": 1,
+      "timestamp": "2025-11-03T21:10:54.036335",
+      "scenarios_trained": 8,
+      "avg_improvement": 0.002259355777984267,
+      "cycle_time": 0.506732702255249,
+      "cumulative_improvements": 0.018074846223874137
+    },
+    {
+      "cycle": 2,
+      "timestamp": "2025-11-03T21:10:56.543053",
+      "scenarios_trained": 8,
+      "avg_improvement": -0.0028886664832711998,
+      "cycle_time": 0.49775266647338867,
+      "cumulative_improvements": -0.023109331866169598
+    },
+    {
+      "cycle": 3,
+      "timestamp": "2025-11-03T21:10:58.975872",
+      "scenarios_trained": 8,
+      "avg_improvement": 0.002363658696589251,
+      "cycle_time": 0.4288809299468994,
+      "cumulative_improvements": 0.018909269572714008
+    },
+    {
+      "cycle": 4,
+      "timestamp": "2025-11-03T21:11:01.727541",
+      "scenarios_trained": 8,
+      "avg_improvement": 0.006897361945222615,
+      "cycle_time": 0.7461445331573486,
+      "cumulative_improvements": 0.05517889556178092
+    },
+    {
+      "cycle": 5,
+      "timestamp": "2025-11-03T21:11:04.308469",
+      "scenarios_trained": 8,
+      "avg_improvement": -0.0025470979998986802,
+      "cycle_time": 0.5641634464263916,
+      "cumulative_improvements": -0.020376783999189442
+    },
+    {
+      "cycle": 6,
+      "timestamp": "2025-11-03T21:11:06.904992",
+      "scenarios_trained": 8,
+      "avg_improvement": 0.006897727297366845,
+      "cycle_time": 0.5891721248626709,
+      "cumulative_improvements": 0.05518181837893476
+    },
+    {
+      "cycle": 7,
+      "timestamp": "2025-11-03T21:11:09.515138",
+      "scenarios_trained": 8,
+      "avg_improvement": 0.002013606699396698,
+      "cycle_time": 0.5995635986328125,
+      "cumulative_improvements": 0.016108853595173583
+    },
+    {
+      "cycle": 8,
+      "timestamp": "2025-11-03T21:11:12.151416",
+      "scenarios_trained": 8,
+      "avg_improvement": 0.006823830737159175,
+      "cycle_time": 0.636070728302002,
+      "cumulative_improvements": 0.0545906458972734
+    },
+    {
+      "cycle": 9,
+      "timestamp": "2025-11-03T21:11:14.727990",
+      "scenarios_trained": 8,
+      "avg_improvement": -0.002501528662696508,
+      "cycle_time": 0.5661776065826416,
+      "cumulative_improvements": -0.020012229301572065
+    },
+    {
+      "cycle": 10,
+      "timestamp": "2025-11-03T21:11:17.120600",
+      "scenarios_trained": 8,
+      "avg_improvement": 0.011934651803,
+      "cycle_time": 0.38961219787597656,
+      "cumulative_improvements": 0.095477214424
+    },
+    {
+      "cycle": 11,
+      "timestamp": "2025-11-03T21:11:20.303975",
+      "scenarios_trained": 8,
+      "avg_improvement": 0.0024426072143591683,
+      "cycle_time": 0.157118558883667,
+      "cumulative_improvements": 0.019540857714873346
+    },
+    {
+      "cycle": 12,
+      "timestamp": "2025-11-03T21:11:22.485378",
+      "scenarios_trained": 8,
+      "avg_improvement": 0.006998909870903316,
+      "cycle_time": 0.170881986618042,
+      "cumulative_improvements": 0.05599127896722653
+    },
+    {
+      "cycle": 13,
+      "timestamp": "2025-11-03T21:11:24.679072",
+      "scenarios_trained": 8,
+      "avg_improvement": -0.002453899622276336,
+      "cycle_time": 0.18103623390197754,
+      "cumulative_improvements": -0.01963119697821069
+    },
+    {
+      "cycle": 14,
+      "timestamp": "2025-11-03T21:11:26.860140",
+      "scenarios_trained": 8,
+      "avg_improvement": -0.00746302639299388,
+      "cycle_time": 0.17887449264526367,
+      "cumulative_improvements": -0.05970421114395104
+    },
+    {
+      "cycle": 15,
+      "timestamp": "2025-11-03T21:11:29.094710",
+      "scenarios_trained": 8,
+      "avg_improvement": 0.007126261496373227,
+      "cycle_time": 0.21208405494689941,
+      "cumulative_improvements": 0.05701009197098582
+    },
+    {
+      "cycle": 16,
+      "timestamp": "2025-11-03T21:11:31.274899",
+      "scenarios_trained": 8,
+      "avg_improvement": -0.0071749623288488275,
+      "cycle_time": 0.16272544860839844,
+      "cumulative_improvements": -0.05739969863079062
+    },
+    {
+      "cycle": 17,
+      "timestamp": "2025-11-03T21:11:33.448666",
+      "scenarios_trained": 8,
+      "avg_improvement": 0.0024031256869989645,
+      "cycle_time": 0.16818666458129883,
+      "cumulative_improvements": 0.019225005495991716
+    },
+    {
+      "cycle": 18,
+      "timestamp": "2025-11-03T21:11:35.650345",
+      "scenarios_trained": 8,
+      "avg_improvement": 0.0022248909841047376,
+      "cycle_time": 0.18641114234924316,
+      "cumulative_improvements": 0.0177991278728379
+    },
+    {
+      "cycle": 19,
+      "timestamp": "2025-11-03T21:11:37.888647",
+      "scenarios_trained": 8,
+      "avg_improvement": 0.0020901096790264364,
+      "cycle_time": 0.22554445266723633,
+      "cumulative_improvements": 0.01672087743221149
+    },
+    {
+      "cycle": 20,
+      "timestamp": "2025-11-03T21:11:40.099127",
+      "scenarios_trained": 8,
+      "avg_improvement": -0.002188846158625351,
+      "cycle_time": 0.20415353775024414,
+      "cumulative_improvements": -0.01751076926900281
+    },
+    {
+      "cycle": 21,
+      "timestamp": "2025-11-03T21:11:43.335304",
+      "scenarios_trained": 8,
+      "avg_improvement": 0.006680361447622565,
+      "cycle_time": 0.20456790924072266,
+      "cumulative_improvements": 0.05344289158098052
+    },
+    {
+      "cycle": 22,
+      "timestamp": "2025-11-03T21:11:45.531908",
+      "scenarios_trained": 8,
+      "avg_improvement": 0.0021536042974559452,
+      "cycle_time": 0.18376469612121582,
+      "cumulative_improvements": 0.017228834379647562
+    },
+    {
+      "cycle": 23,
+      "timestamp": "2025-11-03T21:11:47.725819",
+      "scenarios_trained": 8,
+      "avg_improvement": 0.0020794061604182163,
+      "cycle_time": 0.1921377182006836,
+      "cumulative_improvements": 0.01663524928334573
+    },
+    {
+      "cycle": 24,
+      "timestamp": "2025-11-03T21:11:49.937308",
+      "scenarios_trained": 8,
+      "avg_improvement": -0.0026284523332833964,
+      "cycle_time": 0.19312524795532227,
+      "cumulative_improvements": -0.02102761866626717
+    },
+    {
+      "cycle": 25,
+      "timestamp": "2025-11-03T21:11:52.136958",
+      "scenarios_trained": 8,
+      "avg_improvement": 0.002035504296706541,
+      "cycle_time": 0.19243788719177246,
+      "cumulative_improvements": 0.016284034373652327
+    },
+    {
+      "cycle": 26,
+      "timestamp": "2025-11-03T21:11:54.338292",
+      "scenarios_trained": 8,
+      "avg_improvement": 0.0021982060948451095,
+      "cycle_time": 0.19144940376281738,
+      "cumulative_improvements": 0.017585648758760876
+    },
+    {
+      "cycle": 27,
+      "timestamp": "2025-11-03T21:11:56.642211",
+      "scenarios_trained": 8,
+      "avg_improvement": -0.0074576832065017685,
+      "cycle_time": 0.26822924613952637,
+      "cumulative_improvements": -0.05966146565201415
+    },
+    {
+      "cycle": 28,
+      "timestamp": "2025-11-03T21:11:58.871328",
+      "scenarios_trained": 8,
+      "avg_improvement": 0.006763396199340036,
+      "cycle_time": 0.22684049606323242,
+      "cumulative_improvements": 0.05410716959472029
+    },
+    {
+      "cycle": 29,
+      "timestamp": "2025-11-03T21:12:01.048270",
+      "scenarios_trained": 8,
+      "avg_improvement": -0.00266683584822674,
+      "cycle_time": 0.17678189277648926,
+      "cumulative_improvements": -0.02133468678581392
+    },
+    {
+      "cycle": 30,
+      "timestamp": "2025-11-03T21:12:03.238532",
+      "scenarios_trained": 8,
+      "avg_improvement": 0.0023341572470546184,
+      "cycle_time": 0.18763518333435059,
+      "cumulative_improvements": 0.018673257976436947
+    }
+  ],
+  "final_status": {
+    "learning_active": true,
+    "detection_engine": {
+      "timestamp": "2025-11-04T03:12:13.185031",
+      "models": {
+        "malware": {
+          "type": "ensemble",
+          "accuracy": 0.94,
+          "last_trained": "2025-11-04T03:10:54.354403",
+          "feature_count": 4
+        },
+        "phishing": {
+          "type": "neural_network",
+          "accuracy": 0.96,
+          "last_trained": "2025-11-04T03:10:54.354403",
+          "feature_count": 4
+        },
+        "ddos": {
+          "type": "anomaly_detection",
+          "accuracy": 0.92,
+          "last_trained": "2025-11-04T03:10:54.354403",
+          "feature_count": 4
+        },
+        "insider_threat": {
+          "type": "behavioral_analysis",
+          "accuracy": 0.92,
+          "last_trained": "2025-11-04T03:10:54.354403",
+          "feature_count": 4
+        },
+        "smart_contract_vulnerability": {
+          "type": "static_analysis",
+          "accuracy": 0.99,
+          "last_trained": "2025-11-04T03:10:54.354403",
+          "feature_count": 4
+        },
+        "defi_exploit": {
+          "type": "transaction_analysis",
+          "accuracy": 0.93,
+          "last_trained": "2025-11-04T03:10:54.354403",
+          "feature_count": 4
+        }
+      },
+      "learning_metrics": {
+        "patterns_learned": 528,
+        "accuracy_improvements": [],
+        "false_positive_reduction": [],
+        "detection_speed_improvements": []
+      },
+      "database_stats": {
+        "total_patterns": 563,
+        "learning_events": 18
+      }
+    },
+    "timestamp": "2025-11-04T03:12:13.187593"
+  }
+}

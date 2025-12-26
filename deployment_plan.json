@@ -1,0 +1,109 @@
+{
+  "project": "GuardianShield",
+  "created": "2025-11-03T20:57:39.219197",
+  "domain": "guardianshield.io",
+  "configuration": {
+    "project": "GuardianShield",
+    "domain": "guardianshield.io",
+    "services": {
+      "frontend": {
+        "subdomain": "app.guardianshield.io",
+        "platform": "Vercel",
+        "framework": "React",
+        "build_command": "npm run build",
+        "output_directory": "dist"
+      },
+      "api": {
+        "subdomain": "api.guardianshield.io",
+        "platform": "Railway",
+        "framework": "FastAPI",
+        "port": 8000,
+        "health_check": "/health"
+      },
+      "admin": {
+        "subdomain": "admin.guardianshield.io",
+        "platform": "Vercel",
+        "framework": "React",
+        "auth_required": true
+      },
+      "docs": {
+        "subdomain": "docs.guardianshield.io",
+        "platform": "Vercel",
+        "framework": "Next.js",
+        "content": "API documentation"
+      }
+    },
+    "infrastructure": {
+      "dns": "CloudFlare",
+      "cdn": "CloudFlare",
+      "ssl": "Let's Encrypt",
+      "monitoring": "UptimeRobot",
+      "analytics": "Google Analytics"
+    },
+    "estimated_cost": {
+      "monthly": 86,
+      "annual": 1032,
+      "breakdown": {
+        "domain": 1.25,
+        "cloudflare": 20,
+        "vercel": 20,
+        "railway": 20,
+        "database": 15,
+        "monitoring": 10
+      }
+    }
+  },
+  "dns_records": [
+    {
+      "type": "A",
+      "name": "@",
+      "content": "76.76.19.19",
+      "ttl": 1,
+      "comment": "Main domain - Frontend"
+    },
+    {
+      "type": "CNAME",
+      "name": "app",
+      "content": "guardianshield.io",
+      "ttl": 1,
+      "comment": "Web application"
+    },
+    {
+      "type": "CNAME",
+      "name": "api",
+      "content": "railway.app",
+      "ttl": 1,
+      "comment": "API server"
+    },
+    {
+      "type": "CNAME",
+      "name": "admin",
+      "content": "guardianshield.io",
+      "ttl": 1,
+      "comment": "Admin console"
+    },
+    {
+      "type": "CNAME",
+      "name": "docs",
+      "content": "guardianshield.io",
+      "ttl": 1,
+      "comment": "Documentation"
+    },
+    {
+      "type": "MX",
+      "name": "@",
+      "content": "10 mail.protonmail.ch",
+      "ttl": 1,
+      "comment": "Email routing"
+    },
+    {
+      "type": "TXT",
+      "name": "@",
+      "content": "v=spf1 include:_spf.protonmail.ch mx ~all",
+      "ttl": 1,
+      "comment": "SPF record"
+    }
+  ],
+  "estimated_timeline": "1-2 weeks",
+  "priority": "HIGH - Ready for production deployment"
+}

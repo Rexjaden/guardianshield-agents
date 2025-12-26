@@ -23,6 +23,8 @@ contract DMER is Ownable {
     event EntityFlagged(uint256 indexed entityId, string identifier, string entityType, string reason, address reporter);
     event EntityUnflagged(uint256 indexed entityId, string identifier, address reporter);
 
+    constructor() Ownable(msg.sender) {}
+
     function flagEntity(string memory entityType, string memory identifier, string memory reason) public {
         Entity memory newEntity = Entity({
             entityType: entityType,

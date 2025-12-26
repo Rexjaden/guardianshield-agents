@@ -24,7 +24,7 @@ contract GuardianStaking is Ownable {
     event Unstaked(address indexed user, uint256 amount);
     event RewardClaimed(address indexed user, uint256 amount);
 
-    constructor(address _guardToken, uint256 _rewardRate) {
+    constructor(address _guardToken, uint256 _rewardRate) Ownable(msg.sender) {
         guardToken = IERC20(_guardToken);
         rewardRate = _rewardRate;
     }

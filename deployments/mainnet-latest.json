@@ -1,0 +1,62 @@
+{
+  "network": "mainnet",
+  "chainId": "1",
+  "deployer": "0xF262b772c2EBf526a5cF8634CA92597583Ef38ee",
+  "timestamp": "2025-12-26T19:39:58.375Z",
+  "contracts": {
+    "GuardianToken": {
+      "address": "0x5D4AFA1d429820a88198F3F237bf85a31BE06B71",
+      "constructorArgs": [
+        "0xF262b772c2EBf526a5cF8634CA92597583Ef38ee"
+      ]
+    },
+    "GuardianTreasury": {
+      "address": "0x5c740F59aC8357a6eC3411e7488361E8Df8E6EDc",
+      "constructorArgs": [
+        "0x59bb1BD7b4f596c0886c3332fa8d3fF2e3242B87"
+      ]
+    },
+    "GuardianShieldToken": {
+      "address": "0x74d96D98b00D92F2151a521baB3f8bdB44B09288",
+      "constructorArgs": []
+    },
+    "GuardianStaking": {
+      "address": "0xCBD786f61988565D2BbFdC781F4F857c4aC3Eae9",
+      "constructorArgs": [
+        "0x5D4AFA1d429820a88198F3F237bf85a31BE06B71",
+        "1000000000000000000"
+      ]
+    },
+    "GuardianLiquidityPool": {
+      "address": "0x2c64492B8954180f75Db25bf1665bDA18f712F6e",
+      "constructorArgs": [
+        "0x5D4AFA1d429820a88198F3F237bf85a31BE06B71",
+        "0x74d96D98b00D92F2151a521baB3f8bdB44B09288"
+      ]
+    },
+    "DMER": {
+      "address": "0x974bFFe3B5B287dAF4088Bc6AD3B8E8B2b961cdd",
+      "constructorArgs": []
+    },
+    "EvolutionaryUpgradeableContract": {
+      "address": "0x689fEE37CB98F9f434Ce07a47f52Bd97A578057B",
+      "constructorArgs": [
+        "0x974bFFe3B5B287dAF4088Bc6AD3B8E8B2b961cdd",
+        "0xF262b772c2EBf526a5cF8634CA92597583Ef38ee",
+        "0x",
+        [
+          "0xF262b772c2EBf526a5cF8634CA92597583Ef38ee"
+        ],
+        1
+      ]
+    },
+    "GuardianTokenSale": {
+      "address": "0xC6A4a2591bb0a9d1f45397da616dBc27e4b7BC8d",
+      "constructorArgs": [
+        "0x5D4AFA1d429820a88198F3F237bf85a31BE06B71",
+        "0xF262b772c2EBf526a5cF8634CA92597583Ef38ee",
+        "0x5c740F59aC8357a6eC3411e7488361E8Df8E6EDc"
+      ]
+    }
+  }
+}

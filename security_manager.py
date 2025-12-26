@@ -1,0 +1,281 @@
+"""
+GuardianShield Authentication & Access Control System
+Implements strict security controls for admin access
+"""
+
+import os
+import jwt
+import hashlib
+import secrets
+from datetime import datetime, timedelta
+from typing import Dict, Optional, List
+from fastapi import HTTPException, Request, Depends
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+import json
+
+class SecurityManager:
+    def __init__(self):
+        # Load or generate master keys
+        self.secret_key = self._load_or_generate_secret()
+        self.master_admin_hash = self._load_or_generate_master_admin()
+        self.authorized_users = self._load_authorized_users()
+        self.active_sessions = {}
+        
+        # Security settings
+        self.token_expiry_hours = 8  # Sessions expire after 8 hours
+        self.max_failed_attempts = 3
+        self.lockout_duration_minutes = 15
+        self.failed_attempts = {}
+        
+    def _load_or_generate_secret(self) -> str:
+        """Load existing secret key or generate new one"""
+        secret_file = ".guardian_secret"
+        if os.path.exists(secret_file):
+            with open(secret_file, 'r') as f:
+                return f.read().strip()
+        else:
+            # Generate cryptographically secure secret
+            secret = secrets.token_urlsafe(64)
+            with open(secret_file, 'w') as f:
+                f.write(secret)
+            os.chmod(secret_file, 0o600)  # Owner read/write only
+            return secret
+    
+    def _load_or_generate_master_admin(self) -> str:
+        """Load or generate master admin credentials"""
+        admin_file = ".guardian_admin"
+        if os.path.exists(admin_file):
+            with open(admin_file, 'r') as f:
+                return f.read().strip()
+        else:
+            # Generate master admin password and hash it
+            master_password = secrets.token_urlsafe(32)
+            password_hash = hashlib.sha256(f"guardian_master_{master_password}".encode()).hexdigest()
+            
+            with open(admin_file, 'w') as f:
+                f.write(password_hash)
+            os.chmod(admin_file, 0o600)
+            
+            # Save the actual password for initial setup
+            with open(".guardian_master_password.txt", 'w') as f:
+                f.write(f"MASTER ADMIN PASSWORD: {master_password}\n")
+                f.write(f"Generated: {datetime.now()}\n")
+                f.write("IMPORTANT: Save this password securely and delete this file!\n")
+            os.chmod(".guardian_master_password.txt", 0o600)
+            
+            return password_hash
+    
+    def _load_authorized_users(self) -> Dict:
+        """Load authorized users list"""
+        users_file = ".guardian_authorized_users.json"
+        if os.path.exists(users_file):
+            with open(users_file, 'r') as f:
+                return json.load(f)
+        else:
+            # Initialize with empty authorized users
+            default_users = {
+                "master_admin": {
+                    "role": "master",
+                    "permissions": ["all"],
+                    "created": datetime.now().isoformat(),
+                    "active": True
+                }
+            }
+            self._save_authorized_users(default_users)
+            return default_users
+    
+    def _save_authorized_users(self, users: Dict):
+        """Save authorized users to file"""
+        users_file = ".guardian_authorized_users.json"
+        with open(users_file, 'w') as f:
+            json.dump(users, f, indent=2)
+        os.chmod(users_file, 0o600)
+        self.authorized_users = users
+    
+    def authenticate_master_admin(self, password: str) -> bool:
+        """Authenticate master admin password"""
+        password_hash = hashlib.sha256(f"guardian_master_{password}".encode()).hexdigest()
+        return password_hash == self.master_admin_hash
+    
+    def authenticate_user(self, username: str, password: str) -> Optional[str]:
+        """Authenticate user and return JWT token"""
+        # Check for lockout
+        if self._is_locked_out(username):
+            raise HTTPException(status_code=423, detail="Account temporarily locked due to failed attempts")
+        
+        # Master admin authentication
+        if username == "master_admin":
+            if self.authenticate_master_admin(password):
+                self._clear_failed_attempts(username)
+                return self._generate_token(username, "master")
+            else:
+                self._record_failed_attempt(username)
+                raise HTTPException(status_code=401, detail="Invalid credentials")
+        
+        # Regular user authentication
+        if username not in self.authorized_users:
+            self._record_failed_attempt(username)
+            raise HTTPException(status_code=401, detail="User not authorized")
+        
+        user_info = self.authorized_users[username]
+        if not user_info.get("active", False):
+            raise HTTPException(status_code=401, detail="Account disabled")
+        
+        # Check password (for demo, using simple hash - in production use proper password hashing)
+        expected_hash = user_info.get("password_hash", "")
+        provided_hash = hashlib.sha256(f"guardian_user_{password}".encode()).hexdigest()
+        
+        if expected_hash == provided_hash:
+            self._clear_failed_attempts(username)
+            return self._generate_token(username, user_info.get("role", "user"))
+        else:
+            self._record_failed_attempt(username)
+            raise HTTPException(status_code=401, detail="Invalid credentials")
+    
+    def _generate_token(self, username: str, role: str) -> str:
+        """Generate JWT token for authenticated user"""
+        payload = {
+            "username": username,
+            "role": role,
+            "exp": datetime.utcnow() + timedelta(hours=self.token_expiry_hours),
+            "iat": datetime.utcnow(),
+            "session_id": secrets.token_urlsafe(16)
+        }
+        
+        token = jwt.encode(payload, self.secret_key, algorithm="HS256")
+        
+        # Store active session
+        self.active_sessions[payload["session_id"]] = {
+            "username": username,
+            "role": role,
+            "created": datetime.utcnow(),
+            "last_activity": datetime.utcnow()
+        }
+        
+        return token
+    
+    def verify_token(self, token: str) -> Dict:
+        """Verify JWT token and return user info"""
+        try:
+            payload = jwt.decode(token, self.secret_key, algorithms=["HS256"])
+            
+            # Check if session is still active
+            session_id = payload.get("session_id")
+            if session_id not in self.active_sessions:
+                raise HTTPException(status_code=401, detail="Session expired")
+            
+            # Update last activity
+            self.active_sessions[session_id]["last_activity"] = datetime.utcnow()
+            
+            return payload
+        except jwt.ExpiredSignatureError:
+            raise HTTPException(status_code=401, detail="Token expired")
+        except jwt.JWTError:
+            raise HTTPException(status_code=401, detail="Invalid token")
+    
+    def _is_locked_out(self, username: str) -> bool:
+        """Check if user is locked out due to failed attempts"""
+        if username not in self.failed_attempts:
+            return False
+        
+        attempts = self.failed_attempts[username]
+        if attempts["count"] >= self.max_failed_attempts:
+            lockout_time = attempts["last_attempt"] + timedelta(minutes=self.lockout_duration_minutes)
+            if datetime.utcnow() < lockout_time:
+                return True
+            else:
+                # Lockout period expired, clear attempts
+                del self.failed_attempts[username]
+        
+        return False
+    
+    def _record_failed_attempt(self, username: str):
+        """Record failed login attempt"""
+        if username not in self.failed_attempts:
+            self.failed_attempts[username] = {"count": 0, "last_attempt": None}
+        
+        self.failed_attempts[username]["count"] += 1
+        self.failed_attempts[username]["last_attempt"] = datetime.utcnow()
+    
+    def _clear_failed_attempts(self, username: str):
+        """Clear failed attempts for user"""
+        if username in self.failed_attempts:
+            del self.failed_attempts[username]
+    
+    def add_authorized_user(self, username: str, password: str, role: str = "admin", permissions: List[str] = None):
+        """Add new authorized user (master admin only)"""
+        if permissions is None:
+            permissions = ["read", "agents", "threats"]
+        
+        password_hash = hashlib.sha256(f"guardian_user_{password}".encode()).hexdigest()
+        
+        self.authorized_users[username] = {
+            "role": role,
+            "permissions": permissions,
+            "password_hash": password_hash,
+            "created": datetime.now().isoformat(),
+            "active": True
+        }
+        
+        self._save_authorized_users(self.authorized_users)
+    
+    def revoke_user_access(self, username: str):
+        """Revoke user access (master admin only)"""
+        if username in self.authorized_users and username != "master_admin":
+            self.authorized_users[username]["active"] = False
+            self._save_authorized_users(self.authorized_users)
+            
+            # End all active sessions for this user
+            sessions_to_remove = []
+            for session_id, session_info in self.active_sessions.items():
+                if session_info["username"] == username:
+                    sessions_to_remove.append(session_id)
+            
+            for session_id in sessions_to_remove:
+                del self.active_sessions[session_id]
+    
+    def has_permission(self, user_info: Dict, permission: str) -> bool:
+        """Check if user has specific permission"""
+        role = user_info.get("role", "")
+        username = user_info.get("username", "")
+        
+        # Master admin has all permissions
+        if role == "master" or username == "master_admin":
+            return True
+        
+        # Check user permissions
+        if username in self.authorized_users:
+            user_perms = self.authorized_users[username].get("permissions", [])
+            return permission in user_perms or "all" in user_perms
+        
+        return False
+
+# Global security manager instance
+security_manager = SecurityManager()
+
+# FastAPI security scheme
+security = HTTPBearer()
+
+async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    """Dependency to get current authenticated user"""
+    return security_manager.verify_token(credentials.credentials)
+
+async def require_admin_access(user_info = Depends(get_current_user)):
+    """Dependency to require admin access"""
+    if not security_manager.has_permission(user_info, "admin"):
+        raise HTTPException(status_code=403, detail="Admin access required")
+    return user_info
+
+async def require_master_admin(user_info = Depends(get_current_user)):
+    """Dependency to require master admin access"""
+    if user_info.get("role") != "master":
+        raise HTTPException(status_code=403, detail="Master admin access required")
+    return user_info
+
+def require_permission(permission: str):
+    """Factory function to create permission-specific dependency"""
+    async def permission_check(user_info = Depends(get_current_user)):
+        if not security_manager.has_permission(user_info, permission):
+            raise HTTPException(status_code=403, detail=f"Permission '{permission}' required")
+        return user_info
+    return permission_check

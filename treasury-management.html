@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Treasury Management - GuardianShield</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Ethers.js and WalletConnect -->
+    <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js"></script>
+    <script src="https://unpkg.com/@walletconnect/web3-provider@1.8.0/dist/umd/index.min.js"></script>
+    
+    <!-- GuardianShield Web3 Integration -->
+    <script src="web3-integration.js"></script>
+    <script src="treasury-manager.js"></script>
+    
+    <!-- Styling -->
+    <link rel="stylesheet" href="token-sale-styles.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #ffffff;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: 700;
+            color: #4CAF50;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+        
+        .panel-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .panel-header h2 {
+            color: #4CAF50;
+            font-size: 1.5rem;
+        }
+        
+        .balance-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .balance-item:last-child {
+            border-bottom: none;
+        }
+        
+        .balance-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #E0E0E0;
+        }
+        
+        .balance-value {
+            font-weight: 600;
+            color: #4CAF50;
+            font-size: 1.1rem;
+        }
+        
+        .transaction-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .transaction-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #FF9800;
+        }
+        
+        .transaction-item.confirmed {
+            border-left-color: #4CAF50;
+        }
+        
+        .transaction-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .transaction-id {
+            font-weight: 600;
+            color: #4CAF50;
+        }
+        
+        .transaction-status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .status-pending {
+            background: rgba(255, 152, 0, 0.2);
+            color: #FF9800;
+        }
+        
+        .status-confirmed {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+        }
+        
+        .transaction-details {
+            color: #B0B0B0;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        
+        .transaction-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .btn-confirm {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .btn-cancel {
+            background: #f44336;
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #E0E0E0;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .form-section {
+            grid-column: 1 / -1;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #E0E0E0;
+            font-weight: 500;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 1rem;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.2);
+        }
+        
+        .auth-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1rem;
+            background: rgba(76, 175, 80, 0.1);
+            border: 1px solid rgba(76, 175, 80, 0.3);
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+        
+        .auth-status.unauthorized {
+            background: rgba(244, 67, 54, 0.1);
+            border-color: rgba(244, 67, 54, 0.3);
+            color: #f44336;
+        }
+        
+        .auth-status.authorized {
+            color: #4CAF50;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #B0B0B0;
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">
+                <i class="fas fa-university"></i>
+                Treasury Management
+            </div>
+            <div id="walletConnection">
+                <button id="connectWallet" class="btn btn-secondary">
+                    <i class="fas fa-wallet"></i>
+                    Connect Wallet
+                </button>
+                <div id="walletInfo" class="wallet-info" style="display: none;">
+                    <!-- Wallet info will be populated here -->
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <div id="authStatus" class="auth-status unauthorized" style="display: none;">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>You are not authorized to access treasury functions</span>
+        </div>
+
+        <div id="treasuryDashboard" style="display: none;">
+            <div class="dashboard-grid">
+                <!-- Treasury Balances -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <i class="fas fa-coins"></i>
+                        <h2>Treasury Balances</h2>
+                        <button id="refreshBalances" class="btn btn-secondary">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                    <div id="balancesList">
+                        <div class="loading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Loading balances...
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pending Transactions -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <i class="fas fa-clock"></i>
+                        <h2>Pending Transactions</h2>
+                        <button id="refreshTransactions" class="btn btn-secondary">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                    <div id="pendingTransactions">
+                        <div class="loading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Loading transactions...
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Withdrawal Form -->
+                <div class="panel form-section">
+                    <div class="panel-header">
+                        <i class="fas fa-arrow-up"></i>
+                        <h2>Propose Withdrawal</h2>
+                    </div>
+                    <form id="withdrawalForm" class="form-grid">
+                        <div>
+                            <div class="form-group">
+                                <label for="withdrawalType">Asset Type</label>
+                                <select id="withdrawalType">
+                                    <option value="eth">Ethereum (ETH)</option>
+                                    <option value="token">ERC-20 Token</option>
+                                </select>
+                            </div>
+                            <div class="form-group" id="tokenAddressGroup" style="display: none;">
+                                <label for="tokenAddress">Token Contract Address</label>
+                                <input type="text" id="tokenAddress" placeholder="0x...">
+                            </div>
+                            <div class="form-group">
+                                <label for="withdrawalAmount">Amount</label>
+                                <input type="number" id="withdrawalAmount" step="0.001" placeholder="0.0" required>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="form-group">
+                                <label for="recipientAddress">Recipient Address</label>
+                                <input type="text" id="recipientAddress" placeholder="0x..." required>
+                            </div>
+                            <div class="form-group">
+                                <label for="withdrawalDescription">Description</label>
+                                <textarea id="withdrawalDescription" rows="3" placeholder="Reason for withdrawal..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-confirm">
+                                <i class="fas fa-paper-plane"></i>
+                                Propose Withdrawal
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Treasury Info -->
+            <div class="panel">
+                <div class="panel-header">
+                    <i class="fas fa-info-circle"></i>
+                    <h2>Treasury Information</h2>
+                </div>
+                <div id="treasuryInfo">
+                    <div class="loading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        Loading treasury information...
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="loadingScreen" class="loading">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Please connect your wallet to access treasury management</p>
+        </div>
+    </main>
+
+    <script>
+        let isInitialized = false;
+
+        // Initialize treasury management interface
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Wait for guardianWeb3 and guardianTreasuryManager to be ready
+            await waitForDependencies();
+            
+            // Set treasury address (replace with actual deployed address)
+            const treasuryAddress = "0x..."; // Replace with deployed GuardianTreasury address
+            guardianTreasuryManager.setTreasuryAddress(treasuryAddress);
+            
+            // Set up event listeners
+            setupEventListeners();
+            
+            isInitialized = true;
+        });
+
+        async function waitForDependencies() {
+            return new Promise((resolve) => {
+                const check = () => {
+                    if (typeof guardianWeb3 !== 'undefined' && typeof guardianTreasuryManager !== 'undefined') {
+                        resolve();
+                    } else {
+                        setTimeout(check, 100);
+                    }
+                };
+                check();
+            });
+        }
+
+        function setupEventListeners() {
+            // Wallet connection
+            document.getElementById('connectWallet').addEventListener('click', async () => {
+                try {
+                    await guardianWeb3.connectWallet();
+                    await initializeTreasuryInterface();
+                } catch (error) {
+                    console.error('Wallet connection failed:', error);
+                }
+            });
+
+            // Refresh buttons
+            document.getElementById('refreshBalances').addEventListener('click', refreshBalances);
+            document.getElementById('refreshTransactions').addEventListener('click', refreshTransactions);
+
+            // Withdrawal form
+            document.getElementById('withdrawalType').addEventListener('change', (e) => {
+                const tokenGroup = document.getElementById('tokenAddressGroup');
+                tokenGroup.style.display = e.target.value === 'token' ? 'block' : 'none';
+            });
+
+            document.getElementById('withdrawalForm').addEventListener('submit', handleWithdrawalSubmit);
+
+            // Auto-refresh data every 30 seconds
+            setInterval(() => {
+                if (guardianWeb3.isConnected) {
+                    refreshBalances();
+                    refreshTransactions();
+                }
+            }, 30000);
+        }
+
+        async function initializeTreasuryInterface() {
+            if (!guardianWeb3.isConnected) {
+                return;
+            }
+
+            const isAuthorized = await guardianTreasuryManager.checkAuthorization();
+            
+            const authStatus = document.getElementById('authStatus');
+            const dashboard = document.getElementById('treasuryDashboard');
+            const loadingScreen = document.getElementById('loadingScreen');
+
+            authStatus.style.display = 'block';
+            loadingScreen.style.display = 'none';
+
+            if (isAuthorized) {
+                authStatus.className = 'auth-status authorized';
+                authStatus.innerHTML = '<i class="fas fa-check-circle"></i><span>You are authorized to manage treasury functions</span>';
+                dashboard.style.display = 'block';
+                
+                // Load initial data
+                await Promise.all([
+                    refreshBalances(),
+                    refreshTransactions(),
+                    refreshTreasuryInfo()
+                ]);
+            } else {
+                authStatus.className = 'auth-status unauthorized';
+                authStatus.innerHTML = '<i class="fas fa-exclamation-triangle"></i><span>You are not authorized to access treasury functions</span>';
+                dashboard.style.display = 'none';
+            }
+        }
+
+        async function refreshBalances() {
+            const balancesList = document.getElementById('balancesList');
+            
+            try {
+                const tokenAddresses = [
+                    // Add relevant token addresses here
+                ];
+                
+                const balances = await guardianTreasuryManager.getTreasuryBalances(tokenAddresses);
+                
+                if (balances) {
+                    balancesList.innerHTML = `
+                        <div class="balance-item">
+                            <div class="balance-label">
+                                <i class="fab fa-ethereum"></i>
+                                Ethereum (ETH)
+                            </div>
+                            <div class="balance-value">${parseFloat(balances.eth).toFixed(4)} ETH</div>
+                        </div>
+                        ${balances.tokens.map(token => `
+                            <div class="balance-item">
+                                <div class="balance-label">
+                                    <i class="fas fa-coins"></i>
+                                    Token (${token.address.slice(0, 6)}...${token.address.slice(-4)})
+                                </div>
+                                <div class="balance-value">${parseFloat(token.balance).toFixed(4)}</div>
+                            </div>
+                        `).join('')}
+                    `;
+                }
+            } catch (error) {
+                console.error('Failed to refresh balances:', error);
+                balancesList.innerHTML = '<div class="loading">Failed to load balances</div>';
+            }
+        }
+
+        async function refreshTransactions() {
+            const transactionsContainer = document.getElementById('pendingTransactions');
+            
+            try {
+                const transactions = await guardianTreasuryManager.getPendingTransactions();
+                
+                if (transactions.length === 0) {
+                    transactionsContainer.innerHTML = '<div class="loading">No pending transactions</div>';
+                } else {
+                    transactionsContainer.innerHTML = transactions.map(tx => `
+                        <div class="transaction-item ${tx.confirmations === '2' ? 'confirmed' : ''}">
+                            <div class="transaction-header">
+                                <div class="transaction-id">TX #${tx.id}</div>
+                                <div class="transaction-status ${tx.confirmations === '2' ? 'status-confirmed' : 'status-pending'}">
+                                    ${tx.confirmations}/2 Signatures
+                                </div>
+                            </div>
+                            <div class="transaction-details">
+                                <div><strong>To:</strong> ${tx.to}</div>
+                                <div><strong>Amount:</strong> ${tx.value} ETH</div>
+                                <div><strong>Description:</strong> ${tx.description}</div>
+                                <div><strong>Proposed:</strong> ${tx.timestamp.toLocaleString()}</div>
+                            </div>
+                            <div class="transaction-actions">
+                                ${tx.confirmations !== '2' ? `
+                                    <button class="btn btn-confirm" onclick="confirmTransaction('${tx.id}')">
+                                        <i class="fas fa-check"></i> Confirm
+                                    </button>
+                                    <button class="btn btn-cancel" onclick="cancelTransaction('${tx.id}')">
+                                        <i class="fas fa-times"></i> Cancel
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Failed to refresh transactions:', error);
+                transactionsContainer.innerHTML = '<div class="loading">Failed to load transactions</div>';
+            }
+        }
+
+        async function refreshTreasuryInfo() {
+            const treasuryInfo = document.getElementById('treasuryInfo');
+            
+            try {
+                const info = await guardianTreasuryManager.getTreasuryInfo();
+                
+                if (info) {
+                    treasuryInfo.innerHTML = `
+                        <div class="balance-item">
+                            <div class="balance-label">Owner</div>
+                            <div class="balance-value">${info.owner.slice(0, 6)}...${info.owner.slice(-4)}</div>
+                        </div>
+                        <div class="balance-item">
+                            <div class="balance-label">Treasurer</div>
+                            <div class="balance-value">${info.treasurer.slice(0, 6)}...${info.treasurer.slice(-4)}</div>
+                        </div>
+                        <div class="balance-item">
+                            <div class="balance-label">Your Role</div>
+                            <div class="balance-value">
+                                ${info.isOwner ? 'Owner' : info.isTreasurer ? 'Treasurer' : 'Unauthorized'}
+                            </div>
+                        </div>
+                        <div class="balance-item">
+                            <div class="balance-label">Required Signatures</div>
+                            <div class="balance-value">2 of 2</div>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Failed to refresh treasury info:', error);
+                treasuryInfo.innerHTML = '<div class="loading">Failed to load treasury information</div>';
+            }
+        }
+
+        async function handleWithdrawalSubmit(e) {
+            e.preventDefault();
+            
+            const type = document.getElementById('withdrawalType').value;
+            const amount = document.getElementById('withdrawalAmount').value;
+            const recipient = document.getElementById('recipientAddress').value;
+            const description = document.getElementById('withdrawalDescription').value;
+            const tokenAddress = document.getElementById('tokenAddress').value;
+            
+            try {
+                if (type === 'token' && !tokenAddress) {
+                    guardianWeb3.showNotification('Please enter token contract address', 'error');
+                    return;
+                }
+                
+                await guardianTreasuryManager.proposeWithdrawal(
+                    recipient,
+                    amount,
+                    description,
+                    type === 'token',
+                    type === 'token' ? tokenAddress : null
+                );
+                
+                // Reset form
+                document.getElementById('withdrawalForm').reset();
+                
+                // Refresh transactions
+                refreshTransactions();
+                
+            } catch (error) {
+                console.error('Withdrawal proposal failed:', error);
+            }
+        }
+
+        async function confirmTransaction(txId) {
+            try {
+                await guardianTreasuryManager.confirmTransaction(txId);
+                refreshTransactions();
+                refreshBalances();
+            } catch (error) {
+                console.error('Transaction confirmation failed:', error);
+            }
+        }
+
+        async function cancelTransaction(txId) {
+            try {
+                await guardianTreasuryManager.cancelTransaction(txId);
+                refreshTransactions();
+            } catch (error) {
+                console.error('Transaction cancellation failed:', error);
+            }
+        }
+    </script>
+</body>
+</html>

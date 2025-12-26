@@ -1,0 +1,120 @@
+version: '3.8'
+
+services:
+  # Main GuardianShield API Server
+  guardianshield-api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=development
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/guardianshield
+      - REDIS_URL=redis://redis:6379
+    volumes:
+      - ./agent_logs:/app/logs
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - guardianshield-network
+
+  # Learning Agent Container
+  learning-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile.agent
+    environment:
+      - AGENT_TYPE=learning
+      - API_SERVER_URL=http://guardianshield-api:8000
+    volumes:
+      - ./agent_evolution_log.jsonl:/app/evolution_log.jsonl
+      - ./agent_decision_log.jsonl:/app/decision_log.jsonl
+    depends_on:
+      - guardianshield-api
+    networks:
+      - guardianshield-network
+
+  # Behavioral Analytics Agent
+  behavioral-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile.agent
+    environment:
+      - AGENT_TYPE=behavioral
+      - API_SERVER_URL=http://guardianshield-api:8000
+    depends_on:
+      - guardianshield-api
+    networks:
+      - guardianshield-network
+
+  # DMER Monitor Agent
+  dmer-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile.agent
+    environment:
+      - AGENT_TYPE=dmer
+      - API_SERVER_URL=http://guardianshield-api:8000
+      - WEB3_PROVIDER_URL=${WEB3_PROVIDER_URL}
+    depends_on:
+      - guardianshield-api
+    networks:
+      - guardianshield-network
+
+  # Database
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB=guardianshield
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - guardianshield-network
+
+  # Redis for caching and message queuing
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - guardianshield-network
+
+  # Hardhat Development Node (for blockchain testing)
+  hardhat-node:
+    build:
+      context: .
+      dockerfile: Dockerfile.hardhat
+    ports:
+      - "8545:8545"
+    command: ["npx", "hardhat", "node", "--hostname", "0.0.0.0"]
+    networks:
+      - guardianshield-network
+
+  # Security Scanner
+  security-scanner:
+    build:
+      context: .
+      dockerfile: Dockerfile.security
+    environment:
+      - SCAN_TARGET=guardianshield-api:8000
+    depends_on:
+      - guardianshield-api
+    networks:
+      - guardianshield-network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  guardianshield-network:
+    driver: bridge

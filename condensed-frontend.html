@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GuardianShield - Cybersecurity Platform</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: 700;
+            color: #4f46e5;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #4f46e5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: #a0a0a0;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(79, 70, 229, 0.3);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 4rem 0;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: #4f46e5;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            color: #4f46e5;
+            margin-bottom: 1rem;
+        }
+
+        .feature-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .feature-desc {
+            color: #a0a0a0;
+            line-height: 1.6;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 4rem 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .footer {
+            background: rgba(0, 0, 0, 0.2);
+            text-align: center;
+            padding: 2rem;
+            margin-top: 4rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer p {
+            color: #a0a0a0;
+        }
+
+        .domain-badge {
+            background: linear-gradient(90deg, #f59e0b, #f97316);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .web3-section {
+            background: rgba(79, 70, 229, 0.1);
+            border: 1px solid rgba(79, 70, 229, 0.3);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .wallet-button {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            margin: 0.5rem;
+        }
+
+        .wallet-button:hover {
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+        }
+
+        .wallet-button.disconnected {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+
+        .contract-status {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .contract-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .contract-card.deployed {
+            border-color: #10b981;
+        }
+
+        .contract-card.not-deployed {
+            border-color: #ef4444;
+        }
+
+        .address-display {
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: #a0a0a0;
+            word-break: break-all;
+        }
+
+        .buy-token-section {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+
+        .input-group {
+            margin: 1rem 0;
+        }
+
+        .input-group input {
+            width: 100%;
+            max-width: 300px;
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+        }
+
+        .input-group input::placeholder {
+            color: #a0a0a0;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-indicator.connected {
+            background: #10b981;
+        }
+
+        .status-indicator.disconnected {
+            background: #ef4444;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+                GuardianShield
+                <span class="domain-badge">www.guardian-shield.io</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#security">Security</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li><a href="/admin">Admin Login</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="hero">
+            <h1>Advanced AI Cybersecurity</h1>
+            <p>
+                Protect your digital assets with our cutting-edge AI agents that learn, 
+                adapt, and evolve to counter the latest cyber threats in real-time.
+            </p>
+            <a href="/admin" class="btn">
+                <i class="fas fa-rocket"></i>
+                Launch Dashboard
+            </a>
+        </section>
+
+        <section class="stats">
+            <div class="stat-card">
+                <div class="stat-number">99.8%</div>
+                <div class="stat-label">Threat Detection Rate</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">AI Monitoring</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">1M+</div>
+                <div class="stat-label">Threats Blocked</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">3</div>
+                <div class="stat-label">AI Agents Active</div>
+            </div>
+        </section>
+
+        <section class="web3-section" id="web3">
+            <h2 style="margin-bottom: 1rem; color: #4f46e5;">🔗 Web3 Blockchain Integration</h2>
+            <p style="color: #a0a0a0; margin-bottom: 2rem;">Connect your wallet to interact with GuardianShield smart contracts</p>
+            
+            <div class="wallet-connection">
+                <button id="connectWallet" class="btn wallet-button disconnected">
+                    <span class="status-indicator disconnected"></span>
+                    <i class="fas fa-wallet"></i>
+                    Connect Wallet
+                </button>
+                <div id="walletInfo" style="margin-top: 1rem; display: none;">
+                    <p><strong>Connected:</strong> <span id="connectedAddress" class="address-display"></span></p>
+                    <p><strong>Network:</strong> <span id="networkName"></span></p>
+                    <p><strong>Balance:</strong> <span id="ethBalance"></span> ETH</p>
+                </div>
+            </div>
+
+            <div class="contract-status" id="contractStatus">
+                <div class="contract-card not-deployed">
+                    <h4>🪙 GuardianToken</h4>
+                    <p class="address-display" id="tokenAddress">Not deployed</p>
+                    <small>ERC-20 Utility Token</small>
+                </div>
+                <div class="contract-card not-deployed">
+                    <h4>🏛️ GuardianTreasury</h4>
+                    <p class="address-display" id="treasuryAddress">Not deployed</p>
+                    <small>Multi-sig Treasury</small>
+                </div>
+                <div class="contract-card not-deployed">
+                    <h4>🛡️ GuardianShieldToken</h4>
+                    <p class="address-display" id="nftAddress">Not deployed</p>
+                    <small>ERC-721 NFT Certificates</small>
+                </div>
+                <div class="contract-card not-deployed">
+                    <h4>💰 GuardianStaking</h4>
+                    <p class="address-display" id="stakingAddress">Not deployed</p>
+                    <small>Token Staking System</small>
+                </div>
+            </div>
+
+            <div class="buy-token-section" style="display: none;" id="tokenPurchase">
+                <h3 style="margin-bottom: 1rem;">💳 Purchase GUARD Tokens</h3>
+                <div class="input-group">
+                    <input type="number" id="ethAmount" placeholder="Amount in ETH" step="0.001" min="0.001">
+                </div>
+                <div class="input-group">
+                    <p>You will receive: <strong id="tokenAmount">0</strong> GUARD tokens</p>
+                    <small>Rate: 1 ETH = 10,000 GUARD</small>
+                </div>
+                <button id="buyTokens" class="btn" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                    <i class="fas fa-shopping-cart"></i>
+                    Buy Tokens
+                </button>
+            </div>
+        </section>
+
+        <section class="features" id="features">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h3 class="feature-title">AI Learning Agents</h3>
+                <p class="feature-desc">
+                    Advanced machine learning algorithms that continuously evolve 
+                    and adapt to new threat patterns and attack vectors.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <h3 class="feature-title">Behavioral Analytics</h3>
+                <p class="feature-desc">
+                    Monitor user behavior patterns and detect anomalies that 
+                    could indicate insider threats or compromised accounts.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-network-wired"></i>
+                </div>
+                <h3 class="feature-title">External Threat Detection</h3>
+                <p class="feature-desc">
+                    Real-time scanning for malware, phishing attempts, and 
+                    network intrusions from external sources.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-coins"></i>
+                </div>
+                <h3 class="feature-title">Web3 Security</h3>
+                <p class="feature-desc">
+                    Specialized protection for blockchain, DeFi, and cryptocurrency 
+                    operations with smart contract analysis.
+                    <br><br>
+                    <small style="color: #f59e0b;">
+                        <i class="fas fa-external-link-alt"></i>
+                        Visit: guardianshield-eth.com
+                    </small>
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3 class="feature-title">Real-Time Analytics</h3>
+                <p class="feature-desc">
+                    Comprehensive dashboards and reporting tools to track 
+                    security metrics and system performance.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <h3 class="feature-title">Zero-Trust Security</h3>
+                <p class="feature-desc">
+                    Enterprise-grade access controls with multi-factor 
+                    authentication and role-based permissions.
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2025 GuardianShield LLC. Advanced AI Cybersecurity Platform.</p>
+        <p>
+            <i class="fas fa-globe"></i> 
+            <strong>www.guardian-shield.io</strong> | 
+            <strong>guardianshield-eth.com</strong>
+        </p>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Add some interactive effects
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate stats on scroll
+            const observerOptions = {
+                threshold: 0.5,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+
+            // Observe feature cards
+            document.querySelectorAll('.feature-card').forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'all 0.6s ease';
+                observer.observe(card);
+            });
+
+            // Add loading animation to stats
+            document.querySelectorAll('.stat-number').forEach(stat => {
+                const finalNumber = stat.textContent;
+                stat.textContent = '0';
+                
+                setTimeout(() => {
+                    let current = 0;
+                    const increment = finalNumber.includes('%') ? 
+                        parseFloat(finalNumber) / 100 : 
+                        parseInt(finalNumber.replace(/\D/g, '')) / 100;
+                    
+                    const timer = setInterval(() => {
+                        current += increment;
+                        if (finalNumber.includes('%')) {
+                            stat.textContent = current.toFixed(1) + '%';
+                            if (current >= parseFloat(finalNumber)) {
+                                stat.textContent = finalNumber;
+                                clearInterval(timer);
+                            }
+                        } else if (finalNumber.includes('M')) {
+                            stat.textContent = (current / 10000).toFixed(1) + 'M+';
+                            if (current >= parseInt(finalNumber.replace(/\D/g, ''))) {
+                                stat.textContent = finalNumber;
+                                clearInterval(timer);
+                            }
+                        } else {
+                            stat.textContent = Math.floor(current);
+                            if (current >= parseInt(finalNumber)) {
+                                stat.textContent = finalNumber;
+                                clearInterval(timer);
+                            }
+                        }
+                    }, 20);
+                }, 500);
+            });
+        });
+
+        // Web3 Integration
+        let web3Provider = null;
+        let signer = null;
+        let userAddress = null;
+        let contracts = {};
+
+        // Contract addresses - will be populated after deployment
+        const contractAddresses = {
+            GuardianToken: '',
+            GuardianTreasury: '',
+            GuardianShieldToken: '',
+            GuardianStaking: '',
+            GuardianLiquidityPool: '',
+            DMER: '',
+            GuardianTokenSale: ''
+        };
+
+        // Contract ABIs (simplified for demo)
+        const GuardianTokenABI = [
+            "function name() view returns (string)",
+            "function symbol() view returns (string)",
+            "function balanceOf(address) view returns (uint256)",
+            "function transfer(address to, uint256 amount) returns (bool)"
+        ];
+
+        const GuardianTokenSaleABI = [
+            "function buyTokens() payable",
+            "function tokenPrice() view returns (uint256)",
+            "function tokensPerEth() view returns (uint256)"
+        ];
+
+        // Check if contracts are deployed
+        async function checkContractDeployments() {
+            try {
+                // Try to load deployment file (would be created after deployment)
+                const response = await fetch('/deployments/sepolia-latest.json');
+                if (response.ok) {
+                    const deployments = await response.json();
+                    
+                    // Update contract addresses
+                    Object.keys(deployments.contracts).forEach(contractName => {
+                        if (contractAddresses.hasOwnProperty(contractName)) {
+                            contractAddresses[contractName] = deployments.contracts[contractName].address;
+                        }
+                    });
+                    
+                    updateContractStatus();
+                    return true;
+                }
+            } catch (error) {
+                console.log('Contracts not yet deployed');
+            }
+            return false;
+        }
+
+        // Update contract status display
+        function updateContractStatus() {
+            const statusElements = {
+                'tokenAddress': 'GuardianToken',
+                'treasuryAddress': 'GuardianTreasury', 
+                'nftAddress': 'GuardianShieldToken',
+                'stakingAddress': 'GuardianStaking'
+            };
+
+            Object.keys(statusElements).forEach(elementId => {
+                const element = document.getElementById(elementId);
+                const contractName = statusElements[elementId];
+                const address = contractAddresses[contractName];
+                
+                if (address) {
+                    element.textContent = address;
+                    element.parentElement.className = 'contract-card deployed';
+                } else {
+                    element.textContent = 'Not deployed';
+                    element.parentElement.className = 'contract-card not-deployed';
+                }
+            });
+
+            // Show token purchase section if token sale is deployed
+            if (contractAddresses.GuardianTokenSale && userAddress) {
+                document.getElementById('tokenPurchase').style.display = 'block';
+            }
+        }
+
+        // Connect wallet function
+        async function connectWallet() {
+            if (typeof window.ethereum !== 'undefined') {
+                try {
+                    web3Provider = new ethers.providers.Web3Provider(window.ethereum);
+                    await web3Provider.send('eth_requestAccounts', []);
+                    signer = web3Provider.getSigner();
+                    userAddress = await signer.getAddress();
+                    
+                    const network = await web3Provider.getNetwork();
+                    const balance = await web3Provider.getBalance(userAddress);
+                    
+                    // Update UI
+                    const connectBtn = document.getElementById('connectWallet');
+                    const walletInfo = document.getElementById('walletInfo');
+                    
+                    connectBtn.innerHTML = `
+                        <span class="status-indicator connected"></span>
+                        <i class="fas fa-wallet"></i>
+                        Connected
+                    `;
+                    connectBtn.className = 'btn wallet-button';
+                    
+                    document.getElementById('connectedAddress').textContent = userAddress;
+                    document.getElementById('networkName').textContent = network.name;
+                    document.getElementById('ethBalance').textContent = ethers.utils.formatEther(balance);
+                    
+                    walletInfo.style.display = 'block';
+                    
+                    // Load contracts if available
+                    await loadContracts();
+                    updateContractStatus();
+                    
+                    console.log('✅ Wallet connected:', userAddress);
+                } catch (error) {
+                    console.error('❌ Failed to connect wallet:', error);
+                    alert('Failed to connect wallet. Please try again.');
+                }
+            } else {
+                alert('Please install MetaMask or another Web3 wallet!');
+                window.open('https://metamask.io/download/', '_blank');
+            }
+        }
+
+        // Load contract instances
+        async function loadContracts() {
+            if (!signer) return;
+            
+            try {
+                if (contractAddresses.GuardianToken) {
+                    contracts.GuardianToken = new ethers.Contract(
+                        contractAddresses.GuardianToken, 
+                        GuardianTokenABI, 
+                        signer
+                    );
+                }
+                
+                if (contractAddresses.GuardianTokenSale) {
+                    contracts.GuardianTokenSale = new ethers.Contract(
+                        contractAddresses.GuardianTokenSale, 
+                        GuardianTokenSaleABI, 
+                        signer
+                    );
+                }
+            } catch (error) {
+                console.error('Failed to load contracts:', error);
+            }
+        }
+
+        // Calculate token amount based on ETH input
+        function calculateTokens(ethAmount) {
+            const tokensPerEth = 10000; // 1 ETH = 10,000 GUARD tokens
+            return (parseFloat(ethAmount) * tokensPerEth).toFixed(0);
+        }
+
+        // Buy tokens function
+        async function buyTokens() {
+            if (!contracts.GuardianTokenSale) {
+                alert('Token sale contract not available');
+                return;
+            }
+
+            const ethAmount = document.getElementById('ethAmount').value;
+            if (!ethAmount || parseFloat(ethAmount) <= 0) {
+                alert('Please enter a valid ETH amount');
+                return;
+            }
+
+            try {
+                const tx = await contracts.GuardianTokenSale.buyTokens({
+                    value: ethers.utils.parseEther(ethAmount)
+                });
+                
+                alert(`Transaction submitted! Hash: ${tx.hash}`);
+                console.log('🚀 Token purchase transaction:', tx.hash);
+                
+                await tx.wait();
+                alert('✅ Tokens purchased successfully!');
+                
+                // Refresh balance
+                await connectWallet();
+            } catch (error) {
+                console.error('❌ Failed to buy tokens:', error);
+                alert('Failed to purchase tokens. Please try again.');
+            }
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Check for deployed contracts
+            await checkContractDeployments();
+            
+            // Connect wallet button
+            document.getElementById('connectWallet').addEventListener('click', connectWallet);
+            
+            // Buy tokens button
+            document.getElementById('buyTokens').addEventListener('click', buyTokens);
+            
+            // ETH amount input
+            document.getElementById('ethAmount').addEventListener('input', function(e) {
+                const tokenAmount = calculateTokens(e.target.value);
+                document.getElementById('tokenAmount').textContent = tokenAmount;
+            });
+            
+            // Auto-connect if previously connected
+            if (typeof window.ethereum !== 'undefined') {
+                try {
+                    const accounts = await window.ethereum.request({method: 'eth_accounts'});
+                    if (accounts.length > 0) {
+                        await connectWallet();
+                    }
+                } catch (error) {
+                    console.log('No previous wallet connection');
+                }
+            }
+        });
+
+        // Handle account changes
+        if (typeof window.ethereum !== 'undefined') {
+            window.ethereum.on('accountsChanged', function (accounts) {
+                if (accounts.length === 0) {
+                    // User disconnected
+                    location.reload();
+                } else {
+                    // User switched accounts
+                    connectWallet();
+                }
+            });
+            
+            window.ethereum.on('chainChanged', function (chainId) {
+                // User switched networks
+                location.reload();
+            });
+        }
+
+        // Console branding
+        console.log('%c🛡️ GuardianShield', 'color: #4f46e5; font-size: 20px; font-weight: bold;');
+        console.log('%cAdvanced AI Cybersecurity Platform', 'color: #667eea; font-size: 12px;');
+        console.log('%cwww.guardian-shield.io', 'color: #a0a0a0; font-size: 10px;');
+        console.log('%c🌐 Web3 Integration Ready', 'color: #10b981; font-size: 12px;');
+    </script>
+</body>
+</html>

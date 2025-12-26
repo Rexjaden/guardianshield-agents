@@ -1,0 +1,142 @@
+{
+  "timestamp": "2025-10-20T04:30:44.538975",
+  "services": {
+    "ecosystem_hub": {
+      "status": "healthy",
+      "http_status": 200,
+      "response_time_ms": "unknown",
+      "url": "http://localhost:8000/",
+      "error": null
+    },
+    "community_portal": {
+      "status": "healthy",
+      "http_status": 200,
+      "response_time_ms": "unknown",
+      "url": "http://localhost:8003/",
+      "error": null
+    },
+    "tokenomics_dashboard": {
+      "status": "healthy",
+      "http_status": 200,
+      "response_time_ms": "unknown",
+      "url": "http://localhost:8004/",
+      "error": null
+    },
+    "staking_interface": {
+      "status": "down",
+      "http_status": null,
+      "response_time_ms": null,
+      "url": "http://localhost:8006/",
+      "error": "Cannot connect to host localhost:8006 ssl:default [The remote computer refused the network connection]"
+    },
+    "nft_builder": {
+      "status": "healthy",
+      "http_status": 200,
+      "response_time_ms": "unknown",
+      "url": "http://localhost:8007/",
+      "error": null
+    },
+    "crypto_payment": {
+      "status": "healthy",
+      "http_status": 200,
+      "response_time_ms": "unknown",
+      "url": "http://localhost:8008/",
+      "error": null
+    },
+    "analytics_dashboard": {
+      "status": "healthy",
+      "http_status": 200,
+      "response_time_ms": "unknown",
+      "url": "http://localhost:8009/",
+      "error": null
+    },
+    "guard_purchase": {
+      "status": "healthy",
+      "http_status": 200,
+      "response_time_ms": "unknown",
+      "url": "http://localhost:8010/",
+      "error": null
+    }
+  },
+  "databases": {
+    "community_portal.db": {
+      "status": "healthy",
+      "size_mb": 0.04,
+      "tables": [
+        "user_profiles",
+        "sqlite_sequence",
+        "wallet_connections",
+        "auth_sessions",
+        "community_activities"
+      ],
+      "error": null
+    },
+    "guard_purchases.db": {
+      "status": "healthy",
+      "size_mb": 0.04,
+      "tables": [
+        "guard_purchases",
+        "user_wallets",
+        "payment_methods",
+        "purchase_analytics",
+        "promo_usage"
+      ],
+      "error": null
+    },
+    "staking.db": {
+      "status": "healthy",
+      "size_mb": 0.04,
+      "tables": [
+        "user_stakes",
+        "sqlite_sequence",
+        "reward_history",
+        "pool_statistics",
+        "shield_tokens",
+        "crypto_pairs"
+      ],
+      "error": null
+    },
+    "nft_builder.db": {
+      "status": "healthy",
+      "size_mb": 0.04,
+      "tables": [
+        "nft_tokens",
+        "nft_listings",
+        "nft_collections",
+        "nft_transactions"
+      ],
+      "error": null
+    },
+    "payment_gateway.db": {
+      "status": "healthy",
+      "size_mb": 0.04,
+      "tables": [
+        "payments",
+        "conversions",
+        "wallet_addresses",
+        "payment_analytics"
+      ],
+      "error": null
+    },
+    "analytics.db": {
+      "status": "healthy",
+      "size_mb": 0.04,
+      "tables": [
+        "daily_metrics",
+        "hourly_metrics",
+        "user_activity",
+        "feature_usage",
+        "performance_metrics"
+      ],
+      "error": null
+    }
+  },
+  "system_health": "critical",
+  "critical_issues": [
+    "Critical service Staking Interface is down"
+  ],
+  "warnings": [],
+  "recommendations": [
+    "Restart critical services immediately"
+  ]
+}

@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guardian Token Sale - GuardianShield</title>
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Ethers.js for Web3 interaction -->
+    <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js"></script>
+    
+    <!-- WalletConnect Provider (Optional) -->
+    <script src="https://unpkg.com/@walletconnect/web3-provider@1.8.0/dist/umd/index.min.js"></script>
+    
+    <!-- Token Sale Styles -->
+    <link rel="stylesheet" href="token-sale-styles.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Orbitron', sans-serif;
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            color: #ffffff;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-bottom: 1px solid rgba(76, 175, 80, 0.3);
+        }
+        
+        .header h1 {
+            font-size: 3em;
+            font-weight: 900;
+            color: #4CAF50;
+            text-shadow: 0 0 20px rgba(76, 175, 80, 0.5);
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            color: #E0E0E0;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .main-content {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .info-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .info-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+        
+        .info-card h3 {
+            color: #4CAF50;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+        
+        .info-card p {
+            color: #E0E0E0;
+            line-height: 1.6;
+        }
+        
+        .features-list {
+            list-style: none;
+            text-align: left;
+        }
+        
+        .features-list li {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .features-list li::before {
+            content: '✓';
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        
+        .contract-addresses {
+            margin-top: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .contract-addresses h3 {
+            color: #4CAF50;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .address-item {
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+        
+        .address-label {
+            font-weight: 600;
+            color: #E0E0E0;
+        }
+        
+        .address-value {
+            font-family: monospace;
+            font-size: 0.9em;
+            color: #4CAF50;
+            cursor: pointer;
+        }
+        
+        .copy-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8em;
+        }
+        
+        .footer {
+            margin-top: 60px;
+            text-align: center;
+            padding: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #B0B0B0;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .info-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .address-item {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1><i class="fas fa-shield-alt"></i> GuardianShield</h1>
+        <p>Advanced AI-Powered Threat Detection & Response • Decentralized Security Network</p>
+    </div>
+    
+    <div class="main-content">
+        <div class="info-section">
+            <div class="info-card">
+                <h3><i class="fas fa-coins"></i> Token Sale</h3>
+                <p>Participate in the Guardian Token (GUARD) sale and become part of our decentralized security network. Early supporters receive bonus tokens and governance rights.</p>
+            </div>
+            
+            <div class="info-card">
+                <h3><i class="fas fa-rocket"></i> Multi-Stage Sale</h3>
+                <ul class="features-list">
+                    <li>Pre-Sale: 0.0005 ETH per GUARD</li>
+                    <li>Public Sale: 0.00075 ETH per GUARD</li>
+                    <li>Final Sale: 0.001 ETH per GUARD</li>
+                    <li>Referral Bonus: 5% rewards</li>
+                </ul>
+            </div>
+            
+            <div class="info-card">
+                <h3><i class="fas fa-lock"></i> Multi-Wallet Support</h3>
+                <ul class="features-list">
+                    <li>MetaMask Integration</li>
+                    <li>Coinbase Wallet Support</li>
+                    <li>WalletConnect Protocol</li>
+                    <li>Trust Wallet Compatible</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Token Sale Widget will be inserted here -->
+        <div id="tokenSaleContainer">
+            <!-- Widget will be dynamically created here -->
+        </div>
+        
+        <div class="contract-addresses" id="contractAddresses" style="display: none;">
+            <h3><i class="fas fa-code"></i> Smart Contract Addresses</h3>
+            <div class="address-item">
+                <span class="address-label">Guardian Token (GUARD):</span>
+                <span class="address-value" id="guardianTokenAddress">Loading...</span>
+                <button class="copy-btn" onclick="copyToClipboard('guardianTokenAddress')">Copy</button>
+            </div>
+            <div class="address-item">
+                <span class="address-label">Token Sale Contract:</span>
+                <span class="address-value" id="tokenSaleAddress">Loading...</span>
+                <button class="copy-btn" onclick="copyToClipboard('tokenSaleAddress')">Copy</button>
+            </div>
+            <div class="address-item">
+                <span class="address-label">Guardian Shield NFT:</span>
+                <span class="address-value" id="guardianShieldAddress">Loading...</span>
+                <button class="copy-btn" onclick="copyToClipboard('guardianShieldAddress')">Copy</button>
+            </div>
+            <div class="address-item">
+                <span class="address-label">Staking Contract:</span>
+                <span class="address-value" id="stakingAddress">Loading...</span>
+                <button class="copy-btn" onclick="copyToClipboard('stakingAddress')">Copy</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>&copy; 2024 GuardianShield. All rights reserved. | Powered by Ethereum & AI</p>
+        <p>Always verify contract addresses on Etherscan before interacting</p>
+    </div>
+    
+    <!-- Web3 Integration Scripts -->
+    <script src="web3-integration.js"></script>
+    <script src="token-purchase-ui.js"></script>
+    
+    <script>
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Add the token sale widget to the container
+            addTokenSaleWidget('tokenSaleContainer');
+            
+            // Set contract addresses after deployment
+            // These should be updated with actual deployed contract addresses
+            const contractAddresses = {
+                guardianToken: '0x...', // Update with actual address after deployment
+                guardianTokenSale: '0x...', // Update with actual address after deployment
+                guardianShieldToken: '0x...', // Update with actual address after deployment
+                guardianStaking: '0x...', // Update with actual address after deployment
+                guardianLiquidityPool: '0x...' // Update with actual address after deployment
+            };
+            
+            // Set addresses in Web3 integration
+            if (guardianWeb3) {
+                guardianWeb3.setAddresses(contractAddresses);
+                
+                // Show contract addresses if they are set
+                if (contractAddresses.guardianToken !== '0x...') {
+                    updateContractAddresses(contractAddresses);
+                    document.getElementById('contractAddresses').style.display = 'block';
+                }
+            }
+        });
+        
+        function updateContractAddresses(addresses) {
+            document.getElementById('guardianTokenAddress').textContent = addresses.guardianToken;
+            document.getElementById('tokenSaleAddress').textContent = addresses.guardianTokenSale;
+            document.getElementById('guardianShieldAddress').textContent = addresses.guardianShieldToken;
+            document.getElementById('stakingAddress').textContent = addresses.guardianStaking;
+        }
+        
+        function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            const text = element.textContent;
+            
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showCopyNotification('Address copied to clipboard!');
+                });
+            } else {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showCopyNotification('Address copied to clipboard!');
+            }
+        }
+        
+        function showCopyNotification(message) {
+            if (guardianWeb3) {
+                guardianWeb3.showNotification(message, 'success');
+            }
+        }
+        
+        // Auto-update sale info every minute
+        setInterval(() => {
+            if (guardianWeb3 && guardianWeb3.isConnected) {
+                guardianWeb3.updateBalances();
+            }
+        }, 60000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GuardianShield Security Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header .shield-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .card h2 {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            color: #ffd700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-active { background-color: #00ff88; }
+        .status-inactive { background-color: #ff6b6b; }
+        .status-warning { background-color: #ffa500; }
+        .status-error { background-color: #ff4444; }
+        .status-unknown { background-color: #888888; }
+
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .metric:last-child {
+            border-bottom: none;
+        }
+
+        .metric-value {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .risk-level {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .risk-low { background-color: #00ff88; color: #000; }
+        .risk-medium { background-color: #ffa500; color: #000; }
+        .risk-high { background-color: #ff6b6b; color: #fff; }
+        .risk-critical { background-color: #8b0000; color: #fff; }
+
+        .audit-history {
+            grid-column: span 2;
+            min-height: 300px;
+        }
+
+        .audit-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid #ffd700;
+        }
+
+        .audit-item h4 {
+            color: #ffd700;
+            margin-bottom: 8px;
+        }
+
+        .timestamp {
+            font-size: 0.85rem;
+            opacity: 0.8;
+            margin-bottom: 5px;
+        }
+
+        .response-actions {
+            margin-top: 10px;
+        }
+
+        .response-actions ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .response-actions li {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 5px 10px;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+
+        .escalations {
+            grid-column: span 2;
+        }
+
+        .escalation-item {
+            background: rgba(255, 100, 100, 0.2);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid #ff4444;
+        }
+
+        .controls {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .btn {
+            background: rgba(255, 215, 0, 0.8);
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #ffd700;
+            transform: scale(1.05);
+        }
+
+        .btn:disabled {
+            background: rgba(150, 150, 150, 0.5);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            font-size: 1.2rem;
+        }
+
+        .error {
+            background: rgba(255, 0, 0, 0.2);
+            border: 1px solid #ff4444;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .auto-refresh {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .audit-history, .escalations {
+                grid-column: span 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="shield-icon">🛡️</div>
+            <h1>GuardianShield Security Dashboard</h1>
+            <p>Real-time Security Orchestration & Monitoring</p>
+        </div>
+
+        <div class="auto-refresh">
+            <span id="refresh-status">🔄 Auto-refresh: ON</span>
+        </div>
+
+        <div id="error-container"></div>
+        
+        <div id="dashboard-content">
+            <div class="loading">
+                <div>⏳ Loading security dashboard...</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="refreshDashboard()">🔄 Refresh Now</button>
+            <button class="btn" onclick="runCoordinatedAudit()" id="audit-btn">🔍 Run Coordinated Audit</button>
+            <button class="btn" onclick="toggleAutoRefresh()" id="auto-refresh-btn">⏸️ Pause Auto-refresh</button>
+        </div>
+    </div>
+
+    <script>
+        let autoRefreshEnabled = true;
+        let refreshInterval = null;
+        let isAuditRunning = false;
+
+        // API endpoints (assuming local server)
+        const API_BASE = 'http://localhost:8001';
+
+        async function fetchDashboardData() {
+            try {
+                const response = await fetch(`${API_BASE}/dashboard`);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                return await response.json();
+            } catch (error) {
+                console.error('API fetch error:', error);
+                // Fallback to mock data for demonstration
+                return generateMockData();
+            }
+        }
+
+        function generateMockData() {
+            const now = new Date();
+            return {
+                status: {
+                    timestamp: now.toISOString(),
+                    internal_agent_status: 'active',
+                    external_agent_status: 'active',
+                    last_internal_audit: new Date(now - 3600000).toISOString(),
+                    last_external_audit: new Date(now - 7200000).toISOString(),
+                    total_threats_detected: 47,
+                    critical_threats: 3,
+                    system_risk_level: 4,
+                    next_scheduled_audit: new Date(now + 86400000).toISOString(),
+                    uptime_hours: 48.5
+                },
+                coordination_history: [
+                    {
+                        coordination_id: 'coord_1234567890',
+                        timestamp: new Date(now - 86400000).toISOString(),
+                        combined_risk_level: 4,
+                        response_actions: JSON.stringify([
+                            'MEDIUM: Enhanced monitoring recommended',
+                            'Review recent security events',
+                            'Schedule additional audits'
+                        ])
+                    }
+                ],
+                recent_escalations: [
+                    {
+                        escalation_id: 'esc_1234567891',
+                        timestamp: new Date(now - 172800000).toISOString(),
+                        threat_source: 'coordinated_audit',
+                        severity: 'high',
+                        description: 'Coordinated audit detected risk level 7/10',
+                        escalated_to: 'security_team',
+                        status: 'resolved'
+                    }
+                ],
+                agents_available: true,
+                orchestrator_uptime: 48.5
+            };
+        }
+
+        function getRiskClass(riskLevel) {
+            if (riskLevel <= 2) return 'risk-low';
+            if (riskLevel <= 5) return 'risk-medium';
+            if (riskLevel <= 7) return 'risk-high';
+            return 'risk-critical';
+        }
+
+        function getStatusClass(status) {
+            switch(status?.toLowerCase()) {
+                case 'active': return 'status-active';
+                case 'inactive': return 'status-inactive';
+                case 'warning': return 'status-warning';
+                case 'error': return 'status-error';
+                default: return 'status-unknown';
+            }
+        }
+
+        function formatTimestamp(isoString) {
+            if (!isoString) return 'Never';
+            const date = new Date(isoString);
+            return date.toLocaleString();
+        }
+
+        function renderDashboard(data) {
+            const status = data.status;
+            const history = data.coordination_history || [];
+            const escalations = data.recent_escalations || [];
+
+            const content = `
+                <div class="dashboard-grid">
+                    <!-- System Overview -->
+                    <div class="card">
+                        <h2>🏛️ System Overview</h2>
+                        <div class="metric">
+                            <span>System Risk Level</span>
+                            <span class="risk-level ${getRiskClass(status.system_risk_level)}">${status.system_risk_level}/10</span>
+                        </div>
+                        <div class="metric">
+                            <span>Total Threats Detected</span>
+                            <span class="metric-value">${status.total_threats_detected}</span>
+                        </div>
+                        <div class="metric">
+                            <span>Critical Threats</span>
+                            <span class="metric-value">${status.critical_threats}</span>
+                        </div>
+                        <div class="metric">
+                            <span>System Uptime</span>
+                            <span class="metric-value">${status.uptime_hours?.toFixed(1)} hours</span>
+                        </div>
+                    </div>
+
+                    <!-- Internal Security Agent -->
+                    <div class="card">
+                        <h2>🏠 Internal Security Agent</h2>
+                        <div class="metric">
+                            <span>Status</span>
+                            <span class="metric-value">
+                                <span class="status-indicator ${getStatusClass(status.internal_agent_status)}"></span>
+                                ${status.internal_agent_status}
+                            </span>
+                        </div>
+                        <div class="metric">
+                            <span>Last Audit</span>
+                            <span class="metric-value">${formatTimestamp(status.last_internal_audit)}</span>
+                        </div>
+                        <div class="metric">
+                            <span>Monitoring</span>
+                            <span class="metric-value">File Integrity, Processes, Config</span>
+                        </div>
+                    </div>
+
+                    <!-- External Security Agent -->
+                    <div class="card">
+                        <h2>🌐 External Security Agent</h2>
+                        <div class="metric">
+                            <span>Status</span>
+                            <span class="metric-value">
+                                <span class="status-indicator ${getStatusClass(status.external_agent_status)}"></span>
+                                ${status.external_agent_status}
+                            </span>
+                        </div>
+                        <div class="metric">
+                            <span>Last Audit</span>
+                            <span class="metric-value">${formatTimestamp(status.last_external_audit)}</span>
+                        </div>
+                        <div class="metric">
+                            <span>Monitoring</span>
+                            <span class="metric-value">Smart Contracts, Wallets, DeFi</span>
+                        </div>
+                    </div>
+
+                    <!-- Orchestration Status -->
+                    <div class="card">
+                        <h2>⚙️ Orchestration</h2>
+                        <div class="metric">
+                            <span>Agents Available</span>
+                            <span class="metric-value">${data.agents_available ? '✅ Yes' : '❌ No'}</span>
+                        </div>
+                        <div class="metric">
+                            <span>Next Scheduled Audit</span>
+                            <span class="metric-value">${formatTimestamp(status.next_scheduled_audit)}</span>
+                        </div>
+                        <div class="metric">
+                            <span>Orchestrator Uptime</span>
+                            <span class="metric-value">${data.orchestrator_uptime?.toFixed(1)} hours</span>
+                        </div>
+                    </div>
+
+                    <!-- Audit History -->
+                    <div class="card audit-history">
+                        <h2>📊 Recent Coordinated Audits</h2>
+                        ${history.length === 0 ? 
+                            '<p>No recent coordination history available.</p>' :
+                            history.slice(0, 5).map(audit => `
+                                <div class="audit-item">
+                                    <h4>Audit ${audit.coordination_id}</h4>
+                                    <div class="timestamp">${formatTimestamp(audit.timestamp)}</div>
+                                    <div class="metric">
+                                        <span>Combined Risk Level</span>
+                                        <span class="risk-level ${getRiskClass(audit.combined_risk_level)}">${audit.combined_risk_level}/10</span>
+                                    </div>
+                                    ${audit.response_actions ? `
+                                        <div class="response-actions">
+                                            <strong>Response Actions:</strong>
+                                            <ul>
+                                                ${JSON.parse(audit.response_actions).slice(0, 3).map(action => 
+                                                    `<li>${action}</li>`
+                                                ).join('')}
+                                            </ul>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            `).join('')
+                        }
+                    </div>
+
+                    <!-- Escalations -->
+                    <div class="card escalations">
+                        <h2>🚨 Recent Escalations</h2>
+                        ${escalations.length === 0 ? 
+                            '<p>No recent escalations.</p>' :
+                            escalations.slice(0, 3).map(escalation => `
+                                <div class="escalation-item">
+                                    <h4>${escalation.severity.toUpperCase()} - ${escalation.escalation_id}</h4>
+                                    <div class="timestamp">${formatTimestamp(escalation.timestamp)}</div>
+                                    <div class="metric">
+                                        <span>Source</span>
+                                        <span class="metric-value">${escalation.threat_source}</span>
+                                    </div>
+                                    <div class="metric">
+                                        <span>Status</span>
+                                        <span class="metric-value">${escalation.status || 'open'}</span>
+                                    </div>
+                                    <p>${escalation.description}</p>
+                                </div>
+                            `).join('')
+                        }
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('dashboard-content').innerHTML = content;
+            document.getElementById('error-container').innerHTML = '';
+        }
+
+        function showError(message) {
+            document.getElementById('error-container').innerHTML = `
+                <div class="error">
+                    <h3>❌ Error</h3>
+                    <p>${message}</p>
+                    <p><small>Displaying demo data instead</small></p>
+                </div>
+            `;
+        }
+
+        async function refreshDashboard() {
+            try {
+                document.getElementById('dashboard-content').innerHTML = '<div class="loading">🔄 Refreshing...</div>';
+                const data = await fetchDashboardData();
+                renderDashboard(data);
+            } catch (error) {
+                console.error('Dashboard refresh error:', error);
+                showError('Failed to fetch real-time data from security orchestrator');
+                const mockData = generateMockData();
+                renderDashboard(mockData);
+            }
+        }
+
+        async function runCoordinatedAudit() {
+            if (isAuditRunning) return;
+
+            isAuditRunning = true;
+            const auditBtn = document.getElementById('audit-btn');
+            auditBtn.disabled = true;
+            auditBtn.textContent = '⏳ Running Audit...';
+
+            try {
+                const response = await fetch(`${API_BASE}/coordinate-audit`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    alert(`Coordinated audit completed!\nAudit ID: ${result.coordination_id}\nRisk Level: ${result.combined_risk}/10`);
+                } else {
+                    throw new Error('Audit request failed');
+                }
+            } catch (error) {
+                console.error('Audit error:', error);
+                alert('Failed to run coordinated audit. Please check the orchestrator API server.');
+            } finally {
+                isAuditRunning = false;
+                auditBtn.disabled = false;
+                auditBtn.textContent = '🔍 Run Coordinated Audit';
+                await refreshDashboard();
+            }
+        }
+
+        function toggleAutoRefresh() {
+            autoRefreshEnabled = !autoRefreshEnabled;
+            const refreshStatus = document.getElementById('refresh-status');
+            const toggleBtn = document.getElementById('auto-refresh-btn');
+
+            if (autoRefreshEnabled) {
+                refreshStatus.textContent = '🔄 Auto-refresh: ON';
+                toggleBtn.textContent = '⏸️ Pause Auto-refresh';
+                startAutoRefresh();
+            } else {
+                refreshStatus.textContent = '⏸️ Auto-refresh: OFF';
+                toggleBtn.textContent = '▶️ Resume Auto-refresh';
+                if (refreshInterval) {
+                    clearInterval(refreshInterval);
+                    refreshInterval = null;
+                }
+            }
+        }
+
+        function startAutoRefresh() {
+            if (refreshInterval) clearInterval(refreshInterval);
+            
+            refreshInterval = setInterval(() => {
+                if (autoRefreshEnabled) {
+                    refreshDashboard();
+                }
+            }, 30000); // Refresh every 30 seconds
+        }
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', async () => {
+            await refreshDashboard();
+            startAutoRefresh();
+        });
+
+        // Handle page visibility changes
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible' && autoRefreshEnabled) {
+                refreshDashboard();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GuardianShield - AI Security Platform</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-color: #00ffff;
+            --secondary-color: #ff00ff;
+            --accent-color: #0099ff;
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a2e;
+            --bg-tertiary: #16213e;
+            --text-primary: #ffffff;
+            --text-secondary: #cccccc;
+            --text-muted: #888888;
+            --border-color: #333333;
+            --success-color: #00ff88;
+            --warning-color: #ffaa00;
+            --danger-color: #ff4444;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, var(--bg-tertiary) 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+            padding: 15px 0;
+        }
+        
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .logo i {
+            font-size: 2rem;
+            color: var(--primary-color);
+            filter: drop-shadow(0 0 10px rgba(0, 255, 255, 0.5));
+        }
+        
+        .header-nav {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+        
+        .header-nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .header-nav a:hover {
+            color: var(--primary-color);
+            text-shadow: 0 0 8px rgba(0, 255, 255, 0.6);
+        }
+        
+        .header-nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+        
+        .header-nav a:hover::after {
+            width: 100%;
+        }
+        
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 0, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(0, 153, 255, 0.05) 0%, transparent 50%);
+            animation: pulse 8s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .hero-content {
+            text-align: center;
+            z-index: 2;
+            max-width: 1000px;
+            padding: 0 20px;
+        }
+        
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 900;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color), var(--accent-color));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+            animation: glow 3s ease-in-out infinite;
+        }
+        
+        @keyframes glow {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.2); }
+        }
+        
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+        
+        .hero-description {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            margin-bottom: 50px;
+            line-height: 1.8;
+        }
+        
+        /* Main Menu Grid */
+        .main-menu {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .menu-card {
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid transparent;
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .menu-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent, rgba(0, 255, 255, 0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        
+        .menu-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary-color);
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                0 0 30px rgba(0, 255, 255, 0.2),
+                inset 0 0 30px rgba(0, 255, 255, 0.1);
+        }
+        
+        .menu-card:hover::before {
+            opacity: 1;
+        }
+        
+        .menu-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 10px rgba(0, 255, 255, 0.3));
+        }
+        
+        .menu-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--text-primary);
+        }
+        
+        .menu-description {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .menu-badge {
+            display: inline-block;
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            color: var(--bg-primary);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        /* Status Bar */
+        .status-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(0, 255, 255, 0.2);
+            padding: 15px;
+            z-index: 1000;
+        }
+        
+        .status-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+        
+        .status-dot.online { background: var(--success-color); }
+        .status-dot.warning { background: var(--warning-color); }
+        .status-dot.offline { background: var(--danger-color); }
+        
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.2); }
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-nav {
+                display: none;
+            }
+            
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .main-menu {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .menu-card {
+                padding: 30px 20px;
+            }
+            
+            .status-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+        
+        /* Special Effects */
+        .floating-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0; }
+            10%, 90% { opacity: 1; }
+            50% { transform: translateY(-100px) rotate(180deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+                <span>GuardianShield</span>
+            </div>
+            <nav class="header-nav">
+                <a href="#features">Features</a>
+                <a href="#about">About</a>
+                <a href="#docs">Documentation</a>
+                <a href="#support">Support</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="floating-particles" id="particles"></div>
+        <div class="hero-content">
+            <h1 class="hero-title">GuardianShield</h1>
+            <h2 class="hero-subtitle">Next-Generation AI Security Platform</h2>
+            <p class="hero-description">
+                Experience the future of autonomous security with our advanced AI agents, 
+                real-time threat detection, and immersive 3D/4D visualizations.
+            </p>
+            
+            <!-- Main Menu -->
+            <div class="main-menu">
+                <div class="menu-card" onclick="navigateTo('dashboard')">
+                    <div class="menu-icon">
+                        <i class="fas fa-tachometer-alt"></i>
+                    </div>
+                    <h3 class="menu-title">Control Dashboard</h3>
+                    <p class="menu-description">
+                        System overview with threat visualization 
+                        and general monitoring capabilities.
+                    </p>
+                    <span class="menu-badge">Main Hub</span>
+                </div>
+                
+                <div class="menu-card" onclick="navigateTo('admin')">
+                    <div class="menu-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 class="menu-title">Admin Console</h3>
+                    <p class="menu-description">
+                        Secure administrative access for agent monitoring, 
+                        control, and 3D/4D visualization management.
+                    </p>
+                    <span class="menu-badge">Admin Only</span>
+                </div>
+                
+                <div class="menu-card" onclick="navigateTo('threats')">
+                    <div class="menu-icon">
+                        <i class="fas fa-shield-virus"></i>
+                    </div>
+                    <h3 class="menu-title">Threat Detection</h3>
+                    <p class="menu-description">
+                        Advanced threat monitoring with behavioral analytics
+                        and real-time response capabilities.
+                    </p>
+                    <span class="menu-badge">Security</span>
+                </div>
+                
+                <div class="menu-card" onclick="navigateTo('analytics')">
+                    <div class="menu-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3 class="menu-title">Analytics Hub</h3>
+                    <p class="menu-description">
+                        Comprehensive data analysis, performance metrics,
+                        and predictive insights dashboard.
+                    </p>
+                    <span class="menu-badge">Intelligence</span>
+                </div>
+                
+                <div class="menu-card" onclick="navigateTo('api')">
+                    <div class="menu-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h3 class="menu-title">API Server</h3>
+                    <p class="menu-description">
+                        RESTful API interface with WebSocket support
+                        for real-time integration and automation.
+                    </p>
+                    <span class="menu-badge">Developer</span>
+                </div>
+                
+                <div class="menu-card" onclick="navigateTo('dmer')">
+                    <div class="menu-icon">
+                        <i class="fas fa-shield-virus"></i>
+                    </div>
+                    <h3 class="menu-title">DMER Intelligence</h3>
+                    <p class="menu-description">
+                        Dynamic threat monitoring with ML classification,
+                        blockchain registry, and real-time response.
+                    </p>
+                    <span class="menu-badge">Advanced</span>
+                </div>
+                
+                <div class="menu-card" onclick="navigateTo('docs')">
+                    <div class="menu-icon">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <h3 class="menu-title">Documentation</h3>
+                    <p class="menu-description">
+                        Complete system documentation, setup guides,
+                        and API reference materials.
+                    </p>
+                    <span class="menu-badge">Info</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+        <div class="status-container">
+            <div class="status-item">
+                <div class="status-dot online"></div>
+                <span>System Online</span>
+            </div>
+            <div class="status-item">
+                <div class="status-dot online"></div>
+                <span id="agent-count">7 Agents Active</span>
+            </div>
+            <div class="status-item">
+                <div class="status-dot online"></div>
+                <span id="last-sync">Last Sync: Just now</span>
+            </div>
+            <div class="status-item">
+                <div class="status-dot online"></div>
+                <span id="health-status">System Health: 98%</span>
+            </div>
+            <div class="status-item">
+                <i class="fas fa-github"></i>
+                <span>Connected to GitHub</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Navigation functions
+        function navigateTo(section) {
+            switch(section) {
+                case 'dashboard':
+                    window.location.href = 'index.html';
+                    break;
+                case 'admin':
+                    // Show authentication prompt for admin console
+                    promptAdminAccess();
+                    break;
+                case 'threats':
+                    window.location.href = 'index.html#threats';
+                    break;
+                case 'analytics':
+                    window.location.href = 'index.html#analytics';
+                    break;
+                case 'api':
+                    startApiServer();
+                    break;
+                case 'dmer':
+                    window.location.href = 'dmer-dashboard.html';
+                    break;
+                case 'docs':
+                    showNotification('Documentation coming soon...', 'info');
+                    break;
+            }
+        }
+        
+        function promptAdminAccess() {
+            const adminKey = prompt('Enter Admin Access Key:');
+            if (adminKey === 'GUARDIAN_ADMIN_2025' || adminKey === 'gs_admin_secure') {
+                showNotification('Admin access granted. Loading console...', 'success');
+                setTimeout(() => {
+                    // Create admin interface or redirect to admin console
+                    openAdminConsole();
+                }, 1500);
+            } else if (adminKey !== null) {
+                showNotification('Access denied. Invalid admin key.', 'danger');
+            }
+        }
+        
+        function openAdminConsole() {
+            // Create admin interface overlay
+            const adminOverlay = document.createElement('div');
+            adminOverlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.95);
+                z-index: 10000;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                backdrop-filter: blur(10px);
+            `;
+            
+            adminOverlay.innerHTML = `
+                <div style="
+                    background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
+                    border: 2px solid var(--primary-color);
+                    border-radius: 20px;
+                    padding: 40px;
+                    max-width: 600px;
+                    text-align: center;
+                    box-shadow: 0 0 50px rgba(0, 255, 255, 0.3);
+                ">
+                    <h2 style="color: var(--primary-color); margin-bottom: 30px; font-size: 2rem;">
+                        <i class="fas fa-shield-alt"></i> Admin Console
+                    </h2>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
+                        <button onclick="adminAction('agents3d')" style="
+                            background: var(--primary-color);
+                            color: var(--bg-primary);
+                            border: none;
+                            padding: 15px;
+                            border-radius: 10px;
+                            font-weight: 600;
+                            cursor: pointer;
+                        ">3D Agent Control</button>
+                        <button onclick="adminAction('monitoring')" style="
+                            background: var(--accent-color);
+                            color: var(--bg-primary);
+                            border: none;
+                            padding: 15px;
+                            border-radius: 10px;
+                            font-weight: 600;
+                            cursor: pointer;
+                        ">Agent Monitoring</button>
+                        <button onclick="adminAction('evolution')" style="
+                            background: var(--secondary-color);
+                            color: var(--bg-primary);
+                            border: none;
+                            padding: 15px;
+                            border-radius: 10px;
+                            font-weight: 600;
+                            cursor: pointer;
+                        ">Evolution Control</button>
+                        <button onclick="adminAction('dmer')" style="
+                            background: var(--secondary-color);
+                            color: var(--bg-primary);
+                            border: none;
+                            padding: 15px;
+                            border-radius: 10px;
+                            font-weight: 600;
+                            cursor: pointer;
+                        ">DMER Intelligence</button>
+                        <button onclick="adminAction('console')" style="
+                            background: var(--warning-color);
+                            color: var(--bg-primary);
+                            border: none;
+                            padding: 15px;
+                            border-radius: 10px;
+                            font-weight: 600;
+                            cursor: pointer;
+                        ">Admin Terminal</button>
+                    </div>
+                    <button onclick="closeAdminConsole()" style="
+                        background: var(--danger-color);
+                        color: white;
+                        border: none;
+                        padding: 10px 30px;
+                        border-radius: 10px;
+                        font-weight: 600;
+                        cursor: pointer;
+                    ">Close Console</button>
+                </div>
+            `;
+            
+            document.body.appendChild(adminOverlay);
+            window.adminOverlay = adminOverlay;
+        }
+        
+        function adminAction(action) {
+            switch(action) {
+                case 'agents3d':
+                    showNotification('Loading 3D Agent Visualization...', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'agent3d-demo.html';
+                    }, 1000);
+                    break;
+                case 'monitoring':
+                    showNotification('Accessing Agent Monitoring Systems...', 'info');
+                    setTimeout(() => {
+                        window.location.href = 'index.html#agents';
+                    }, 1000);
+                    break;
+                case 'evolution':
+                    showNotification('Opening Evolution Control Panel...', 'warning');
+                    break;
+                case 'dmer':
+                    showNotification('Loading DMER Intelligence Dashboard...', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'dmer-dashboard.html';
+                    }, 1000);
+                    break;
+                case 'console':
+                    showNotification('Starting Admin Terminal...', 'info');
+                    break;
+            }
+        }
+        
+        function closeAdminConsole() {
+            if (window.adminOverlay) {
+                window.adminOverlay.remove();
+                window.adminOverlay = null;
+            }
+        }
+        
+        function startApiServer() {
+            // Show loading notification
+            showNotification('Starting API Server...', 'info');
+            
+            // In a real implementation, this would start the API server
+            setTimeout(() => {
+                showNotification('API Server started on http://localhost:8000', 'success');
+                window.open('http://localhost:8000/docs', '_blank');
+            }, 2000);
+        }
+        
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            const colors = {
+                success: 'var(--success-color)',
+                info: 'var(--primary-color)',
+                warning: 'var(--warning-color)',
+                danger: 'var(--danger-color)'
+            };
+            
+            notification.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                background: ${colors[type] || colors.info};
+                color: var(--bg-primary);
+                padding: 15px 25px;
+                border-radius: 10px;
+                font-weight: 600;
+                z-index: 10000;
+                animation: slideIn 0.3s ease;
+                max-width: 300px;
+                text-align: center;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+        
+        // Floating particles effect
+        function createParticles() {
+            const container = document.getElementById('particles');
+            const particleCount = 20;
+            
+            for(let i = 0; i < particleCount; i++) {
+                setTimeout(() => {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    particle.style.left = Math.random() * 100 + '%';
+                    particle.style.animationDelay = Math.random() * 6 + 's';
+                    particle.style.animationDuration = (4 + Math.random() * 4) + 's';
+                    container.appendChild(particle);
+                    
+                    setTimeout(() => particle.remove(), 8000);
+                }, i * 300);
+            }
+        }
+        
+        // Start particle animation
+        setInterval(createParticles, 8000);
+        createParticles();
+        
+        // Update status information
+        function updateStatus() {
+            const agentCount = document.getElementById('agent-count');
+            const lastSync = document.getElementById('last-sync');
+            const healthStatus = document.getElementById('health-status');
+            
+            // Simulate real-time updates
+            const agents = 7 + Math.floor(Math.random() * 3);
+            const health = 95 + Math.floor(Math.random() * 5);
+            
+            if(agentCount) agentCount.textContent = `${agents} Agents Active`;
+            if(lastSync) lastSync.textContent = `Last Sync: ${new Date().toLocaleTimeString()}`;
+            if(healthStatus) healthStatus.textContent = `System Health: ${health}%`;
+        }
+        
+        // Update status every 30 seconds
+        setInterval(updateStatus, 30000);
+        
+        // Add CSS animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Welcome message
+        setTimeout(() => {
+            showNotification('Welcome to GuardianShield! Click any card to begin.', 'info');
+        }, 1000);
+    </script>
+</body>
+</html>

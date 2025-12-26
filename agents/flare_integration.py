@@ -6,6 +6,7 @@ import asyncio
 import json
 import time
 import hashlib
+from types import SimpleNamespace
 from typing import Dict, List, Optional, Any
 import os
 
@@ -46,7 +47,7 @@ class FlareIntegrationAgent:
     def __init__(self, api_url: str = None, api_key: str = None):
         self.api_url = api_url or os.getenv('FLARE_API_URL', 'https://flare-api.flare.network/ext/bc/C/rpc')
         self.api_key = api_key or os.getenv('FLARE_API_KEY')
-        self.web3 = Web3(Web3.HTTPProvider(self.api_url))
+        self.web3 = self._initialize_web3()
         self.threat_contract_address = os.getenv('THREAT_CONTRACT_ADDRESS')
         self.private_key = os.getenv('FLARE_PRIVATE_KEY')
         self.price_feeds = {
@@ -57,6 +58,57 @@ class FlareIntegrationAgent:
         self.cache_timeout = 300  # 5 minutes
         self.rate_limit_delay = 1.0  # 1 second between requests
         self.last_request_time = 0
+
+    def _initialize_web3(self):
+        """Initialize Web3 provider with graceful fallback"""
+        if not WEB3_AVAILABLE:
+            logger.warning("Web3 unavailable, using mock provider")
+            return self._build_mock_web3()
+
+        try:
+            from importlib import import_module
+            web3_module = import_module('web3')
+            web3_cls = getattr(web3_module, 'Web3', None)
+            provider_cls = getattr(web3_cls, 'HTTPProvider', None) if web3_cls else None
+
+            if web3_cls and provider_cls:
+                instance = web3_cls(provider_cls(self.api_url))
+            elif web3_cls:
+                instance = web3_cls()
+            else:
+                return self._build_mock_web3()
+
+            return instance
+
+        except Exception as exc:
+            logger.error(f"FlareIntegrationAgent Web3 init failed: {exc}")
+            return self._build_mock_web3()
+
+    def _build_mock_web3(self):
+        """Construct lightweight mock Web3 interface for testing"""
+        def default_get_block(block_identifier):
+            now = int(time.time())
+            return {
+                'number': 0,
+                'timestamp': now,
+                'transactions': []
+            }
+
+        eth_interface = SimpleNamespace(
+            get_block=default_get_block,
+            gas_price=0,
+            contract=lambda *args, **kwargs: SimpleNamespace(functions=SimpleNamespace())
+        )
+
+        net_interface = SimpleNamespace(version="0")
+
+        return SimpleNamespace(
+            eth=eth_interface,
+            net=net_interface,
+            is_connected=lambda: True,
+            to_checksum_address=lambda address: address,
+            from_wei=lambda value, unit='wei': value / 1_000_000_000 if unit == 'gwei' else value
+        )
 
     def _rate_limit(self):
         """Implement rate limiting"""
@@ -158,8 +210,11 @@ class FlareIntegrationAgent:
                 }
             ]
 
+            checksum_fn = getattr(self.web3, 'to_checksum_address', None)
+            checksum_address = checksum_fn(contract_address) if callable(checksum_fn) else contract_address
+
             contract = self.web3.eth.contract(
-                address=Web3.to_checksum_address(contract_address),
+                address=checksum_address,
                 abi=price_feed_abi
             )
 

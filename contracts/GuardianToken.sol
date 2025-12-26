@@ -15,7 +15,7 @@ contract GuardianToken is ERC20, Ownable {
 
     event StageMint(address indexed to, uint256 amount, uint256 totalMinted);
 
-    constructor(address initialSaleAddress) ERC20("Guardian Token", "GUARD") {
+    constructor(address initialSaleAddress) ERC20("Guardian Token", "GUARD") Ownable(msg.sender) {
         _mint(initialSaleAddress, INITIAL_STAGE_SUPPLY);
         totalMinted = INITIAL_STAGE_SUPPLY;
         emit StageMint(initialSaleAddress, INITIAL_STAGE_SUPPLY, totalMinted);
