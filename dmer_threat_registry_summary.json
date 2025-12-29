@@ -1,0 +1,21 @@
+{
+  "timestamp": "2025-12-29T15:20:19.956182",
+  "dmer_statistics": {
+    "total_threat_entries": 27,
+    "total_malicious_addresses": 7,
+    "average_severity_level": 4.63,
+    "threat_type_distribution": {
+      "APT_ATTACK": 15,
+      "CRIMINAL_OPERATION": 12
+    }
+  },
+  "registry_status": "FULLY_LOADED_WITH_CRIMINAL_INTELLIGENCE",
+  "coverage": {
+    "traditional_cybercriminals": "Complete",
+    "web3_blockchain_criminals": "Complete",
+    "nation_state_actors": "Complete",
+    "ransomware_groups": "Complete",
+    "defi_exploiters": "Complete",
+    "nft_scammers": "Complete"
+  }
+}

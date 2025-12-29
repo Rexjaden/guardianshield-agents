@@ -1,0 +1,66 @@
+{
+  "timestamp": "2025-12-29T15:21:38.170489",
+  "report_type": "criminal_threat_indicators",
+  "cryptocurrency_threats": {
+    "bitcoin_addresses": {
+      "count": 5,
+      "total_stolen": 404400000,
+      "active_investigations": 1,
+      "seized_funds": 1
+    },
+    "ethereum_addresses": {
+      "count": 4,
+      "total_stolen": 6060000000,
+      "bridge_exploits": 2,
+      "defi_exploits": 0
+    }
+  },
+  "phishing_threats": {
+    "domains": {
+      "count": 7,
+      "total_victims": 98000,
+      "total_stolen": 130000000,
+      "active_threats": 1,
+      "categories": {
+        "wallet_phishing": 0,
+        "exchange_phishing": 1,
+        "defi_phishing": 2,
+        "nft_phishing": 1
+      }
+    }
+  },
+  "threat_intelligence": {
+    "top_criminal_groups": [
+      "Ransomware operations (DarkSide, Conti, LockBit)",
+      "Nation-state hackers (Lazarus Group, APT groups)",
+      "DeFi exploiters (Bridge hackers, Flash loan attackers)",
+      "Phishing rings (Wallet/Exchange impersonators)"
+    ],
+    "attack_patterns": [
+      "Cross-chain bridge exploitations",
+      "Ransomware with crypto payment demands",
+      "Social engineering for wallet access",
+      "Fake DeFi yield farming schemes",
+      "NFT marketplace impersonation"
+    ],
+    "indicators_of_compromise": {
+      "bitcoin_address_patterns": [
+        "1[A-Za-z0-9]{25,34}",
+        "3[A-Za-z0-9]{25,34}",
+        "bc1[a-z0-9]{39,59}"
+      ],
+      "ethereum_address_pattern": "0x[a-fA-F0-9]{40}",
+      "suspicious_domain_patterns": [
+        "*metamask*.com (not official)",
+        "*uniswap*.net (not official)",
+        "*opensea*.org (not official)",
+        "*binance*.com variations"
+      ]
+    }
+  },
+  "dmer_integration": {
+    "addresses_loaded": 9,
+    "domains_loaded": 7,
+    "total_stolen": 6594400000
+  }
+}

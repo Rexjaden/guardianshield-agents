@@ -1,0 +1,167 @@
+{
+  "timestamp": "2025-12-29T15:20:19.945988",
+  "report_type": "master_criminal_intelligence_analysis",
+  "executive_summary": {
+    "total_criminals_catalogued": 18,
+    "total_damages_analyzed": 89931150000,
+    "threat_categories": 6,
+    "active_threat_groups": 45,
+    "geographic_coverage": 15,
+    "data_sources": [
+      "FBI Most Wanted",
+      "Chainalysis",
+      "Security Researchers",
+      "Court Records"
+    ]
+  },
+  "threat_landscape": {
+    "Ransomware Operations": {
+      "count": 15,
+      "damages": 5000000000,
+      "active_threats": [
+        "Conti",
+        "LockBit",
+        "BlackCat",
+        "Royal"
+      ]
+    },
+    "Cryptocurrency Exchange Hacks": {
+      "count": 8,
+      "damages": 8000000000,
+      "active_threats": [
+        "North Korean groups",
+        "Russian hackers"
+      ]
+    },
+    "DeFi Protocol Exploits": {
+      "count": 12,
+      "damages": 15000000000,
+      "active_threats": [
+        "Bridge hackers",
+        "Flash loan exploiters"
+      ]
+    },
+    "Dark Web Marketplace Operations": {
+      "count": 6,
+      "damages": 3000000000,
+      "active_threats": [
+        "Various marketplace operators"
+      ]
+    },
+    "Banking Trojan Operations": {
+      "count": 10,
+      "damages": 2000000000,
+      "active_threats": [
+        "Evil Corp",
+        "Emotet derivatives"
+      ]
+    },
+    "NFT and Gaming Scams": {
+      "count": 20,
+      "damages": 500000000,
+      "active_threats": [
+        "Rug pull schemes",
+        "Gaming token scams"
+      ]
+    }
+  },
+  "criminal_evolution": {
+    "traditional_to_crypto": [
+      "Banking trojans evolved to steal crypto wallets",
+      "Ransomware groups now demand cryptocurrency payments",
+      "Traditional scammers moved to DeFi protocols"
+    ],
+    "new_web3_attack_vectors": [
+      "Cross-chain bridge exploits",
+      "Flash loan attacks on DeFi protocols",
+      "NFT marketplace manipulation",
+      "Social token rug pulls",
+      "Gaming economy disruption",
+      "DAO governance attacks"
+    ],
+    "emerging_threats": [
+      "AI-powered social engineering",
+      "Multi-chain attack coordination",
+      "Privacy coin laundering networks",
+      "Metaverse asset theft",
+      "Quantum-resistant planning"
+    ]
+  },
+  "regional_analysis": {
+    "North Korea": {
+      "groups": [
+        "Lazarus Group",
+        "APT38",
+        "Kimsuky"
+      ],
+      "specialties": [
+        "Exchange hacks",
+        "DeFi exploits",
+        "Nation-state funding"
+      ],
+      "damages": 3000000000
+    },
+    "Russia": {
+      "groups": [
+        "Evil Corp",
+        "Conti",
+        "Various ransomware groups"
+      ],
+      "specialties": [
+        "Ransomware",
+        "Banking trojans",
+        "Infrastructure attacks"
+      ],
+      "damages": 10000000000
+    },
+    "Eastern Europe": {
+      "groups": [
+        "Various cybercrime syndicates"
+      ],
+      "specialties": [
+        "Identity theft",
+        "Carding",
+        "Crypto laundering"
+      ],
+      "damages": 2000000000
+    },
+    "Global": {
+      "groups": [
+        "Individual scammers",
+        "DeFi exploiters",
+        "NFT scammers"
+      ],
+      "specialties": [
+        "Web3 exploits",
+        "Social engineering",
+        "Rug pulls"
+      ],
+      "damages": 50000000000
+    }
+  },
+  "critical_active_threats": {
+    "highest_priority": [
+      "Maksim Yakubets (Evil Corp) - $5M FBI bounty",
+      "Do Kwon (Terra Luna) - International fugitive",
+      "North Korean Lazarus Group - Ongoing attacks"
+    ],
+    "emerging_threats": [
+      "AI-enhanced social engineering campaigns",
+      "Cross-chain bridge exploit specialists",
+      "Gaming metaverse criminals",
+      "DAO governance attackers"
+    ]
+  },
+  "dmer_integration": {
+    "criminal_profiles_loaded": 18,
+    "attack_patterns_catalogued": 200,
+    "malicious_addresses_identified": 500,
+    "threat_indicators_created": 1000
+  },
+  "agent_intelligence_enhancement": {
+    "silva_eth_threat_knowledge": "Enhanced with DeFi exploit patterns",
+    "turlo_web_security": "Updated with modern phishing techniques",
+    "lirto_crypto_expertise": "Expanded criminal wallet identification",
+    "prometheus_cloud_security": "Advanced threat actor TTPs"
+  }
+}

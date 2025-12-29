@@ -1,0 +1,38 @@
+{
+  "prometheus": {
+    "criminal_knowledge_areas": [
+      "Nation-state hacking groups (Lazarus, APT38)",
+      "Infrastructure attack patterns",
+      "Cloud security threats from criminal groups",
+      "Advanced persistent threat tactics"
+    ],
+    "specialization": "Nation-state and infrastructure threats"
+  },
+  "silva": {
+    "criminal_knowledge_areas": [
+      "DeFi protocol exploitation techniques",
+      "Cross-chain bridge attack vectors",
+      "Ethereum criminal address patterns",
+      "Smart contract vulnerabilities exploited by criminals"
+    ],
+    "specialization": "Blockchain and DeFi criminal activity"
+  },
+  "turlo": {
+    "criminal_knowledge_areas": [
+      "Modern phishing and social engineering tactics",
+      "Web application exploitation by criminals",
+      "Identity theft and credential harvesting",
+      "Dark web marketplace operations"
+    ],
+    "specialization": "Web security and social engineering threats"
+  },
+  "lirto": {
+    "criminal_knowledge_areas": [
+      "Cryptocurrency laundering techniques",
+      "Criminal wallet identification patterns",
+      "Ransomware payment flows",
+      "Privacy coin usage by criminals"
+    ],
+    "specialization": "Cryptocurrency crime and money laundering"
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "timestamp": "2025-12-29T15:20:19.904964",
+  "report_type": "comprehensive_criminal_intelligence",
+  "summary": {
+    "total_criminals": 9,
+    "active_criminals_at_large": 2,
+    "convicted_criminals": 4,
+    "total_estimated_damages": 7259100000,
+    "operations_catalogued": 12,
+    "blockchain_crimes": 7,
+    "web2_crimes": 5
+  },
+  "database_updates": {
+    "criminal_profiles": {
+      "criminals_loaded": 9,
+      "operations_loaded": 12,
+      "blockchain_crimes": 7,
+      "web2_crimes": 5,
+      "total_damages": 7259100000
+    },
+    "dmer_registry": {
+      "entries_added": 12,
+      "addresses_added": 3
+    }
+  },
+  "top_criminals_by_damage": [
+    {
+      "name": "lichtenstein_morgan",
+      "status": "CONVICTED",
+      "damages": 4500000000,
+      "specializations": [
+        "Cryptocurrency laundering",
+        "Exchange hacking",
+        "Social media manipulation",
+        "Identity obfuscation"
+      ]
+    },
+    {
+      "name": "Ross William Ulbricht",
+      "status": "CONVICTED",
+      "damages": 1200000000,
+      "specializations": [
+        "Dark web marketplace operations",
+        "Bitcoin laundering",
+        "Drug trafficking facilitation",
+        "Murder-for-hire plots"
+      ]
+    },
+    {
+      "name": "Alexandre Cazes",
+      "status": "DECEASED",
+      "damages": 1000000000,
+      "specializations": [
+        "Dark web marketplace operations",
+        "Multi-cryptocurrency operations",
+        "Identity theft facilitation",
+        "Cybercrime-as-a-Service"
+      ]
+    },
+    {
+      "name": "Gerald William Cotten",
+      "status": "DECEASED_SUSPECTED_FRAUD",
+      "damages": 190000000,
+      "specializations": [
+        "Exchange fraud",
+        "Customer fund misappropriation",
+        "Fake trading",
+        "Ponzi scheme operations"
+      ]
+    },
+    {
+      "name": "Roman Valeryevich Seleznev",
+      "status": "CONVICTED",
+      "damages": 169000000,
+      "specializations": [
+        "Credit card fraud",
+        "Point-of-sale malware",
+        "Skimming operations",
+        "Dark web marketplace operations",
+        "Money laundering"
+      ]
+    }
+  ],
+  "threat_landscape": {
+    "most_dangerous_active": [
+      "evgeniy_bogachev",
+      "maksim_yakubets"
+    ],
+    "primary_attack_vectors": [
+      "Ransomware and extortion",
+      "Cryptocurrency theft and laundering",
+      "Banking trojans and financial fraud",
+      "Dark web marketplace operations",
+      "Social engineering and phishing",
+      "Exchange hacking and manipulation"
+    ]
+  }
+}
