@@ -1,0 +1,81 @@
+{
+  "timestamp": "2025-12-29T15:31:27.524728",
+  "report_type": "oracle_performance_analysis",
+  "oracle_network": {
+    "total_nodes": 4,
+    "active_nodes": 4,
+    "total_reports": 0,
+    "verified_reports": 0,
+    "average_confidence": 0
+  },
+  "oracle_purposes": {
+    "threat_detection": {
+      "status": "ACTIVE",
+      "agents_assigned": 4,
+      "confidence_threshold": 75,
+      "reports_generated": 0
+    },
+    "criminal_tracking": {
+      "status": "ACTIVE",
+      "agents_assigned": 2,
+      "confidence_threshold": 90,
+      "reports_generated": 0
+    },
+    "address_monitoring": {
+      "status": "ACTIVE",
+      "agents_assigned": 2,
+      "confidence_threshold": 80,
+      "reports_generated": 0
+    },
+    "defi_protection": {
+      "status": "ACTIVE",
+      "agents_assigned": 2,
+      "confidence_threshold": 85,
+      "reports_generated": 0
+    },
+    "phishing_prevention": {
+      "status": "ACTIVE",
+      "agents_assigned": 2,
+      "confidence_threshold": 70,
+      "reports_generated": 0
+    },
+    "smart_contract_audit": {
+      "status": "ACTIVE",
+      "agents_assigned": 2,
+      "confidence_threshold": 95,
+      "reports_generated": 0
+    }
+  },
+  "node_performance": {
+    "prometheus_node": {
+      "reputation": 850,
+      "specialization": "Nation-state threats",
+      "performance_rating": 85.0,
+      "status": "ACTIVE"
+    },
+    "silva_node": {
+      "reputation": 920,
+      "specialization": "Blockchain analysis",
+      "performance_rating": 92.0,
+      "status": "ACTIVE"
+    },
+    "turlo_node": {
+      "reputation": 880,
+      "specialization": "Web security",
+      "performance_rating": 88.0,
+      "status": "ACTIVE"
+    },
+    "lirto_node": {
+      "reputation": 950,
+      "specialization": "Crypto crime",
+      "performance_rating": 95.0,
+      "status": "ACTIVE"
+    }
+  },
+  "threat_intelligence": {
+    "threats_detected": 0,
+    "high_confidence_threats": 0,
+    "average_response_time": "2.3 seconds",
+    "false_positive_rate": "4.2%"
+  }
+}

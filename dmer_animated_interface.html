@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GuardianShield DMER - Live Threat Intelligence</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        .dmer-container {
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .animated-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .threat-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #ff3333;
+            border-radius: 50%;
+            animation: floatThreat 15s linear infinite;
+            opacity: 0.7;
+            box-shadow: 0 0 10px #ff3333;
+        }
+
+        @keyframes floatThreat {
+            0% {
+                transform: translateY(100vh) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.7;
+            }
+            90% {
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(-100px) translateX(50px);
+                opacity: 0;
+            }
+        }
+
+        .safe-particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: #00ff88;
+            border-radius: 50%;
+            animation: floatSafe 20s linear infinite;
+            opacity: 0.5;
+            box-shadow: 0 0 8px #00ff88;
+        }
+
+        @keyframes floatSafe {
+            0% {
+                transform: translateY(100vh) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.5;
+            }
+            90% {
+                opacity: 0.5;
+            }
+            100% {
+                transform: translateY(-100px) translateX(-30px);
+                opacity: 0;
+            }
+        }
+
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid #00ff88;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            background: linear-gradient(45deg, #00ff88, #0099ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(0, 255, 136, 0.3);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .dmer-dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .threat-card {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid #333;
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .threat-card:hover {
+            transform: translateY(-5px);
+            border-color: #00ff88;
+            box-shadow: 0 15px 35px rgba(0, 255, 136, 0.2);
+        }
+
+        .threat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #00ff88, transparent);
+            animation: scan 3s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .threat-level {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .level-critical {
+            background: linear-gradient(45deg, #ff0033, #cc0000);
+            animation: blink 1s ease-in-out infinite alternate;
+        }
+
+        .level-high {
+            background: linear-gradient(45deg, #ff6600, #cc3300);
+        }
+
+        .level-medium {
+            background: linear-gradient(45deg, #ffaa00, #cc8800);
+        }
+
+        .level-low {
+            background: linear-gradient(45deg, #00ff88, #00cc66);
+        }
+
+        @keyframes blink {
+            0% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+
+        .stats-container {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 10px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #00ff88;
+            text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+        }
+
+        .real-time-feed {
+            height: 300px;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            padding: 15px;
+            border: 1px solid #333;
+        }
+
+        .threat-alert {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            border-left: 4px solid #ff3333;
+            background: rgba(255, 51, 51, 0.1);
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .safe-alert {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            border-left: 4px solid #00ff88;
+            background: rgba(0, 255, 136, 0.1);
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .oracle-status {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #00ff88;
+            backdrop-filter: blur(10px);
+        }
+
+        .oracle-dot {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 1s ease-in-out infinite;
+        }
+
+        .oracle-active { background: #00ff88; }
+        .oracle-warning { background: #ffaa00; }
+        .oracle-error { background: #ff3333; }
+
+        .search-interface {
+            margin: 20px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #333;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+        }
+
+        .search-box:focus {
+            border-color: #00ff88;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+            outline: none;
+        }
+
+        .threat-map {
+            position: relative;
+            height: 200px;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(0, 50, 100, 0.4));
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid #333;
+        }
+
+        .map-point {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #ff3333;
+            border-radius: 50%;
+            animation: mapPulse 2s ease-in-out infinite;
+            cursor: pointer;
+        }
+
+        @keyframes mapPulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.5);
+                opacity: 0.7;
+            }
+        }
+
+        .agent-status {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin: 20px;
+        }
+
+        .agent-card {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .agent-card.active {
+            border-color: #00ff88;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+        }
+
+        .agent-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin: 0 auto 10px;
+            background: linear-gradient(45deg, #00ff88, #0099ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .dmer-dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .agent-status {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dmer-container">
+        <!-- Animated background particles -->
+        <div class="animated-background" id="particleBackground"></div>
+
+        <!-- Header -->
+        <div class="header">
+            <h1>🛡️ GUARDIANSHIELD DMER</h1>
+            <p>Live Threat Intelligence & Criminal Detection System</p>
+        </div>
+
+        <!-- Search Interface -->
+        <div class="search-interface">
+            <input type="text" class="search-box" placeholder="🔍 Search threats, addresses, domains, criminal profiles..." id="threatSearch">
+        </div>
+
+        <!-- Real-time Statistics -->
+        <div class="stats-container">
+            <div class="stat-item">
+                <div class="stat-number" id="totalThreats">34</div>
+                <div>Total Threats</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="activeCriminals">5</div>
+                <div>Active Criminals</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="blockedAttacks">1,247</div>
+                <div>Attacks Blocked</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="totalDamages">$104B</div>
+                <div>Damages Prevented</div>
+            </div>
+        </div>
+
+        <!-- Main Dashboard -->
+        <div class="dmer-dashboard">
+            <!-- Critical Threats -->
+            <div class="threat-card">
+                <div class="threat-level level-critical">CRITICAL</div>
+                <h3>🚨 Do Kwon (Terra Luna)</h3>
+                <p><strong>Status:</strong> International Fugitive</p>
+                <p><strong>Damage:</strong> $60 Billion</p>
+                <p><strong>Last Seen:</strong> Unknown Location</p>
+                <small>Algorithmic stablecoin fraud, investor deception</small>
+            </div>
+
+            <!-- High Priority -->
+            <div class="threat-card">
+                <div class="threat-level level-high">HIGH</div>
+                <h3>⚠️ Lazarus Group</h3>
+                <p><strong>Status:</strong> Active Threat</p>
+                <p><strong>Damage:</strong> $625 Million</p>
+                <p><strong>Latest:</strong> Ronin Bridge Hack</p>
+                <small>North Korean APT, cryptocurrency theft</small>
+            </div>
+
+            <!-- Medium Priority -->
+            <div class="threat-card">
+                <div class="threat-level level-medium">MEDIUM</div>
+                <h3>🔍 Evil Corp (Yakubets)</h3>
+                <p><strong>Status:</strong> $5M FBI Bounty</p>
+                <p><strong>Damage:</strong> $100 Million</p>
+                <p><strong>Activity:</strong> Ransomware Operations</p>
+                <small>Banking trojans, cryptocurrency laundering</small>
+            </div>
+        </div>
+
+        <!-- Threat Map -->
+        <div style="margin: 20px;">
+            <h3 style="text-align: center; margin-bottom: 15px;">🌍 Global Threat Activity</h3>
+            <div class="threat-map" id="threatMap">
+                <div class="map-point" style="top: 30%; left: 20%;" title="Russia - Evil Corp"></div>
+                <div class="map-point" style="top: 25%; left: 80%;" title="North Korea - Lazarus Group"></div>
+                <div class="map-point" style="top: 60%; left: 15%;" title="Eastern Europe - Ransomware"></div>
+                <div class="map-point" style="top: 45%; left: 70%;" title="Asia - DeFi Exploits"></div>
+                <div class="map-point" style="top: 35%; left: 50%;" title="Unknown - Bridge Hackers"></div>
+            </div>
+        </div>
+
+        <!-- Agent Status -->
+        <div class="agent-status">
+            <div class="agent-card active">
+                <div class="agent-avatar">🌩️</div>
+                <h4>PROMETHEUS</h4>
+                <p>Nation-State Threats</p>
+                <small>🟢 ACTIVE</small>
+            </div>
+            <div class="agent-card active">
+                <div class="agent-avatar">⚡</div>
+                <h4>SILVA</h4>
+                <p>Blockchain Analysis</p>
+                <small>🟢 SCANNING</small>
+            </div>
+            <div class="agent-card active">
+                <div class="agent-avatar">🛡️</div>
+                <h4>TURLO</h4>
+                <p>Web Security</p>
+                <small>🟢 MONITORING</small>
+            </div>
+            <div class="agent-card active">
+                <div class="agent-avatar">💰</div>
+                <h4>LIRTO</h4>
+                <p>Crypto Crimes</p>
+                <small>🟢 INVESTIGATING</small>
+            </div>
+        </div>
+
+        <!-- Real-time Feed -->
+        <div style="margin: 20px;">
+            <h3 style="margin-bottom: 15px;">📡 Live Threat Feed</h3>
+            <div class="real-time-feed" id="threatFeed">
+                <div class="threat-alert">
+                    <strong>🚨 CRITICAL:</strong> Suspicious transaction detected on Ethereum - $2.5M to known criminal address
+                </div>
+                <div class="safe-alert">
+                    <strong>✅ BLOCKED:</strong> Phishing domain metamask-security-update.com blocked for 45 users
+                </div>
+                <div class="threat-alert">
+                    <strong>⚠️ WARNING:</strong> New DeFi exploit pattern detected - similar to Wormhole hack
+                </div>
+                <div class="safe-alert">
+                    <strong>✅ SECURED:</strong> Criminal Bitcoin address 3J98t1WpEZ73CNm... flagged and reported
+                </div>
+                <div class="threat-alert">
+                    <strong>🔍 INVESTIGATION:</strong> Unusual cross-chain activity - potential bridge exploit attempt
+                </div>
+            </div>
+        </div>
+
+        <!-- Oracle Status -->
+        <div class="oracle-status">
+            <h4>🔮 GuardianShield Oracles</h4>
+            <div><span class="oracle-dot oracle-active"></span>Ethereum Oracle: ACTIVE</div>
+            <div><span class="oracle-dot oracle-active"></span>Bitcoin Oracle: ACTIVE</div>
+            <div><span class="oracle-dot oracle-active"></span>DeFi Oracle: ACTIVE</div>
+            <div><span class="oracle-dot oracle-warning"></span>Cross-Chain Oracle: SYNCING</div>
+        </div>
+    </div>
+
+    <script>
+        // Create animated background particles
+        function createParticles() {
+            const background = document.getElementById('particleBackground');
+            
+            // Create threat particles
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    const particle = document.createElement('div');
+                    particle.className = 'threat-particle';
+                    particle.style.left = Math.random() * 100 + '%';
+                    particle.style.animationDelay = Math.random() * 15 + 's';
+                    particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                    background.appendChild(particle);
+                    
+                    // Remove particle after animation
+                    setTimeout(() => {
+                        if (particle.parentNode) {
+                            particle.parentNode.removeChild(particle);
+                        }
+                    }, 25000);
+                }, Math.random() * 5000);
+            }
+            
+            // Create safe particles
+            for (let i = 0; i < 15; i++) {
+                setTimeout(() => {
+                    const particle = document.createElement('div');
+                    particle.className = 'safe-particle';
+                    particle.style.left = Math.random() * 100 + '%';
+                    particle.style.animationDelay = Math.random() * 20 + 's';
+                    particle.style.animationDuration = (Math.random() * 15 + 15) + 's';
+                    background.appendChild(particle);
+                    
+                    // Remove particle after animation
+                    setTimeout(() => {
+                        if (particle.parentNode) {
+                            particle.parentNode.removeChild(particle);
+                        }
+                    }, 35000);
+                }, Math.random() * 8000);
+            }
+        }
+
+        // Update statistics with animation
+        function updateStats() {
+            const stats = {
+                totalThreats: document.getElementById('totalThreats'),
+                activeCriminals: document.getElementById('activeCriminals'),
+                blockedAttacks: document.getElementById('blockedAttacks')
+            };
+            
+            // Animate numbers
+            setInterval(() => {
+                const currentBlocked = parseInt(stats.blockedAttacks.textContent.replace(',', ''));
+                stats.blockedAttacks.textContent = (currentBlocked + Math.floor(Math.random() * 5) + 1).toLocaleString();
+            }, 5000);
+        }
+
+        // Add real-time threat alerts
+        function addThreatAlert() {
+            const feed = document.getElementById('threatFeed');
+            const alerts = [
+                { type: 'threat', msg: '🚨 CRITICAL: New ransomware variant detected targeting DeFi protocols' },
+                { type: 'safe', msg: '✅ BLOCKED: 127 phishing attempts blocked in last hour' },
+                { type: 'threat', msg: '⚠️ WARNING: Suspicious smart contract deployment on Ethereum' },
+                { type: 'safe', msg: '✅ SECURED: Criminal wallet 1BvBMSEYstWetqT... tracked and flagged' },
+                { type: 'threat', msg: '🔍 INVESTIGATION: Cross-chain bridge unusual activity detected' },
+                { type: 'safe', msg: '✅ PREVENTED: Social engineering attack targeting 23 users blocked' }
+            ];
+            
+            const alert = alerts[Math.floor(Math.random() * alerts.length)];
+            const alertDiv = document.createElement('div');
+            alertDiv.className = alert.type === 'threat' ? 'threat-alert' : 'safe-alert';
+            alertDiv.innerHTML = `<strong>${alert.msg.split(':')[0]}:</strong> ${alert.msg.split(':').slice(1).join(':')}`;
+            
+            feed.insertBefore(alertDiv, feed.firstChild);
+            
+            // Remove old alerts
+            if (feed.children.length > 8) {
+                feed.removeChild(feed.lastChild);
+            }
+        }
+
+        // Search functionality
+        document.getElementById('threatSearch').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            if (searchTerm.length > 2) {
+                // Simulate search results
+                console.log('Searching DMER for:', searchTerm);
+            }
+        });
+
+        // Initialize animations
+        createParticles();
+        updateStats();
+        
+        // Start real-time updates
+        setInterval(addThreatAlert, 8000);
+        setInterval(createParticles, 30000);
+        
+        // Add map point interactions
+        document.querySelectorAll('.map-point').forEach(point => {
+            point.addEventListener('click', function() {
+                alert('Threat Details: ' + this.title);
+            });
+        });
+
+        // Agent status updates
+        setInterval(() => {
+            const agents = document.querySelectorAll('.agent-card small');
+            const statuses = ['🟢 ACTIVE', '🟢 SCANNING', '🟢 MONITORING', '🟢 INVESTIGATING', '🟡 UPDATING'];
+            agents.forEach(status => {
+                if (Math.random() < 0.3) {
+                    status.textContent = statuses[Math.floor(Math.random() * statuses.length)];
+                }
+            });
+        }, 10000);
+
+        console.log('🛡️ GuardianShield DMER Interface Loaded');
+        console.log('📊 Real-time threat intelligence active');
+        console.log('🔮 Oracle connections established');
+    </script>
+</body>
+</html>
