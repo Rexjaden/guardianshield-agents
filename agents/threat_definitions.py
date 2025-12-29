@@ -571,3 +571,9 @@ DECEPTIVE_ACTS = {
     "sandwich attack": "MEV strategy extracting value from transactions",
     "frontrunning": "Racing to profit from observed transactions"
 }
+
+# Export the main class for use by other modules
+evolving_threats = EvolvingThreatDefinitions()
+
+# Alias for compatibility
+EvolvingThreats = EvolvingThreatDefinitions

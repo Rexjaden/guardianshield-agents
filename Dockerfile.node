@@ -1,0 +1,47 @@
+# GuardianShield Node.js Agent Container
+FROM node:18-alpine
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies
+RUN apk add --no-cache \
+    python3 \
+    make \
+    g++ \
+    git \
+    curl \
+    bash
+
+# Copy package files
+COPY package*.json ./
+
+# Install Node.js dependencies
+RUN npm install
+
+# Copy orchestrator and blockchain cluster files
+COPY distributed_node_orchestrator.js ./
+COPY blockchain_node_cluster.js ./
+
+# Copy agent education system
+COPY agent_education_completeness_validator.py ./
+COPY agent_physical_forms_system.py ./
+
+# Create necessary directories
+RUN mkdir -p /app/logs /app/physical_forms /app/memory /app/blockchain_data
+
+# Set permissions
+RUN chown -R node:node /app
+
+# Switch to non-root user
+USER node
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:3003/api/system/health || exit 1
+
+# Expose ports
+EXPOSE 3001 3002 3003
+
+# Start the Node.js orchestrator
+CMD ["node", "distributed_node_orchestrator.js"]

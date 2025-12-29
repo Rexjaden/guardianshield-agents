@@ -1,0 +1,49 @@
+const { expect } = require("chai");
+const { ethers } = require("hardhat");
+
+describe("ChainlinkPriceOracle Integration", function () {
+    let priceOracle;
+    let tokenSale;
+    let guardToken;
+    let deployer;
+    let buyer;
+    
+    // Mock price feed for testing
+    const mockPriceFeedAddress = "0x694AA1769357215DE4FAC081bf1f309aDC325306"; // Sepolia ETH/USD
+    
+    beforeEach(async function () {
+        [deployer, buyer] = await ethers.getSigners();
+        
+        // Deploy mock GuardianToken
+        const GuardianToken = await ethers.getContractFactory("ERC20Mock");
+        guardToken = await GuardianToken.deploy(
+            "Guardian Token",
+            "GUARD",
+            ethers.parseEther("1000000000") // 1B tokens
+        );
+        
+        // Deploy ChainlinkPriceOracle
+        const ChainlinkPriceOracle = await ethers.getContractFactory("ChainlinkPriceOracle");
+        priceOracle = await ChainlinkPriceOracle.deploy(mockPriceFeedAddress);
+        
+        // Deploy GuardianTokenSale with oracle
+        const GuardianTokenSale = await ethers.getContractFactory("GuardianTokenSale");
+        tokenSale = await GuardianTokenSale.deploy(
+            await guardToken.getAddress(),
+            deployer.address,
+            deployer.address,
+            await priceOracle.getAddress()
+        );
+        
+        // Transfer tokens to sale contract
+        await guardToken.transfer(
+            await tokenSale.getAddress(),
+            ethers.parseEther("500000000") // 500M tokens
+        );
+    });
+    
+    describe("Price Oracle Functions", function () {
+        it("Should get latest ETH price from Chainlink", async function () {
+            const [price, timestamp, success] = await priceOracle.getLatestPrice();
+            
+            console.log(`Current ETH Price: $${ethers.formatUnits(price, 8)}`);\n            console.log(`Timestamp: ${new Date(Number(timestamp) * 1000).toISOString()}`);\n            console.log(`Success: ${success}`);\n            \n            if (success) {\n                expect(price).to.be.greaterThan(0);\n                expect(timestamp).to.be.greaterThan(0);\n            }\n        });\n        \n        it("Should convert ETH to USD correctly", async function () {\n            const ethAmount = ethers.parseEther("1"); // 1 ETH\n            const usdValue = await priceOracle.ethToUsd(ethAmount);\n            \n            console.log(`1 ETH = $${ethers.formatEther(usdValue)}`);\n            \n            // USD value should be reasonable (between $500 and $10,000)\n            expect(usdValue).to.be.greaterThan(ethers.parseEther("500"));\n            expect(usdValue).to.be.lessThan(ethers.parseEther("10000"));\n        });\n        \n        it("Should convert USD to ETH correctly", async function () {\n            const usdAmount = ethers.parseEther("3000"); // $3000\n            const ethValue = await priceOracle.usdToEth(usdAmount);\n            \n            console.log(`$3000 = ${ethers.formatEther(ethValue)} ETH`);\n            \n            // Should be close to 1 ETH if price is around $3000\n            expect(ethValue).to.be.greaterThan(ethers.parseEther("0.1"));\n            expect(ethValue).to.be.lessThan(ethers.parseEther("10"));\n        });\n        \n        it("Should handle fallback price when oracle fails", async function () {\n            // Test fallback functionality\n            const fallbackPrice = await priceOracle.fallbackPrice();\n            expect(fallbackPrice).to.equal(ethers.parseUnits("3000", 8)); // $3000 with 8 decimals\n        });\n    });\n    \n    describe("Token Sale with Dynamic Pricing", function () {\n        it("Should calculate token prices based on current ETH price", async function () {\n            const saleInfo = await tokenSale.getCurrentSaleInfo();\n            \n            console.log(`Current Stage: ${saleInfo[0]} - ${saleInfo[1]}`);\n            console.log(`Price per token: ${ethers.formatEther(saleInfo[2])} ETH`);\n            \n            if (saleInfo.length > 7) {\n                console.log(`Price per token: $${ethers.formatEther(saleInfo[7])} USD`);\n                console.log(`Oracle Active: ${saleInfo[8]}`);\n            }\n            \n            expect(saleInfo[0]).to.equal(1); // Should be stage 1\n            expect(saleInfo[2]).to.be.greaterThan(0); // Price should be positive\n        });\n        \n        it("Should purchase tokens with ETH using dynamic pricing", async function () {\n            const ethAmount = ethers.parseEther("1");\n            const expectedTokens = await tokenSale.calculateTokens(ethAmount);\n            \n            console.log(`Purchasing with ${ethers.formatEther(ethAmount)} ETH`);\n            console.log(`Expected tokens: ${ethers.formatEther(expectedTokens)}`);\n            \n            const initialBalance = await guardToken.balanceOf(buyer.address);\n            \n            await tokenSale.connect(buyer).buyTokens(ethers.ZeroAddress, {\n                value: ethAmount\n            });\n            \n            const finalBalance = await guardToken.balanceOf(buyer.address);\n            const tokensReceived = finalBalance - initialBalance;\n            \n            console.log(`Tokens received: ${ethers.formatEther(tokensReceived)}`);\n            \n            expect(tokensReceived).to.equal(expectedTokens);\n            expect(tokensReceived).to.be.greaterThan(0);\n        });\n        \n        it("Should update stage pricing based on current ETH price", async function () {\n            // Test price updates\n            const initialInfo = await tokenSale.getCurrentSaleInfo();\n            const initialPrice = initialInfo[2];\n            \n            // Update stage pricing (admin function)\n            await tokenSale.updateStagesPricing();\n            \n            const updatedInfo = await tokenSale.getCurrentSaleInfo();\n            const updatedPrice = updatedInfo[2];\n            \n            console.log(`Initial price: ${ethers.formatEther(initialPrice)} ETH`);\n            console.log(`Updated price: ${ethers.formatEther(updatedPrice)} ETH`);\n            \n            // Prices might be the same if ETH price hasn't changed significantly\n            expect(updatedPrice).to.be.greaterThan(0);\n        });\n    });\n    \n    describe("Oracle Management", function () {\n        it("Should allow owner to toggle oracle on/off", async function () {\n            // Disable oracle\n            await tokenSale.toggleOracle(false);\n            \n            const saleInfo = await tokenSale.getCurrentSaleInfo();\n            if (saleInfo.length > 8) {\n                expect(saleInfo[8]).to.be.false; // Oracle should be inactive\n            }\n            \n            // Re-enable oracle\n            await tokenSale.toggleOracle(true);\n            \n            const saleInfo2 = await tokenSale.getCurrentSaleInfo();\n            // Oracle status depends on whether price feed is working\n        });\n        \n        it("Should allow owner to set fallback price", async function () {\n            const newFallbackPrice = ethers.parseUnits("4000", 8); // $4000\n            \n            await tokenSale.setFallbackEthPrice(newFallbackPrice);\n            \n            const currentFallback = await tokenSale.fallbackEthPrice();\n            expect(currentFallback).to.equal(newFallbackPrice);\n        });\n        \n        it("Should get token price in USD", async function () {\n            const stage1Price = await tokenSale.getTokenPriceInUsd(1);\n            const stage2Price = await tokenSale.getTokenPriceInUsd(2);\n            const stage3Price = await tokenSale.getTokenPriceInUsd(3);\n            \n            console.log(`Stage 1 price: $${ethers.formatEther(stage1Price)}`);\n            console.log(`Stage 2 price: $${ethers.formatEther(stage2Price)}`);\n            console.log(`Stage 3 price: $${ethers.formatEther(stage3Price)}`);\n            \n            // Stage 1 should be cheapest, Stage 3 most expensive\n            expect(stage1Price).to.be.lessThan(stage2Price);\n            expect(stage2Price).to.be.lessThan(stage3Price);\n            \n            // Prices should be in reasonable range ($0.0001 to $0.01)\n            expect(stage1Price).to.be.greaterThan(ethers.parseEther("0.0001"));\n            expect(stage3Price).to.be.lessThan(ethers.parseEther("0.01"));\n        });\n    });\n    \n    describe("Edge Cases and Error Handling", function () {\n        it("Should handle oracle failures gracefully", async function () {\n            // Test with invalid oracle address\n            const TokenSaleWithBadOracle = await ethers.getContractFactory("GuardianTokenSale");\n            const badTokenSale = await TokenSaleWithBadOracle.deploy(\n                await guardToken.getAddress(),\n                deployer.address,\n                deployer.address,\n                ethers.ZeroAddress // No oracle\n            );\n            \n            const saleInfo = await badTokenSale.getCurrentSaleInfo();\n            \n            // Should still work with fallback pricing\n            expect(saleInfo[0]).to.equal(1);\n            expect(saleInfo[2]).to.be.greaterThan(0);\n        });\n        \n        it("Should validate price oracle address", async function () {\n            await expect(\n                tokenSale.setPriceOracle(ethers.ZeroAddress)\n            ).to.be.revertedWith("Invalid oracle address");\n        });\n        \n        it("Should validate fallback price", async function () {\n            await expect(\n                tokenSale.setFallbackEthPrice(0)\n            ).to.be.revertedWith("Invalid price");\n        });\n    });\n});

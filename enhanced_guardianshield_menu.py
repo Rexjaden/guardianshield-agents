@@ -17,6 +17,8 @@ try:
     from high_performance_graphics_engine import HighPerformanceGraphicsEngine, demonstrate_graphics_engine
     from advanced_liquidity_pool_framework import AdvancedLiquidityPoolFramework, demonstrate_liquidity_framework
     from advanced_staking_pool_system import AdvancedStakingPoolSystem, demonstrate_staking_system
+    from treasury_animation_system import TreasuryAnimationSystem, demonstrate_treasury_system
+    from token_pos_system import TokenPOSSystem, demonstrate_pos_system
     ADVANCED_SYSTEMS_AVAILABLE = True
 except ImportError:
     ADVANCED_SYSTEMS_AVAILABLE = False
@@ -35,6 +37,8 @@ class EnhancedGuardianShieldMenu:
         self.graphics_engine = None
         self.liquidity_framework = None
         self.staking_system = None
+        self.treasury_system = None
+        self.pos_system = None
         self.advanced_systems_initialized = False
     
     def clear_screen(self):
@@ -104,12 +108,19 @@ class EnhancedGuardianShieldMenu:
         print("24. 💰 Reward Distribution")
         print("25. ⚖️ Slashing & Security")
         
+        print("\n�️ TREASURY & POS SYSTEMS:")
+        print("26. 🏛️ Treasury Management")
+        print("27. 💳 POS System Control")
+        print("28. 📊 Treasury Analytics")
+        print("29. 💰 Payment Processing")
+        print("30. 📈 Financial Dashboard")
+        
         print("\n🎯 INTEGRATED SYSTEMS:")
-        print("26. 🔗 Unified DeFi Hub")
-        print("27. 🌈 Full System Demo")
-        print("28. 📱 Mobile Interface")
-        print("29. 🔐 Security Center")
-        print("30. 📡 Real-Time Monitoring")
+        print("31. 🔗 Unified DeFi Hub")
+        print("32. 🌈 Full System Demo")
+        print("33. 📱 Mobile Interface")
+        print("34. 🔐 Security Center")
+        print("35. 📡 Real-Time Monitoring")
         
         print("\n0.  ❌ Exit System")
         print("=" * 80)
@@ -189,16 +200,28 @@ class EnhancedGuardianShieldMenu:
         elif choice == '25':
             await self.slashing_security()
             
-        # Integrated Systems
+        # Treasury & POS Systems
         elif choice == '26':
-            await self.unified_defi_hub()
+            await self.treasury_management()
         elif choice == '27':
-            await self.full_system_demo()
+            await self.pos_system_control()
         elif choice == '28':
-            await self.mobile_interface()
+            await self.treasury_analytics()
         elif choice == '29':
-            await self.security_center()
+            await self.payment_processing()
         elif choice == '30':
+            await self.financial_dashboard()
+            
+        # Integrated Systems
+        elif choice == '31':
+            await self.unified_defi_hub()
+        elif choice == '32':
+            await self.full_system_demo()
+        elif choice == '33':
+            await self.mobile_interface()
+        elif choice == '34':
+            await self.security_center()
+        elif choice == '35':
             await self.realtime_monitoring()
             
         # Exit
@@ -482,8 +505,113 @@ class EnhancedGuardianShieldMenu:
         print("Security monitoring and slashing protocol management")
         input("\nPress Enter to continue...")
     
-    # Integrated System Methods
-    async def unified_defi_hub(self):
+    # Treasury & POS System Methods
+    async def treasury_management(self):
+        """Treasury management system"""
+        if not ADVANCED_SYSTEMS_AVAILABLE:
+            print("❌ Advanced systems not available")
+            input("Press Enter to continue...")
+            return
+            
+        print("\n🏛️ TREASURY MANAGEMENT SYSTEM")
+        print("="*50)
+        
+        if not self.treasury_system:
+            print("🔄 Initializing Treasury System...")
+            try:
+                self.treasury_system = TreasuryAnimationSystem()
+                print("✅ Treasury System initialized!")
+            except Exception as e:
+                print(f"❌ Error initializing treasury system: {e}")
+                input("Press Enter to continue...")
+                return
+        
+        status = self.treasury_system.get_treasury_status()
+        print(f"💰 Total USD Value: ${status['total_usd_value']:,.2f}")
+        print(f"🎆 Active Animations: {status['animation_status']['active_animations']}")
+        print(f"⚡ Animation FPS: {status['animation_status']['fps']}")
+        
+        print("\n🏛️ Treasury Dashboard: frontend/treasury-dashboard.html")
+        
+        input("\nPress Enter to continue...")
+    
+    async def pos_system_control(self):
+        """POS system control panel"""
+        if not ADVANCED_SYSTEMS_AVAILABLE:
+            print("❌ Advanced systems not available")
+            input("Press Enter to continue...")
+            return
+            
+        print("\n💳 POS SYSTEM CONTROL")
+        print("="*50)
+        
+        if not self.pos_system:
+            print("🔄 Initializing POS System...")
+            try:
+                self.pos_system = TokenPOSSystem()
+                print("✅ POS System initialized!")
+            except Exception as e:
+                print(f"❌ Error initializing POS system: {e}")
+                input("Press Enter to continue...")
+                return
+        
+        status = self.pos_system.get_pos_status()
+        print(f"📈 Daily Transactions: {status['daily_transactions']}")
+        print(f"💵 Daily Volume: ${status['daily_volume']:,.2f}")
+        print(f"🎨 Active Animations: {status['active_transactions']}")
+        print(f"⚡ Animation FPS: {status['animation_status']['fps']}")
+        
+        print("\n💳 POS Dashboard: frontend/pos-dashboard.html")
+        
+        input("\nPress Enter to continue...")
+    
+    async def treasury_analytics(self):
+        """Treasury analytics dashboard"""
+        print("\n📊 TREASURY ANALYTICS")
+        print("="*50)
+        print("Advanced treasury performance analytics and reporting")
+        if ADVANCED_SYSTEMS_AVAILABLE:
+            try:
+                await demonstrate_treasury_system()
+            except Exception as e:
+                print(f"Error running treasury demo: {e}")
+        else:
+            print("❌ Treasury system not available")
+        input("\nPress Enter to continue...")
+    
+    async def payment_processing(self):
+        """Payment processing system"""
+        print("\n💰 PAYMENT PROCESSING")
+        print("="*50)
+        print("Advanced token payment processing and management")
+        if ADVANCED_SYSTEMS_AVAILABLE:
+            try:
+                await demonstrate_pos_system()
+            except Exception as e:
+                print(f"Error running POS demo: {e}")
+        else:
+            print("❌ POS system not available")
+        input("\nPress Enter to continue...")
+    
+    async def financial_dashboard(self):
+        """Financial dashboard overview"""
+        print("\n📈 FINANCIAL DASHBOARD")
+        print("="*50)
+        print("Comprehensive financial overview and management")
+        
+        if ADVANCED_SYSTEMS_AVAILABLE and self.treasury_system and self.pos_system:
+            treasury_status = self.treasury_system.get_treasury_status()
+            pos_status = self.pos_system.get_pos_status()
+            
+            print("\n📊 FINANCIAL OVERVIEW:")
+            print(f"  🏛️ Treasury Value: ${treasury_status['total_usd_value']:,.2f}")
+            print(f"  💳 Daily POS Volume: ${pos_status['daily_volume']:,.2f}")
+            print(f"  📈 Total Transactions: {pos_status['daily_transactions']}")
+            print(f"  🎆 Combined Systems: Active")
+        else:
+            print("❌ Financial systems not fully initialized")
+        
+        input("\nPress Enter to continue...")
         """Unified DeFi hub"""
         print("\n🔗 UNIFIED DEFI HUB")
         print("="*80)
@@ -510,7 +638,7 @@ class EnhancedGuardianShieldMenu:
         input("\nPress Enter to continue...")
     
     async def full_system_demo(self):
-        """Full system demonstration"""
+        """Full system demonstration including treasury and POS"""
         print("\n🌈 FULL SYSTEM DEMONSTRATION")
         print("="*50)
         
@@ -532,6 +660,18 @@ class EnhancedGuardianShieldMenu:
                 await demonstrate_staking_system()
             except Exception as e:
                 print(f"Staking demo error: {e}")
+            
+            print("\n🏛️ Running Treasury Demo...")
+            try:
+                await demonstrate_treasury_system()
+            except Exception as e:
+                print(f"Treasury demo error: {e}")
+            
+            print("\n💳 Running POS Demo...")
+            try:
+                await demonstrate_pos_system()
+            except Exception as e:
+                print(f"POS demo error: {e}")
         else:
             print("❌ Advanced systems not available")
         
@@ -559,7 +699,7 @@ class EnhancedGuardianShieldMenu:
         input("\nPress Enter to continue...")
     
     async def initialize_all_systems(self):
-        """Initialize all advanced systems"""
+        """Initialize all advanced systems including treasury and POS"""
         print("\n🚀 INITIALIZING ALL ADVANCED SYSTEMS...")
         print("="*60)
         
@@ -583,8 +723,19 @@ class EnhancedGuardianShieldMenu:
                 self.staking_system = AdvancedStakingPoolSystem()
                 print("✅ Staking System ready!")
             
+            if not self.treasury_system:
+                print("🏛️ Initializing Treasury System...")
+                self.treasury_system = TreasuryAnimationSystem()
+                print("✅ Treasury System ready!")
+            
+            if not self.pos_system:
+                print("💳 Initializing POS System...")
+                self.pos_system = TokenPOSSystem()
+                print("✅ POS System ready!")
+            
             self.advanced_systems_initialized = True
             print("\n🎉 ALL ADVANCED SYSTEMS INITIALIZED SUCCESSFULLY!")
+            print("🎮 Graphics | 💧 Liquidity | 🏦 Staking | 🏛️ Treasury | 💳 POS")
             
         except Exception as e:
             print(f"❌ Error initializing systems: {e}")
@@ -593,10 +744,19 @@ class EnhancedGuardianShieldMenu:
         """Exit the system gracefully"""
         print("\n👋 THANK YOU FOR USING GUARDIANSHIELD!")
         print("🛡️ System shutting down gracefully...")
-        print("\n🌟 Advanced DeFi operations completed")
-        print("🎨 Graphics systems offline")
+        print("\n🌟 Enhanced DeFi operations completed")
+        print("🎮 Graphics systems offline")
         print("💧 Liquidity pools secured")
         print("🏦 Staking systems locked")
+        print("🏛️ Treasury systems secured")
+        print("💳 POS systems offline")
+        
+        # Shutdown all systems gracefully
+        if self.treasury_system:
+            await self.treasury_system.shutdown()
+        if self.pos_system:
+            await self.pos_system.shutdown()
+        
         print("\n✅ All systems safely shut down")
         self.running = False
 

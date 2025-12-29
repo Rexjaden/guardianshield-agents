@@ -31,7 +31,7 @@ except ImportError:
 class LearningAgent:
     """Enhanced learning agent with unlimited autonomous evolution capabilities"""
     
-    def __init__(self, name: str = "LearningAgent"):
+    def __init__(self, name: str = "Prometheus"):
         self.name = name
         self.unlimited_evolution = True
         self.autonomous_decisions = True

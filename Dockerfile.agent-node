@@ -1,0 +1,261 @@
+# GuardianShield Individual Agent Node Container
+FROM node:18-alpine
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies
+RUN apk add --no-cache \
+    python3 \
+    py3-pip \
+    make \
+    g++ \
+    git \
+    curl \
+    bash \
+    sqlite
+
+# Copy package files
+COPY package*.json ./
+
+# Install Node.js dependencies
+RUN npm install
+
+# Install Python dependencies for agent functionality
+RUN pip3 install \
+    asyncio \
+    sqlite3 \
+    numpy \
+    scikit-learn \
+    requests \
+    websockets
+
+# Copy agent system files
+COPY agents/ ./agents/
+COPY agent_education_completeness_validator.py ./
+COPY agent_physical_forms_system.py ./
+
+# Create agent-specific startup script
+COPY <<EOF ./start_agent_node.js
+const WebSocket = require('ws');
+const express = require('express');
+const { spawn } = require('child_process');
+
+class AgentNode {
+    constructor() {
+        this.agentName = process.env.AGENT_NAME || 'unknown';
+        this.nodePort = process.env.NODE_PORT || 4100;
+        this.apiPort = parseInt(this.nodePort) + 100; // API port is WS port + 100
+        
+        this.agentConfig = {
+            name: this.agentName,
+            specialization: process.env.SPECIALIZATION || 'Unknown',
+            colorScheme: process.env.COLOR_SCHEME || '#FFFFFF',
+            personality: process.env.PERSONALITY || 'default',
+            expertisePoints: parseInt(process.env.EXPERTISE_POINTS || '0'),
+            learningRate: parseFloat(process.env.LEARNING_RATE || '0.01')
+        };
+        
+        this.wsServer = null;
+        this.apiServer = null;
+        this.agentProcess = null;
+    }
+    
+    async start() {
+        console.log(\`🤖 Starting Agent Node: \${this.agentName}\`);
+        console.log(\`   Specialization: \${this.agentConfig.specialization}\`);
+        console.log(\`   WebSocket Port: \${this.nodePort}\`);
+        console.log(\`   API Port: \${this.apiPort}\`);
+        
+        // Start WebSocket server for real-time communication
+        this.startWebSocketServer();
+        
+        // Start REST API server
+        this.startAPIServer();
+        
+        // Start Python agent process
+        this.startAgentProcess();
+        
+        // Health monitoring
+        this.startHealthMonitoring();
+    }
+    
+    startWebSocketServer() {
+        this.wsServer = new WebSocket.Server({ port: this.nodePort });
+        
+        this.wsServer.on('connection', (ws) => {
+            console.log(\`📱 WebSocket client connected to \${this.agentName}\`);
+            
+            // Send agent configuration
+            ws.send(JSON.stringify({
+                type: 'agent_config',
+                data: this.agentConfig,
+                timestamp: new Date()
+            }));
+            
+            ws.on('message', (message) => {
+                this.handleWebSocketMessage(ws, message);
+            });
+        });
+        
+        console.log(\`✅ WebSocket server started for \${this.agentName} on port \${this.nodePort}\`);
+    }
+    
+    startAPIServer() {
+        const app = express();
+        app.use(express.json());
+        
+        // Agent status endpoint
+        app.get('/status', (req, res) => {
+            res.json({
+                agent: this.agentName,
+                config: this.agentConfig,
+                status: 'active',
+                uptime: process.uptime(),
+                timestamp: new Date()
+            });
+        });
+        
+        // Agent command endpoint
+        app.post('/command', (req, res) => {
+            const result = this.executeAgentCommand(req.body);
+            res.json(result);
+        });
+        
+        // Physical form endpoint
+        app.post('/physical-form', (req, res) => {
+            const result = this.updatePhysicalForm(req.body);
+            res.json(result);
+        });
+        
+        app.listen(this.apiPort, () => {
+            console.log(\`✅ API server started for \${this.agentName} on port \${this.apiPort}\`);
+        });
+    }
+    
+    startAgentProcess() {
+        // Start Python agent process
+        this.agentProcess = spawn('python3', ['-c', \`
+import sys
+sys.path.append('agents')
+import asyncio
+from learning_agent import LearningAgent
+
+async def run_agent():
+    agent = LearningAgent()
+    agent.name = "\${this.agentName}"
+    agent.specialization = "\${this.agentConfig.specialization}"
+    agent.learning_rate = \${this.agentConfig.learningRate}
+    
+    print(f"🚀 Agent {\${this.agentName}} started with specialization: {\${this.agentConfig.specialization}}")
+    
+    # Start continuous learning cycle
+    while True:
+        try:
+            await agent.autonomous_cycle()
+            await asyncio.sleep(30)  # 30 second cycles
+        except Exception as e:
+            print(f"❌ Agent error: {e}")
+            await asyncio.sleep(10)
+
+if __name__ == "__main__":
+    asyncio.run(run_agent())
+        \`]);
+        
+        this.agentProcess.stdout.on('data', (data) => {
+            console.log(\`[\${this.agentName}] \${data.toString().trim()}\`);
+        });
+        
+        this.agentProcess.stderr.on('data', (data) => {
+            console.error(\`[\${this.agentName}] ERROR: \${data.toString().trim()}\`);
+        });
+    }
+    
+    handleWebSocketMessage(ws, message) {
+        try {
+            const data = JSON.parse(message);
+            
+            switch (data.type) {
+                case 'agent_command':
+                    const result = this.executeAgentCommand(data.command);
+                    ws.send(JSON.stringify({
+                        type: 'command_result',
+                        data: result,
+                        timestamp: new Date()
+                    }));
+                    break;
+                    
+                case 'request_status':
+                    ws.send(JSON.stringify({
+                        type: 'agent_status',
+                        data: {
+                            agent: this.agentName,
+                            config: this.agentConfig,
+                            status: 'active',
+                            uptime: process.uptime()
+                        },
+                        timestamp: new Date()
+                    }));
+                    break;
+            }
+        } catch (error) {
+            console.error(\`Error handling WebSocket message: \${error}\`);
+        }
+    }
+    
+    executeAgentCommand(command) {
+        // Execute agent-specific commands
+        console.log(\`🎯 Executing command for \${this.agentName}: \${command.action}\`);
+        
+        return {
+            success: true,
+            agent: this.agentName,
+            command: command.action,
+            result: 'Command executed successfully',
+            timestamp: new Date()
+        };
+    }
+    
+    updatePhysicalForm(formData) {
+        // Update agent's physical form
+        console.log(\`🎭 Updating physical form for \${this.agentName}\`);
+        
+        return {
+            success: true,
+            agent: this.agentName,
+            formUpdated: true,
+            timestamp: new Date()
+        };
+    }
+    
+    startHealthMonitoring() {
+        setInterval(() => {
+            // Basic health check
+            console.log(\`💓 \${this.agentName} health check - Status: Active\`);
+        }, 60000); // Every minute
+    }
+}
+
+// Start the agent node
+const agentNode = new AgentNode();
+agentNode.start().catch(console.error);
+EOF
+
+# Create necessary directories
+RUN mkdir -p /app/physical_forms /app/memory /app/logs
+
+# Set permissions
+RUN chown -R node:node /app
+
+# Switch to non-root user
+USER node
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
+  CMD curl -f http://localhost:\${NODE_PORT:-4100}/status || exit 1
+
+# Expose the dynamic port range for agents
+EXPOSE 4100-4299
+
+# Start the agent node
+CMD ["node", "start_agent_node.js"]

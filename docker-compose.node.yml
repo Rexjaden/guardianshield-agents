@@ -1,0 +1,303 @@
+# GuardianShield Docker Node Web Integration
+# Multi-container Node.js system with agent coordination
+
+version: '3.8'
+
+services:
+  # Node.js Orchestrator Service
+  guardianshield-node-orchestrator:
+    build:
+      context: .
+      dockerfile: Dockerfile.node
+    container_name: gs-node-orchestrator
+    ports:
+      - "3001:3001"  # Main Node cluster
+      - "3002:3002"  # WebSocket server
+      - "3003:3003"  # REST API
+    environment:
+      - NODE_ENV=production
+      - CLUSTER_MODE=true
+      - MAX_WORKERS=4
+      - AGENT_COORDINATION=true
+      - PHYSICAL_FORM_INTEGRATION=true
+      - QUANTUM_ENCRYPTION=true
+      - WEBSOCKET_PORT=3002
+      - API_PORT=3003
+    volumes:
+      - ./agent_logs:/app/logs
+      - ./agent_physical_forms:/app/physical_forms
+      - ./distributed_node_orchestrator.js:/app/orchestrator.js
+      - ./blockchain_node_cluster.js:/app/blockchain_cluster.js
+    depends_on:
+      - redis-cluster
+      - postgres-agents
+    networks:
+      - guardianshield-node-network
+    restart: unless-stopped
+
+  # Blockchain Node Cluster Service
+  guardianshield-blockchain-cluster:
+    build:
+      context: .
+      dockerfile: Dockerfile.blockchain
+    container_name: gs-blockchain-cluster
+    ports:
+      - "4001:4001"  # Blockchain cluster coordinator
+      - "4002:4002"  # Cross-chain bridge
+    environment:
+      - NODE_ENV=production
+      - MAX_BLOCKCHAIN_NODES=8
+      - SHARDING_ENABLED=true
+      - CROSS_CHAIN_BRIDGE=true
+      - CONSENSUS_ALGORITHM=proof_of_stake
+      - QUANTUM_RESISTANT=true
+      - ETHEREUM_RPC_URL=${ETHEREUM_RPC_URL}
+      - POLYGON_RPC_URL=${POLYGON_RPC_URL}
+      - AVALANCHE_RPC_URL=${AVALANCHE_RPC_URL}
+      - ARBITRUM_RPC_URL=${ARBITRUM_RPC_URL}
+    volumes:
+      - ./blockchain_data:/app/blockchain_data
+      - ./contract_deployments:/app/deployments
+    depends_on:
+      - guardianshield-node-orchestrator
+    networks:
+      - guardianshield-node-network
+    restart: unless-stopped
+
+  # Agent Node - Prometheus (Google Cloud Expert)
+  agent-prometheus:
+    build:
+      context: .
+      dockerfile: Dockerfile.agent-node
+    container_name: gs-agent-prometheus
+    ports:
+      - "4100:4100"  # Prometheus WebSocket
+      - "4200:4200"  # Prometheus API
+    environment:
+      - AGENT_NAME=prometheus
+      - AGENT_TYPE=google_cloud_expert
+      - SPECIALIZATION=Google Cloud Architecture & DevOps
+      - COLOR_SCHEME=#FF6B35
+      - PERSONALITY=methodical_technical
+      - EXPERTISE_POINTS=3000
+      - LEARNING_RATE=0.01
+      - PHYSICAL_FORM_INTEGRATION=true
+      - NODE_PORT=4100
+    volumes:
+      - ./agent_physical_forms/prometheus:/app/physical_forms
+      - ./agent_memories/prometheus:/app/memory
+    depends_on:
+      - guardianshield-node-orchestrator
+    networks:
+      - guardianshield-node-network
+    restart: unless-stopped
+
+  # Agent Node - Silva (Blockchain Security Master)
+  agent-silva:
+    build:
+      context: .
+      dockerfile: Dockerfile.agent-node
+    container_name: gs-agent-silva
+    ports:
+      - "4101:4101"  # Silva WebSocket
+      - "4201:4201"  # Silva API
+    environment:
+      - AGENT_NAME=silva
+      - AGENT_TYPE=blockchain_security_expert
+      - SPECIALIZATION=Blockchain Security & Threat Detection
+      - COLOR_SCHEME=#4F7942
+      - PERSONALITY=vigilant_guardian
+      - EXPERTISE_POINTS=3200
+      - LEARNING_RATE=0.015
+      - PHYSICAL_FORM_INTEGRATION=true
+      - NODE_PORT=4101
+    volumes:
+      - ./agent_physical_forms/silva:/app/physical_forms
+      - ./agent_memories/silva:/app/memory
+      - ./threat_intelligence.db:/app/threat_db.db
+    depends_on:
+      - guardianshield-blockchain-cluster
+    networks:
+      - guardianshield-node-network
+    restart: unless-stopped
+
+  # Agent Node - Turlo (Web Security Analyst)
+  agent-turlo:
+    build:
+      context: .
+      dockerfile: Dockerfile.agent-node
+    container_name: gs-agent-turlo
+    ports:
+      - "4102:4102"  # Turlo WebSocket
+      - "4202:4202"  # Turlo API
+    environment:
+      - AGENT_NAME=turlo
+      - AGENT_TYPE=web_security_analyst
+      - SPECIALIZATION=Web2/Web3 Security Analysis
+      - COLOR_SCHEME=#4169E1
+      - PERSONALITY=analytical_observer
+      - EXPERTISE_POINTS=2800
+      - LEARNING_RATE=0.012
+      - PHYSICAL_FORM_INTEGRATION=true
+      - NODE_PORT=4102
+    volumes:
+      - ./agent_physical_forms/turlo:/app/physical_forms
+      - ./agent_memories/turlo:/app/memory
+      - ./web_security_data:/app/security_data
+    depends_on:
+      - guardianshield-node-orchestrator
+    networks:
+      - guardianshield-node-network
+    restart: unless-stopped
+
+  # Agent Node - Lirto (Cryptocurrency Master)
+  agent-lirto:
+    build:
+      context: .
+      dockerfile: Dockerfile.agent-node
+    container_name: gs-agent-lirto
+    ports:
+      - "4103:4103"  # Lirto WebSocket
+      - "4203:4203"  # Lirto API
+    environment:
+      - AGENT_NAME=lirto
+      - AGENT_TYPE=cryptocurrency_master
+      - SPECIALIZATION=Cryptocurrency & DeFi Mastery
+      - COLOR_SCHEME=#8A2BE2
+      - PERSONALITY=elite_strategic_advisor
+      - EXPERTISE_POINTS=3500
+      - LEARNING_RATE=0.018
+      - PHYSICAL_FORM_INTEGRATION=true
+      - NODE_PORT=4103
+      - USER_EXCLUSIVE_ACCESS=true
+    volumes:
+      - ./agent_physical_forms/lirto:/app/physical_forms
+      - ./agent_memories/lirto:/app/memory
+      - ./defi_strategies:/app/strategies
+    depends_on:
+      - guardianshield-blockchain-cluster
+    networks:
+      - guardianshield-node-network
+    restart: unless-stopped
+
+  # Redis Cluster for Node Communication
+  redis-cluster:
+    image: redis:7-alpine
+    container_name: gs-redis-cluster
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes --cluster-enabled yes
+    volumes:
+      - redis-cluster-data:/data
+    networks:
+      - guardianshield-node-network
+    restart: unless-stopped
+
+  # PostgreSQL for Agent Data
+  postgres-agents:
+    image: postgres:15
+    container_name: gs-postgres-agents
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=guardianshield_agents
+      - POSTGRES_USER=guardianshield
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-guardianshield_secure}
+    volumes:
+      - postgres-agents-data:/var/lib/postgresql/data
+      - ./sql/init_agents.sql:/docker-entrypoint-initdb.d/init_agents.sql
+    networks:
+      - guardianshield-node-network
+    restart: unless-stopped
+
+  # NGINX Load Balancer for Agent APIs
+  nginx-agent-lb:
+    image: nginx:alpine
+    container_name: gs-nginx-agent-lb
+    ports:
+      - "8080:80"   # Load balanced agent access
+      - "8443:443"  # SSL terminated agent access
+    volumes:
+      - ./nginx/agent-lb.conf:/etc/nginx/nginx.conf
+      - ./nginx/ssl:/etc/nginx/ssl
+    depends_on:
+      - agent-prometheus
+      - agent-silva
+      - agent-turlo
+      - agent-lirto
+    networks:
+      - guardianshield-node-network
+    restart: unless-stopped
+
+  # Node.js Web Dashboard
+  guardianshield-web-dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile.dashboard
+    container_name: gs-web-dashboard
+    ports:
+      - "3000:3000"  # Web dashboard
+    environment:
+      - NODE_ENV=production
+      - API_BASE_URL=http://guardianshield-node-orchestrator:3003
+      - WS_BASE_URL=ws://guardianshield-node-orchestrator:3002
+      - ENABLE_AGENT_CONTROL=true
+      - ENABLE_BLOCKCHAIN_MONITOR=true
+    volumes:
+      - ./frontend:/app/frontend
+      - ./agent_physical_forms:/app/agent_forms
+    depends_on:
+      - guardianshield-node-orchestrator
+      - nginx-agent-lb
+    networks:
+      - guardianshield-node-network
+    restart: unless-stopped
+
+  # Monitoring & Metrics
+  prometheus-monitoring:
+    image: prom/prometheus:latest
+    container_name: gs-prometheus-monitoring
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+    networks:
+      - guardianshield-node-network
+    restart: unless-stopped
+
+  # Grafana Dashboard
+  grafana-dashboard:
+    image: grafana/grafana:latest
+    container_name: gs-grafana-dashboard
+    ports:
+      - "3001:3000"  # Note: Different from orchestrator port
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-guardianshield_admin}
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources
+    depends_on:
+      - prometheus-monitoring
+    networks:
+      - guardianshield-node-network
+    restart: unless-stopped
+
+networks:
+  guardianshield-node-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+volumes:
+  redis-cluster-data:
+  postgres-agents-data:
+  prometheus-data:
+  grafana-data:

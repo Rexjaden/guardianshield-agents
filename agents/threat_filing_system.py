@@ -25,7 +25,7 @@ class ThreatFilingSystem:
     - Associated metadata and evidence
     """
     
-    def __init__(self, db_path: str = "threat_intelligence.db"):
+    def __init__(self, db_path: str = "./databases/threat_intelligence.db"):
         self.db_path = db_path
         self.init_database()
         

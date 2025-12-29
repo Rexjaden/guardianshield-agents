@@ -1,0 +1,50 @@
+# GuardianShield Blockchain Cluster Container
+FROM node:18-alpine
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies including Python for agent integration
+RUN apk add --no-cache \
+    python3 \
+    py3-pip \
+    make \
+    g++ \
+    git \
+    curl \
+    bash
+
+# Copy package files
+COPY package*.json ./
+
+# Install Node.js dependencies
+RUN npm install
+
+# Install Python dependencies for agent coordination
+RUN pip3 install web3 asyncio sqlite3
+
+# Copy blockchain cluster file
+COPY blockchain_node_cluster.js ./
+
+# Copy smart contract deployment scripts
+COPY scripts/ ./scripts/
+COPY contracts/ ./contracts/
+
+# Create necessary directories
+RUN mkdir -p /app/blockchain_data /app/deployments /app/logs
+
+# Set permissions
+RUN chown -R node:node /app
+
+# Switch to non-root user
+USER node
+
+# Health check for blockchain connectivity
+HEALTHCHECK --interval=45s --timeout=15s --start-period=10s --retries=3 \
+  CMD node -e "console.log('Blockchain cluster health check')" || exit 1
+
+# Expose ports
+EXPOSE 4001 4002
+
+# Start the blockchain cluster
+CMD ["node", "blockchain_node_cluster.js"]

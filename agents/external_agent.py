@@ -21,7 +21,7 @@ class ExternalAgent:
     """Enhanced external agent with autonomous integration capabilities"""
     
     def __init__(self):
-        self.name = "ExternalAgent"
+        self.name = "Silva"
         self.training_specialization = 'external_threats'
         self.external_threat_patterns = {}
         self.network_signatures = []

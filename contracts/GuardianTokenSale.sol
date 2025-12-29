@@ -5,6 +5,14 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/Pausable.sol";
+import "./ChainlinkPriceOracle.sol";
+
+interface IPriceOracle {
+    function ethToUsd(uint256 ethAmount) external view returns (uint256 usdValue);
+    function usdToEth(uint256 usdAmount) external view returns (uint256 ethValue);
+    function getLatestPrice() external view returns (uint256 price, uint256 timestamp, bool success);
+    function getTokenPriceInUsd(uint256 tokenPriceInEth) external view returns (uint256 tokenPriceInUsd);
+}
 
 /**
  * @title GuardianTokenSale
@@ -12,6 +20,11 @@ import "@openzeppelin/contracts/utils/Pausable.sol";
  */
 contract GuardianTokenSale is Ownable, ReentrancyGuard, Pausable {
     IERC20 public immutable guardToken;
+    IPriceOracle public priceOracle;
+    
+    // Price feed configuration
+    bool public useOracle = true;
+    uint256 public fallbackEthPrice = 3000e8; // $3000 with 8 decimals
     
     // Sale Configuration
     struct SaleStage {
@@ -62,42 +75,50 @@ contract GuardianTokenSale is Ownable, ReentrancyGuard, Pausable {
     );
     event StageUpdated(uint256 indexed stage, uint256 price, uint256 maxTokens);
     event ReferralReward(address indexed referrer, address indexed buyer, uint256 reward);
+    event PriceOracleUpdated(address indexed newOracle);
+    event OracleToggled(bool enabled);
+    event FallbackPriceUpdated(uint256 newPrice);
     
     constructor(
         address _guardToken,
         address _treasury,
-        address _guardianTreasury
+        address _guardianTreasury,
+        address _priceOracle
     ) Ownable(msg.sender) {
         guardToken = IERC20(_guardToken);
         treasury = _treasury;
         guardianTreasury = _guardianTreasury;
         
-        // Set up initial sale stages
+        if (_priceOracle != address(0)) {
+            priceOracle = IPriceOracle(_priceOracle);
+        }
+        
+        // Set up initial sale stages with USD-based pricing
         _setupInitialStages();
     }
     
     function _setupInitialStages() private {
-        // Pre-Sale Stage (50% discount)
+        // Pre-Sale Stage - $0.001 per token (50% discount from $0.002)
         saleStages[1] = SaleStage({
-            price: 0.0005 ether,  // 2000 GUARD per 1 ETH
+            price: _usdToEthPrice(0.001 ether), // $0.001 per token
             maxTokens: 50_000_000 * 10**18,
             soldTokens: 0,
             active: true,
             name: "Pre-Sale"
         });
         
-        // Public Sale Stage (25% discount)
+        // Public Sale Stage - $0.0015 per token (25% discount from $0.002)
         saleStages[2] = SaleStage({
-            price: 0.00075 ether, // 1333 GUARD per 1 ETH
+            price: _usdToEthPrice(0.0015 ether), // $0.0015 per token
             maxTokens: 100_000_000 * 10**18,
             soldTokens: 0,
             active: false,
             name: "Public Sale"
         });
         
-        // Final Sale Stage (normal price)
+        // Final Sale Stage - $0.002 per token (normal price)
         saleStages[3] = SaleStage({
-            price: 0.001 ether,   // 1000 GUARD per 1 ETH
+            price: _usdToEthPrice(0.002 ether), // $0.002 per token
             maxTokens: 150_000_000 * 10**18,
             soldTokens: 0,
             active: false,
@@ -175,14 +196,14 @@ contract GuardianTokenSale is Ownable, ReentrancyGuard, Pausable {
         SaleStage storage stage = saleStages[currentStage];
         require(stage.active, "Current stage not active");
         
-        // Calculate GUARD tokens based on USD value
-        // Assuming 1 ETH = $3000 for conversion (in production, use Chainlink oracle)
+        // Calculate GUARD tokens based on USD value using oracle
         uint256 usdValue = tokenAmount;
         if (tokenDecimals[token] != 18) {
             usdValue = tokenAmount * (10**(18 - tokenDecimals[token]));
         }
         
-        uint256 ethEquivalent = (usdValue * 1 ether) / 3000e18; // Convert USD to ETH equivalent
+        // Convert USD to ETH using oracle
+        uint256 ethEquivalent = _usdToEth(usdValue);
         uint256 guardTokens = (ethEquivalent * 10**18) / stage.price;
         
         require(stage.soldTokens + guardTokens <= stage.maxTokens, "Stage limit exceeded");
@@ -229,7 +250,7 @@ contract GuardianTokenSale is Ownable, ReentrancyGuard, Pausable {
     }
     
     /**
-     * @dev Get current sale information
+     * @dev Get current sale information with oracle status
      */
     function getCurrentSaleInfo() external view returns (
         uint256 stage,
@@ -238,9 +259,14 @@ contract GuardianTokenSale is Ownable, ReentrancyGuard, Pausable {
         uint256 maxTokens,
         uint256 soldTokens,
         uint256 remainingTokens,
-        bool active
+        bool active,
+        uint256 priceInUsd,
+        bool oracleActive
     ) {
         SaleStage memory currentSaleStage = saleStages[currentStage];
+        (uint256 ethPrice, bool fromOracle) = getCurrentEthPrice();
+        uint256 tokenPriceUsd = this.getTokenPriceInUsd(currentStage);
+        
         return (
             currentStage,
             currentSaleStage.name,
@@ -248,7 +274,9 @@ contract GuardianTokenSale is Ownable, ReentrancyGuard, Pausable {
             currentSaleStage.maxTokens,
             currentSaleStage.soldTokens,
             currentSaleStage.maxTokens - currentSaleStage.soldTokens,
-            currentSaleStage.active
+            currentSaleStage.active,
+            tokenPriceUsd,
+            useOracle && fromOracle
         );
     }
     
@@ -258,6 +286,63 @@ contract GuardianTokenSale is Ownable, ReentrancyGuard, Pausable {
     function calculateTokens(uint256 ethAmount) external view returns (uint256) {
         SaleStage memory stage = saleStages[currentStage];
         return (ethAmount * 10**18) / stage.price;
+    }
+    
+    /**
+     * @dev Get current ETH price in USD
+     */
+    function getCurrentEthPrice() public view returns (uint256 price, bool fromOracle) {
+        if (useOracle && address(priceOracle) != address(0)) {
+            (uint256 oraclePrice, , bool success) = priceOracle.getLatestPrice();
+            if (success) {
+                return (oraclePrice, true);
+            }
+        }
+        return (fallbackEthPrice, false);
+    }
+    
+    /**
+     * @dev Convert USD amount to ETH using oracle or fallback
+     */
+    function _usdToEth(uint256 usdAmount) internal view returns (uint256) {
+        if (useOracle && address(priceOracle) != address(0)) {
+            try priceOracle.usdToEth(usdAmount) returns (uint256 ethAmount) {
+                return ethAmount;
+            } catch {
+                // Fallback calculation
+                return (usdAmount * (10**8)) / fallbackEthPrice;
+            }
+        } else {
+            // Fallback calculation: USD (18 decimals) * 1e8 / price (8 decimals) = ETH (18 decimals)
+            return (usdAmount * (10**8)) / fallbackEthPrice;
+        }
+    }
+    
+    /**
+     * @dev Convert USD price to ETH price for token pricing
+     */
+    function _usdToEthPrice(uint256 usdPrice) internal view returns (uint256) {
+        return _usdToEth(usdPrice);
+    }
+    
+    /**
+     * @dev Get token price in USD
+     */
+    function getTokenPriceInUsd(uint256 stage) external view returns (uint256) {
+        require(stage > 0 && stage <= totalStages, "Invalid stage");
+        SaleStage memory stageData = saleStages[stage];
+        
+        if (useOracle && address(priceOracle) != address(0)) {
+            try priceOracle.getTokenPriceInUsd(stageData.price) returns (uint256 usdPrice) {
+                return usdPrice;
+            } catch {
+                // Fallback calculation
+                return (stageData.price * fallbackEthPrice) / (10**8);
+            }
+        } else {
+            // Fallback calculation: ETH price * ETH amount / 1e8
+            return (stageData.price * fallbackEthPrice) / (10**8);
+        }
     }
     
     // Admin functions
@@ -306,6 +391,48 @@ contract GuardianTokenSale is Ownable, ReentrancyGuard, Pausable {
     function setGuardianTreasury(address _guardianTreasury) external onlyOwner {
         require(_guardianTreasury != address(0), "Invalid treasury address");
         guardianTreasury = _guardianTreasury;
+    }
+    
+    /**
+     * @dev Set the price oracle contract
+     */
+    function setPriceOracle(address _priceOracle) external onlyOwner {
+        require(_priceOracle != address(0), "Invalid oracle address");
+        priceOracle = IPriceOracle(_priceOracle);
+        emit PriceOracleUpdated(_priceOracle);
+    }
+    
+    /**
+     * @dev Toggle oracle usage on/off
+     */
+    function toggleOracle(bool _useOracle) external onlyOwner {
+        useOracle = _useOracle;
+        emit OracleToggled(_useOracle);
+    }
+    
+    /**
+     * @dev Set fallback ETH price (with 8 decimals)
+     */
+    function setFallbackEthPrice(uint256 _fallbackPrice) external onlyOwner {
+        require(_fallbackPrice > 0, "Invalid price");
+        fallbackEthPrice = _fallbackPrice;
+        emit FallbackPriceUpdated(_fallbackPrice);
+    }
+    
+    /**
+     * @dev Update sale stage prices based on current USD rates
+     */
+    function updateStagesPricing() external onlyOwner {
+        // Update all stages with current USD-to-ETH conversion
+        if (totalStages >= 1) {
+            saleStages[1].price = _usdToEthPrice(0.001 ether); // $0.001
+        }
+        if (totalStages >= 2) {
+            saleStages[2].price = _usdToEthPrice(0.0015 ether); // $0.0015
+        }
+        if (totalStages >= 3) {
+            saleStages[3].price = _usdToEthPrice(0.002 ether); // $0.002
+        }
     }
     
     function withdrawTokens(address token, uint256 amount) external onlyOwner {

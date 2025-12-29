@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏛️ GuardianShield Treasury Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            color: #ffffff;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+        
+        /* Animated background particles */
+        .particles-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.3;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #ffd700;
+            border-radius: 50%;
+            animation: float 6s infinite linear;
+            box-shadow: 0 0 6px #ffd700;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+        }
+        
+        /* Header */
+        .header {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 1rem 2rem;
+            border-bottom: 2px solid #ffd700;
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header h1 {
+            background: linear-gradient(45deg, #ffd700, #ff8c00, #ffd700);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient-shift 3s ease-in-out infinite;
+            font-size: 2.5rem;
+            text-align: center;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+        
+        @keyframes gradient-shift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        /* Main dashboard layout */
+        .dashboard {
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* Treasury vault visualization */
+        .treasury-vault {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 140, 0, 0.05));
+            border: 2px solid #ffd700;
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            grid-column: span 2;
+            min-height: 400px;
+        }
+        
+        .vault-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 2rem auto;
+            perspective: 1000px;
+        }
+        
+        .vault-3d {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            animation: vault-rotate 20s infinite linear;
+        }
+        
+        @keyframes vault-rotate {
+            0% { transform: rotateY(0deg) rotateX(0deg); }
+            25% { transform: rotateY(90deg) rotateX(5deg); }
+            50% { transform: rotateY(180deg) rotateX(0deg); }
+            75% { transform: rotateY(270deg) rotateX(-5deg); }
+            100% { transform: rotateY(360deg) rotateX(0deg); }
+        }
+        
+        .vault-face {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(45deg, #ffd700, #ffed4e, #ffd700);
+            border: 3px solid #b8860b;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
+        }
+        
+        .vault-face.front { transform: translateZ(100px); }
+        .vault-face.back { transform: translateZ(-100px) rotateY(180deg); }
+        .vault-face.right { transform: rotateY(90deg) translateZ(100px); }
+        .vault-face.left { transform: rotateY(-90deg) translateZ(100px); }
+        .vault-face.top { transform: rotateX(90deg) translateZ(100px); }
+        .vault-face.bottom { transform: rotateX(-90deg) translateZ(100px); }
+        
+        .treasury-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 300px;
+            height: 300px;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.3) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: pulse-glow 2s ease-in-out infinite alternate;
+            pointer-events: none;
+        }
+        
+        @keyframes pulse-glow {
+            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.5; }
+            100% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.8; }
+        }
+        
+        /* Stats cards */
+        .stats-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 15px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-5px);
+            border-color: #ffd700;
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+        }
+        
+        .stats-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #ffd700, transparent, #ffd700);
+            border-radius: 15px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .stats-card:hover::before {
+            opacity: 0.5;
+        }
+        
+        .stats-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .stats-icon {
+            font-size: 2rem;
+            margin-right: 1rem;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-5px); }
+            60% { transform: translateY(-3px); }
+        }
+        
+        .stats-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #ffd700;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            animation: counter-up 2s ease-out;
+        }
+        
+        @keyframes counter-up {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .stats-label {
+            color: #cccccc;
+            font-size: 1.1rem;
+            margin-top: 0.5rem;
+        }
+        
+        /* Transaction history */
+        .transaction-history {
+            grid-column: span 2;
+        }
+        
+        .transaction-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+            animation: slide-in 0.5s ease-out;
+        }
+        
+        @keyframes slide-in {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        .transaction-item:hover {
+            background: rgba(255, 215, 0, 0.1);
+            border-color: #ffd700;
+        }
+        
+        .transaction-type {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+        
+        .transaction-type.deposit {
+            background: linear-gradient(45deg, #4CAF50, #8BC34A);
+            color: white;
+        }
+        
+        .transaction-type.withdrawal {
+            background: linear-gradient(45deg, #f44336, #ff9800);
+            color: white;
+        }
+        
+        /* Performance charts */
+        .performance-chart {
+            position: relative;
+            height: 200px;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 140, 0, 0.05));
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .chart-line {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60%;
+            background: linear-gradient(to top, rgba(255, 215, 0, 0.6), rgba(255, 215, 0, 0.1));
+            border-radius: 10px 10px 0 0;
+            animation: chart-fill 3s ease-out;
+            transform-origin: bottom;
+        }
+        
+        @keyframes chart-fill {
+            from { transform: scaleY(0); }
+            to { transform: scaleY(1); }
+        }
+        
+        /* Control buttons */
+        .control-panel {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+        
+        .control-btn {
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            color: #000;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+        }
+        
+        .control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.5);
+            background: linear-gradient(45deg, #ffed4e, #ffd700);
+        }
+        
+        .control-btn:active {
+            transform: translateY(0);
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+            }
+            
+            .treasury-vault {
+                grid-column: span 1;
+            }
+            
+            .transaction-history {
+                grid-column: span 1;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .vault-container {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .vault-face {
+                width: 150px;
+                height: 150px;
+                font-size: 2rem;
+            }
+        }
+        
+        /* Loading animations */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 215, 0, 0.3);
+            border-radius: 50%;
+            border-top-color: #ffd700;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Status indicators */
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-indicator.online {
+            background: #4CAF50;
+        }
+        
+        .status-indicator.offline {
+            background: #f44336;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated particles background -->
+    <div class="particles-bg" id="particlesBg"></div>
+    
+    <!-- Header -->
+    <header class="header">
+        <h1>🏛️ Treasury Dashboard</h1>
+    </header>
+    
+    <!-- Main dashboard -->
+    <main class="dashboard">
+        <!-- Treasury vault visualization -->
+        <section class="stats-card treasury-vault">
+            <div class="treasury-glow"></div>
+            <h2>💰 Main Treasury Vault</h2>
+            <div class="vault-container">
+                <div class="vault-3d">
+                    <div class="vault-face front">🏛️</div>
+                    <div class="vault-face back">💎</div>
+                    <div class="vault-face right">⚡</div>
+                    <div class="vault-face left">🛡️</div>
+                    <div class="vault-face top">👑</div>
+                    <div class="vault-face bottom">🔒</div>
+                </div>
+            </div>
+            <div class="stats-value" id="totalValue">$0.00</div>
+            <div class="stats-label">Total Treasury Value</div>
+            <div class="control-panel">
+                <button class="control-btn" onclick="addFunds()">➕ Add Funds</button>
+                <button class="control-btn" onclick="withdrawFunds()">➖ Withdraw</button>
+                <button class="control-btn" onclick="refreshData()">🔄 Refresh</button>
+            </div>
+        </section>
+        
+        <!-- Token balances -->
+        <section class="stats-card">
+            <div class="stats-header">
+                <span class="stats-icon">🪙</span>
+                <h3>GUARD Tokens</h3>
+                <span class="status-indicator online"></span>
+            </div>
+            <div class="stats-value" id="guardBalance">0</div>
+            <div class="stats-label">Available Balance</div>
+        </section>
+        
+        <section class="stats-card">
+            <div class="stats-header">
+                <span class="stats-icon">💵</span>
+                <h3>USDC Reserve</h3>
+                <span class="status-indicator online"></span>
+            </div>
+            <div class="stats-value" id="usdcBalance">0</div>
+            <div class="stats-label">Stablecoin Reserve</div>
+        </section>
+        
+        <section class="stats-card">
+            <div class="stats-header">
+                <span class="stats-icon">🏦</span>
+                <h3>Staked Amount</h3>
+                <span class="status-indicator online"></span>
+            </div>
+            <div class="stats-value" id="stakedAmount">0</div>
+            <div class="stats-label">Currently Staked</div>
+        </section>
+        
+        <section class="stats-card">
+            <div class="stats-header">
+                <span class="stats-icon">📈</span>
+                <h3>24h Performance</h3>
+                <span class="status-indicator online"></span>
+            </div>
+            <div class="stats-value" id="dailyPerformance">+0.00%</div>
+            <div class="stats-label">Daily Change</div>
+            <div class="performance-chart">
+                <div class="chart-line"></div>
+            </div>
+        </section>
+        
+        <!-- Transaction history -->
+        <section class="stats-card transaction-history">
+            <div class="stats-header">
+                <span class="stats-icon">📊</span>
+                <h3>Recent Transactions</h3>
+                <span class="status-indicator online"></span>
+            </div>
+            <div id="transactionList">
+                <div class="transaction-item">
+                    <div>
+                        <span class="transaction-type deposit">DEPOSIT</span>
+                        <strong>50,000 GUARD</strong>
+                    </div>
+                    <div>
+                        <div>$125,000.00</div>
+                        <div style="font-size: 0.9rem; color: #888;">2 hours ago</div>
+                    </div>
+                </div>
+                <div class="transaction-item">
+                    <div>
+                        <span class="transaction-type deposit">DEPOSIT</span>
+                        <strong>25,000 USDC</strong>
+                    </div>
+                    <div>
+                        <div>$25,000.00</div>
+                        <div style="font-size: 0.9rem; color: #888;">4 hours ago</div>
+                    </div>
+                </div>
+                <div class="transaction-item">
+                    <div>
+                        <span class="transaction-type withdrawal">WITHDRAWAL</span>
+                        <strong>5,000 GUARD</strong>
+                    </div>
+                    <div>
+                        <div>$12,500.00</div>
+                        <div style="font-size: 0.9rem; color: #888;">6 hours ago</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Treasury allocations -->
+        <section class="stats-card">
+            <div class="stats-header">
+                <span class="stats-icon">📊</span>
+                <h3>Treasury Allocations</h3>
+            </div>
+            <div style="margin-top: 1rem;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <span>Development Fund</span>
+                    <span style="color: #ffd700; font-weight: bold;">30%</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <span>Marketing Fund</span>
+                    <span style="color: #ffd700; font-weight: bold;">20%</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <span>Security Reserve</span>
+                    <span style="color: #ffd700; font-weight: bold;">25%</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <span>Liquidity Pool</span>
+                    <span style="color: #ffd700; font-weight: bold;">25%</span>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <script>
+        // Create animated particles background
+        function createParticles() {
+            const particlesBg = document.getElementById('particlesBg');
+            
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (6 + Math.random() * 4) + 's';
+                particlesBg.appendChild(particle);
+            }
+        }
+        
+        // Animate counter values
+        function animateValue(element, start, end, duration) {
+            let startTime = null;
+            
+            function animate(currentTime) {
+                if (startTime === null) startTime = currentTime;
+                const progress = Math.min((currentTime - startTime) / duration, 1);
+                const value = start + (end - start) * progress;
+                
+                if (element.id === 'totalValue') {
+                    element.textContent = '$' + value.toLocaleString('en-US', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+                } else if (element.id === 'dailyPerformance') {
+                    element.textContent = '+' + value.toFixed(2) + '%';
+                } else {
+                    element.textContent = Math.floor(value).toLocaleString('en-US');
+                }
+                
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                }
+            }
+            
+            requestAnimationFrame(animate);
+        }
+        
+        // Initialize dashboard
+        function initializeDashboard() {
+            // Animate values
+            animateValue(document.getElementById('totalValue'), 0, 137500, 2000);
+            animateValue(document.getElementById('guardBalance'), 0, 45000, 1800);
+            animateValue(document.getElementById('usdcBalance'), 0, 25000, 1600);
+            animateValue(document.getElementById('stakedAmount'), 0, 15000, 2200);
+            animateValue(document.getElementById('dailyPerformance'), 0, 8.5, 2500);
+            
+            // Create particles
+            createParticles();
+        }
+        
+        // Control functions
+        function addFunds() {
+            alert('🏛️ Add Funds functionality - Connect to treasury system');
+            // This would connect to the Python treasury system
+        }
+        
+        function withdrawFunds() {
+            alert('🏛️ Withdraw Funds functionality - Connect to treasury system');
+            // This would connect to the Python treasury system
+        }
+        
+        function refreshData() {
+            // Add loading animation
+            document.querySelectorAll('.stats-value').forEach(el => {
+                el.innerHTML = '<span class="loading"></span>';
+            });
+            
+            // Simulate data refresh
+            setTimeout(() => {
+                initializeDashboard();
+            }, 1000);
+        }
+        
+        // Auto-refresh data every 30 seconds
+        setInterval(() => {
+            // In a real implementation, this would fetch fresh data from the backend
+            console.log('🔄 Auto-refreshing treasury data...');
+        }, 30000);
+        
+        // Initialize dashboard on load
+        document.addEventListener('DOMContentLoaded', initializeDashboard);
+    </script>
+</body>
+</html>

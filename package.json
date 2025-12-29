@@ -6,10 +6,16 @@
   "scripts": {
     "compile": "hardhat compile",
     "test": "hardhat test",
+    "test:chainlink": "hardhat test test/chainlink-integration.test.js",
     "deploy:localhost": "hardhat run scripts/deploy.js --network localhost",
-    "deploy:sepolia": "hardhat run scripts/deploy.js --network sepolia",
-    "deploy:mainnet": "hardhat run scripts/deploy.js --network mainnet",
-    "deploy:flare": "hardhat run scripts/deploy.js --network flare",
+    "deploy:sepolia": "hardhat run scripts/deploy-with-chainlink.js --network sepolia",
+    "deploy:mainnet": "hardhat run scripts/deploy-with-chainlink.js --network mainnet",
+    "deploy:flare": "hardhat run scripts/deploy-with-chainlink.js --network flare",
+    "deploy:chainlink": "hardhat run scripts/deploy-with-chainlink.js",
+    "update-frontend": "node scripts/update-frontend.js",
+    "deploy-and-update": "npm run deploy:chainlink && npm run update-frontend",
+    "serve-frontend": "node scripts/frontend-server.js",
+    "frontend": "npm run deploy-and-update && npm run serve-frontend",
     "verify:sepolia": "hardhat run scripts/verify.js --network sepolia",
     "verify:mainnet": "hardhat run scripts/verify.js --network mainnet",
     "node": "hardhat node"
@@ -18,10 +24,15 @@
     "@nomicfoundation/hardhat-toolbox": "^4.0.0",
     "@nomicfoundation/hardhat-verify": "^2.0.0",
     "@openzeppelin/contracts": "^5.4.0",
-    "hardhat": "^2.19.0",
+    "hardhat": "^2.28.0",
     "hardhat-gas-reporter": "^1.0.9"
   },
   "dependencies": {
-    "dotenv": "^16.3.1"
+    "@chainlink/contracts": "^1.5.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^4.22.1",
+    "serve-static": "^1.16.3",
+    "ws": "^8.18.3"
   }
 }

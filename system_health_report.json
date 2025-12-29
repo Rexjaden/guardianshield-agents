@@ -1,0 +1,151 @@
+{
+  "timestamp": "2025-12-28T20:17:11.710407",
+  "overall_status": "EXCELLENT",
+  "components": {
+    "learning_agent": {
+      "status": "OPERATIONAL",
+      "type": "agent",
+      "module": "agents.learning_agent"
+    },
+    "behavioral_analytics": {
+      "status": "OPERATIONAL",
+      "type": "agent",
+      "module": "agents.behavioral_analytics"
+    },
+    "data_ingestion": {
+      "status": "OPERATIONAL",
+      "type": "agent",
+      "module": "agents.data_ingestion"
+    },
+    "dmer_monitor": {
+      "status": "OPERATIONAL",
+      "type": "agent",
+      "module": "agents.dmer_monitor_agent"
+    },
+    "external_agent": {
+      "status": "OPERATIONAL",
+      "type": "agent",
+      "module": "agents.external_agent"
+    },
+    "flare_integration": {
+      "status": "OPERATIONAL",
+      "type": "agent",
+      "module": "agents.flare_integration"
+    },
+    "genetic_evolver": {
+      "status": "OPERATIONAL",
+      "type": "agent",
+      "module": "agents.genetic_evolver"
+    },
+    "threat_definitions": {
+      "status": "OPERATIONAL",
+      "type": "agent",
+      "module": "agents.threat_definitions"
+    },
+    "authentication": {
+      "status": "OPERATIONAL",
+      "type": "security",
+      "module": "guardian_security_system"
+    },
+    "rbac": {
+      "status": "OPERATIONAL",
+      "type": "security",
+      "module": "guardian_rbac_system"
+    },
+    "audit": {
+      "status": "OPERATIONAL",
+      "type": "security",
+      "module": "guardian_audit_system"
+    },
+    "admin_console": {
+      "status": "OPERATIONAL",
+      "type": "security",
+      "module": "admin_console"
+    },
+    "security_integration": {
+      "status": "OPERATIONAL",
+      "type": "security",
+      "module": "security_integration"
+    },
+    "main_orchestrator": {
+      "status": "OPERATIONAL",
+      "type": "main_system",
+      "module": "main"
+    },
+    "guardian_main_menu": {
+      "status": "OPERATIONAL",
+      "type": "main_system",
+      "module": "guardianshield_main_menu"
+    }
+  },
+  "databases": {
+    "./databases/threat_intelligence.db": {
+      "status": "OPERATIONAL",
+      "tables": 8,
+      "size_mb": 0.07
+    },
+    "./databases/analytics.db": {
+      "status": "OPERATIONAL",
+      "tables": 1,
+      "size_mb": 0.01
+    },
+    "./databases/security_orchestration.db": {
+      "status": "OPERATIONAL",
+      "tables": 1,
+      "size_mb": 0.01
+    },
+    "./databases/dmer_monitoring.db": {
+      "status": "OPERATIONAL",
+      "tables": 1,
+      "size_mb": 0.01
+    },
+    "./databases/behavioral_data.db": {
+      "status": "OPERATIONAL",
+      "tables": 1,
+      "size_mb": 0.01
+    }
+  },
+  "files": {
+    "main.py": {
+      "status": "PRESENT",
+      "size_kb": 13.0
+    },
+    "admin_console.py": {
+      "status": "PRESENT",
+      "size_kb": 34.8
+    },
+    "guardian_security_system.py": {
+      "status": "PRESENT",
+      "size_kb": 30.2
+    },
+    "guardian_rbac_system.py": {
+      "status": "PRESENT",
+      "size_kb": 25.9
+    },
+    "guardian_audit_system.py": {
+      "status": "PRESENT",
+      "size_kb": 37.3
+    },
+    "package.json": {
+      "status": "PRESENT",
+      "size_kb": 1.5
+    },
+    "hardhat.config.js": {
+      "status": "PRESENT",
+      "size_kb": 2.2
+    }
+  },
+  "dependencies": {
+    "pyotp": "AVAILABLE",
+    "qrcode": "AVAILABLE",
+    "cryptography": "AVAILABLE",
+    "web3": "AVAILABLE",
+    "requests": "AVAILABLE",
+    "flask": "AVAILABLE",
+    "fastapi": "AVAILABLE",
+    "sqlite3": "AVAILABLE",
+    "numpy": "AVAILABLE",
+    "sklearn": "AVAILABLE"
+  },
+  "recommendations": []
+}

@@ -18,6 +18,7 @@ logger = logging.getLogger(__name__)
 
 class BehavioralAnalyticsAgent:
     def __init__(self, max_log_size: int = 10000):
+        self.name = "Turlo"
         self.behavior_log = []
         self.max_log_size = max_log_size
         self.anomaly_threshold = 2.5

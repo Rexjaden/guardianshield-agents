@@ -33,6 +33,9 @@ try:
     from high_performance_graphics_engine import HighPerformanceGraphicsEngine
     from advanced_liquidity_pool_framework import AdvancedLiquidityPoolFramework
     from advanced_staking_pool_system import AdvancedStakingPoolSystem
+    from treasury_animation_system import TreasuryAnimationSystem
+    from token_pos_system import TokenPOSSystem
+    from frontend_animation_coordinator import FrontendAnimationCoordinator
     ENHANCED_SYSTEMS_AVAILABLE = True
 except ImportError:
     ENHANCED_SYSTEMS_AVAILABLE = False
@@ -320,6 +323,9 @@ def run_enhanced_mode():
         print("🎨 Graphics Engine: Available")
         print("💧 Liquidity Framework: Available")
         print("🏦 Staking System: Available")
+        print("🏛️ Treasury System: Available")
+        print("💳 POS System: Available")
+        print("🎬 Animation Coordinator: Available")
         
         # Launch enhanced menu
         launch_enhanced_menu_sync()

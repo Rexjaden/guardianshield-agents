@@ -1,13 +1,29 @@
 """
 admin_console.py: Administrative monitoring and control console for autonomous GuardianShield agents.
 Provides oversight, monitoring, and reversal capabilities for self-evolving agents.
+ENHANCED WITH COMPREHENSIVE SECURITY FEATURES
 """
 import os
 import json
 import time
+import hashlib
+import getpass
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Any
 import logging
+
+# Import security systems
+try:
+    from guardian_security_system import GuardianSecuritySystem, AuthMethod
+    from guardian_rbac_system import GuardianRoleBasedAccessControl, UserRole, Permission
+    from guardian_audit_system import GuardianAuditSystem, EventCategory, AlertLevel
+    SECURITY_AVAILABLE = True
+except ImportError as e:
+    SECURITY_AVAILABLE = False
+    # Only show warning if not in test mode
+    import sys
+    if len(sys.argv) == 1:  # Normal execution, not test
+        print("⚠️ Security modules not available - running in basic mode")
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -18,13 +34,21 @@ EVOLUTION_LOG_FILE = "agent_evolution_log.jsonl"
 DECISION_LOG_FILE = "agent_decision_log.jsonl"
 
 class AdminConsole:
-    """Administrative console for monitoring and controlling autonomous agents"""
+    """🔐 SECURE Administrative console for monitoring and controlling autonomous agents"""
     
     def __init__(self, log_file=LOG_FILE):
         self.log_file = log_file
         self.evolution_log_file = EVOLUTION_LOG_FILE
         self.decision_log_file = DECISION_LOG_FILE
         self.initialize_log_files()
+        
+        # Initialize security systems if available
+        self.security_enabled = SECURITY_AVAILABLE
+        if self.security_enabled:
+            self.auth_system = GuardianSecuritySystem()
+            self.rbac_system = GuardianRoleBasedAccessControl()
+            self.audit_system = GuardianAuditSystem()
+            print("🔐 Security systems initialized successfully!")
         
         # Admin control settings
         self.monitoring_active = True
@@ -36,6 +60,13 @@ class AdminConsole:
         self.agent_states = {}
         self.pending_reversals = {}
         self.blocked_actions = {}
+        
+        # Security state
+        self.current_user = None
+        self.current_session = None
+        self.current_role = None
+        self.session_start_time = None
+        self.failed_auth_attempts = 0
 
     def initialize_log_files(self):
         """Initialize log files if they don't exist"""
@@ -43,6 +74,171 @@ class AdminConsole:
             if not os.path.exists(log_file):
                 with open(log_file, 'w') as f:
                     pass
+    
+    def secure_login(self, source_ip: str = "127.0.0.1") -> bool:
+        """🔐 SECURE AUTHENTICATION FOR ADMIN CONSOLE ACCESS"""
+        
+        if not self.security_enabled:
+            print("⚠️  Security disabled - proceeding without authentication")
+            self.current_user = "admin_basic"
+            self.current_role = "ADMIN"
+            return True
+            
+        print("\n🔐 GUARDIAN SHIELD SECURE ADMIN LOGIN")
+        print("=" * 45)
+        
+        max_attempts = 3
+        
+        for attempt in range(max_attempts):
+            try:
+                # Get credentials
+                username = input("👤 Username: ").strip()
+                if not username:
+                    continue
+                    
+                password = getpass.getpass("🔑 Password: ")
+                if not password:
+                    continue
+                
+                print("\n🔢 Multi-Factor Authentication Required")
+                totp_token = input("📱 Enter TOTP code from authenticator app: ").strip()
+                
+                # Attempt authentication
+                print("\n🔍 Authenticating...")
+                result = self.auth_system.authenticate_user(username, password, totp_token)
+                
+                if result['success']:
+                    # Set session info
+                    self.current_user = username
+                    self.current_session = self.auth_system._generate_session_token(username)
+                    self.current_role = self._get_user_role(username)
+                    self.session_start_time = datetime.now()
+                    
+                    # Log successful authentication
+                    if hasattr(self, 'audit_system'):
+                        self.audit_system.log_event(
+                            EventCategory.AUTHENTICATION, 'admin_login_success', 
+                            username, self.current_role.value if SECURITY_AVAILABLE and hasattr(self.current_role, 'value') else str(self.current_role), 
+                            source_ip, 'admin_console', 'login', 'SUCCESS',
+                            {'console_access': True, 'attempt_number': attempt + 1}
+                        )
+                    
+                    print(f"\n✅ Authentication successful! Welcome, {username}")
+                    print(f"🔐 Role: {self.current_role.value if SECURITY_AVAILABLE and hasattr(self.current_role, 'value') else self.current_role}")
+                    print(f"⏰ Session started: {self.session_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
+                    return True
+                    
+                else:
+                    # Log failed attempt
+                    if hasattr(self, 'audit_system'):
+                        self.audit_system.log_event(
+                            EventCategory.AUTHENTICATION, 'admin_login_failed',
+                            username, 'Unknown', source_ip,
+                            'admin_console', 'login', 'FAILURE',
+                            {'failure_reason': result.get('message', 'Unknown'), 'attempt_number': attempt + 1}
+                        )
+                    
+                    print(f"\n❌ Authentication failed: {result.get('message', 'Invalid credentials')}")
+                    if attempt < max_attempts - 1:
+                        print(f"🔄 {max_attempts - attempt - 1} attempts remaining\n")
+                        
+            except KeyboardInterrupt:
+                print("\n\n👋 Authentication cancelled")
+                return False
+            except Exception as e:
+                print(f"\n🚨 Authentication error: {e}")
+                
+        print(f"\n🚫 Maximum authentication attempts exceeded")
+        print("🔒 Access denied for security reasons")
+        
+        # Log failed authentication series
+        if hasattr(self, 'audit_system'):
+            self.audit_system.log_event(
+                EventCategory.SECURITY, 'admin_access_blocked',
+                'unknown', 'Unknown', source_ip,
+                'admin_console', 'login', 'FAILURE',
+                {'reason': 'max_attempts_exceeded', 'total_attempts': max_attempts}
+            )
+            
+        return False
+    
+    def _get_user_role(self, username: str):
+        """Get user role for RBAC"""
+        if not SECURITY_AVAILABLE:
+            return "ADMIN"
+            
+        admin_users = ['admin', 'administrator', 'guardian_admin']
+        if username in admin_users:
+            return UserRole.MASTER_ADMIN
+        else:
+            return UserRole.DESIGNATED_ADMIN
+    
+    def check_session_valid(self) -> bool:
+        """🔍 CHECK IF CURRENT SESSION IS STILL VALID"""
+        if not self.security_enabled:
+            return True
+            
+        if not self.current_session or not self.session_start_time:
+            return False
+            
+        # Check session timeout (30 minutes)
+        if datetime.now() - self.session_start_time > timedelta(minutes=30):
+            print("\n⏰ Session expired - please log in again")
+            self.logout()
+            return False
+            
+        return True
+    
+    def require_admin_auth(self, action_name: str) -> bool:
+        """🛡️ REQUIRE ADMIN AUTHENTICATION FOR SENSITIVE ACTIONS"""
+        if not self.security_enabled:
+            return True
+            
+        if not self.check_session_valid():
+            print(f"\n🔐 Authentication required for: {action_name}")
+            return self.secure_login()
+            
+        # Check if user has required permissions
+        if self.security_enabled and self.current_role:
+            required_roles = [UserRole.MASTER_ADMIN, UserRole.DESIGNATED_ADMIN] if SECURITY_AVAILABLE else ["ADMIN"]
+            if SECURITY_AVAILABLE and self.current_role not in required_roles:
+                print(f"\n🚫 Admin privileges required for: {action_name}")
+                return False
+            elif not SECURITY_AVAILABLE and self.current_role != "ADMIN":
+                print(f"\n🚫 Admin privileges required for: {action_name}")
+                return False
+            
+            # Log the admin action attempt
+            if hasattr(self, 'audit_system'):
+                self.audit_system.log_event(
+                    EventCategory.AUTHORIZATION, 'admin_action_authorized',
+                    self.current_user, self.current_role.value if SECURITY_AVAILABLE and hasattr(self.current_role, 'value') else str(self.current_role), 
+                    '127.0.0.1', 'admin_console', action_name, 'SUCCESS',
+                    {'admin_operation': True, 'authorized_action': action_name}
+                )
+        
+        return True
+    
+    def logout(self):
+        """🚪 SECURE LOGOUT"""
+        if self.security_enabled and self.current_user:
+            # Log logout
+            if hasattr(self, 'audit_system'):
+                session_duration = datetime.now() - self.session_start_time if self.session_start_time else timedelta(0)
+                self.audit_system.log_event(
+                    EventCategory.AUTHENTICATION, 'admin_logout',
+                    self.current_user, self.current_role.value if SECURITY_AVAILABLE and hasattr(self.current_role, 'value') else str(self.current_role), 
+                    '127.0.0.1', 'admin_console', 'logout', 'SUCCESS',
+                    {'session_duration_minutes': int(session_duration.total_seconds() / 60)}
+                )
+        
+        # Clear session data
+        self.current_user = None
+        self.current_session = None
+        self.current_role = None
+        self.session_start_time = None
+        
+        print("\n👋 Logged out successfully")
 
     def log_action(self, agent: str, action: str, details: Dict, severity: int = 5):
         """Log agent action with enhanced metadata for monitoring"""
@@ -174,8 +370,56 @@ class AdminConsole:
         
         return recent_entries
 
+    def view_security_dashboard(self):
+        """🔍 VIEW COMPREHENSIVE SECURITY DASHBOARD"""
+        if not self.require_admin_auth("view_security_dashboard"):
+            return
+            
+        if not self.security_enabled or not hasattr(self, 'audit_system'):
+            print("\n⚠️  Security dashboard not available - security systems not initialized")
+            return
+            
+        print("\n🔐 GUARDIAN SHIELD SECURITY DASHBOARD")
+        print("=" * 50)
+        
+        try:
+            # Get security dashboard data
+            dashboard = self.audit_system.get_security_dashboard(24)
+            
+            print(f"📊 SECURITY METRICS (Last 24 hours):")
+            print(f"   Total Events: {dashboard.get('total_events', 0)}")
+            print(f"   Active Alerts: {sum(dashboard.get('active_alerts', {}).values())}")
+            
+            # Risk distribution
+            risk_dist = dashboard.get('risk_distribution', {})
+            print(f"\n🚨 RISK DISTRIBUTION:")
+            for level, count in risk_dist.items():
+                icon = "🔴" if level == "critical" else "🟡" if level == "high" else "🟢"
+                print(f"   {icon} {level.upper()}: {count} events")
+            
+            # Top users by activity
+            top_users = dashboard.get('top_users', [])
+            if top_users:
+                print(f"\n👥 TOP ACTIVE USERS:")
+                for user, count in top_users[:5]:
+                    print(f"   📊 {user}: {count} activities")
+            
+            # Top IPs by activity  
+            top_ips = dashboard.get('top_ips', [])
+            if top_ips:
+                print(f"\n🌐 TOP SOURCE IPs:")
+                for ip, count in top_ips[:5]:
+                    print(f"   📍 {ip}: {count} activities")
+                    
+        except Exception as e:
+            logger.error(f"Error viewing security dashboard: {e}")
+            print(f"❌ Error retrieving security dashboard: {e}")
+
     def view_agent_autonomy_stats(self):
         """View comprehensive agent autonomy and performance statistics"""
+        if not self.require_admin_auth("view_autonomy_stats"):
+            return
+            
         print("\n🤖 AGENT AUTONOMY STATISTICS")
         print("=" * 50)
         
@@ -220,7 +464,10 @@ class AdminConsole:
             logger.error(f"Error analyzing agent stats: {e}")
 
     def revert_action(self, action_id: str, reason: str = "Admin override") -> bool:
-        """Revert a specific agent action"""
+        """🔄 REVERT A SPECIFIC AGENT ACTION (SECURED)"""
+        if not self.require_admin_auth("revert_action"):
+            return False
+            
         try:
             # Find the action
             action_entry = None
@@ -303,7 +550,19 @@ class AdminConsole:
             return False
 
     def emergency_stop_all_agents(self):
-        """Emergency stop for all autonomous agent activities"""
+        """🚨 EMERGENCY STOP FOR ALL AUTONOMOUS AGENT ACTIVITIES (MASTER ADMIN ONLY)"""
+        if not self.require_admin_auth("emergency_stop"):
+            return
+            
+        # Require master admin for emergency stop
+        if self.security_enabled and SECURITY_AVAILABLE and self.current_role != UserRole.MASTER_ADMIN:
+            print("\n🚫 EMERGENCY STOP requires MASTER ADMIN privileges")
+            print("   Only the system owner can execute emergency shutdown")
+            return
+        elif self.security_enabled and not SECURITY_AVAILABLE and self.current_role != "ADMIN":
+            print("\n🚫 EMERGENCY STOP requires ADMIN privileges")
+            return
+            
         print("🛑 EMERGENCY STOP ACTIVATED")
         print("   All autonomous agent activities halted")
         print("   Manual intervention required to resume")
@@ -414,77 +673,121 @@ class AdminConsole:
 if __name__ == "__main__":
     console = AdminConsole()
     
-    while True:
-        print("\n" + "="*60)
-        print("🛡️  GUARDIANSHIELD ADMIN CONTROL CONSOLE")
-        print("="*60)
-        print("📊 MONITORING & OVERSIGHT:")
-        print("1.  Real-time agent monitoring")
-        print("2.  View agent autonomy statistics")
-        print("3.  View pending actions")
-        print("4.  View recent actions log")
-        print("")
-        print("🔄 CONTROL & INTERVENTION:")
-        print("5.  Revert specific action")
-        print("6.  Set agent autonomy level")
-        print("7.  Emergency stop all agents")
-        print("8.  Resume agent operations")
-        print("")
-        print("✅ ACTION MANAGEMENT:")
-        print("9.  Provide feedback on action")
-        print("")
-        print("0.  Exit console")
-        print("="*60)
-        
-        choice = input("Select option: ").strip()
-        
-        if choice == "1":
-            minutes = input("Enter monitoring window (minutes, default 30): ") or "30"
-            console.view_real_time_monitoring(int(minutes))
-            
-        elif choice == "2":
-            console.view_agent_autonomy_stats()
-            
-        elif choice == "3":
-            console.view_pending_actions()
-            
-        elif choice == "4":
-            limit = input("Enter number of entries (default 20): ") or "20"
-            console.view_log(int(limit))
-            
-        elif choice == "5":
-            action_id = input("Enter action ID to revert: ")
-            reason = input("Enter reason for reversal: ") or "Admin override"
-            console.revert_action(action_id, reason)
-            
-        elif choice == "6":
-            level = input("Enter autonomy level (1-10): ")
-            try:
-                console.set_agent_autonomy_level(int(level))
-            except ValueError:
-                print("❌ Please enter a valid number between 1 and 10")
+    # Require authentication if security is enabled
+    if console.security_enabled:
+        print("\n🔐 SECURE ADMIN CONSOLE - AUTHENTICATION REQUIRED")
+        if not console.secure_login():
+            print("\n❌ Authentication failed - exiting")
+            exit(1)
+    
+    try:
+        while True:
+            if not console.check_session_valid():
+                break
                 
-        elif choice == "7":
-            confirm = input("⚠️  Confirm emergency stop? (yes/no): ").lower()
-            if confirm == "yes":
-                console.emergency_stop_all_agents()
-                
-        elif choice == "8":
-            confirm = input("Resume agent operations? (yes/no): ").lower()
-            if confirm == "yes":
-                console.resume_agent_operations()
-                
-        elif choice == "9":
-            action_id = input("Enter action ID: ")
-            feedback = input("Enter feedback (approve/reject/correct): ")
-            comment = input("Optional comment: ")
-            console.provide_feedback(action_id, feedback, comment)
-            
-        elif choice == "0":
-            print("👋 Exiting GuardianShield Admin Console")
-            break
-            
-        else:
-            print("❌ Invalid option. Please try again.")
+            print("\n" + "="*60)
+            print("🛡️  GUARDIANSHIELD SECURE ADMIN CONSOLE")
+            if console.security_enabled and console.current_user:
+                role_display = console.current_role.value if SECURITY_AVAILABLE and hasattr(console.current_role, 'value') else str(console.current_role)
+                print(f"👤 User: {console.current_user} | Role: {role_display}")
+            print("="*60)
+            print("🔐 SECURITY & MONITORING:")
+            print("1.  Security dashboard")
+            print("2.  Real-time agent monitoring")
+            print("3.  View agent autonomy statistics")
+            print("4.  View pending actions")
+            print("5.  View recent actions log")
+            print("")
+            print("🔄 CONTROL & INTERVENTION:")
+            print("6.  Revert specific action")
+            print("7.  Set agent autonomy level")
+            print("8.  Emergency stop all agents")
+            print("9.  Resume agent operations")
+            print("")
+            print("✅ ACTION MANAGEMENT:")
+            print("10. Provide feedback on action")
+            print("")
+            if console.security_enabled:
+                print("🚪 SESSION MANAGEMENT:")
+                print("11. Logout")
+                print("")
+            print("0.  Exit console")
+            print("="*60)
         
-        input("\nPress Enter to continue...")
+            choice = input("Select option: ").strip()
+            
+            if choice == "1":
+                console.view_security_dashboard()
+                
+            elif choice == "2":
+                minutes = input("Enter monitoring window (minutes, default 30): ") or "30"
+                if console.require_admin_auth("real_time_monitoring"):
+                    console.view_real_time_monitoring(int(minutes))
+                
+            elif choice == "3":
+                console.view_agent_autonomy_stats()
+                
+            elif choice == "4":
+                if console.require_admin_auth("view_pending_actions"):
+                    console.view_pending_actions()
+                
+            elif choice == "5":
+                limit = input("Enter number of entries (default 20): ") or "20"
+                if console.require_admin_auth("view_action_log"):
+                    console.view_log(int(limit))
+                
+            elif choice == "6":
+                action_id = input("Enter action ID to revert: ")
+                reason = input("Enter reason for reversal: ") or "Admin override"
+                console.revert_action(action_id, reason)
+                
+            elif choice == "7":
+                if console.require_admin_auth("set_autonomy_level"):
+                    level = input("Enter autonomy level (1-10): ")
+                    try:
+                        console.set_agent_autonomy_level(int(level))
+                    except ValueError:
+                        print("❌ Please enter a valid number between 1 and 10")
+                    
+            elif choice == "8":
+                confirm = input("⚠️  Confirm emergency stop? (yes/no): ").lower()
+                if confirm == "yes":
+                    console.emergency_stop_all_agents()
+                    
+            elif choice == "9":
+                if console.require_admin_auth("resume_operations"):
+                    confirm = input("Resume agent operations? (yes/no): ").lower()
+                    if confirm == "yes":
+                        console.resume_agent_operations()
+                    
+            elif choice == "10":
+                if console.require_admin_auth("provide_feedback"):
+                    action_id = input("Enter action ID: ")
+                    feedback = input("Enter feedback (approve/reject/correct): ")
+                    comment = input("Optional comment: ")
+                    console.provide_feedback(action_id, feedback, comment)
+                    
+            elif choice == "11" and console.security_enabled:
+                console.logout()
+                print("🔐 Please log in again to continue")
+                if not console.secure_login():
+                    break
+                    
+            elif choice == "0":
+                console.logout()
+                print("👋 Exiting GuardianShield Admin Console")
+                break
+            
+            else:
+                print("❌ Invalid option. Please try again.")
+            
+            input("\nPress Enter to continue...")
+            
+    except KeyboardInterrupt:
+        print("\n\n👋 Console interrupted by user")
+        console.logout()
+    except Exception as e:
+        print(f"\n🚨 Console error: {e}")
+        console.logout()
+    finally:
+        print("\n🔐 Admin console session ended")
