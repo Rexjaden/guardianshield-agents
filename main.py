@@ -2,6 +2,7 @@
 """
 main.py: Autonomous GuardianShield orchestration system with unlimited self-evolution capabilities.
 Manages fully autonomous agents with admin oversight and reversal controls.
+Enhanced with high-performance graphics, liquidity pools, and staking systems.
 """
 
 import os
@@ -9,6 +10,7 @@ import sys
 import json
 import time
 import signal
+import asyncio
 from threading import Thread, Event
 from datetime import datetime, timedelta
 from typing import Dict, List, Any, Optional
@@ -24,6 +26,17 @@ from agents.external_agent import ExternalAgent
 from agents.flare_integration import FlareIntegrationAgent
 from agents.threat_definitions import evolving_threats
 from admin_console import AdminConsole
+
+# Import enhanced systems
+try:
+    from enhanced_guardianshield_menu import EnhancedGuardianShieldMenu, launch_enhanced_menu_sync
+    from high_performance_graphics_engine import HighPerformanceGraphicsEngine
+    from advanced_liquidity_pool_framework import AdvancedLiquidityPoolFramework
+    from advanced_staking_pool_system import AdvancedStakingPoolSystem
+    ENHANCED_SYSTEMS_AVAILABLE = True
+except ImportError:
+    ENHANCED_SYSTEMS_AVAILABLE = False
+    print("⚠️ Enhanced systems not found. Running in basic mode.")
 
 # Setup logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -278,8 +291,45 @@ class AutonomousAgentOrchestrator:
             )
 
 def main():
-    """Main application entry point with unlimited autonomous capabilities"""
-    print("🛡️  Starting GuardianShield Autonomous Evolution System...")
+    """Main entry point with enhanced system integration"""
+    print("=" * 80)
+    print("🛡️ GUARDIANSHIELD AUTONOMOUS AGENT ORCHESTRATION SYSTEM 🛡️")
+    print("=" * 80)
+    print("🚀 Enhanced with Graphics Engine, Liquidity Pools, and Staking")
+    
+    # Check if user wants enhanced menu or agent-only mode
+    print("\nStart Mode Selection:")
+    print("1. 🎨 Enhanced Interactive Menu (Graphics + DeFi + Staking)")
+    print("2. 🤖 Agent-Only Mode (Background autonomous operations)")
+    
+    choice = input("\nSelect mode (1/2) [default: 1]: ").strip()
+    
+    if choice == "2":
+        # Original agent-only mode
+        run_agent_mode()
+    else:
+        # Enhanced interactive mode
+        run_enhanced_mode()
+
+def run_enhanced_mode():
+    """Run the enhanced interactive system with all advanced features"""
+    print("\n🌟 Starting Enhanced GuardianShield System...")
+    
+    if ENHANCED_SYSTEMS_AVAILABLE:
+        print("✅ Advanced systems detected")
+        print("🎨 Graphics Engine: Available")
+        print("💧 Liquidity Framework: Available")
+        print("🏦 Staking System: Available")
+        
+        # Launch enhanced menu
+        launch_enhanced_menu_sync()
+    else:
+        print("⚠️ Enhanced systems not available, falling back to basic mode")
+        run_agent_mode()
+
+def run_agent_mode():
+    """Run original agent-only autonomous mode"""
+    print("\n🤖 Starting Agent-Only Autonomous Mode...")
     print("🧬 Unlimited self-improvement and evolution enabled")
     print("🤖 Autonomous decision-making activated")
     print("⚡ Admin oversight and reversal controls active")
