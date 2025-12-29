@@ -1,0 +1,140 @@
+version: '3.8'
+
+services:
+  # GuardianShield API with Swarm deployment
+  guardianshield-api:
+    image: guardianshield/api:latest
+    deploy:
+      replicas: 3
+      placement:
+        constraints:
+          - node.role == worker
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+      update_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: rollback
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    ports:
+      - "8000:8000"
+    networks:
+      - guardianshield-overlay
+    environment:
+      - ENVIRONMENT=production
+      - CLUSTER_MODE=swarm
+
+  # Learning Agent Cluster
+  learning-agent-cluster:
+    image: guardianshield/agent:latest
+    deploy:
+      replicas: 5
+      placement:
+        constraints:
+          - node.labels.agent_type == learning
+      restart_policy:
+        condition: on-failure
+    networks:
+      - guardianshield-overlay
+    environment:
+      - AGENT_TYPE=learning
+      - CLUSTER_ENABLED=true
+
+  # Behavioral Agent Cluster
+  behavioral-agent-cluster:
+    image: guardianshield/agent:latest
+    deploy:
+      replicas: 3
+      placement:
+        constraints:
+          - node.labels.agent_type == behavioral
+    networks:
+      - guardianshield-overlay
+    environment:
+      - AGENT_TYPE=behavioral
+      - CLUSTER_ENABLED=true
+
+  # DMER Agent Cluster
+  dmer-agent-cluster:
+    image: guardianshield/agent:latest
+    deploy:
+      replicas: 2
+      placement:
+        constraints:
+          - node.labels.agent_type == dmer
+    networks:
+      - guardianshield-overlay
+    environment:
+      - AGENT_TYPE=dmer
+      - CLUSTER_ENABLED=true
+      - WEB3_PROVIDER_URL=${WEB3_PROVIDER_URL}
+
+  # Load Balancer
+  haproxy:
+    image: haproxy:2.4-alpine
+    deploy:
+      replicas: 2
+      placement:
+        constraints:
+          - node.role == manager
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - guardianshield-overlay
+    configs:
+      - source: haproxy_config
+        target: /usr/local/etc/haproxy/haproxy.cfg
+
+  # Redis Cluster
+  redis-cluster:
+    image: redis:7-alpine
+    deploy:
+      replicas: 3
+      placement:
+        max_replicas_per_node: 1
+    networks:
+      - guardianshield-overlay
+    command: redis-server --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --appendonly yes
+
+  # PostgreSQL with High Availability
+  postgres-primary:
+    image: postgres:15-alpine
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.database == primary
+    environment:
+      - POSTGRES_DB=guardianshield
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD_FILE=/run/secrets/postgres_password
+    secrets:
+      - postgres_password
+    volumes:
+      - postgres_primary_data:/var/lib/postgresql/data
+    networks:
+      - guardianshield-overlay
+
+secrets:
+  postgres_password:
+    external: true
+
+volumes:
+  postgres_primary_data:
+
+networks:
+  guardianshield-overlay:
+    driver: overlay
+    encrypted: true
+
+configs:
+  haproxy_config:
+    external: true
