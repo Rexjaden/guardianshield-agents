@@ -1,0 +1,130 @@
+{
+  "strategy": {
+    "total_opportunities": 8,
+    "high_priority_count": 5,
+    "total_potential_funding": 8310000,
+    "recommended_applications": [
+      {
+        "opportunity": "Arbitrum DAO Grants",
+        "organization": "Arbitrum",
+        "type": "web3_grants",
+        "potential_amount": 85000,
+        "success_rate": 0.18,
+        "fit_score": 0.5873333333333333,
+        "priority": "high"
+      },
+      {
+        "opportunity": "Polygon Ecosystem Fund",
+        "organization": "Polygon",
+        "type": "web3_grants",
+        "potential_amount": 150000,
+        "success_rate": 0.2,
+        "fit_score": 0.51,
+        "priority": "high"
+      },
+      {
+        "opportunity": "Ethereum Foundation Ecosystem Support Program",
+        "organization": "Ethereum Foundation",
+        "type": "web3_grants",
+        "potential_amount": 75000,
+        "success_rate": 0.15,
+        "fit_score": 0.495,
+        "priority": "high"
+      },
+      {
+        "opportunity": "a16z crypto Investment",
+        "organization": "Andreessen Horowitz",
+        "type": "vc_funding",
+        "potential_amount": 5000000,
+        "success_rate": 0.02,
+        "fit_score": 0.481,
+        "priority": "high"
+      },
+      {
+        "opportunity": "Paradigm Investment",
+        "organization": "Paradigm",
+        "type": "vc_funding",
+        "potential_amount": 3000000,
+        "success_rate": 0.015,
+        "fit_score": 0.4378333333333333,
+        "priority": "high"
+      }
+    ],
+    "success_probability": 0.11300000000000002
+  },
+  "all_opportunities": [
+    {
+      "opportunity": "Arbitrum DAO Grants",
+      "organization": "Arbitrum",
+      "type": "web3_grants",
+      "potential_amount": 85000,
+      "success_rate": 0.18,
+      "fit_score": 0.5873333333333333,
+      "priority": "high"
+    },
+    {
+      "opportunity": "Polygon Ecosystem Fund",
+      "organization": "Polygon",
+      "type": "web3_grants",
+      "potential_amount": 150000,
+      "success_rate": 0.2,
+      "fit_score": 0.51,
+      "priority": "high"
+    },
+    {
+      "opportunity": "Ethereum Foundation Ecosystem Support Program",
+      "organization": "Ethereum Foundation",
+      "type": "web3_grants",
+      "potential_amount": 75000,
+      "success_rate": 0.15,
+      "fit_score": 0.495,
+      "priority": "high"
+    },
+    {
+      "opportunity": "a16z crypto Investment",
+      "organization": "Andreessen Horowitz",
+      "type": "vc_funding",
+      "potential_amount": 5000000,
+      "success_rate": 0.02,
+      "fit_score": 0.481,
+      "priority": "high"
+    },
+    {
+      "opportunity": "Paradigm Investment",
+      "organization": "Paradigm",
+      "type": "vc_funding",
+      "potential_amount": 3000000,
+      "success_rate": 0.015,
+      "fit_score": 0.4378333333333333,
+      "priority": "high"
+    },
+    {
+      "opportunity": "Gitcoin Public Goods Funding",
+      "organization": "Gitcoin",
+      "type": "web3_grants",
+      "potential_amount": 15000,
+      "success_rate": 0.35,
+      "fit_score": 0.3716666666666667,
+      "priority": "medium"
+    },
+    {
+      "opportunity": "Republic Crypto Campaign",
+      "organization": "Republic",
+      "type": "crowdfunding",
+      "potential_amount": 500000,
+      "success_rate": 0.25,
+      "fit_score": 0.275,
+      "priority": "medium"
+    },
+    {
+      "opportunity": "NIST Cybersecurity Framework Grants",
+      "organization": "NIST",
+      "type": "government_grants",
+      "potential_amount": 200000,
+      "success_rate": 0.12,
+      "fit_score": 0.23600000000000002,
+      "priority": "medium"
+    }
+  ],
+  "generated_date": "2025-12-29T06:31:55.610318"
+}
