@@ -1,0 +1,61 @@
+{
+  "portfolio_size": 10000.0,
+  "allocations": {
+    "high_yield_defi": 0.35,
+    "stable_liquidity": 0.25,
+    "arbitrage_pools": 0.2,
+    "staking_rewards": 0.15,
+    "reserve_buffer": 0.05
+  },
+  "strategies": {
+    "defi_yield": {
+      "daily_return": 0.0,
+      "weekly_return": 0.0,
+      "monthly_return": 0.0,
+      "annual_return": 0.0,
+      "multiplier": 1.0
+    },
+    "compound_interest": {
+      "daily_return": 500.00000000000045,
+      "weekly_return": 3500.000000000003,
+      "monthly_return": 15000.000000000015,
+      "annual_return": 182500.00000000017,
+      "multiplier": 1.05
+    },
+    "arbitrage": {
+      "daily_return": 200.00000000000017,
+      "weekly_return": 1400.0000000000011,
+      "monthly_return": 6000.0000000000055,
+      "annual_return": 73000.00000000006,
+      "multiplier": 1.02
+    },
+    "liquidity_mining": {
+      "daily_return": 800.0000000000007,
+      "weekly_return": 5600.000000000005,
+      "monthly_return": 24000.000000000022,
+      "annual_return": 292000.00000000023,
+      "multiplier": 1.08
+    },
+    "staking_rewards": {
+      "daily_return": 300.0000000000003,
+      "weekly_return": 2100.000000000002,
+      "monthly_return": 9000.00000000001,
+      "annual_return": 109500.0000000001,
+      "multiplier": 1.03
+    }
+  },
+  "projections": {
+    "daily": 1913.8040000000035,
+    "weekly": 13396.628000000024,
+    "monthly": 57414.120000000104,
+    "quarterly": 172242.3600000003,
+    "annual": 698538.4600000012
+  },
+  "combined_multiplier": 1.1913804000000003,
+  "target_analysis": {
+    "conservative": true,
+    "aggressive": true,
+    "maximum": true
+  },
+  "timestamp": "2025-12-29T08:55:17.416608"
+}

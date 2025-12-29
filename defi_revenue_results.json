@@ -1,0 +1,13 @@
+{
+  "timestamp": "2025-12-29T08:52:36.534112",
+  "total_opportunities_found": 14,
+  "daily_projected_yield": 48.36986301369863,
+  "daily_arbitrage_profit": 164.3704,
+  "total_daily_revenue": 212.7402630136986,
+  "annual_projected_revenue": 77650.196,
+  "agent_knowledge_levels": {
+    "Silva": 0.952,
+    "Turlo": 0.93125,
+    "Lirto": 0.9124
+  }
+}

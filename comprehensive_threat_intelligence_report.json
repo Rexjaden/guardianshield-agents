@@ -1,0 +1,81 @@
+{
+  "timestamp": "2025-12-29T15:10:28.056713",
+  "report_type": "comprehensive_threat_intelligence",
+  "summary": {
+    "total_threat_actors": 7,
+    "critical_threat_actors": 3,
+    "total_estimated_damages": 16355000000,
+    "techniques_catalogued": 43,
+    "attacks_analyzed": 15
+  },
+  "database_stats": {
+    "threat_intelligence_db": {
+      "actors_loaded": 7,
+      "techniques_loaded": 43,
+      "victims_loaded": 15
+    },
+    "dmer_registry": {
+      "addresses_loaded": 4,
+      "domains_loaded": 4,
+      "entries_loaded": 15
+    }
+  },
+  "agent_enhancements": {
+    "prometheus": {
+      "relevant_actors": 3,
+      "techniques_learned": 23,
+      "attacks_analyzed": 9,
+      "specialization": "Cloud Infrastructure & SaaS Threats"
+    },
+    "silva": {
+      "relevant_actors": 6,
+      "techniques_learned": 39,
+      "attacks_analyzed": 14,
+      "specialization": "Blockchain & DeFi Attack Vectors"
+    },
+    "turlo": {
+      "relevant_actors": 4,
+      "techniques_learned": 29,
+      "attacks_analyzed": 11,
+      "specialization": "Web Application & Social Engineering"
+    },
+    "lirto": {
+      "relevant_actors": 4,
+      "techniques_learned": 29,
+      "attacks_analyzed": 11,
+      "specialization": "Cryptocurrency & Financial Crime"
+    }
+  },
+  "top_threat_actors": [
+    {
+      "name": "Sandworm Team",
+      "damages": 10000000000,
+      "specialization": "Critical infrastructure, industrial systems, election interference",
+      "attribution_confidence": 0.98
+    },
+    {
+      "name": "Lazarus Group",
+      "damages": 2800000000,
+      "specialization": "Financial theft, cryptocurrency heists, destructive attacks",
+      "attribution_confidence": 0.95
+    },
+    {
+      "name": "Conti Ransomware Group",
+      "damages": 2700000000,
+      "specialization": "Double extortion ransomware, corporate targeting",
+      "attribution_confidence": 0.95
+    },
+    {
+      "name": "Ronin Bridge Hackers",
+      "damages": 625000000,
+      "specialization": "Cross-chain bridge attacks, validator compromise",
+      "attribution_confidence": 0.85
+    },
+    {
+      "name": "Cream Finance Exploiter",
+      "damages": 130000000,
+      "specialization": "DeFi protocol flash loan attacks",
+      "attribution_confidence": 0.6
+    }
+  ]
+}
