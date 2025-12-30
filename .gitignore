@@ -2,7 +2,6 @@
 __pycache__/
 *.pyc
 *.pyo
-*.log
 .env
 venv/
 env/
@@ -15,40 +14,3 @@ env/
 .DS_Store
 Thumbs.db
 node_modules
-
-# Database files - ALL databases contain sensitive data
-*.db
-*.sqlite
-*.sqlite3
-
-# Security and sensitive files
-.guardian_master_password.txt
-.guardian_secret
-.guardian_admin
-.guardian_authorized_users.json
-master.key
-audit_encryption.key
-mfa_qr_*.png
-guardian_security.encrypted
-guardian_audit_log.encrypted
-active_sessions.encrypted
-
-# Backup and temporary files
-local_backup/
-evolution_backups/
-*.backup
-*.bak
-*.tmp
-
-# Logs with potential sensitive information
-agent_action_log.jsonl
-agent_decision_log.jsonl
-agent_evolution_log.jsonl
-agent_learning_log.jsonl
-agent_expertise_tracking.jsonl
-agent_deep_learning_log.jsonl
-
-# Deployment and production files
-deployments/
-artifacts/
-cache/
