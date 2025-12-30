@@ -50,6 +50,17 @@ Built in collaboration with Flare Network, these agents power the DMER (Decentra
 
 ## 📦 Installation & Setup
 
+### ⚠️ Security Notice
+**IMPORTANT**: This repository uses template files for sensitive configurations. The system will auto-generate secure keys on first run. See [SECURITY_SETUP.md](SECURITY_SETUP.md) for detailed security configuration.
+
+**Files excluded from version control:**
+- `.guardian_master_password.txt` - Master admin password
+- `.guardian_secret` - JWT secret key
+- `master.key` - Master encryption key
+- `audit_encryption.key` - Audit log encryption key
+- `*.db` - All database files with operational data
+- `*.jsonl` - Log files with potentially sensitive data
+
 ### Quick Start
 ```bash
 # Clone the repository
@@ -66,9 +77,15 @@ cp .env.example .env
 # Run system tests
 python test_system.py
 
-# Start the system
+# Start the system (will auto-generate security files on first run)
 python start_guardianshield.py
 ```
+
+**First-time security setup:**
+1. On first run, the system auto-generates secure keys and credentials
+2. Save your master admin password from `.guardian_master_password.txt`
+3. Store the password securely, then delete or secure the file
+4. See [SECURITY_SETUP.md](SECURITY_SETUP.md) for production deployment
 
 ### Minimal Requirements
 The system is designed to work even without external dependencies:
