@@ -51,15 +51,14 @@ Built in collaboration with Flare Network, these agents power the DMER (Decentra
 ## 📦 Installation & Setup
 
 ### ⚠️ Security Notice
-**IMPORTANT**: This repository uses template files for sensitive configurations. The system will auto-generate secure keys on first run. See [SECURITY_SETUP.md](SECURITY_SETUP.md) for detailed security configuration.
+**IMPORTANT**: This repository uses template files for sensitive configurations. The system will auto-generate secure credentials on first run. See [SECURITY_SETUP.md](SECURITY_SETUP.md) for detailed security configuration.
 
-**Files excluded from version control:**
+**Admin credential files (auto-generated on first run, excluded from version control):**
 - `.guardian_master_password.txt` - Master admin password
-- `.guardian_secret` - JWT secret key
-- `master.key` - Master encryption key
-- `audit_encryption.key` - Audit log encryption key
-- `*.db` - All database files with operational data
-- `*.jsonl` - Log files with potentially sensitive data
+- `.guardian_secret` - Security phrase/secret key
+- `.guardian_admin` - Admin authentication hash
+
+These files are created automatically when you first run the system and are kept local for security.
 
 ### Quick Start
 ```bash
