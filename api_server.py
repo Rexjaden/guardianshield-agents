@@ -20,7 +20,7 @@ from security_manager import (
 import json
 import asyncio
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import List, Dict, Any, Optional
 from pydantic import BaseModel, validator
 import uvicorn
@@ -79,7 +79,8 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         response.headers["X-Frame-Options"] = "DENY"
         response.headers["X-XSS-Protection"] = "1; mode=block"
         response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
-        response.headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';"
+        # Stricter CSP - remove unsafe-inline and unsafe-eval for production
+        response.headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self'; style-src 'self';"
         response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
         response.headers["Permissions-Policy"] = "geolocation=(), microphone=(), camera=()"
         

@@ -226,7 +226,7 @@ def run_all_tests():
             print(f"\nTesting: {test_name}")
             print("-" * 40)
             result = test_func()
-            if result or result is None:
+            if result is not False:  # Accept True or None as pass
                 passed += 1
                 print(f"✓ PASSED: {test_name}\n")
             else:
