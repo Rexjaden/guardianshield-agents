@@ -14,3 +14,10 @@ env/
 .DS_Store
 Thumbs.db
 node_modules
+
+# Admin credentials (concealed for security)
+# These files contain sensitive admin authentication data
+# and should not be committed to version control
+.guardian_master_password.txt
+.guardian_secret
+.guardian_admin

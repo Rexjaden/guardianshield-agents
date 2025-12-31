@@ -51,15 +51,24 @@ Built in collaboration with Flare Network, these agents power the DMER (Decentra
 ## 📦 Installation & Setup
 
 ### ⚠️ Security Notice
-**IMPORTANT**: This repository uses template files for sensitive configurations. The system will auto-generate secure keys on first run. See [SECURITY_SETUP.md](SECURITY_SETUP.md) for detailed security configuration.
+
+**IMPORTANT**: This system implements multiple layers of security to protect sensitive operations and credentials.
+
+**Security Features:**
+- **Admin Credential Protection**: Master admin credentials are stored locally and excluded from version control
+- **Rate Limiting**: API endpoints protected against abuse (100 requests/minute per IP)
+- **Authentication**: JWT-based token authentication with session management
+- **Input Validation**: All user inputs sanitized to prevent injection attacks
+- **Security Headers**: HTTP security headers to prevent XSS, clickjacking, and other attacks
+- **CORS Protection**: Strict origin validation for cross-origin requests
+- **Encrypted Storage**: Sensitive configuration data encrypted at rest
 
 **Files excluded from version control:**
-- `.guardian_master_password.txt` - Master admin password
-- `.guardian_secret` - JWT secret key
-- `master.key` - Master encryption key
-- `audit_encryption.key` - Audit log encryption key
-- `*.db` - All database files with operational data
-- `*.jsonl` - Log files with potentially sensitive data
+- `.guardian_master_password.txt` - Master admin password (auto-generated on first run)
+- `.guardian_secret` - JWT secret key (auto-generated on first run)
+- `.guardian_admin` - Admin authentication hash (auto-generated on first run)
+
+**Note**: Database files (*.db) and log files (*.jsonl) are tracked for operational continuity but should be secured in production deployments.
 
 ### Quick Start
 ```bash
@@ -85,7 +94,16 @@ python start_guardianshield.py
 1. On first run, the system auto-generates secure keys and credentials
 2. Save your master admin password from `.guardian_master_password.txt`
 3. Store the password securely, then delete or secure the file
-4. See [SECURITY_SETUP.md](SECURITY_SETUP.md) for production deployment
+4. The concealed credential files will be created in your local directory
+5. These files are excluded from git tracking for security
+
+**API Security Best Practices:**
+- Always use HTTPS in production (configure reverse proxy with SSL/TLS)
+- Regularly rotate authentication tokens and secrets
+- Monitor rate limiting logs for potential abuse
+- Keep JWT secret keys secure and never commit to version control
+- Use strong passwords (minimum 12 characters) for all admin accounts
+- Enable MFA for production deployments when available
 
 ### Minimal Requirements
 The system is designed to work even without external dependencies:
