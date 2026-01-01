@@ -249,6 +249,22 @@ class SecurityManager:
             return permission in user_perms or "all" in user_perms
         
         return False
+    
+    def cleanup_expired_sessions(self):
+        """Clean up expired sessions to prevent memory leaks"""
+        now = datetime.utcnow()
+        expired_sessions = []
+        
+        for session_id, session_info in self.active_sessions.items():
+            # Remove sessions older than token expiry time
+            session_age = now - session_info.get("created", now)
+            if session_age > timedelta(hours=self.token_expiry_hours):
+                expired_sessions.append(session_id)
+        
+        for session_id in expired_sessions:
+            del self.active_sessions[session_id]
+        
+        return len(expired_sessions)
 
 # Global security manager instance
 security_manager = SecurityManager()

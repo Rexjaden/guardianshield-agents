@@ -3,6 +3,8 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.responses import Response
 # Use the primary agent implementation rather than the legacy alias
 from agents.behavioral_analytics import BehavioralAnalyticsAgent
 from agents.dmer_monitor_agent import DmerMonitorAgent
@@ -18,11 +20,114 @@ from security_manager import (
 import json
 import asyncio
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import List, Dict, Any, Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 import uvicorn
 import os
+from collections import defaultdict
+import re
+
+# Rate Limiting Middleware
+class RateLimitMiddleware(BaseHTTPMiddleware):
+    """
+    Rate limiting middleware to prevent abuse of API endpoints.
+    Implements sliding window rate limiting per IP address.
+    """
+    def __init__(self, app, calls: int = 100, period: int = 60):
+        super().__init__(app)
+        self.calls = calls  # Max calls allowed
+        self.period = period  # Time period in seconds
+        self.clients = defaultdict(list)  # IP -> list of timestamps
+    
+    async def dispatch(self, request: Request, call_next):
+        client_ip = request.client.host
+        now = time.time()
+        
+        # Clean old requests outside the time window
+        self.clients[client_ip] = [
+            req_time for req_time in self.clients[client_ip]
+            if now - req_time < self.period
+        ]
+        
+        # Check rate limit
+        if len(self.clients[client_ip]) >= self.calls:
+            return JSONResponse(
+                status_code=429,
+                content={
+                    "detail": "Rate limit exceeded. Please try again later.",
+                    "error": "too_many_requests"
+                }
+            )
+        
+        # Add current request timestamp
+        self.clients[client_ip].append(now)
+        
+        response = await call_next(request)
+        return response
+
+# Security Headers Middleware
+class SecurityHeadersMiddleware(BaseHTTPMiddleware):
+    """
+    Add security headers to all responses to prevent common web vulnerabilities.
+    """
+    async def dispatch(self, request: Request, call_next):
+        response = await call_next(request)
+        
+        # Add security headers
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["X-XSS-Protection"] = "1; mode=block"
+        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+        # Stricter CSP - remove unsafe-inline and unsafe-eval for production
+        response.headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self'; style-src 'self';"
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+        response.headers["Permissions-Policy"] = "geolocation=(), microphone=(), camera=()"
+        
+        return response
+
+# Input Validation Utilities
+class InputValidator:
+    """Utility class for input validation and sanitization"""
+    
+    @staticmethod
+    def sanitize_string(value: str, max_length: int = 1000) -> str:
+        """Sanitize string input to prevent injection attacks"""
+        if not isinstance(value, str):
+            raise ValueError("Input must be a string")
+        
+        # Truncate to max length
+        value = value[:max_length]
+        
+        # Remove potential script tags and SQL injection patterns
+        dangerous_patterns = [
+            r'<script[^>]*>.*?</script>',
+            r'javascript:',
+            r'on\w+\s*=',
+            r'DROP\s+TABLE',
+            r'DELETE\s+FROM',
+            r'INSERT\s+INTO',
+            r'UPDATE\s+.*\s+SET'
+        ]
+        
+        for pattern in dangerous_patterns:
+            value = re.sub(pattern, '', value, flags=re.IGNORECASE)
+        
+        return value.strip()
+    
+    @staticmethod
+    def validate_agent_id(agent_id: str) -> str:
+        """Validate agent ID format"""
+        if not re.match(r'^[a-zA-Z0-9_-]+$', agent_id):
+            raise ValueError("Invalid agent ID format")
+        return agent_id
+    
+    @staticmethod
+    def validate_username(username: str) -> str:
+        """Validate username format"""
+        if not re.match(r'^[a-zA-Z0-9_]{3,32}$', username):
+            raise ValueError("Username must be 3-32 characters and contain only letters, numbers, and underscores")
+        return username
 
 app = FastAPI(
     title="GuardianShield API", 
@@ -32,20 +137,23 @@ app = FastAPI(
     redoc_url="/admin/redoc"     # Move ReDoc to admin area
 )
 
-# Configure CORS for frontend
+# Add security middlewares
+app.add_middleware(SecurityHeadersMiddleware)
+app.add_middleware(RateLimitMiddleware, calls=100, period=60)  # 100 requests per minute
+
+# Configure CORS for frontend with stricter settings
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000", 
         "http://localhost:8000", 
         "https://www.guardian-shield.io",
-        "https://guardian-shield.io",
-        "http://www.guardian-shield.io",
-        "http://guardian-shield.io"
+        "https://guardian-shield.io"
     ],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE"],
-    allow_headers=["*"],
+    allow_headers=["Authorization", "Content-Type"],
+    max_age=3600  # Cache preflight requests for 1 hour
 )
 
 # Mount static files for frontend
@@ -83,12 +191,39 @@ manager = ConnectionManager()
 class LoginRequest(BaseModel):
     username: str
     password: str
+    
+    @validator('username')
+    def validate_username(cls, v):
+        return InputValidator.validate_username(v)
+    
+    @validator('password')
+    def validate_password(cls, v):
+        if len(v) < 8 or len(v) > 128:
+            raise ValueError("Password must be between 8 and 128 characters")
+        return v
 
 class UserCreationRequest(BaseModel):
     username: str
     password: str
     role: str = "admin"
     permissions: List[str] = ["read", "agents", "threats"]
+    
+    @validator('username')
+    def validate_username(cls, v):
+        return InputValidator.validate_username(v)
+    
+    @validator('password')
+    def validate_password(cls, v):
+        if len(v) < 12:
+            raise ValueError("Password must be at least 12 characters for new users")
+        return v
+    
+    @validator('role')
+    def validate_role(cls, v):
+        allowed_roles = ["admin", "operator", "viewer"]
+        if v not in allowed_roles:
+            raise ValueError(f"Role must be one of: {', '.join(allowed_roles)}")
+        return v
 
 # Authentication Endpoints
 @app.post("/api/auth/login")
@@ -103,9 +238,23 @@ async def login(login_data: LoginRequest):
             "message": "Authentication successful"
         }
     except HTTPException as e:
+        # Generic error message to prevent username enumeration
         return JSONResponse(
-            status_code=e.status_code,
-            content={"detail": e.detail, "error": "authentication_failed"}
+            status_code=401,
+            content={
+                "detail": "Invalid credentials",
+                "error": "authentication_failed"
+            }
+        )
+    except Exception as e:
+        # Log the error internally but don't expose details
+        print(f"Login error: {str(e)}")
+        return JSONResponse(
+            status_code=500,
+            content={
+                "detail": "Authentication service unavailable",
+                "error": "service_error"
+            }
         )
 
 @app.post("/api/auth/logout")
@@ -160,11 +309,19 @@ async def report_threat_detection(
 ):
     """Report a threat detection for training (Requires agent access)"""
     try:
+        # Validate and sanitize inputs
+        agent_id = InputValidator.validate_agent_id(data.get('agent_id', 'unknown'))
+        confidence = float(data.get('confidence', 0.5))
+        
+        # Validate confidence range
+        if not 0 <= confidence <= 1:
+            raise ValueError("Confidence must be between 0 and 1")
+        
         event = LearningEvent(
             event_type='threat_detected',
-            agent_id=data.get('agent_id', 'unknown'),
+            agent_id=agent_id,
             data=data.get('threat_data', {}),
-            confidence=data.get('confidence', 0.5)
+            confidence=confidence
         )
         continuous_trainer.add_learning_event(event)
         
@@ -172,14 +329,16 @@ async def report_threat_detection(
         await manager.broadcast(json.dumps({
             'type': 'training_event',
             'event': 'threat_detection',
-            'agent': data.get('agent_id'),
+            'agent': agent_id,
             'reported_by': user_info["username"],
             'timestamp': datetime.now().isoformat()
         }))
         
         return {"status": "success", "message": "Threat detection reported for training", "reported_by": user_info["username"]}
-    except Exception as e:
+    except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Failed to report threat detection")
 
 @app.post("/api/training/false-positive")
 async def report_false_positive(
@@ -188,11 +347,15 @@ async def report_false_positive(
 ):
     """Report a false positive for immediate retraining (Requires agent access)"""
     try:
+        # Validate and sanitize inputs
+        agent_id = InputValidator.validate_agent_id(data.get('agent_id', 'unknown'))
+        feedback = InputValidator.sanitize_string(data.get('feedback', ''), max_length=500)
+        
         event = LearningEvent(
             event_type='false_positive',
-            agent_id=data.get('agent_id', 'unknown'),
+            agent_id=agent_id,
             data=data.get('detection_data', {}),
-            feedback=data.get('feedback', ''),
+            feedback=feedback,
             confidence=0.0
         )
         continuous_trainer.add_learning_event(event)
@@ -201,15 +364,17 @@ async def report_false_positive(
         await manager.broadcast(json.dumps({
             'type': 'training_event',
             'event': 'false_positive',
-            'agent': data.get('agent_id'),
-            'feedback': data.get('feedback'),
+            'agent': agent_id,
+            'feedback': feedback[:100],  # Truncate for broadcast
             'reported_by': user_info["username"],
             'timestamp': datetime.now().isoformat()
         }))
         
         return {"status": "success", "message": "False positive reported for retraining", "reported_by": user_info["username"]}
-    except Exception as e:
+    except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Failed to report false positive")
 
 @app.get("/api/training/status")
 async def get_training_status():
@@ -275,6 +440,9 @@ async def get_agents():
 async def start_agent(agent_id: str, admin_user = Depends(require_admin_access)):
     """Start an agent (Admin Only)"""
     try:
+        # Validate agent_id
+        agent_id = InputValidator.validate_agent_id(agent_id)
+        
         # Log the action
         admin_console.log_action(
             agent_id,
@@ -295,13 +463,19 @@ async def start_agent(agent_id: str, admin_user = Depends(require_admin_access))
         }))
         
         return {"status": "success", "message": f"Agent {agent_id} started by {admin_user['username']}"}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        # Don't expose internal error details
+        raise HTTPException(status_code=500, detail="Failed to start agent")
 
 @app.post("/api/agents/{agent_id}/stop")
 async def stop_agent(agent_id: str, admin_user = Depends(require_admin_access)):
     """Stop an agent (Admin Only)"""
     try:
+        # Validate agent_id
+        agent_id = InputValidator.validate_agent_id(agent_id)
+        
         # Log the action
         admin_console.log_action(
             agent_id,
@@ -321,34 +495,49 @@ async def stop_agent(agent_id: str, admin_user = Depends(require_admin_access)):
         }))
         
         return {"status": "success", "message": f"Agent {agent_id} stopped"}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="Failed to stop agent")
 
 @app.put("/api/agents/{agent_id}/config")
-async def update_agent_config(agent_id: str, config: dict):
-    """Update agent configuration"""
+async def update_agent_config(agent_id: str, config: dict, admin_user = Depends(require_admin_access)):
+    """Update agent configuration (Admin Only)"""
     try:
+        # Validate agent_id
+        agent_id = InputValidator.validate_agent_id(agent_id)
+        
+        # Validate config size to prevent DoS
+        config_str = json.dumps(config)
+        if len(config_str) > 10000:  # Max 10KB config
+            raise HTTPException(status_code=400, detail="Configuration too large")
+        
         # Log the configuration change
         admin_console.log_action(
             agent_id,
             "config_update",
-            {"config": config, "timestamp": time.time()},
+            {"config": config, "admin": admin_user["username"], "timestamp": time.time()},
             severity=6
         )
         
         return {"status": "success", "message": "Configuration updated"}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="Failed to update configuration")
 
 @app.post("/api/agents/{agent_id}/evolve")
-async def evolve_agent(agent_id: str):
-    """Trigger agent evolution"""
+async def evolve_agent(agent_id: str, admin_user = Depends(require_admin_access)):
+    """Trigger agent evolution (Admin Only)"""
     try:
+        # Validate agent_id
+        agent_id = InputValidator.validate_agent_id(agent_id)
+        
         # Log evolution trigger
         admin_console.log_evolution_decision(
             agent_id,
             "manual_evolution_trigger",
-            {"trigger": "api", "timestamp": time.time()}
+            {"trigger": "api", "admin": admin_user["username"], "timestamp": time.time()}
         )
         
         # Simulate evolution process
@@ -368,8 +557,10 @@ async def evolve_agent(agent_id: str):
         }))
         
         return {"status": "success", "message": f"Agent {agent_id} evolution initiated"}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="Failed to trigger evolution")
 
 # Emergency stop endpoint (Master Admin Only)
 @app.post("/api/emergency-stop")
