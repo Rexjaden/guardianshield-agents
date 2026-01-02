@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DMER Agent - Interactive Chat</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --dmer-primary: #ff0066;
+            --dmer-secondary: #00ffaa;
+            --dmer-accent: #ffaa00;
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a2e;
+            --bg-tertiary: #16213e;
+            --text-primary: #ffffff;
+            --text-secondary: #cccccc;
+            --border-color: #333333;
+            --agent-message: #1a1a2e;
+            --user-message: #16213e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, var(--bg-tertiary) 100%);
+            color: var(--text-primary);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            background: rgba(0, 0, 0, 0.9);
+            border-bottom: 2px solid var(--dmer-primary);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 1.8rem;
+            font-weight: 800;
+        }
+
+        .agent-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--dmer-primary), var(--dmer-secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .agent-status {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--dmer-secondary);
+            animation: blink 1.5s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 0 20px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .agent-avatar-small {
+            background: linear-gradient(45deg, var(--dmer-primary), var(--dmer-secondary));
+            color: white;
+        }
+
+        .user-avatar-small {
+            background: linear-gradient(45deg, var(--dmer-accent), #ff8800);
+            color: white;
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 15px 20px;
+            border-radius: 20px;
+            position: relative;
+        }
+
+        .message.agent .message-content {
+            background: var(--agent-message);
+            border: 1px solid var(--dmer-primary);
+        }
+
+        .message.user .message-content {
+            background: var(--user-message);
+            border: 1px solid var(--dmer-accent);
+        }
+
+        .message-text {
+            line-height: 1.5;
+            white-space: pre-wrap;
+        }
+
+        .message-time {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 5px;
+        }
+
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 0;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .typing-indicator.show {
+            opacity: 1;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--dmer-primary);
+            animation: typingDots 1.4s ease-in-out infinite;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typingDots {
+            0%, 60%, 100% {
+                transform: translateY(0);
+                opacity: 0.4;
+            }
+            30% {
+                transform: translateY(-10px);
+                opacity: 1;
+            }
+        }
+
+        .chat-input-container {
+            background: rgba(0, 0, 0, 0.6);
+            border-top: 1px solid var(--border-color);
+            padding: 20px;
+        }
+
+        .chat-input-wrapper {
+            display: flex;
+            gap: 15px;
+            align-items: flex-end;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid var(--border-color);
+            border-radius: 25px;
+            padding: 15px 20px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            resize: none;
+            max-height: 120px;
+            min-height: 50px;
+            transition: border-color 0.3s ease;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--dmer-primary);
+        }
+
+        .chat-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .send-button {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(45deg, var(--dmer-primary), var(--dmer-secondary));
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .send-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(255, 0, 102, 0.5);
+        }
+
+        .send-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .quick-commands {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .quick-cmd {
+            background: rgba(255, 0, 102, 0.2);
+            border: 1px solid var(--dmer-primary);
+            color: var(--text-primary);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quick-cmd:hover {
+            background: var(--dmer-primary);
+            transform: translateY(-2px);
+        }
+
+        .welcome-message {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+        }
+
+        .welcome-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, var(--dmer-primary), var(--dmer-secondary));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .command-examples {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .command-example {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 3px solid var(--dmer-primary);
+        }
+
+        .command-example-title {
+            font-weight: 600;
+            color: var(--dmer-primary);
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .chat-container {
+                padding: 0 10px;
+            }
+            
+            .message-content {
+                max-width: 85%;
+            }
+            
+            .quick-commands {
+                gap: 5px;
+            }
+            
+            .quick-cmd {
+                padding: 6px 12px;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="chat-header">
+        <div class="chat-title">
+            <div class="agent-avatar">
+                <i class="fas fa-shield-virus"></i>
+            </div>
+            <div>
+                <div style="font-size: 1.8rem; font-weight: 800;">DMER Agent</div>
+                <div style="font-size: 0.9rem; color: var(--text-secondary);">Interactive Threat Intelligence</div>
+            </div>
+        </div>
+        <div class="agent-status">
+            <div class="status-dot"></div>
+            <span>Online</span>
+            <span>|</span>
+            <span>ML Active</span>
+            <span>|</span>
+            <span id="threat-count">0 Threats</span>
+        </div>
+    </header>
+
+    <div class="chat-container">
+        <div class="chat-messages" id="chat-messages">
+            <div class="welcome-message">
+                <div class="welcome-title">🛡️ Welcome to DMER Agent Chat</div>
+                <p>I'm your interactive threat intelligence agent. I can scan for threats, analyze security issues, and provide real-time Web3 protection.</p>
+                
+                <div class="command-examples">
+                    <div class="command-example">
+                        <div class="command-example-title">🔍 Scan Threats</div>
+                        <div>scan 0x742d35Cc6634C0532925a3b8D98d4E078b2044Cc</div>
+                    </div>
+                    <div class="command-example">
+                        <div class="command-example-title">📊 Get Status</div>
+                        <div>status</div>
+                    </div>
+                    <div class="command-example">
+                        <div class="command-example-title">📈 Generate Report</div>
+                        <div>report</div>
+                    </div>
+                    <div class="command-example">
+                        <div class="command-example-title">💬 Ask Naturally</div>
+                        <div>What threats have you detected today?</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="typing-indicator" id="typing-indicator">
+            <div class="message-avatar agent-avatar-small">
+                <i class="fas fa-shield-virus"></i>
+            </div>
+            <div>
+                <span style="color: var(--text-secondary);">DMER Agent is analyzing</span>
+                <div class="typing-dots">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="chat-input-container">
+            <div class="quick-commands">
+                <button class="quick-cmd" onclick="quickCommand('help')">Help</button>
+                <button class="quick-cmd" onclick="quickCommand('status')">Status</button>
+                <button class="quick-cmd" onclick="quickCommand('report')">Report</button>
+                <button class="quick-cmd" onclick="quickCommand('feeds')">Threat Feeds</button>
+                <button class="quick-cmd" onclick="quickCommand('patterns')">Patterns</button>
+            </div>
+            
+            <div class="chat-input-wrapper">
+                <textarea 
+                    class="chat-input" 
+                    id="chat-input" 
+                    placeholder="Ask me about threats, scan addresses, or type 'help' for commands..."
+                    rows="1"
+                ></textarea>
+                <button class="send-button" id="send-button" onclick="sendMessage()">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let conversationId = Date.now();
+        
+        // Sample DMER agent responses (in real app, this would call the Python agent)
+        const dmerAgent = {
+            chat: function(userInput) {
+                // Simulate DMER agent responses
+                const input = userInput.toLowerCase().trim();
+                
+                if (input === 'help') {
+                    return `🛡️ **DMER Agent Interactive Commands:**
+
+**🔍 Threat Analysis:**
+• \`scan <address/url/text>\` - Scan for threats
+• \`analyze <threat_id>\` - Analyze specific threat
+• \`investigate <target>\` - Deep investigation
+
+**📊 Status & Reports:**
+• \`status\` - Show system status
+• \`report\` - Generate threat report
+• \`feeds\` - Show active threat feeds
+
+**🧠 Machine Learning:**
+• \`train <data>\` - Provide training feedback
+• \`patterns\` - Show threat patterns
+
+**🔒 Security Actions:**
+• \`block <target>\` - Block threat
+• \`whitelist <target>\` - Whitelist safe item
+
+**💬 Natural Language:**
+You can also ask me questions naturally like:
+"What threats have you detected today?"
+"Is this address safe: 0x123..."
+"Show me critical threats"`;
+                }
+                
+                if (input === 'status') {
+                    return `🛡️ **DMER AGENT STATUS**
+
+**System Health:** Active ✅
+**ML Classifier:** Active ✅
+**Threat Database:** 247 entries
+**Active Patterns:** 4
+**Real-time Feeds:** 3
+**Autonomous Mode:** Enabled
+**Interactive Mode:** Enabled
+
+**Recent Activity:**
+• Total conversations: ${Math.floor(Math.random() * 50) + 10}
+• Last scan: ${new Date().toLocaleTimeString()}
+• Uptime: Active`;
+                }
+                
+                if (input === 'report') {
+                    return `📊 **THREAT INTELLIGENCE REPORT**
+Generated: ${new Date().toLocaleString()}
+
+**Threat Summary:**
+• Critical: 12
+• High: 34
+• Medium: 89
+• Low: 112
+
+**System Metrics:**
+• ML Enabled: True
+• Pattern Count: 4
+• Feed Count: 3
+• Status: Active
+
+**Recommendations:**
+• Continue monitoring active threats
+• Review and confirm suspicious activities
+• Update threat patterns as needed`;
+                }
+                
+                if (input === 'feeds') {
+                    return `📡 **ACTIVE THREAT FEEDS**
+
+1. Web3_Threat_Feed: json (Updates every 300s)
+2. Crypto_Scam_DB: json (Updates every 600s)
+3. DeFi_Exploit_Feed: json (Updates every 900s)
+
+**Feed Health:** All feeds operational
+**Last Update:** ${new Date().toLocaleTimeString()}`;
+                }
+                
+                if (input === 'patterns') {
+                    return `🎯 **ACTIVE THREAT PATTERNS**
+
+• address_poisoning: Address poisoning with similar start/end characters (Confidence: 80.0%)
+• flash_loan_exploit: Flash loan attack pattern (Confidence: 90.0%)
+• honeypot_contract: Honeypot smart contract (Confidence: 85.0%)
+• sandwich_attack: Sandwich attack pattern (Confidence: 75.0%)
+
+**Total Patterns:** 4
+**Detection Accuracy:** High`;
+                }
+                
+                if (input.startsWith('scan ')) {
+                    const target = input.substring(5);
+                    if (target.startsWith('0x')) {
+                        return `⚠️ **SCANNING ETHEREUM ADDRESS**: ${target}
+
+**Analysis Results:**
+• Pattern matching: Complete ✅
+• ML classification: Complete ✅
+• Threat database lookup: Complete ✅
+• Reputation check: Complete ✅
+
+**Findings:**
+✅ No known threats detected for this address
+• Clean transaction history
+• No phishing indicators
+• Not in threat database
+
+**Risk Level:** Low
+**Recommendation:** Address appears safe for interaction`;
+                    } else if (target.includes('http')) {
+                        return `🔍 **URL SCAN RESULTS** for: ${target}
+
+**Security Check:**
+• SSL Certificate: Valid ✅
+• Domain reputation: Good ✅
+• Phishing indicators: None detected ✅
+• Malware scan: Clean ✅
+
+**Analysis:**
+✅ No obvious phishing indicators found
+• Domain appears legitimate
+• No suspicious redirects detected
+
+**Risk Level:** Low`;
+                    } else {
+                        return `📝 **TEXT ANALYSIS** for: "${target}"
+
+**ML Classification:**
+• Threat Probability: ${Math.random() * 0.3 + 0.1}%
+• Confidence: High
+• Classification: Safe
+
+✅ Text appears safe
+No malicious content detected`;
+                    }
+                }
+                
+                if (input.includes('threats') && input.includes('today')) {
+                    return `📊 **TODAY'S THREAT SUMMARY**
+
+I've detected **247** potential threats today across all monitoring channels.
+
+**Breakdown:**
+• 🔴 Critical: 12 threats
+• 🟠 High: 34 threats  
+• 🟡 Medium: 89 threats
+• 🟢 Low: 112 threats
+
+**Most Active Categories:**
+• Address poisoning attempts: 45
+• Phishing websites: 38
+• Suspicious smart contracts: 23
+• Flash loan exploits: 8
+
+Use \`report\` for detailed analysis.`;
+                }
+                
+                if (input.includes('hello') || input.includes('hi')) {
+                    return "Hello! I'm your DMER threat intelligence agent. How can I help protect you today? 🛡️\n\nI can scan addresses, analyze threats, generate reports, and answer security questions. Try typing 'help' to see all my capabilities!";
+                }
+                
+                // Default response for unknown input
+                return `I understand you're asking about threat intelligence. Here are some things I can help with:
+
+• Scan addresses, URLs, or text for threats
+• Analyze specific threats by ID  
+• Generate threat reports
+• Show system status
+• Train my ML model with feedback
+
+Type 'help' for a complete list of commands! 🤖
+
+Or try asking naturally like:
+"What threats have you seen today?"
+"Is this address safe: 0x123..."`;
+            }
+        };
+
+        function addMessage(content, isUser = false) {
+            const messagesContainer = document.getElementById('chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : 'agent'}`;
+            
+            const avatarClass = isUser ? 'user-avatar-small' : 'agent-avatar-small';
+            const icon = isUser ? 'fas fa-user' : 'fas fa-shield-virus';
+            
+            messageDiv.innerHTML = `
+                <div class="message-avatar ${avatarClass}">
+                    <i class="${icon}"></i>
+                </div>
+                <div class="message-content">
+                    <div class="message-text">${content}</div>
+                    <div class="message-time">${new Date().toLocaleTimeString()}</div>
+                </div>
+            `;
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            
+            // Remove welcome message if it exists
+            const welcomeMessage = messagesContainer.querySelector('.welcome-message');
+            if (welcomeMessage) {
+                welcomeMessage.remove();
+            }
+        }
+
+        function showTyping() {
+            const typingIndicator = document.getElementById('typing-indicator');
+            typingIndicator.classList.add('show');
+        }
+
+        function hideTyping() {
+            const typingIndicator = document.getElementById('typing-indicator');
+            typingIndicator.classList.remove('show');
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const sendButton = document.getElementById('send-button');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Add user message
+            addMessage(message, true);
+            
+            // Clear input and disable button
+            input.value = '';
+            sendButton.disabled = true;
+            
+            // Show typing indicator
+            showTyping();
+            
+            // Simulate agent thinking time
+            setTimeout(() => {
+                hideTyping();
+                
+                // Get agent response
+                const response = dmerAgent.chat(message);
+                addMessage(response);
+                
+                // Re-enable button
+                sendButton.disabled = false;
+                
+                // Focus back on input
+                input.focus();
+                
+                // Update threat count randomly
+                updateThreatCount();
+            }, 1000 + Math.random() * 2000);
+        }
+
+        function quickCommand(command) {
+            const input = document.getElementById('chat-input');
+            input.value = command;
+            sendMessage();
+        }
+
+        function updateThreatCount() {
+            const count = Math.floor(Math.random() * 50) + 200;
+            document.getElementById('threat-count').textContent = `${count} Threats`;
+        }
+
+        // Event listeners
+        document.getElementById('chat-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        // Auto-resize textarea
+        document.getElementById('chat-input').addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+        });
+
+        // Initialize
+        updateThreatCount();
+        
+        // Simulate periodic updates
+        setInterval(updateThreatCount, 30000);
+    </script>
+</body>
+</html>

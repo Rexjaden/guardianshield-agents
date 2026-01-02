@@ -1,0 +1,35 @@
+{
+  "sentry_id": "guardian_sentry_asia_pacific_001",
+  "region": "asia-pacific",
+  "zone": "singapore-1a",
+  "bind_address": "0.0.0.0",
+  "api_port": 80,
+  "rpc_port": 26657,
+  "websocket_port": 8080,
+  "https_port": 443,
+  "validator_endpoints": [
+    "validator-asia-pacific:26657",
+    "validator-us-east:26657",
+    "validator-eu-west:26657"
+  ],
+  "rate_limits": {
+    "requests_per_minute": 40000,
+    "requests_per_ip_per_minute": 500,
+    "concurrent_connections_per_ip": 30,
+    "websocket_connections_per_ip": 6
+  },
+  "ddos_protection": {
+    "max_request_size": 1048576,
+    "timeout_seconds": 45,
+    "ban_threshold": 300,
+    "ban_duration_minutes": 90
+  },
+  "attack_mitigation": {
+    "enabled": true,
+    "slow_loris_protection": true,
+    "request_flood_protection": true,
+    "malformed_request_protection": true,
+    "geo_blocking_enabled": true
+  },
+  "load_balancer_tier": "primary"
+}

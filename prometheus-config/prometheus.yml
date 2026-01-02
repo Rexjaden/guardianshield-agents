@@ -1,0 +1,221 @@
+# GuardianShield Prometheus Monitoring Configuration
+# Comprehensive metrics collection for sentry shield infrastructure
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'guardian-sentry-shield'
+    environment: 'production'
+
+rule_files:
+  - "guardian_alerts.yml"
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          - alertmanager:9093
+
+scrape_configs:
+  # Prometheus self-monitoring
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+    scrape_interval: 30s
+
+  # Sentry shield nodes - US East region
+  - job_name: 'sentry-us-east-primary'
+    static_configs:
+      - targets: ['sentry-us-east-01:9090']
+    labels:
+      region: 'us-east'
+      tier: 'primary'
+      node_type: 'sentry-shield'
+    scrape_interval: 10s
+    metrics_path: /metrics
+
+  - job_name: 'sentry-us-east-secondary'
+    static_configs:
+      - targets: ['sentry-us-east-02:9090']
+    labels:
+      region: 'us-east'
+      tier: 'secondary'
+      node_type: 'sentry-shield'
+    scrape_interval: 15s
+    metrics_path: /metrics
+
+  # Sentry shield nodes - EU West region
+  - job_name: 'sentry-eu-west-primary'
+    static_configs:
+      - targets: ['sentry-eu-west-01:9090']
+    labels:
+      region: 'eu-west'
+      tier: 'primary'
+      node_type: 'sentry-shield'
+    scrape_interval: 10s
+    metrics_path: /metrics
+
+  - job_name: 'sentry-eu-west-secondary'
+    static_configs:
+      - targets: ['sentry-eu-west-02:9090']
+    labels:
+      region: 'eu-west'
+      tier: 'secondary'
+      node_type: 'sentry-shield'
+    scrape_interval: 15s
+    metrics_path: /metrics
+
+  # Sentry shield nodes - Asia Pacific region
+  - job_name: 'sentry-asia-pacific-primary'
+    static_configs:
+      - targets: ['sentry-asia-pacific-01:9090']
+    labels:
+      region: 'asia-pacific'
+      tier: 'primary'
+      node_type: 'sentry-shield'
+    scrape_interval: 10s
+    metrics_path: /metrics
+
+  - job_name: 'sentry-asia-pacific-secondary'
+    static_configs:
+      - targets: ['sentry-asia-pacific-02:9090']
+    labels:
+      region: 'asia-pacific'
+      tier: 'secondary'
+      node_type: 'sentry-shield'
+    scrape_interval: 15s
+    metrics_path: /metrics
+
+  # Nginx load balancer metrics
+  - job_name: 'nginx-exporter'
+    static_configs:
+      - targets: ['nginx-exporter:9113']
+    labels:
+      service: 'nginx-load-balancer'
+    scrape_interval: 10s
+
+  # Redis rate limiting metrics
+  - job_name: 'redis-exporter'
+    static_configs:
+      - targets: ['redis-exporter:9121']
+    labels:
+      service: 'redis-rate-limiter'
+    scrape_interval: 15s
+
+  # Docker container metrics
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080']
+    labels:
+      service: 'container-metrics'
+    scrape_interval: 30s
+
+  # Node system metrics for each region
+  - job_name: 'node-exporter-us-east'
+    static_configs:
+      - targets: 
+        - 'node-exporter-us-east-01:9100'
+        - 'node-exporter-us-east-02:9100'
+    labels:
+      region: 'us-east'
+      service: 'system-metrics'
+    scrape_interval: 30s
+
+  - job_name: 'node-exporter-eu-west'
+    static_configs:
+      - targets:
+        - 'node-exporter-eu-west-01:9100'
+        - 'node-exporter-eu-west-02:9100'
+    labels:
+      region: 'eu-west'
+      service: 'system-metrics'
+    scrape_interval: 30s
+
+  - job_name: 'node-exporter-asia-pacific'
+    static_configs:
+      - targets:
+        - 'node-exporter-asia-pacific-01:9100'
+        - 'node-exporter-asia-pacific-02:9100'
+    labels:
+      region: 'asia-pacific'
+      service: 'system-metrics'
+    scrape_interval: 30s
+
+  # Custom GuardianShield application metrics
+  - job_name: 'guardian-api-metrics'
+    static_configs:
+      - targets:
+        - 'sentry-us-east-01:8888'
+        - 'sentry-us-east-02:8888'
+        - 'sentry-eu-west-01:8888'
+        - 'sentry-eu-west-02:8888'
+        - 'sentry-asia-pacific-01:8888'
+        - 'sentry-asia-pacific-02:8888'
+    labels:
+      service: 'guardian-api'
+    scrape_interval: 10s
+    metrics_path: /guardian/metrics
+
+  # Attack absorption metrics
+  - job_name: 'attack-absorber-metrics'
+    static_configs:
+      - targets:
+        - 'sentry-us-east-01:8889'
+        - 'sentry-us-east-02:8889'
+        - 'sentry-eu-west-01:8889'
+        - 'sentry-eu-west-02:8889'
+        - 'sentry-asia-pacific-01:8889'
+        - 'sentry-asia-pacific-02:8889'
+    labels:
+      service: 'attack-absorber'
+    scrape_interval: 5s
+    metrics_path: /attack/metrics
+
+  # Rate limiter performance metrics
+  - job_name: 'rate-limiter-metrics'
+    static_configs:
+      - targets:
+        - 'sentry-us-east-01:8890'
+        - 'sentry-us-east-02:8890'
+        - 'sentry-eu-west-01:8890'
+        - 'sentry-eu-west-02:8890'
+        - 'sentry-asia-pacific-01:8890'
+        - 'sentry-asia-pacific-02:8890'
+    labels:
+      service: 'rate-limiter'
+    scrape_interval: 5s
+    metrics_path: /ratelimit/metrics
+
+  # Blockchain connection health to validators
+  - job_name: 'validator-connection-health'
+    static_configs:
+      - targets:
+        - 'sentry-us-east-01:8891'
+        - 'sentry-us-east-02:8891'
+        - 'sentry-eu-west-01:8891'
+        - 'sentry-eu-west-02:8891'
+        - 'sentry-asia-pacific-01:8891'
+        - 'sentry-asia-pacific-02:8891'
+    labels:
+      service: 'validator-health'
+    scrape_interval: 10s
+    metrics_path: /validator/health
+
+# Remote write configuration for long-term storage
+remote_write:
+  - url: "https://guardian-metrics-storage.internal/api/v1/write"
+    queue_config:
+      max_samples_per_send: 10000
+      batch_send_deadline: 5s
+      max_shards: 200
+    basic_auth:
+      username: "guardian-prometheus"
+      password: "metrics-write-key"
+
+# Remote read for querying historical data  
+remote_read:
+  - url: "https://guardian-metrics-storage.internal/api/v1/read"
+    basic_auth:
+      username: "guardian-prometheus"
+      password: "metrics-read-key"

@@ -1,0 +1,525 @@
+# GuardianShield Observer/Archive Node Infrastructure
+# High-capacity blockchain analytics and indexing deployment
+# Multi-region observer nodes for comprehensive data analysis
+
+version: '3.8'
+
+networks:
+  observer-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.21.0.0/16
+  
+  # Connect to existing validator network for blockchain access
+  guardian-blockchain:
+    external: true
+
+volumes:
+  # Persistent storage volumes for blockchain data
+  observer-us-east-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /data/observer/us-east
+  
+  observer-eu-central-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /data/observer/eu-central
+  
+  observer-asia-southeast-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /data/observer/asia-southeast
+  
+  # Shared PostgreSQL data for analytics
+  observer-postgres-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /data/observer/postgres
+  
+  # Elasticsearch data for search indices
+  observer-elasticsearch-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /data/observer/elasticsearch
+  
+  # Redis data for caching
+  observer-redis-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /data/observer/redis
+
+services:
+  # US-East Observer Node - Primary analytics hub
+  observer-us-east:
+    build:
+      context: .
+      dockerfile: Dockerfile.observer
+    container_name: guardian-observer-us-east
+    hostname: observer-us-east
+    restart: unless-stopped
+    networks:
+      - observer-network
+      - guardian-blockchain
+    ports:
+      - "8545:8545"    # JSON-RPC API
+      - "8080:8080"    # Analytics API  
+      - "9090:9090"    # Prometheus metrics
+    volumes:
+      - observer-us-east-data:/home/guardian/blockchain-data
+      - ./observer-config/us-east.json:/etc/guardian/observer.json:ro
+      - ./logs/observer:/var/log/guardian
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - OBSERVER_REGION=us-east
+      - OBSERVER_MODE=archive
+      - INDEXING_ENABLED=true
+      - ANALYTICS_ENABLED=true
+      - PROMETHEUS_ENABLED=true
+      - STORAGE_ENGINE=rocksdb
+      - MAX_BLOCK_CACHE=50000
+      - MAX_TRANSACTION_CACHE=200000
+      - POSTGRES_HOST=observer-postgres
+      - POSTGRES_DB=guardian_analytics
+      - POSTGRES_USER=observer
+      - POSTGRES_PASSWORD=observer123
+      - REDIS_HOST=observer-redis
+      - REDIS_PASSWORD=redis123
+      - ELASTICSEARCH_HOST=observer-elasticsearch:9200
+    depends_on:
+      - observer-postgres
+      - observer-redis
+      - observer-elasticsearch
+    deploy:
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 16G
+        reservations:
+          cpus: '2.0'
+          memory: 8G
+    healthcheck:
+      test: ["CMD", "/home/guardian/observer-healthcheck.sh"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
+    logging:
+      driver: json-file
+      options:
+        max-size: "100m"
+        max-file: "5"
+
+  # EU-Central Observer Node - European analytics hub
+  observer-eu-central:
+    build:
+      context: .
+      dockerfile: Dockerfile.observer
+    container_name: guardian-observer-eu-central
+    hostname: observer-eu-central
+    restart: unless-stopped
+    networks:
+      - observer-network
+      - guardian-blockchain
+    ports:
+      - "8546:8545"    # JSON-RPC API (different port)
+      - "8081:8080"    # Analytics API
+      - "9091:9090"    # Prometheus metrics
+    volumes:
+      - observer-eu-central-data:/home/guardian/blockchain-data
+      - ./observer-config/eu-central.json:/etc/guardian/observer.json:ro
+      - ./logs/observer:/var/log/guardian
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - OBSERVER_REGION=eu-central
+      - OBSERVER_MODE=archive
+      - INDEXING_ENABLED=true
+      - ANALYTICS_ENABLED=true
+      - PROMETHEUS_ENABLED=true
+      - STORAGE_ENGINE=rocksdb
+      - MAX_BLOCK_CACHE=40000
+      - MAX_TRANSACTION_CACHE=150000
+      - POSTGRES_HOST=observer-postgres
+      - POSTGRES_DB=guardian_analytics
+      - POSTGRES_USER=observer
+      - POSTGRES_PASSWORD=observer123
+      - REDIS_HOST=observer-redis
+      - REDIS_PASSWORD=redis123
+      - ELASTICSEARCH_HOST=observer-elasticsearch:9200
+    depends_on:
+      - observer-postgres
+      - observer-redis
+      - observer-elasticsearch
+    deploy:
+      resources:
+        limits:
+          cpus: '3.0'
+          memory: 12G
+        reservations:
+          cpus: '1.5'
+          memory: 6G
+    healthcheck:
+      test: ["CMD", "/home/guardian/observer-healthcheck.sh"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
+    logging:
+      driver: json-file
+      options:
+        max-size: "100m"
+        max-file: "5"
+
+  # Asia-Southeast Observer Node - APAC analytics hub
+  observer-asia-southeast:
+    build:
+      context: .
+      dockerfile: Dockerfile.observer
+    container_name: guardian-observer-asia-southeast
+    hostname: observer-asia-southeast
+    restart: unless-stopped
+    networks:
+      - observer-network
+      - guardian-blockchain
+    ports:
+      - "8547:8545"    # JSON-RPC API (different port)
+      - "8082:8080"    # Analytics API
+      - "9092:9090"    # Prometheus metrics
+    volumes:
+      - observer-asia-southeast-data:/home/guardian/blockchain-data
+      - ./observer-config/asia-southeast.json:/etc/guardian/observer.json:ro
+      - ./logs/observer:/var/log/guardian
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - OBSERVER_REGION=asia-southeast
+      - OBSERVER_MODE=archive
+      - INDEXING_ENABLED=true
+      - ANALYTICS_ENABLED=true
+      - PROMETHEUS_ENABLED=true
+      - STORAGE_ENGINE=rocksdb
+      - MAX_BLOCK_CACHE=30000
+      - MAX_TRANSACTION_CACHE=100000
+      - POSTGRES_HOST=observer-postgres
+      - POSTGRES_DB=guardian_analytics
+      - POSTGRES_USER=observer
+      - POSTGRES_PASSWORD=observer123
+      - REDIS_HOST=observer-redis
+      - REDIS_PASSWORD=redis123
+      - ELASTICSEARCH_HOST=observer-elasticsearch:9200
+    depends_on:
+      - observer-postgres
+      - observer-redis
+      - observer-elasticsearch
+    deploy:
+      resources:
+        limits:
+          cpus: '2.5'
+          memory: 10G
+        reservations:
+          cpus: '1.0'
+          memory: 4G
+    healthcheck:
+      test: ["CMD", "/home/guardian/observer-healthcheck.sh"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
+    logging:
+      driver: json-file
+      options:
+        max-size: "100m"
+        max-file: "5"
+
+  # PostgreSQL Database for Analytics Storage
+  observer-postgres:
+    image: postgres:15-alpine
+    container_name: guardian-observer-postgres
+    hostname: observer-postgres
+    restart: unless-stopped
+    networks:
+      - observer-network
+    ports:
+      - "5433:5432"    # Non-standard port to avoid conflicts
+    volumes:
+      - observer-postgres-data:/var/lib/postgresql/data
+      - ./observer-config/postgresql.conf:/etc/postgresql/postgresql.conf:ro
+      - ./observer-config/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
+    environment:
+      - POSTGRES_DB=guardian_analytics
+      - POSTGRES_USER=observer
+      - POSTGRES_PASSWORD=observer123
+      - POSTGRES_INITDB_ARGS=--auth-host=md5
+    command: >
+      postgres
+      -c config_file=/etc/postgresql/postgresql.conf
+      -c shared_preload_libraries=pg_stat_statements
+      -c pg_stat_statements.track=all
+      -c log_statement=mod
+      -c log_min_duration_statement=1000
+      -c checkpoint_completion_target=0.9
+      -c effective_cache_size=8GB
+      -c shared_buffers=2GB
+      -c work_mem=256MB
+      -c maintenance_work_mem=1GB
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 8G
+        reservations:
+          cpus: '1.0'
+          memory: 4G
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U observer -d guardian_analytics"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    logging:
+      driver: json-file
+      options:
+        max-size: "100m"
+        max-file: "3"
+
+  # Redis for Caching and Real-time Data
+  observer-redis:
+    image: redis:7-alpine
+    container_name: guardian-observer-redis
+    hostname: observer-redis
+    restart: unless-stopped
+    networks:
+      - observer-network
+    ports:
+      - "6380:6379"    # Non-standard port
+    volumes:
+      - observer-redis-data:/data
+      - ./observer-config/redis.conf:/usr/local/etc/redis/redis.conf:ro
+    command: redis-server /usr/local/etc/redis/redis.conf --requirepass redis123
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 4G
+        reservations:
+          cpus: '0.5'
+          memory: 2G
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 30s
+      timeout: 3s
+      retries: 5
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "3"
+
+  # Elasticsearch for Full-text Search and Indexing
+  observer-elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: guardian-observer-elasticsearch
+    hostname: observer-elasticsearch
+    restart: unless-stopped
+    networks:
+      - observer-network
+    ports:
+      - "9201:9200"    # Non-standard port
+      - "9301:9300"    # Node communication
+    volumes:
+      - observer-elasticsearch-data:/usr/share/elasticsearch/data
+      - ./observer-config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+    environment:
+      - node.name=guardian-observer-es
+      - cluster.name=guardian-analytics
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=false
+      - xpack.security.enrollment.enabled=false
+      - "ES_JAVA_OPTS=-Xms4g -Xmx4g"
+      - ELASTIC_PASSWORD=elastic123
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 6G
+        reservations:
+          cpus: '1.0'
+          memory: 4G
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s http://localhost:9200/_cluster/health | grep -q '\"status\":\"green\\|yellow\"'"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    logging:
+      driver: json-file
+      options:
+        max-size: "100m"
+        max-file: "3"
+
+  # Grafana for Analytics Visualization
+  observer-grafana:
+    image: grafana/grafana:10.2.0
+    container_name: guardian-observer-grafana
+    hostname: observer-grafana
+    restart: unless-stopped
+    networks:
+      - observer-network
+    ports:
+      - "3001:3000"    # Non-standard port
+    volumes:
+      - ./observer-config/grafana:/etc/grafana/provisioning
+      - ./observer-config/grafana-dashboards:/var/lib/grafana/dashboards
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=guardian123
+      - GF_INSTALL_PLUGINS=grafana-piechart-panel,grafana-worldmap-panel
+      - GF_FEATURE_TOGGLES_ENABLE=ngalert
+      - GF_DATABASE_TYPE=postgres
+      - GF_DATABASE_HOST=observer-postgres:5432
+      - GF_DATABASE_NAME=grafana
+      - GF_DATABASE_USER=grafana
+      - GF_DATABASE_PASSWORD=grafana123
+    depends_on:
+      - observer-postgres
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 1G
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "3"
+
+  # Prometheus for Metrics Collection
+  observer-prometheus:
+    image: prom/prometheus:v2.47.0
+    container_name: guardian-observer-prometheus
+    hostname: observer-prometheus
+    restart: unless-stopped
+    networks:
+      - observer-network
+    ports:
+      - "9093:9090"    # Non-standard port to avoid conflicts
+    volumes:
+      - ./observer-config/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./observer-config/alert_rules.yml:/etc/prometheus/alert_rules.yml:ro
+      - ./data/observer/prometheus:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=90d'
+      - '--storage.tsdb.retention.size=50GB'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+      - '--web.enable-admin-api'
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 4G
+        reservations:
+          cpus: '0.5'
+          memory: 2G
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9090/-/healthy"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "3"
+
+  # Node Exporter for System Metrics
+  observer-node-exporter:
+    image: prom/node-exporter:v1.6.1
+    container_name: guardian-observer-node-exporter
+    hostname: observer-node-exporter
+    restart: unless-stopped
+    networks:
+      - observer-network
+    ports:
+      - "9101:9100"
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    deploy:
+      resources:
+        limits:
+          cpus: '0.2'
+          memory: 200M
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # cAdvisor for Container Metrics
+  observer-cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.47.2
+    container_name: guardian-observer-cadvisor
+    hostname: observer-cadvisor
+    restart: unless-stopped
+    networks:
+      - observer-network
+    ports:
+      - "8084:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    privileged: true
+    devices:
+      - /dev/kmsg
+    deploy:
+      resources:
+        limits:
+          cpus: '0.3'
+          memory: 300M
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "2"

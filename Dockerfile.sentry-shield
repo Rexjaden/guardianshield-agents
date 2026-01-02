@@ -1,0 +1,100 @@
+# GuardianShield Sentry Node - Validator Protection Shield
+# Absorbs attacks, rate limits, serves API/RPC/WebSocket
+FROM ubuntu:22.04
+
+# Create sentry user for security
+RUN groupadd -r sentry && useradd -r -g sentry -s /bin/bash sentry
+
+WORKDIR /sentry
+
+# Install comprehensive protection and monitoring tools
+RUN apt-get update && apt-get install -y \
+    curl \
+    wget \
+    git \
+    build-essential \
+    pkg-config \
+    libssl-dev \
+    nginx \
+    redis-server \
+    fail2ban \
+    ufw \
+    iptables \
+    tcpdump \
+    netstat-nat \
+    htop \
+    iotop \
+    nload \
+    jq \
+    python3 \
+    python3-pip \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Node.js for blockchain services
+RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - \
+    && apt-get install -y nodejs
+
+# Install Python packages for attack mitigation
+RUN pip3 install \
+    aiohttp \
+    websockets \
+    redis \
+    prometheus-client \
+    psutil \
+    netaddr
+
+# Configure Nginx for load balancing and DDoS protection
+COPY docker/sentry-config/nginx.conf /etc/nginx/nginx.conf
+COPY docker/sentry-config/nginx-rate-limit.conf /etc/nginx/conf.d/
+
+# Configure Redis for rate limiting and caching
+COPY docker/sentry-config/redis.conf /etc/redis/redis.conf
+
+# Configure fail2ban for attack mitigation
+COPY docker/sentry-config/jail.local /etc/fail2ban/jail.local
+
+# Install sentry protection services
+COPY sentry_attack_absorber.py ./
+COPY sentry_rate_limiter.py ./
+COPY sentry_api_gateway.py ./
+COPY blockchain_node_cluster.js ./
+COPY package*.json ./
+RUN npm ci --only=production
+
+# Create sentry directories with proper permissions
+RUN mkdir -p /sentry/{data,logs,config,cache} \
+    && chown -R sentry:sentry /sentry \
+    && chmod 755 /sentry
+
+# Create attack logs directory
+RUN mkdir -p /var/log/sentry-attacks \
+    && chown sentry:sentry /var/log/sentry-attacks
+
+# Configure firewall for sentry nodes
+# Allow all necessary ports but with protection
+RUN ufw --force enable \
+    && ufw default deny incoming \
+    && ufw default allow outgoing \
+    && ufw allow 80/tcp comment 'HTTP API' \
+    && ufw allow 443/tcp comment 'HTTPS API' \
+    && ufw allow 26656/tcp comment 'P2P' \
+    && ufw allow 26657/tcp comment 'RPC' \
+    && ufw allow 8080/tcp comment 'WebSocket' \
+    && ufw limit ssh/tcp
+
+# Set proper ownership
+RUN chown -R sentry:sentry /sentry /var/log/sentry-attacks
+
+# Drop to sentry user
+USER sentry
+
+# Health check with comprehensive monitoring
+HEALTHCHECK --interval=30s --timeout=15s --start-period=30s --retries=5 \
+    CMD python3 -c "import sentry_attack_absorber; print('Sentry Health: OK')" && \
+        curl -f http://localhost:26657/health || exit 1
+
+# Expose sentry protection ports
+EXPOSE 80 443 26656 26657 8080 9090
+
+# Start sentry protection stack
+CMD ["python3", "sentry_attack_absorber.py"]

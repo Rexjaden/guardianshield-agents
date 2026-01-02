@@ -1,0 +1,327 @@
+# GuardianShield Multi-Region Sentry Network
+# Protection shield for validators - absorbs attacks and serves API/RPC/WebSocket
+version: '3.8'
+
+services:
+  # ======================= US-EAST SENTRY CLUSTER =======================
+  sentry-us-east-01:
+    build:
+      context: .
+      dockerfile: Dockerfile.sentry-shield
+    container_name: guardian-sentry-us-east-01
+    hostname: sentry-us-east-01.guardianshield.network
+    environment:
+      - SENTRY_ID=guardian_sentry_us_east_001
+      - REGION=us-east
+      - ZONE=virginia-1a
+      - VALIDATOR_ENDPOINTS=validator-us-east:26657,validator-eu-west:26657,validator-asia-pacific:26657
+      - REDIS_URL=redis://sentry-redis-us-east:6379
+      - LOAD_BALANCER_TIER=primary
+    volumes:
+      - sentry_us_east_01_data:/sentry/data
+      - sentry_us_east_01_logs:/var/log/sentry-attacks
+      - ./sentry-config/us-east-01.json:/sentry/config/sentry-gateway.json:ro
+    networks:
+      - sentry-protection-network
+      - validator-private-network
+    ports:
+      - "80:80"      # HTTP API
+      - "443:443"    # HTTPS API  
+      - "26657:26657" # RPC
+      - "8080:8080"  # WebSocket
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+          cpus: '2.0'
+        reservations:
+          memory: 2G
+          cpus: '1.0'
+    cap_add:
+      - NET_ADMIN
+    security_opt:
+      - no-new-privileges:true
+
+  sentry-us-east-02:
+    build:
+      context: .
+      dockerfile: Dockerfile.sentry-shield
+    container_name: guardian-sentry-us-east-02
+    hostname: sentry-us-east-02.guardianshield.network
+    environment:
+      - SENTRY_ID=guardian_sentry_us_east_002
+      - REGION=us-east
+      - ZONE=virginia-1b
+      - VALIDATOR_ENDPOINTS=validator-us-east:26657,validator-eu-west:26657,validator-asia-pacific:26657
+      - REDIS_URL=redis://sentry-redis-us-east:6379
+      - LOAD_BALANCER_TIER=secondary
+    volumes:
+      - sentry_us_east_02_data:/sentry/data
+      - sentry_us_east_02_logs:/var/log/sentry-attacks
+      - ./sentry-config/us-east-02.json:/sentry/config/sentry-gateway.json:ro
+    networks:
+      - sentry-protection-network
+      - validator-private-network
+    ports:
+      - "81:80"
+      - "444:443" 
+      - "26658:26657"
+      - "8081:8080"
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+          cpus: '2.0'
+        reservations:
+          memory: 2G
+          cpus: '1.0'
+    cap_add:
+      - NET_ADMIN
+    security_opt:
+      - no-new-privileges:true
+
+  # ======================= EU-WEST SENTRY CLUSTER =======================
+  sentry-eu-west-01:
+    build:
+      context: .
+      dockerfile: Dockerfile.sentry-shield
+    container_name: guardian-sentry-eu-west-01
+    hostname: sentry-eu-west-01.guardianshield.network
+    environment:
+      - SENTRY_ID=guardian_sentry_eu_west_001
+      - REGION=eu-west
+      - ZONE=ireland-1a
+      - VALIDATOR_ENDPOINTS=validator-eu-west:26657,validator-us-east:26657,validator-asia-pacific:26657
+      - REDIS_URL=redis://sentry-redis-eu-west:6379
+      - LOAD_BALANCER_TIER=primary
+    volumes:
+      - sentry_eu_west_01_data:/sentry/data
+      - sentry_eu_west_01_logs:/var/log/sentry-attacks
+      - ./sentry-config/eu-west-01.json:/sentry/config/sentry-gateway.json:ro
+    networks:
+      - sentry-protection-network
+      - validator-private-network
+    ports:
+      - "82:80"
+      - "445:443"
+      - "26659:26657"
+      - "8082:8080"
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+          cpus: '2.0'
+        reservations:
+          memory: 2G
+          cpus: '1.0'
+    cap_add:
+      - NET_ADMIN
+    security_opt:
+      - no-new-privileges:true
+
+  sentry-eu-west-02:
+    build:
+      context: .
+      dockerfile: Dockerfile.sentry-shield
+    container_name: guardian-sentry-eu-west-02
+    hostname: sentry-eu-west-02.guardianshield.network
+    environment:
+      - SENTRY_ID=guardian_sentry_eu_west_002
+      - REGION=eu-west
+      - ZONE=ireland-1b
+      - VALIDATOR_ENDPOINTS=validator-eu-west:26657,validator-us-east:26657,validator-asia-pacific:26657
+      - REDIS_URL=redis://sentry-redis-eu-west:6379
+      - LOAD_BALANCER_TIER=secondary
+    volumes:
+      - sentry_eu_west_02_data:/sentry/data
+      - sentry_eu_west_02_logs:/var/log/sentry-attacks
+      - ./sentry-config/eu-west-02.json:/sentry/config/sentry-gateway.json:ro
+    networks:
+      - sentry-protection-network
+      - validator-private-network
+    ports:
+      - "83:80"
+      - "446:443"
+      - "26660:26657"
+      - "8083:8080"
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+          cpus: '2.0'
+        reservations:
+          memory: 2G
+          cpus: '1.0'
+    cap_add:
+      - NET_ADMIN
+    security_opt:
+      - no-new-privileges:true
+
+  # ======================= ASIA-PACIFIC SENTRY CLUSTER =======================
+  sentry-asia-pacific-01:
+    build:
+      context: .
+      dockerfile: Dockerfile.sentry-shield
+    container_name: guardian-sentry-asia-pacific-01
+    hostname: sentry-asia-pacific-01.guardianshield.network
+    environment:
+      - SENTRY_ID=guardian_sentry_asia_pacific_001
+      - REGION=asia-pacific
+      - ZONE=singapore-1a
+      - VALIDATOR_ENDPOINTS=validator-asia-pacific:26657,validator-us-east:26657,validator-eu-west:26657
+      - REDIS_URL=redis://sentry-redis-asia-pacific:6379
+      - LOAD_BALANCER_TIER=primary
+    volumes:
+      - sentry_asia_pacific_01_data:/sentry/data
+      - sentry_asia_pacific_01_logs:/var/log/sentry-attacks
+      - ./sentry-config/asia-pacific-01.json:/sentry/config/sentry-gateway.json:ro
+    networks:
+      - sentry-protection-network
+      - validator-private-network
+    ports:
+      - "84:80"
+      - "447:443"
+      - "26661:26657"
+      - "8084:8080"
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+          cpus: '2.0'
+        reservations:
+          memory: 2G
+          cpus: '1.0'
+    cap_add:
+      - NET_ADMIN
+    security_opt:
+      - no-new-privileges:true
+
+  # ======================= REDIS CLUSTERS FOR RATE LIMITING =======================
+  sentry-redis-us-east:
+    image: redis:7-alpine
+    container_name: guardian-sentry-redis-us-east
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
+    volumes:
+      - sentry_redis_us_east_data:/data
+    networks:
+      - sentry-protection-network
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+
+  sentry-redis-eu-west:
+    image: redis:7-alpine
+    container_name: guardian-sentry-redis-eu-west
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
+    volumes:
+      - sentry_redis_eu_west_data:/data
+    networks:
+      - sentry-protection-network
+    ports:
+      - "6380:6379"
+    restart: unless-stopped
+
+  sentry-redis-asia-pacific:
+    image: redis:7-alpine
+    container_name: guardian-sentry-redis-asia-pacific
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
+    volumes:
+      - sentry_redis_asia_pacific_data:/data
+    networks:
+      - sentry-protection-network
+    ports:
+      - "6381:6379"
+    restart: unless-stopped
+
+  # ======================= LOAD BALANCER & MONITORING =======================
+  sentry-load-balancer:
+    image: nginx:alpine
+    container_name: guardian-sentry-load-balancer
+    volumes:
+      - ./sentry-config/nginx-lb.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - sentry-protection-network
+    ports:
+      - "8888:80"  # Load balancer status
+    depends_on:
+      - sentry-us-east-01
+      - sentry-us-east-02
+      - sentry-eu-west-01
+      - sentry-eu-west-02
+      - sentry-asia-pacific-01
+    restart: unless-stopped
+
+  sentry-monitor:
+    image: prom/prometheus:latest
+    container_name: guardian-sentry-monitor
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=7d'
+    volumes:
+      - ./sentry-config/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - sentry_monitor_data:/prometheus
+    networks:
+      - sentry-protection-network
+    ports:
+      - "9090:9090"
+    restart: unless-stopped
+
+  # ======================= ATTACK ANALYTICS =======================
+  sentry-analytics:
+    build:
+      context: .
+      dockerfile: Dockerfile.sentry-shield
+    container_name: guardian-sentry-analytics
+    environment:
+      - SERVICE_MODE=analytics
+      - REDIS_URLS=redis://sentry-redis-us-east:6379,redis://sentry-redis-eu-west:6379,redis://sentry-redis-asia-pacific:6379
+    command: ["python3", "sentry_attack_analytics.py"]
+    volumes:
+      - sentry_analytics_data:/analytics/data
+    networks:
+      - sentry-protection-network
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '0.5'
+
+volumes:
+  sentry_us_east_01_data:
+  sentry_us_east_01_logs:
+  sentry_us_east_02_data:
+  sentry_us_east_02_logs:
+  sentry_eu_west_01_data:
+  sentry_eu_west_01_logs:
+  sentry_eu_west_02_data:
+  sentry_eu_west_02_logs:
+  sentry_asia_pacific_01_data:
+  sentry_asia_pacific_01_logs:
+  sentry_redis_us_east_data:
+  sentry_redis_eu_west_data:
+  sentry_redis_asia_pacific_data:
+  sentry_monitor_data:
+  sentry_analytics_data:
+
+networks:
+  sentry-protection-network:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: guardian-sentry-shield
+    ipam:
+      config:
+        - subnet: 172.22.0.0/16
+          gateway: 172.22.0.1
+  
+  validator-private-network:
+    external: true
+    name: guardianshield-agents_validator-private-network

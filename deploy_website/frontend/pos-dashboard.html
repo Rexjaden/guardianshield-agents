@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💳 GuardianShield POS Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #ffffff;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+        
+        /* Animated payment flow background */
+        .payment-flow-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.1;
+        }
+        
+        .flow-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: linear-gradient(45deg, #00ff88, #00ccff);
+            border-radius: 50%;
+            animation: flow-move 8s infinite linear;
+            box-shadow: 0 0 8px currentColor;
+        }
+        
+        @keyframes flow-move {
+            0% { 
+                transform: translateX(-100px) translateY(50vh) rotate(0deg); 
+                opacity: 0; 
+            }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { 
+                transform: translateX(calc(100vw + 100px)) translateY(50vh) rotate(360deg); 
+                opacity: 0; 
+            }
+        }
+        
+        /* Header */
+        .header {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 1rem 2rem;
+            border-bottom: 3px solid #00ff88;
+            backdrop-filter: blur(15px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0, 255, 136, 0.2);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header h1 {
+            background: linear-gradient(45deg, #00ff88, #00ccff, #00ff88);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient-flow 4s ease-in-out infinite;
+            font-size: 2.5rem;
+            text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+        }
+        
+        @keyframes gradient-flow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        .status-bar {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(0, 255, 136, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #00ff88;
+            animation: pulse-dot 2s infinite;
+        }
+        
+        @keyframes pulse-dot {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.7; }
+        }
+        
+        /* Main dashboard layout */
+        .dashboard {
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        /* POS Terminal */
+        .pos-terminal {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.15), rgba(0, 204, 255, 0.1));
+            border: 2px solid #00ff88;
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            grid-column: span 2;
+            min-height: 500px;
+        }
+        
+        .terminal-screen {
+            background: #000;
+            border: 3px solid #00ff88;
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 1rem auto;
+            max-width: 400px;
+            position: relative;
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.4), inset 0 0 20px rgba(0, 255, 136, 0.1);
+        }
+        
+        .terminal-glow {
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            background: linear-gradient(45deg, #00ff88, #00ccff, #00ff88, #00ccff);
+            border-radius: 20px;
+            z-index: -1;
+            animation: terminal-pulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes terminal-pulse {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.05); }
+        }
+        
+        .payment-display {
+            font-size: 3rem;
+            color: #00ff88;
+            font-weight: bold;
+            text-shadow: 0 0 15px #00ff88;
+            margin: 1rem 0;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .payment-info {
+            color: #cccccc;
+            font-size: 1.2rem;
+            margin: 0.5rem 0;
+        }
+        
+        /* Payment methods grid */
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .payment-method {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            border: 2px solid transparent;
+            border-radius: 15px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            position: relative;
+        }
+        
+        .payment-method:hover {
+            border-color: #00ff88;
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.2), rgba(0, 204, 255, 0.1));
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 255, 136, 0.3);
+        }
+        
+        .payment-method.active {
+            border-color: #00ff88;
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.3), rgba(0, 204, 255, 0.2));
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+        }
+        
+        .payment-method-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            animation: float-icon 3s ease-in-out infinite;
+        }
+        
+        @keyframes float-icon {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        .payment-method-name {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #ffffff;
+        }
+        
+        /* Stats cards */
+        .stats-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            border-radius: 15px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-5px);
+            border-color: #00ff88;
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.2);
+        }
+        
+        .stats-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #00ff88, transparent, #00ccff);
+            border-radius: 15px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .stats-card:hover::before {
+            opacity: 0.3;
+        }
+        
+        .stats-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .stats-icon {
+            font-size: 2rem;
+            margin-right: 1rem;
+            animation: rotate-icon 4s linear infinite;
+        }
+        
+        @keyframes rotate-icon {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .stats-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #00ff88;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+            animation: value-glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes value-glow {
+            0% { text-shadow: 0 0 10px rgba(0, 255, 136, 0.5); }
+            100% { text-shadow: 0 0 20px rgba(0, 255, 136, 0.8); }
+        }
+        
+        .stats-label {
+            color: #cccccc;
+            font-size: 1.1rem;
+            margin-top: 0.5rem;
+        }
+        
+        /* Transaction processing animation */
+        .processing-animation {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 200px;
+            height: 200px;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .processing-animation.active {
+            opacity: 1;
+            animation: processing-spin 2s linear infinite;
+        }
+        
+        @keyframes processing-spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        
+        .processing-ring {
+            width: 100%;
+            height: 100%;
+            border: 4px solid transparent;
+            border-top: 4px solid #00ff88;
+            border-radius: 50%;
+            position: absolute;
+        }
+        
+        .processing-ring:nth-child(2) {
+            width: 80%;
+            height: 80%;
+            top: 10%;
+            left: 10%;
+            border-top-color: #00ccff;
+            animation: processing-spin 1.5s linear infinite reverse;
+        }
+        
+        /* QR Code display */
+        .qr-display {
+            background: #ffffff;
+            border-radius: 15px;
+            padding: 1rem;
+            margin: 1rem auto;
+            width: fit-content;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .qr-code {
+            width: 200px;
+            height: 200px;
+            background: #000;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+        
+        /* Control buttons */
+        .control-panel {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+        
+        .control-btn {
+            background: linear-gradient(45deg, #00ff88, #00ccff);
+            color: #000;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .control-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .control-btn:hover::before {
+            left: 100%;
+        }
+        
+        .control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 255, 136, 0.5);
+        }
+        
+        .control-btn:active {
+            transform: translateY(0);
+        }
+        
+        /* Success/Failure animations */
+        .status-animation {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .status-animation.success {
+            animation: success-burst 3s ease-out;
+        }
+        
+        .status-animation.failure {
+            animation: failure-shake 2s ease-out;
+        }
+        
+        @keyframes success-burst {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0); }
+            20% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
+        }
+        
+        @keyframes failure-shake {
+            0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
+            10% { transform: translate(-50%, -50%) rotate(-5deg); }
+            20% { transform: translate(-50%, -50%) rotate(5deg); }
+            30% { transform: translate(-50%, -50%) rotate(-5deg); }
+            40% { transform: translate(-50%, -50%) rotate(5deg); }
+            50% { transform: translate(-50%, -50%) rotate(0deg); }
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+            }
+            
+            .pos-terminal {
+                grid-column: span 1;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .payment-display {
+                font-size: 2rem;
+            }
+            
+            .payment-methods {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated payment flow background -->
+    <div class="payment-flow-bg" id="paymentFlowBg"></div>
+    
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <h1>💳 POS Dashboard</h1>
+            <div class="status-bar">
+                <div class="status-indicator">
+                    <div class="status-dot"></div>
+                    <span>Online</span>
+                </div>
+                <div class="status-indicator">
+                    <div class="status-dot"></div>
+                    <span id="transactionCount">0</span> Transactions Today
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Main dashboard -->
+    <main class="dashboard">
+        <!-- POS Terminal -->
+        <section class="stats-card pos-terminal">
+            <div class="terminal-glow"></div>
+            <h2>🖥️ Payment Terminal</h2>
+            
+            <div class="terminal-screen">
+                <div class="payment-display" id="paymentAmount">$0.00</div>
+                <div class="payment-info" id="paymentToken">Select Token</div>
+                <div class="payment-info" id="paymentStatus">Ready</div>
+                
+                <!-- QR Code Display -->
+                <div class="qr-display" id="qrDisplay" style="display: none;">
+                    <div class="qr-code" id="qrCode">QR Code</div>
+                </div>
+            </div>
+            
+            <!-- Payment Methods -->
+            <div class="payment-methods">
+                <div class="payment-method" onclick="selectPaymentMethod('wallet_connect')">
+                    <div class="payment-method-icon">🔗</div>
+                    <div class="payment-method-name">Wallet Connect</div>
+                </div>
+                <div class="payment-method" onclick="selectPaymentMethod('metamask')">
+                    <div class="payment-method-icon">🦊</div>
+                    <div class="payment-method-name">MetaMask</div>
+                </div>
+                <div class="payment-method" onclick="selectPaymentMethod('qr_code')">
+                    <div class="payment-method-icon">📱</div>
+                    <div class="payment-method-name">QR Code</div>
+                </div>
+                <div class="payment-method" onclick="selectPaymentMethod('nfc')">
+                    <div class="payment-method-icon">📡</div>
+                    <div class="payment-method-name">NFC</div>
+                </div>
+            </div>
+            
+            <!-- Processing Animation -->
+            <div class="processing-animation" id="processingAnimation">
+                <div class="processing-ring"></div>
+                <div class="processing-ring"></div>
+            </div>
+            
+            <!-- Control Panel -->
+            <div class="control-panel">
+                <button class="control-btn" onclick="createPayment()">💰 New Payment</button>
+                <button class="control-btn" onclick="processPayment()">⚡ Process</button>
+                <button class="control-btn" onclick="cancelPayment()">❌ Cancel</button>
+                <button class="control-btn" onclick="refreshData()">🔄 Refresh</button>
+            </div>
+        </section>
+        
+        <!-- Today's Sales -->
+        <section class="stats-card">
+            <div class="stats-header">
+                <span class="stats-icon">💵</span>
+                <h3>Today's Sales</h3>
+            </div>
+            <div class="stats-value" id="todaysSales">$0.00</div>
+            <div class="stats-label">Total Revenue</div>
+        </section>
+        
+        <!-- Transaction Count -->
+        <section class="stats-card">
+            <div class="stats-header">
+                <span class="stats-icon">📊</span>
+                <h3>Transactions</h3>
+            </div>
+            <div class="stats-value" id="transactionCountCard">0</div>
+            <div class="stats-label">Completed Today</div>
+        </section>
+        
+        <!-- Average Sale -->
+        <section class="stats-card">
+            <div class="stats-header">
+                <span class="stats-icon">📈</span>
+                <h3>Average Sale</h3>
+            </div>
+            <div class="stats-value" id="averageSale">$0.00</div>
+            <div class="stats-label">Per Transaction</div>
+        </section>
+        
+        <!-- Top Token -->
+        <section class="stats-card">
+            <div class="stats-header">
+                <span class="stats-icon">🪙</span>
+                <h3>Top Token</h3>
+            </div>
+            <div class="stats-value" id="topToken">GUARD</div>
+            <div class="stats-label">Most Used</div>
+        </section>
+        
+        <!-- Recent Transactions -->
+        <section class="stats-card" style="grid-column: span 2;">
+            <div class="stats-header">
+                <span class="stats-icon">🧾</span>
+                <h3>Recent Transactions</h3>
+            </div>
+            <div id="recentTransactions" style="max-height: 300px; overflow-y: auto;">
+                <div style="padding: 1rem; text-align: center; color: #888;">
+                    No recent transactions
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Status Animations -->
+    <div class="status-animation" id="statusAnimation">
+        <div style="font-size: 4rem;" id="statusIcon">✅</div>
+        <div style="font-size: 1.5rem; margin-top: 1rem;" id="statusText">Payment Successful!</div>
+    </div>
+    
+    <script>
+        let currentPayment = null;
+        let selectedMethod = null;
+        
+        // Create animated payment flow background
+        function createPaymentFlow() {
+            const flowBg = document.getElementById('paymentFlowBg');
+            
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'flow-particle';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 8 + 's';
+                particle.style.animationDuration = (8 + Math.random() * 4) + 's';
+                flowBg.appendChild(particle);
+            }
+        }
+        
+        // Select payment method
+        function selectPaymentMethod(method) {
+            selectedMethod = method;
+            
+            // Update UI
+            document.querySelectorAll('.payment-method').forEach(el => el.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            
+            document.getElementById('paymentStatus').textContent = `Selected: ${method.replace('_', ' ').toUpperCase()}`;
+        }
+        
+        // Create new payment
+        function createPayment() {
+            const amount = prompt('Enter payment amount in USD:', '25.00');
+            if (!amount || isNaN(amount)) return;
+            
+            const token = prompt('Enter token symbol:', 'GUARD');
+            if (!token) return;
+            
+            currentPayment = {
+                id: generateTransactionId(),
+                amount: parseFloat(amount),
+                token: token,
+                status: 'created',
+                timestamp: new Date()
+            };
+            
+            // Update display
+            document.getElementById('paymentAmount').textContent = `$${amount}`;
+            document.getElementById('paymentToken').textContent = `${token} Payment`;
+            document.getElementById('paymentStatus').textContent = 'Payment Created - Awaiting Customer';
+            
+            // Show QR code if method is QR
+            if (selectedMethod === 'qr_code') {
+                showQRCode();
+            }
+            
+            console.log('Payment created:', currentPayment);
+        }
+        
+        // Process payment
+        function processPayment() {
+            if (!currentPayment) {
+                alert('No active payment to process');
+                return;
+            }
+            
+            if (!selectedMethod) {
+                alert('Please select a payment method first');
+                return;
+            }
+            
+            // Start processing animation
+            showProcessingAnimation();
+            document.getElementById('paymentStatus').textContent = 'Processing Payment...';
+            
+            // Simulate payment processing
+            setTimeout(() => {
+                const success = Math.random() > 0.1; // 90% success rate
+                
+                hideProcessingAnimation();
+                
+                if (success) {
+                    currentPayment.status = 'confirmed';
+                    currentPayment.confirmedAt = new Date();
+                    
+                    document.getElementById('paymentStatus').textContent = 'Payment Successful!';
+                    showStatusAnimation('success');
+                    addToRecentTransactions(currentPayment);
+                    updateDashboardStats();
+                } else {
+                    currentPayment.status = 'failed';
+                    document.getElementById('paymentStatus').textContent = 'Payment Failed - Try Again';
+                    showStatusAnimation('failure');
+                }
+                
+                // Reset after 3 seconds
+                setTimeout(() => {
+                    resetPayment();
+                }, 3000);
+                
+            }, 3000);
+        }
+        
+        // Cancel payment
+        function cancelPayment() {
+            if (currentPayment) {
+                currentPayment.status = 'cancelled';
+                resetPayment();
+            }
+        }
+        
+        // Reset payment state
+        function resetPayment() {
+            currentPayment = null;
+            selectedMethod = null;
+            
+            document.getElementById('paymentAmount').textContent = '$0.00';
+            document.getElementById('paymentToken').textContent = 'Select Token';
+            document.getElementById('paymentStatus').textContent = 'Ready';
+            document.getElementById('qrDisplay').style.display = 'none';
+            
+            document.querySelectorAll('.payment-method').forEach(el => el.classList.remove('active'));
+        }
+        
+        // Show QR code
+        function showQRCode() {
+            const qrDisplay = document.getElementById('qrDisplay');
+            const qrCode = document.getElementById('qrCode');
+            
+            // Generate QR code content
+            const paymentUrl = `guardianshield://pay/${currentPayment.id}`;
+            qrCode.textContent = 'Scan to Pay';
+            qrCode.style.background = `url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="white"/><text x="50" y="50" font-family="monospace" font-size="8" text-anchor="middle" fill="black">QR CODE</text></svg>')`;
+            qrCode.style.backgroundSize = 'cover';
+            
+            qrDisplay.style.display = 'block';
+        }
+        
+        // Show processing animation
+        function showProcessingAnimation() {
+            document.getElementById('processingAnimation').classList.add('active');
+        }
+        
+        // Hide processing animation
+        function hideProcessingAnimation() {
+            document.getElementById('processingAnimation').classList.remove('active');
+        }
+        
+        // Show status animation
+        function showStatusAnimation(type) {
+            const animation = document.getElementById('statusAnimation');
+            const icon = document.getElementById('statusIcon');
+            const text = document.getElementById('statusText');
+            
+            if (type === 'success') {
+                icon.textContent = '✅';
+                text.textContent = 'Payment Successful!';
+                animation.className = 'status-animation success';
+            } else {
+                icon.textContent = '❌';
+                text.textContent = 'Payment Failed!';
+                animation.className = 'status-animation failure';
+            }
+            
+            // Reset animation after completion
+            setTimeout(() => {
+                animation.className = 'status-animation';
+            }, 3000);
+        }
+        
+        // Add to recent transactions
+        function addToRecentTransactions(payment) {
+            const container = document.getElementById('recentTransactions');
+            
+            const transactionEl = document.createElement('div');
+            transactionEl.style.cssText = `
+                background: rgba(0, 255, 136, 0.1);
+                border: 1px solid rgba(0, 255, 136, 0.3);
+                border-radius: 8px;
+                padding: 1rem;
+                margin-bottom: 0.5rem;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                animation: slide-in 0.5s ease-out;
+            `;
+            
+            transactionEl.innerHTML = `
+                <div>
+                    <strong>$${payment.amount.toFixed(2)}</strong> (${payment.token})
+                    <div style="font-size: 0.9rem; color: #888;">${payment.timestamp.toLocaleTimeString()}</div>
+                </div>
+                <div style="color: #00ff88; font-weight: bold;">✓ CONFIRMED</div>
+            `;
+            
+            container.insertBefore(transactionEl, container.firstChild);
+            
+            // Remove old transactions (keep only 5)
+            while (container.children.length > 5) {
+                container.removeChild(container.lastChild);
+            }
+        }
+        
+        // Update dashboard stats
+        function updateDashboardStats() {
+            const todaysSales = parseFloat(document.getElementById('todaysSales').textContent.replace('$', '')) || 0;
+            const transactionCount = parseInt(document.getElementById('transactionCountCard').textContent) || 0;
+            
+            const newSales = todaysSales + currentPayment.amount;
+            const newCount = transactionCount + 1;
+            const newAverage = newSales / newCount;
+            
+            animateValue(document.getElementById('todaysSales'), todaysSales, newSales, 1000, '$');
+            animateValue(document.getElementById('transactionCountCard'), transactionCount, newCount, 1000);
+            animateValue(document.getElementById('transactionCount'), transactionCount, newCount, 1000);
+            animateValue(document.getElementById('averageSale'), parseFloat(document.getElementById('averageSale').textContent.replace('$', '')) || 0, newAverage, 1000, '$');
+        }
+        
+        // Animate counter values
+        function animateValue(element, start, end, duration, prefix = '') {
+            const startTime = performance.now();
+            
+            function animate(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const value = start + (end - start) * progress;
+                
+                if (prefix === '$') {
+                    element.textContent = prefix + value.toFixed(2);
+                } else {
+                    element.textContent = Math.floor(value);
+                }
+                
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                }
+            }
+            
+            requestAnimationFrame(animate);
+        }
+        
+        // Generate transaction ID
+        function generateTransactionId() {
+            return 'tx_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        }
+        
+        // Refresh data
+        function refreshData() {
+            console.log('Refreshing POS data...');
+            // In a real implementation, this would fetch fresh data
+        }
+        
+        // Initialize dashboard
+        function initializeDashboard() {
+            createPaymentFlow();
+            
+            // Set initial values
+            animateValue(document.getElementById('todaysSales'), 0, 1247.50, 2000, '$');
+            animateValue(document.getElementById('transactionCountCard'), 0, 23, 1800);
+            animateValue(document.getElementById('transactionCount'), 0, 23, 1800);
+            animateValue(document.getElementById('averageSale'), 0, 54.24, 2200, '$');
+        }
+        
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', initializeDashboard);
+    </script>
+</body>
+</html>

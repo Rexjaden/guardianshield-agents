@@ -1,0 +1,102 @@
+# GuardianShield Observer Alert Rules
+# Critical monitoring for analytics infrastructure
+
+groups:
+  - name: observer.critical
+    interval: 30s
+    rules:
+      - alert: ObserverNodeDown
+        expr: up{job=~"observer-.*"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          team: guardian-analytics
+        annotations:
+          summary: "Observer node {{ $labels.instance }} is down"
+          description: "Observer node {{ $labels.instance }} in region {{ $labels.region }} has been down for more than 1 minute"
+
+      - alert: BlockIndexingStalled
+        expr: increase(observer_blocks_processed_total[5m]) == 0
+        for: 10m
+        labels:
+          severity: critical
+          team: guardian-analytics
+        annotations:
+          summary: "Block indexing stalled on {{ $labels.instance }}"
+          description: "No blocks have been processed in the last 10 minutes on {{ $labels.instance }}"
+
+      - alert: DatabaseConnectionFailure
+        expr: observer_db_connections_active == 0
+        for: 2m
+        labels:
+          severity: critical
+          team: guardian-analytics
+        annotations:
+          summary: "Database connection failure on {{ $labels.instance }}"
+          description: "Observer node has no active database connections"
+
+  - name: observer.performance
+    interval: 60s
+    rules:
+      - alert: HighIndexingLatency
+        expr: histogram_quantile(0.95, rate(observer_indexing_duration_seconds_bucket[5m])) > 10
+        for: 5m
+        labels:
+          severity: warning
+          team: guardian-analytics
+        annotations:
+          summary: "High indexing latency on {{ $labels.instance }}"
+          description: "95th percentile indexing latency is {{ $value }}s"
+
+      - alert: IndexingLagHigh
+        expr: observer_indexing_lag_blocks > 100
+        for: 5m
+        labels:
+          severity: warning
+          team: guardian-analytics
+        annotations:
+          summary: "High indexing lag on {{ $labels.instance }}"
+          description: "Observer is {{ $value }} blocks behind current tip"
+
+      - alert: LowCacheHitRate
+        expr: observer_cache_hit_rate < 80
+        for: 10m
+        labels:
+          severity: warning
+          team: guardian-analytics
+        annotations:
+          summary: "Low cache hit rate on {{ $labels.instance }}"
+          description: "Cache hit rate is {{ $value }}%, below optimal threshold"
+
+  - name: observer.storage
+    interval: 60s
+    rules:
+      - alert: PostgreSQLConnectionsHigh
+        expr: pg_stat_database_numbackends{datname="guardian_analytics"} > 150
+        for: 5m
+        labels:
+          severity: warning
+          team: guardian-analytics
+        annotations:
+          summary: "High PostgreSQL connection count"
+          description: "{{ $value }} active connections to analytics database"
+
+      - alert: ElasticsearchIndexSizeLarge
+        expr: indexer_index_size_bytes > 100000000000  # 100GB
+        for: 1m
+        labels:
+          severity: warning
+          team: guardian-analytics
+        annotations:
+          summary: "Large Elasticsearch index size"
+          description: "Index size is {{ $value | humanizeBytes }}"
+
+      - alert: RedisMemoryUsageHigh
+        expr: redis_memory_used_bytes / redis_memory_max_bytes > 0.9
+        for: 5m
+        labels:
+          severity: warning
+          team: guardian-analytics
+        annotations:
+          summary: "High Redis memory usage"
+          description: "Redis memory usage is {{ $value | humanizePercentage }} of maximum"

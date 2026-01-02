@@ -1,0 +1,196 @@
+# GuardianShield Bootnode Network - Stable Peer Discovery
+# Minimal deployment in key geographic locations
+version: '3.8'
+
+services:
+  # ======================= US-EAST BOOTNODE =======================
+  bootnode-us-east:
+    build:
+      context: .
+      dockerfile: Dockerfile.bootnode
+    container_name: guardian-bootnode-us-east
+    hostname: bootnode-us-east.guardianshield.network
+    environment:
+      - BOOTNODE_ID=guardian_bootnode_us_east_001
+      - REGION=us-east
+      - LOCATION=virginia
+      - CHAIN_ID=guardianshield-mainnet
+      - MODE=bootnode
+      - DISCOVERY_ONLY=true
+      - EXTERNAL_IP=${US_EAST_EXTERNAL_IP:-auto}
+      # NO RPC/API VARIABLES - P2P ONLY
+    volumes:
+      - bootnode_us_east_data:/bootnode/data:rw
+      - ./bootnode-config/us-east.json:/bootnode/config/bootnode.json:ro
+    networks:
+      - bootnode-p2p-network
+    ports:
+      - "26656:26656"  # P2P ONLY - NO RPC PORTS
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 256M  # Minimal resources for discovery only
+          cpus: '0.25'
+        reservations:
+          memory: 128M
+          cpus: '0.1'
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+    read_only: true
+    tmpfs:
+      - /tmp:noexec,nosuid,size=10m
+
+  # ======================= EU-WEST BOOTNODE =======================
+  bootnode-eu-west:
+    build:
+      context: .
+      dockerfile: Dockerfile.bootnode
+    container_name: guardian-bootnode-eu-west
+    hostname: bootnode-eu-west.guardianshield.network
+    environment:
+      - BOOTNODE_ID=guardian_bootnode_eu_west_001
+      - REGION=eu-west
+      - LOCATION=ireland
+      - CHAIN_ID=guardianshield-mainnet
+      - MODE=bootnode
+      - DISCOVERY_ONLY=true
+      - EXTERNAL_IP=${EU_WEST_EXTERNAL_IP:-auto}
+      # Peer seeds to other bootnodes
+      - BOOTSTRAP_PEERS=bootnode-us-east.guardianshield.network:26656
+    volumes:
+      - bootnode_eu_west_data:/bootnode/data:rw
+      - ./bootnode-config/eu-west.json:/bootnode/config/bootnode.json:ro
+    networks:
+      - bootnode-p2p-network
+    ports:
+      - "26657:26656"  # Different external port mapping
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.25'
+        reservations:
+          memory: 128M
+          cpus: '0.1'
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+    read_only: true
+    tmpfs:
+      - /tmp:noexec,nosuid,size=10m
+
+  # ======================= ASIA-PACIFIC BOOTNODE =======================
+  bootnode-asia-pacific:
+    build:
+      context: .
+      dockerfile: Dockerfile.bootnode
+    container_name: guardian-bootnode-asia-pacific
+    hostname: bootnode-asia-pacific.guardianshield.network
+    environment:
+      - BOOTNODE_ID=guardian_bootnode_asia_pacific_001
+      - REGION=asia-pacific
+      - LOCATION=singapore
+      - CHAIN_ID=guardianshield-mainnet
+      - MODE=bootnode
+      - DISCOVERY_ONLY=true
+      - EXTERNAL_IP=${ASIA_PACIFIC_EXTERNAL_IP:-auto}
+      - BOOTSTRAP_PEERS=bootnode-us-east.guardianshield.network:26656,bootnode-eu-west.guardianshield.network:26656
+    volumes:
+      - bootnode_asia_pacific_data:/bootnode/data:rw
+      - ./bootnode-config/asia-pacific.json:/bootnode/config/bootnode.json:ro
+    networks:
+      - bootnode-p2p-network
+    ports:
+      - "26658:26656"  # Different external port mapping
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.25'
+        reservations:
+          memory: 128M
+          cpus: '0.1'
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+    read_only: true
+    tmpfs:
+      - /tmp:noexec,nosuid,size=10m
+
+  # ======================= BOOTNODE MONITOR =======================
+  # Minimal monitoring (no external access)
+  bootnode-monitor:
+    image: alpine:3.18
+    container_name: guardian-bootnode-monitor
+    command: |
+      sh -c '
+        while true; do
+          echo "=== Bootnode Health Check $(date) ==="
+          echo "US-East: $$(nc -z bootnode-us-east 26656 && echo "UP" || echo "DOWN")"
+          echo "EU-West: $$(nc -z bootnode-eu-west 26656 && echo "UP" || echo "DOWN")"
+          echo "Asia-Pacific: $$(nc -z bootnode-asia-pacific 26656 && echo "UP" || echo "DOWN")"
+          sleep 300
+        done
+      '
+    depends_on:
+      - bootnode-us-east
+      - bootnode-eu-west
+      - bootnode-asia-pacific
+    networks:
+      - bootnode-p2p-network
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 32M
+          cpus: '0.1'
+
+volumes:
+  bootnode_us_east_data:
+    driver: local
+  bootnode_eu_west_data:
+    driver: local
+  bootnode_asia_pacific_data:
+    driver: local
+
+networks:
+  bootnode-p2p-network:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: guardian-bootnodes
+    ipam:
+      config:
+        - subnet: 172.21.0.0/16
+          gateway: 172.21.0.1
+
+# Security: No external volumes, no privileged access
+# Only P2P port exposed, no RPC/API endpoints
+# Minimal resource allocation for discovery only

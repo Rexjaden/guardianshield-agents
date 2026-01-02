@@ -1,0 +1,35 @@
+{
+  "sentry_id": "guardian_sentry_us_east_001",
+  "region": "us-east",
+  "zone": "virginia-1a",
+  "bind_address": "0.0.0.0",
+  "api_port": 80,
+  "rpc_port": 26657,
+  "websocket_port": 8080,
+  "https_port": 443,
+  "validator_endpoints": [
+    "validator-us-east:26657",
+    "validator-eu-west:26657",
+    "validator-asia-pacific:26657"
+  ],
+  "rate_limits": {
+    "requests_per_minute": 60000,
+    "requests_per_ip_per_minute": 1000,
+    "concurrent_connections_per_ip": 50,
+    "websocket_connections_per_ip": 10
+  },
+  "ddos_protection": {
+    "max_request_size": 2097152,
+    "timeout_seconds": 60,
+    "ban_threshold": 500,
+    "ban_duration_minutes": 120
+  },
+  "attack_mitigation": {
+    "enabled": true,
+    "slow_loris_protection": true,
+    "request_flood_protection": true,
+    "malformed_request_protection": true,
+    "geo_blocking_enabled": false
+  },
+  "load_balancer_tier": "primary"
+}

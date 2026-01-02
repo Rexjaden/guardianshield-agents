@@ -1,0 +1,50 @@
+# GuardianShield Secure SSH Configuration
+# Rex Judon Rogers - Direct Node Access
+
+# Rex's SSH Key (generate new key pair)
+Host guardian-*
+    User ubuntu
+    Port 2222
+    IdentityFile ~/.ssh/guardianshield_rsa
+    StrictHostKeyChecking yes
+    UserKnownHostsFile ~/.ssh/guardianshield_known_hosts
+    
+    # Security settings
+    Protocol 2
+    Compression yes
+    ServerAliveInterval 60
+    ServerAliveCountMax 3
+    
+    # Encryption ciphers (strongest)
+    Ciphers aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr
+    MACs hmac-sha2-256-etm@openssh.com,hmac-sha2-512-etm@openssh.com
+    KexAlgorithms curve25519-sha256,diffie-hellman-group16-sha512
+
+# Regional node shortcuts
+Host guardian-us-east
+    HostName sentry-us-east-1.guardian-shield.network
+
+Host guardian-us-west  
+    HostName sentry-us-west-2.guardian-shield.network
+
+Host guardian-eu-west
+    HostName sentry-eu-west-1.guardian-shield.network
+
+Host guardian-eu-central
+    HostName sentry-eu-central-1.guardian-shield.network
+
+Host guardian-asia-tokyo
+    HostName sentry-ap-northeast-1.guardian-shield.network
+
+Host guardian-asia-singapore
+    HostName sentry-ap-southeast-1.guardian-shield.network
+
+# Management shortcuts
+Host guardian-all
+    # Connect to all nodes simultaneously (using tmux/parallel-ssh)
+    HostName manage.guardian-shield.network
+    
+# Quick commands
+# ssh guardian-us-east "docker ps"
+# ssh guardian-eu-west "systemctl status guardianshield-sentry"
+# ssh guardian-asia-tokyo "tail -f /opt/guardianshield/logs/security.log"

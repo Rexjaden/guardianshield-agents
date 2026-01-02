@@ -1,0 +1,32 @@
+
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>GuardianShield Agents 3D Showcase</title>
+            <style>
+                body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
+                h1 { text-align: center; color: #333; }
+                .agents-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+                .agent-card { background: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+                .model-preview { width: 100%; height: 150px; background: #eee; border-radius: 4px; margin: 10px 0; }
+                .model-preview img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; }
+                button { background: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; }
+                button:hover { background: #0056b3; }
+                .no-agents { text-align: center; color: #666; margin: 50px 0; }
+            </style>
+        </head>
+        <body>
+            <h1>🛡️ GuardianShield Agents 3D Gallery</h1>
+            
+            <div class="agents-grid">
+                <div class="no-agents">No 3D agent models found. Add some 3D models to get started!</div>
+            </div>
+            
+            <script>
+                function viewAgent(agentName) {
+                    window.open(`/agent/3d/${agentName}`, '_blank');
+                }
+            </script>
+        </body>
+        </html>
+        

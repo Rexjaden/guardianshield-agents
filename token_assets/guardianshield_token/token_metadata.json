@@ -1,0 +1,35 @@
+{
+  "name": "GuardianShield Token",
+  "symbol": "GST",
+  "decimals": 18,
+  "total_supply": "100000000000000000000000000",
+  "contract_address": "0x...",
+  "network": "Ethereum Mainnet",
+  "token_type": "ERC-20",
+  "launch_date": "2026-01-02",
+  "description": "The native utility token of the GuardianShield autonomous security ecosystem",
+  "features": [
+    "Governance Rights",
+    "Staking Rewards",
+    "Agent Deployment Costs",
+    "Premium Security Features",
+    "Treasury Participation",
+    "Liquidity Mining"
+  ],
+  "tokenomics": {
+    "governance": "25%",
+    "staking_rewards": "20%",
+    "team_treasury": "15%",
+    "public_sale": "20%",
+    "liquidity_provision": "10%",
+    "agent_operations": "10%"
+  },
+  "utility_functions": [
+    "\ud83d\uddf3\ufe0f DAO Governance Voting",
+    "\ud83d\udd12 Agent Security Staking",
+    "\u26a1 Transaction Fee Payments",
+    "\ud83c\udfaf Premium Feature Access",
+    "\ud83d\udc8e Reward Distribution",
+    "\ud83d\udd17 Cross-chain Operations"
+  ]
+}

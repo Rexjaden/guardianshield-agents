@@ -1,0 +1,108 @@
+
+# GuardianShield Secure API Configuration
+# Rex Judon Rogers - Admin Access Only
+
+server:
+  host: 0.0.0.0
+  port: 8443
+  ssl_cert: /etc/ssl/certs/guardian-shield.crt
+  ssl_key: /etc/ssl/private/guardian-shield.key
+
+authentication:
+  enabled: true
+  method: api_key
+  
+  authorized_users:
+    rex_judon_rogers:
+      api_key: "e988169a6a8b0c14504ad7f15833242b874fd8349773f27eddc9b19926dae087"
+      email: "rexxrog1@gmail.com"
+      phone: "(843) 250-3735"
+      role: admin
+      permissions:
+        - nodes:read
+        - nodes:write
+        - nodes:restart
+        - nodes:update
+        - security:read
+        - logs:read
+        - metrics:read
+
+security:
+  rate_limiting:
+    enabled: true
+    requests_per_minute: 1000
+    burst: 50
+  
+  ip_whitelist:
+    - "0.0.0.0/0"  # Will be restricted to Rex's IPs in production
+  
+  encryption:
+    enabled: true
+    algorithm: AES-256-GCM
+    key: "qWkZopMEDDzdbKV7dFY86Pdf1E3w0diAl2lNT0OYJW8="
+
+monitoring:
+  enabled: true
+  metrics_endpoint: /metrics
+  health_endpoint: /health
+  
+  alerts:
+    email: rexxrog1@gmail.com
+    phone: "+18432503735"
+    
+  thresholds:
+    response_time_ms: 500
+    error_rate_percent: 5
+    cpu_usage_percent: 80
+    memory_usage_percent: 85
+
+logging:
+  level: INFO
+  format: json
+  retention_days: 30
+  
+  destinations:
+    - console
+    - file: /var/log/guardianshield/api.log
+    - syslog: guardian-shield-api
+
+endpoints:
+  # Authentication
+  - path: /v1/auth/verify
+    method: GET
+    auth_required: true
+    
+  # Node management
+  - path: /v1/nodes
+    method: GET
+    auth_required: true
+    
+  - path: /v1/nodes/status
+    method: GET
+    auth_required: true
+    
+  - path: /v1/nodes/{region}/restart
+    method: POST
+    auth_required: true
+    permissions: [nodes:write]
+    
+  - path: /v1/nodes/update-all
+    method: POST
+    auth_required: true
+    permissions: [nodes:write]
+    
+  - path: /v1/nodes/{region}/logs
+    method: GET
+    auth_required: true
+    permissions: [logs:read]
+    
+  # Security endpoints
+  - path: /v1/security/report
+    method: GET
+    auth_required: true
+    permissions: [security:read]
+    
+  - path: /v1/security/threats
+    method: GET
+    auth_required: true
+    permissions: [security:read]

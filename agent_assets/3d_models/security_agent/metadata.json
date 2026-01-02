@@ -1,0 +1,10 @@
+{
+  "agent_type": "security_agent",
+  "description": "3D visualization for security_agent",
+  "capabilities": [
+    "3d_rendering",
+    "animation",
+    "interaction"
+  ],
+  "created_at": "2026-01-02"
+}

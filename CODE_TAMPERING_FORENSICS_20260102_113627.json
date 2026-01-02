@@ -1,0 +1,2770 @@
+{
+  "scan_start": "2026-01-02T11:36:20.087417",
+  "threat_signatures": [
+    {
+      "file": ".\\admin_console.py",
+      "threats": [
+        "os\\.remove"
+      ],
+      "size": 34629,
+      "modified": 1766971610.1918974,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\agent_3d_server.py",
+      "threats": [
+        "shutil\\.rmtree"
+      ],
+      "size": 7962,
+      "modified": 1767366635.9815423,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\auto_sync_github.py",
+      "threats": [
+        "subprocess\\.call",
+        "threading\\.Thread"
+      ],
+      "size": 8154,
+      "modified": 1760152998.504424,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\crypto_payment_gateway.py",
+      "threats": [
+        "requests\\.get|requests\\.post"
+      ],
+      "size": 42571,
+      "modified": 1761004014.504852,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\emergency_worm_detection.py",
+      "threats": [
+        "urllib.*request",
+        "multiprocessing",
+        "tempfile"
+      ],
+      "size": 14605,
+      "modified": 1767371738.2943141,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\enhanced_guardianshield_menu.py",
+      "threats": [
+        "os\\.system"
+      ],
+      "size": 29997,
+      "modified": 1767007780.1248498,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\frontend_animation_coordinator.py",
+      "threats": [
+        "threading\\.Thread"
+      ],
+      "size": 15326,
+      "modified": 1767007780.1268518,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\guardian-node-manager.py",
+      "threats": [
+        "subprocess\\.call"
+      ],
+      "size": 19606,
+      "modified": 1767320884.9963286,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\guardianshield_main_menu.py",
+      "threats": [
+        "os\\.system"
+      ],
+      "size": 9358,
+      "modified": 1760136945.1265287,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\guardian_audit_system.py",
+      "threats": [
+        "threading\\.Thread"
+      ],
+      "size": 37216,
+      "modified": 1766971610.1314406,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\high_performance_graphics_engine.py",
+      "threats": [
+        "threading\\.Thread"
+      ],
+      "size": 42397,
+      "modified": 1767006466.697123,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\launch_3d_demo.py",
+      "threats": [
+        "threading\\.Thread"
+      ],
+      "size": 1553,
+      "modified": 1760264603.405382,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\launch_dashboard.py",
+      "threats": [
+        "__import__\\s*\\(",
+        "subprocess\\.call"
+      ],
+      "size": 2510,
+      "modified": 1760152998.0232823,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\node_startup.py",
+      "threats": [
+        "threading\\.Thread"
+      ],
+      "size": 5898,
+      "modified": 1767235259.276656,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\quick_test.py",
+      "threats": [
+        "exec\\s*\\("
+      ],
+      "size": 2481,
+      "modified": 1766971610.1918974,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\real_guardianshield_blockchain.py",
+      "threats": [
+        "requests\\.get|requests\\.post",
+        "threading\\.Thread"
+      ],
+      "size": 20119,
+      "modified": 1767268424.622749,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\secure_node_communication.py",
+      "threats": [
+        "requests\\.get|requests\\.post"
+      ],
+      "size": 33135,
+      "modified": 1767283165.9041536,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\security_assessment.py",
+      "threats": [
+        "eval\\s*\\(",
+        "exec\\s*\\(",
+        "__import__\\s*\\(",
+        "subprocess\\.call",
+        "os\\.system"
+      ],
+      "size": 17484,
+      "modified": 1760402780.3497941,
+      "threat_level": "HIGH"
+    },
+    {
+      "file": ".\\sentry_node_protection.py",
+      "threats": [
+        "subprocess\\.call"
+      ],
+      "size": 9448,
+      "modified": 1767320884.971073,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\setup_environment.py",
+      "threats": [
+        "__import__\\s*\\(",
+        "subprocess\\.call"
+      ],
+      "size": 4428,
+      "modified": 1760152997.3164253,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\setup_git_sync.py",
+      "threats": [
+        "subprocess\\.call",
+        "threading\\.Thread"
+      ],
+      "size": 9731,
+      "modified": 1760152998.13106,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\sync_fixed.py",
+      "threats": [
+        "shutil\\.rmtree"
+      ],
+      "size": 5158,
+      "modified": 1760152998.8477156,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\sync_with_github.py",
+      "threats": [
+        "subprocess\\.call",
+        "shutil\\.rmtree"
+      ],
+      "size": 9336,
+      "modified": 1760152998.6372857,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\system_health_check.py",
+      "threats": [
+        "exec\\s*\\("
+      ],
+      "size": 13073,
+      "modified": 1766971610.1918974,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\test_auto_generation.py",
+      "threats": [
+        "tempfile"
+      ],
+      "size": 5535,
+      "modified": 1767232727.0219035,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\token_pos_system.py",
+      "threats": [
+        "threading\\.Thread"
+      ],
+      "size": 26891,
+      "modified": 1767007198.9799216,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\treasury_animation_system.py",
+      "threats": [
+        "threading\\.Thread"
+      ],
+      "size": 21181,
+      "modified": 1767007005.7459612,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\verify_all_agents.py",
+      "threats": [
+        "exec\\s*\\("
+      ],
+      "size": 9452,
+      "modified": 1766971610.1918974,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\vpn_network_manager.py",
+      "threats": [
+        "subprocess\\.call",
+        "os\\.remove"
+      ],
+      "size": 9569,
+      "modified": 1767320884.971073,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\agents\\data_ingestion.py",
+      "threats": [
+        "requests\\.get|requests\\.post"
+      ],
+      "size": 15222,
+      "modified": 1761004014.890029,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\agents\\dmer_monitor_agent.py",
+      "threats": [
+        "requests\\.get|requests\\.post"
+      ],
+      "size": 65321,
+      "modified": 1760400155.4942255,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\agents\\external_agent.py",
+      "threats": [
+        "threading\\.Thread"
+      ],
+      "size": 20594,
+      "modified": 1767004415.9013133,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\agents\\external_security_agent.py",
+      "threats": [
+        "threading\\.Thread"
+      ],
+      "size": 39990,
+      "modified": 1760400940.6354551,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\agents\\flare_integration.py",
+      "threats": [
+        "requests\\.get|requests\\.post"
+      ],
+      "size": 20922,
+      "modified": 1761004015.2011547,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\agents\\internal_security_agent.py",
+      "threats": [
+        "threading\\.Thread"
+      ],
+      "size": 33031,
+      "modified": 1760402780.2593741,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\agents\\learning_agent.py",
+      "threats": [
+        "threading\\.Thread"
+      ],
+      "size": 26079,
+      "modified": 1767004415.9013133,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\agents\\security_orchestrator.py",
+      "threats": [
+        "threading\\.Thread"
+      ],
+      "size": 26042,
+      "modified": 1760400940.696866,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\agents\\utils.py",
+      "threats": [
+        "requests\\.get|requests\\.post"
+      ],
+      "size": 18968,
+      "modified": 1760136945.1207669,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\local_backup\\admin_console.py",
+      "threats": [
+        "os\\.remove"
+      ],
+      "size": 20689,
+      "modified": 1760136945.1105292,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\local_backup\\auto_sync_github.py",
+      "threats": [
+        "subprocess\\.call",
+        "threading\\.Thread"
+      ],
+      "size": 7556,
+      "modified": 1760140121.605286,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\local_backup\\guardianshield_main_menu.py",
+      "threats": [
+        "os\\.system"
+      ],
+      "size": 9358,
+      "modified": 1760136945.1265287,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\local_backup\\launch_dashboard.py",
+      "threats": [
+        "__import__\\s*\\(",
+        "subprocess\\.call"
+      ],
+      "size": 2510,
+      "modified": 1760139090.3109107,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\local_backup\\setup_environment.py",
+      "threats": [
+        "__import__\\s*\\(",
+        "subprocess\\.call"
+      ],
+      "size": 4428,
+      "modified": 1760138143.4307392,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\local_backup\\setup_git_sync.py",
+      "threats": [
+        "subprocess\\.call",
+        "threading\\.Thread"
+      ],
+      "size": 9731,
+      "modified": 1760139553.336708,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\local_backup\\sync_fixed.py",
+      "threats": [
+        "shutil\\.rmtree"
+      ],
+      "size": 5158,
+      "modified": 1760152092.1818297,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\local_backup\\sync_with_github.py",
+      "threats": [
+        "subprocess\\.call",
+        "shutil\\.rmtree"
+      ],
+      "size": 9336,
+      "modified": 1760140849.9405415,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\local_backup\\agents\\dmer_monitor_agent.py",
+      "threats": [
+        "requests\\.get|requests\\.post"
+      ],
+      "size": 24739,
+      "modified": 1760136945.1165688,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\local_backup\\agents\\external_agent.py",
+      "threats": [
+        "threading\\.Thread"
+      ],
+      "size": 15606,
+      "modified": 1760136945.1165688,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\local_backup\\agents\\flare_integration.py",
+      "threats": [
+        "requests\\.get|requests\\.post"
+      ],
+      "size": 18954,
+      "modified": 1760136945.1165688,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\local_backup\\agents\\learning_agent.py",
+      "threats": [
+        "threading\\.Thread"
+      ],
+      "size": 16300,
+      "modified": 1760136945.1165688,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\local_backup\\agents\\utils.py",
+      "threats": [
+        "requests\\.get|requests\\.post"
+      ],
+      "size": 18968,
+      "modified": 1760136945.1207669,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\local_backup\\tests\\test_agents.py",
+      "threats": [
+        "requests\\.get|requests\\.post"
+      ],
+      "size": 15291,
+      "modified": 1760136945.1305408,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\secure-node-management\\guardian-cli.py",
+      "threats": [
+        "requests\\.get|requests\\.post"
+      ],
+      "size": 8443,
+      "modified": 1767283181.617403,
+      "threat_level": "MEDIUM"
+    },
+    {
+      "file": ".\\tests\\test_agents.py",
+      "threats": [
+        "requests\\.get|requests\\.post"
+      ],
+      "size": 15291,
+      "modified": 1760136945.1305408,
+      "threat_level": "MEDIUM"
+    }
+  ],
+  "modified_files": [
+    {
+      "file": ".\\emergency_worm_detection.py",
+      "modified": "2026-01-02T11:35:38.294314",
+      "size": 15079,
+      "suspicious": false
+    },
+    {
+      "file": ".\\CODE_TAMPERING_FORENSICS_20260102_113238.json",
+      "modified": "2026-01-02T11:32:38.444160",
+      "size": 51309,
+      "suspicious": false
+    },
+    {
+      "file": ".\\code_tampering_investigation.py",
+      "modified": "2026-01-02T11:31:50.226954",
+      "size": 14219,
+      "suspicious": false
+    },
+    {
+      "file": ".\\SECURITY_AUDIT_20260102_112355.json",
+      "modified": "2026-01-02T11:23:55.241000",
+      "size": 12838,
+      "suspicious": false
+    },
+    {
+      "file": ".\\emergency_security_audit.py",
+      "modified": "2026-01-02T11:23:39.666349",
+      "size": 14534,
+      "suspicious": false
+    },
+    {
+      "file": ".\\SECURITY_AUDIT_LOG.jsonl",
+      "modified": "2026-01-02T11:23:14.344626",
+      "size": 0,
+      "suspicious": false
+    },
+    {
+      "file": ".\\simple_gallery_server.py",
+      "modified": "2026-01-02T11:13:36.664898",
+      "size": 12398,
+      "suspicious": false
+    },
+    {
+      "file": ".\\token_assets\\guardianshield_token\\token_profile.html",
+      "modified": "2026-01-02T11:13:08.969868",
+      "size": 9759,
+      "suspicious": false
+    },
+    {
+      "file": ".\\token_assets\\guardianshield_token\\token_metadata.json",
+      "modified": "2026-01-02T11:13:08.969361",
+      "size": 1040,
+      "suspicious": false
+    },
+    {
+      "file": ".\\guardianshield_token_system.py",
+      "modified": "2026-01-02T11:12:06.395905",
+      "size": 12642,
+      "suspicious": false
+    },
+    {
+      "file": ".\\agent_gallery_server.py",
+      "modified": "2026-01-02T11:05:46.025108",
+      "size": 23855,
+      "suspicious": false
+    },
+    {
+      "file": ".\\agent_assets\\avatars\\divine_messenger\\metadata.json",
+      "modified": "2026-01-02T10:59:10.864008",
+      "size": 2572,
+      "suspicious": false
+    },
+    {
+      "file": ".\\setup_divine_messenger.py",
+      "modified": "2026-01-02T10:58:45.824358",
+      "size": 3273,
+      "suspicious": false
+    },
+    {
+      "file": ".\\agent_assets\\avatars\\ethereum_storm_lord\\metadata.json",
+      "modified": "2026-01-02T10:46:36.574479",
+      "size": 2838,
+      "suspicious": false
+    },
+    {
+      "file": ".\\setup_ethereum_storm_lord.py",
+      "modified": "2026-01-02T10:45:46.982340",
+      "size": 3605,
+      "suspicious": false
+    },
+    {
+      "file": ".\\agent_assets\\avatars\\network_guardian\\metadata.json",
+      "modified": "2026-01-02T10:39:52.835290",
+      "size": 2524,
+      "suspicious": false
+    },
+    {
+      "file": ".\\setup_network_guardian.py",
+      "modified": "2026-01-02T10:39:11.861206",
+      "size": 3211,
+      "suspicious": false
+    }
+  ],
+  "suspicious_processes": [
+    {
+      "pid": 632,
+      "name": "powershell.exe",
+      "cmdline": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe -noexit -command try { . \"c:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\resources\\app\\out\\vs\\workbench\\contrib\\terminal\\common\\scripts\\shellIntegration.ps1\" } catch {}",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.17068448290286725,
+      "create_time": "2026-01-02T10:41:20.123147",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 736,
+      "name": "Code.exe",
+      "cmdline": "C:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe --type=utility --utility-sub-type=node.mojom.NodeService --lang=en-US --service-sandbox-type=none --dns-result-order=ipv4first --experimental-network-inspection --inspect-port=0 --video-capture-use-gpu-memory-buffer --user-data-dir=C:\\Users\\rexxr\\AppData\\Roaming\\Code --standard-schemes=vscode-webview,vscode-file --enable-sandbox --secure-schemes=vscode-webview,vscode-file --cors-schemes=vscode-webview,vscode-file --fetch-schemes=vscode-webview,vscode-file --service-worker-schemes=vscode-webview --code-cache-schemes=vscode-webview,vscode-file --field-trial-handle=1724,i,11735031614327320611,13986067942660001508,262144 --enable-features=DocumentPolicyIncludeJSCallStacksInCrashReports,EarlyEstablishGpuChannel,EnableTransparentHwndEnlargement,EstablishGpuChannelAsync --disable-features=CalculateNativeWinOcclusion,LocalNetworkAccessChecks,ScreenAIOCREnabled,SpareRendererForSitePerProcess,TraceSiteInstanceGetProcessCreation --variations-seed-version --trace-process-track-uuid=3190708999430457380 --mojo-platform-channel-handle=5124 /prefetch:14",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.757484851020091,
+      "create_time": "2026-01-02T06:53:08.628495",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 756,
+      "name": "powershell.exe",
+      "cmdline": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe -noexit -command try { . \"c:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\resources\\app\\out\\vs\\workbench\\contrib\\terminal\\common\\scripts\\shellIntegration.ps1\" } catch {}",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.1653420024142753,
+      "create_time": "2026-01-02T10:10:45.523031",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 772,
+      "name": "csrss.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.016816264088252517,
+      "create_time": "2026-01-01T11:51:33.406699",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 868,
+      "name": "csrss.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.022170696434760783,
+      "create_time": "2026-01-01T11:51:34.281465",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 872,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.04568000095614864,
+      "create_time": "2026-01-01T11:51:47.402829",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 964,
+      "name": "winlogon.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.040540702052134,
+      "create_time": "2026-01-01T11:51:34.585514",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 1028,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.10779380654722777,
+      "create_time": "2026-01-01T11:51:35.328336",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 1152,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.05720159198747446,
+      "create_time": "2026-01-01T11:51:35.457490",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 1204,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.03368033560817029,
+      "create_time": "2026-01-01T11:51:35.509922",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 1276,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.07649189066440377,
+      "create_time": "2026-01-01T11:52:16.470068",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 1364,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.01897955037110519,
+      "create_time": "2026-01-01T11:51:35.738178",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 1448,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.04253666232415829,
+      "create_time": "2026-01-01T11:51:36.123832",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 1476,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.03653682965016912,
+      "create_time": "2026-01-01T11:51:35.793216",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 1500,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.02436983829136239,
+      "create_time": "2026-01-01T11:51:35.804870",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 1508,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.04438920030118682,
+      "create_time": "2026-01-01T11:51:35.804878",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 1528,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.022087033429346592,
+      "create_time": "2026-01-01T11:51:35.808744",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 1588,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.03678781866641169,
+      "create_time": "2026-01-01T11:51:36.127295",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 1608,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.060858860509866254,
+      "create_time": "2026-01-01T11:51:35.831354",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 1628,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.020664762337305333,
+      "create_time": "2026-01-01T11:51:35.836499",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 1664,
+      "name": "conhost.exe",
+      "cmdline": "\\\\?\\C:\\Windows\\system32\\conhost.exe --headless --width 80 --height 30 --signal 0x6a0 --server 0x698",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.021991418566016087,
+      "create_time": "2026-01-01T12:00:01.960036",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 1804,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.07235654782535945,
+      "create_time": "2026-01-01T11:53:43.512679",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 1888,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.03454086937814483,
+      "create_time": "2026-01-01T11:51:36.002760",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 1896,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.055504428163357995,
+      "create_time": "2026-01-01T11:51:36.008128",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 2016,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.03652487779225281,
+      "create_time": "2026-01-01T11:51:36.079607",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 2072,
+      "name": "Evernote.exe",
+      "cmdline": "C:\\Users\\rexxr\\AppData\\Local\\Programs\\Evernote\\Evernote.exe --type=renderer --user-data-dir=C:\\Users\\rexxr\\AppData\\Roaming\\Evernote --standard-schemes=app,en-html --secure-schemes=app,sentry-ipc --bypasscsp-schemes=sentry-ipc --cors-schemes=en-cache,sentry-ipc --fetch-schemes=en-cache,sentry-ipc --app-user-model-id=com.evernote.Evernote --app-path=C:\\Users\\rexxr\\AppData\\Local\\Programs\\Evernote\\resources\\app.asar --no-sandbox --no-zygote --video-capture-use-gpu-memory-buffer --lang=en-US --device-scale-factor=1 --num-raster-threads=2 --enable-main-frame-before-activation --renderer-client-id=5 --time-ticks-at-unix-epoch=-1767286278078986 --launch-time-ticks=165722606 --field-trial-handle=1784,i,417160232637593874,13625370028556824448,262144 --enable-features=EnableTransparentHwndEnlargement,MacLoopbackAudioForScreenShare,MacSckSystemAudioLoopbackOverride,PdfUseShowSaveFilePicker,PulseaudioLoopbackForScreenShare --disable-features=ScreenAIOCREnabled,SpareRendererForSitePerProcess,WinDelaySpellcheckServiceInit --variations-seed-version --mojo-platform-channel-handle=3696 --initArgs=eyJpc1BhY2thZ2VkIjp0cnVlLCJ1c2VyQWdlbnRTdHJpbmciOiJldmVybm90ZSBlbGVjdHJvbi8xMC4xNjcuNCgyMDI1MTIyOTIwMjk1Mik7IHdpbi8xMC4wLjI2MTAwOyIsImFwcFZlcnNpb24iOiIxMC4xNjcuNCIsImJvcm9uQ29uZmlnIjp7ImRldiI6eyJtYWluVXJsIjoiaHR0cDovL2xvY2FsaG9zdDozMDAzIiwiaXNGbGVFbmFibGVkIjp0cnVlLCJjZVZlcnNpb24iOiIiLCJjaGVja0ZvckxvY2FsTm90ZWJvb2tzIjpudWxsLCJpc05ldExvZ0VuYWJsZWQiOm51bGx9LCJnZW5lcmFsIjp7ImRlZmF1bHRTZXJ2aWNlSG9zdCI6Imh0dHBzOi8vd3d3LmV2ZXJub3RlLmNvbSIsImZvcmNlVXBkYXRlT25TdGFydCI6dHJ1ZSwicG9wdXBOb3RlV2luZG93TGltaXQiOjIwfSwicWEiOnt9fSwiY3VycmVudEVudmlyb25tZW50IjoicHJvZHVjdGlvbiIsImNvbG9yVGhlbWUiOiJvc19zeW5jIiwib3ZlclF1b3RhIjpmYWxzZSwiaXNTcGVsbGNoZWNrRW5hYmxlZCI6dHJ1ZX0= /prefetch:1",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.2513236682642317,
+      "create_time": "2026-01-01T11:54:03.849938",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 2084,
+      "name": "chrome.exe",
+      "cmdline": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe --type=renderer --origin-trial-disabled-features=CanvasTextNg|WebAssemblyCustomDescriptors --video-capture-use-gpu-memory-buffer --lang=en-US --device-scale-factor=1 --num-raster-threads=2 --enable-main-frame-before-activation --renderer-client-id=31 --time-ticks-at-unix-epoch=-1767286278078973 --launch-time-ticks=887449871 --metrics-shmem-handle=4540,i,7548087106963698586,16562967580620031474,2097152 --field-trial-handle=2004,i,11491746468440406962,16938629281342729037,262144 --variations-seed-version=20251219-070015.367000 --trace-process-track-uuid=3190709015360168813 --mojo-platform-channel-handle=6168 /prefetch:1",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.3711290920173541,
+      "create_time": "2026-01-01T12:06:05.540911",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 2136,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.046982753469026764,
+      "create_time": "2026-01-01T11:51:36.187080",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 2180,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.0504009848330923,
+      "create_time": "2026-01-01T11:51:36.216313",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 2232,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.021298210806869926,
+      "create_time": "2026-01-01T11:51:36.240797",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 2240,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.05232523395761871,
+      "create_time": "2026-01-01T11:51:36.241087",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 2248,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.028672507141235107,
+      "create_time": "2026-01-01T11:51:36.244958",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 2360,
+      "name": "conhost.exe",
+      "cmdline": "\\\\?\\C:\\Windows\\system32\\conhost.exe --headless --width 80 --height 30 --signal 0x6c0 --server 0x6b8",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.021991418566016087,
+      "create_time": "2026-01-01T12:00:52.630236",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 2420,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.03193536435238858,
+      "create_time": "2026-01-01T11:51:36.340316",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 2496,
+      "name": "conhost.exe",
+      "cmdline": "\\\\?\\C:\\Windows\\system32\\conhost.exe --headless --width 80 --height 30 --signal 0x1198 --server 0x11b0",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.025039142334675926,
+      "create_time": "2026-01-02T11:07:20.537458",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 2572,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.03160071233073181,
+      "create_time": "2026-01-01T11:51:36.484954",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 2580,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.02787173266084213,
+      "create_time": "2026-01-01T11:51:36.491008",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 2616,
+      "name": "powershell.exe",
+      "cmdline": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe -NoProfile -ExecutionPolicy Bypass -Command Import-Module 'c:\\Users\\rexxr\\.vscode\\extensions\\ms-vscode.powershell-2025.4.0\\modules\\PowerShellEditorServices\\PowerShellEditorServices.psd1'; Start-EditorServices -HostName 'Visual Studio Code Host' -HostProfileId 'Microsoft.VSCode' -HostVersion '2025.4.0' -BundledModulesPath 'c:\\Users\\rexxr\\.vscode\\extensions\\ms-vscode.powershell-2025.4.0\\modules' -EnableConsoleRepl -StartupBanner \"PowerShell Extension v2025.4.0\nCopyright (c) Microsoft Corporation.\n\nhttps://aka.ms/vscode-powershell\nType 'help' to get help.\n\" -LogLevel 'Warning' -LogPath 'c:\\Users\\rexxr\\AppData\\Roaming\\Code\\logs\\20260101T115221\\window4\\exthost\\ms-vscode.powershell' -SessionDetailsPath 'c:\\Users\\rexxr\\AppData\\Roaming\\Code\\User\\globalStorage\\ms-vscode.powershell\\sessions\\PSES-VSCode-12000-274654.json' -FeatureFlags @() ",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.2230694761500675,
+      "create_time": "2026-01-02T09:57:28.897188",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 2620,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.02493157561342911,
+      "create_time": "2026-01-01T11:51:36.515603",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 2736,
+      "name": "Code.exe",
+      "cmdline": "C:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe --type=utility --utility-sub-type=node.mojom.NodeService --lang=en-US --service-sandbox-type=none --video-capture-use-gpu-memory-buffer --user-data-dir=C:\\Users\\rexxr\\AppData\\Roaming\\Code --standard-schemes=vscode-webview,vscode-file --enable-sandbox --secure-schemes=vscode-webview,vscode-file --cors-schemes=vscode-webview,vscode-file --fetch-schemes=vscode-webview,vscode-file --service-worker-schemes=vscode-webview --code-cache-schemes=vscode-webview,vscode-file --field-trial-handle=1724,i,11735031614327320611,13986067942660001508,262144 --enable-features=DocumentPolicyIncludeJSCallStacksInCrashReports,EarlyEstablishGpuChannel,EnableTransparentHwndEnlargement,EstablishGpuChannelAsync --disable-features=CalculateNativeWinOcclusion,LocalNetworkAccessChecks,ScreenAIOCREnabled,SpareRendererForSitePerProcess,TraceSiteInstanceGetProcessCreation --variations-seed-version --trace-process-track-uuid=3190709015360168813 --mojo-platform-channel-handle=6264 /prefetch:14",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.358376459620648,
+      "create_time": "2026-01-02T09:55:09.545390",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 2764,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.05430924237172668,
+      "create_time": "2026-01-01T11:51:36.652132",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 2792,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.0305848044078452,
+      "create_time": "2026-01-01T11:51:36.717298",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 3020,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.061779153569422374,
+      "create_time": "2026-01-01T11:51:37.075870",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 3076,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.029509137195377025,
+      "create_time": "2026-01-01T11:51:37.284088",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 3084,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.03470819538897322,
+      "create_time": "2026-01-01T11:51:37.284195",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 3176,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.06955981307294219,
+      "create_time": "2026-01-01T11:55:35.555248",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 3200,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.02860079599373723,
+      "create_time": "2026-01-01T11:51:37.358694",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 3248,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.036070707191432905,
+      "create_time": "2026-01-01T11:51:37.402021",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 3264,
+      "name": "Code.exe",
+      "cmdline": "C:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe c:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\resources\\app\\extensions\\json-language-features\\server\\dist\\node\\jsonServerMain --node-ipc --clientProcessId=8656",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.31475217822610524,
+      "create_time": "2026-01-02T09:55:35.333260",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 3432,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.0649105403434964,
+      "create_time": "2026-01-01T11:51:37.486550",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 3508,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.056747421386654555,
+      "create_time": "2026-01-01T11:51:37.514656",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 3528,
+      "name": "conhost.exe",
+      "cmdline": "\\\\?\\C:\\Windows\\system32\\conhost.exe --headless --width 46 --height 13 --signal 0x5ec --server 0x574",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.021644814686443005,
+      "create_time": "2026-01-01T11:54:45.454445",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 3612,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.07718509842354994,
+      "create_time": "2026-01-01T11:51:37.671554",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 3692,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.02814662539291733,
+      "create_time": "2026-01-01T11:51:37.741405",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 3740,
+      "name": "conhost.exe",
+      "cmdline": "\\\\?\\C:\\Windows\\system32\\conhost.exe --headless --width 80 --height 30 --signal 0x1158 --server 0x1150",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.02506304605050855,
+      "create_time": "2026-01-02T11:06:18.545577",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 3844,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.07643213137482222,
+      "create_time": "2026-01-01T11:51:38.012102",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 3876,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.17723410104100681,
+      "create_time": "2026-01-01T11:51:38.022140",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 3912,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.10705279135641635,
+      "create_time": "2026-01-01T11:51:38.030143",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 3956,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.03859254921177497,
+      "create_time": "2026-01-01T11:51:38.037683",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 4100,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.019887891572744985,
+      "create_time": "2026-01-01T11:51:38.160670",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 4124,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.0725836331257694,
+      "create_time": "2026-01-01T11:51:38.168811",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 4140,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.032425390526957414,
+      "create_time": "2026-01-01T11:51:38.174970",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 4180,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.027059006322532837,
+      "create_time": "2026-01-01T11:51:38.198138",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 4232,
+      "name": "wsl.exe",
+      "cmdline": "C:\\Windows\\System32\\wsl.exe -d docker-desktop -e /usr/bin/vpnkit-bridge --pid-file=/run/vpnkit-bridge.pid guest",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.03408669877732494,
+      "create_time": "2026-01-01T12:00:15.594051",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 4288,
+      "name": "chrome.exe",
+      "cmdline": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe --type=renderer --origin-trial-disabled-features=CanvasTextNg|WebAssemblyCustomDescriptors --video-capture-use-gpu-memory-buffer --lang=en-US --device-scale-factor=1 --num-raster-threads=2 --enable-main-frame-before-activation --renderer-client-id=83 --time-ticks-at-unix-epoch=-1767286278078973 --launch-time-ticks=10966076366 --metrics-shmem-handle=7392,i,15491474184680765572,1948415346120758639,2097152 --field-trial-handle=2004,i,11491746468440406962,16938629281342729037,262144 --variations-seed-version=20251219-070015.367000 --trace-process-track-uuid=3190709064086344961 --mojo-platform-channel-handle=7028 /prefetch:1",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.26006047640105656,
+      "create_time": "2026-01-01T14:54:04.766887",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 4344,
+      "name": "wslhost.exe",
+      "cmdline": " --distro-id {21d23000-1f0c-4320-9cb8-caa99b3c0805} --vm-id {4547f737-e1a1-47f9-8416-bf3bf8090ff3} --handle 1808 --event 2104 --parent 2096",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.03253295724820423,
+      "create_time": "2026-01-01T12:12:24.201803",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 4588,
+      "name": "Code.exe",
+      "cmdline": "C:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe --type=renderer --user-data-dir=C:\\Users\\rexxr\\AppData\\Roaming\\Code --standard-schemes=vscode-webview,vscode-file --enable-sandbox --secure-schemes=vscode-webview,vscode-file --cors-schemes=vscode-webview,vscode-file --fetch-schemes=vscode-webview,vscode-file --service-worker-schemes=vscode-webview --code-cache-schemes=vscode-webview,vscode-file --app-user-model-id=Microsoft.VisualStudioCode --app-path=C:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\resources\\app --enable-sandbox --enable-blink-features=HighlightAPI --disable-blink-features=FontMatchingCTMigration,StandardizedBrowserZoom, --video-capture-use-gpu-memory-buffer --lang=en-US --device-scale-factor=1 --num-raster-threads=2 --enable-main-frame-before-activation --renderer-client-id=34 --time-ticks-at-unix-epoch=-1767286278078973 --launch-time-ticks=83811986909 --field-trial-handle=1724,i,11735031614327320611,13986067942660001508,262144 --enable-features=DocumentPolicyIncludeJSCallStacksInCrashReports,EarlyEstablishGpuChannel,EnableTransparentHwndEnlargement,EstablishGpuChannelAsync --disable-features=CalculateNativeWinOcclusion,LocalNetworkAccessChecks,ScreenAIOCREnabled,SpareRendererForSitePerProcess,TraceSiteInstanceGetProcessCreation --variations-seed-version --trace-process-track-uuid=3190709018171294360 --mojo-platform-channel-handle=3924 --vscode-window-config=vscode:99c8c2d9-d4b4-4206-b109-72e7eaef4058 /prefetch:1",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.4181118454863808,
+      "create_time": "2026-01-02T11:08:10.750973",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 4700,
+      "name": "powershell.exe",
+      "cmdline": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe -noexit -command try { . \"c:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\resources\\app\\out\\vs\\workbench\\contrib\\terminal\\common\\scripts\\shellIntegration.ps1\" } catch {}",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.16431414263347238,
+      "create_time": "2026-01-01T12:00:02.149161",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 4708,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.030823841566171458,
+      "create_time": "2026-01-01T11:51:47.093918",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 4764,
+      "name": "chrome.exe",
+      "cmdline": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe --type=renderer --origin-trial-disabled-features=CanvasTextNg|WebAssemblyCustomDescriptors --video-capture-use-gpu-memory-buffer --lang=en-US --device-scale-factor=1 --num-raster-threads=2 --enable-main-frame-before-activation --renderer-client-id=81 --time-ticks-at-unix-epoch=-1767286278078973 --launch-time-ticks=10961146808 --metrics-shmem-handle=7208,i,11236837367362226996,9944228596945597239,2097152 --field-trial-handle=2004,i,11491746468440406962,16938629281342729037,262144 --variations-seed-version=20251219-070015.367000 --trace-process-track-uuid=3190709062212261263 --mojo-platform-channel-handle=8892 /prefetch:1",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.3847183544682021,
+      "create_time": "2026-01-01T14:53:59.839046",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 4900,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.020091073157322305,
+      "create_time": "2026-01-01T11:51:48.646204",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 4924,
+      "name": "conhost.exe",
+      "cmdline": "\\\\?\\C:\\Windows\\system32\\conhost.exe --headless --width 46 --height 13 --signal 0x840 --server 0x848",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.022361926161421793,
+      "create_time": "2026-01-01T12:10:37.290599",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 4964,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.08057942607178285,
+      "create_time": "2026-01-01T11:52:07.236222",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 4968,
+      "name": "Evernote.exe",
+      "cmdline": "C:\\Users\\rexxr\\AppData\\Local\\Programs\\Evernote\\Evernote.exe --type=crashpad-handler --user-data-dir=C:\\Users\\rexxr\\AppData\\Roaming\\Evernote /prefetch:4 --no-rate-limit --monitor-self-annotation=ptype=crashpad-handler --database=C:\\Users\\rexxr\\AppData\\Roaming\\Evernote\\Crashpad --url=https://f.a.k/e --annotation=_productName=Evernote --annotation=_version=10.167.4 --annotation=plat=Win64 --annotation=prod=Electron --annotation=ver=37.6.0 --initial-client-data=0x55c,0x50c,0x554,0x560,0x564,0x7ff63c6621f4,0x7ff63c662200,0x7ff63c662210",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.10498511993689418,
+      "create_time": "2026-01-01T11:54:00.842458",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 5128,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.030620659981594137,
+      "create_time": "2026-01-01T11:51:55.207812",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 5156,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.07817710263060393,
+      "create_time": "2026-01-01T11:52:03.787846",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 5160,
+      "name": "wsl.exe",
+      "cmdline": "C:\\Windows\\system32\\wsl.exe --install",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.10338357097610824,
+      "create_time": "2026-01-01T12:10:48.733503",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 5328,
+      "name": "powershell.exe",
+      "cmdline": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe -noexit -command try { . \"c:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\resources\\app\\out\\vs\\workbench\\contrib\\terminal\\common\\scripts\\shellIntegration.ps1\" } catch {}",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.1663579103371619,
+      "create_time": "2026-01-01T23:20:21.656969",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 5356,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.041508802543355365,
+      "create_time": "2026-01-01T11:53:42.195470",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 5388,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.025804061241319964,
+      "create_time": "2026-01-01T11:51:49.436763",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 5392,
+      "name": "conhost.exe",
+      "cmdline": "\\??\\C:\\Windows\\system32\\conhost.exe 0x4",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.019828132283163418,
+      "create_time": "2026-01-02T08:52:44.995078",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 5432,
+      "name": "conhost.exe",
+      "cmdline": "\\??\\C:\\Windows\\system32\\conhost.exe 0x4",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.026198472552558295,
+      "create_time": "2026-01-01T12:12:24.362853",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 5448,
+      "name": "powershell.exe",
+      "cmdline": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe -noexit -command try { . \"c:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\resources\\app\\out\\vs\\workbench\\contrib\\terminal\\common\\scripts\\shellIntegration.ps1\" } catch {}",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.29950160752488975,
+      "create_time": "2026-01-02T11:07:20.914572",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 5464,
+      "name": "msedgewebview2.exe",
+      "cmdline": "C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\143.0.3650.96\\msedgewebview2.exe --embedded-browser-webview=1 --webview-exe-name=Widgets.exe --webview-exe-version=525.31002.10.0 --user-data-dir=C:\\Users\\rexxr\\AppData\\Local\\Packages\\MicrosoftWindows.Client.WebExperience_cw5n1h2txyewy\\LocalState\\EBWebView --noerrdialogs --disk-cache-size=52428800 --edge-webview-is-background --lang=en-US --mojo-named-platform-channel-pipe=8756.5588.13912298110859191062 /pfhostedapp:76852205c3dcdc2fabde49eaabee5fbd2b1e3c7f",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.01446174807873884,
+      "create_time": "2026-01-01T11:54:12.689438",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 5516,
+      "name": "msedgewebview2.exe",
+      "cmdline": "C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\143.0.3650.96\\msedgewebview2.exe --type=utility --utility-sub-type=network.mojom.NetworkService --lang=en-US --service-sandbox-type=none --noerrdialogs --user-data-dir=C:\\Users\\rexxr\\AppData\\Local\\Packages\\Microsoft.MicrosoftOfficeHub_8wekyb3d8bbwe\\LocalState\\EBWebView --webview-exe-name=M365Copilot.exe --webview-exe-version=19.2512.53121.0 --embedded-browser-webview=1 --embedded-browser-webview-dpi-awareness=2 --no-pre-read-main-dll --startup-read-main-dll --metrics-shmem-handle=1748,i,16581608948721583803,17201874290045489674,524288 --field-trial-handle=1776,i,5710017705207263571,11232789954704335600,262144 --enable-features=msSingleSignOnOSForPrimaryAccountIsShared --disable-features=msEnhancedTrackingPreventionEnabled --variations-seed-version --trace-process-track-uuid=3190708989122997041 --mojo-platform-channel-handle=1916 /prefetch:11 /pfhostedapp:42e2c044a0ef210974a0bbce1152c0751ff230d2",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.03078798599242252,
+      "create_time": "2026-01-01T11:55:28.707498",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 5584,
+      "name": "wsl.exe",
+      "cmdline": "C:\\Windows\\system32\\wsl.exe --install",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.020365965889397507,
+      "create_time": "2026-01-01T12:10:48.587215",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 5704,
+      "name": "conhost.exe",
+      "cmdline": "\\\\?\\C:\\Windows\\system32\\conhost.exe --headless --width 80 --height 30 --signal 0x374 --server 0x720",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.022134840861011845,
+      "create_time": "2026-01-01T12:01:21.496248",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 5728,
+      "name": "conhost.exe",
+      "cmdline": "\\??\\C:\\Windows\\system32\\conhost.exe 0x4",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.026174568836725667,
+      "create_time": "2026-01-01T12:00:17.118983",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 5864,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.03837741576928134,
+      "create_time": "2026-01-01T11:51:41.872537",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 5928,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.03403889134565968,
+      "create_time": "2026-01-01T11:51:49.490056",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 6012,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.07215336624078213,
+      "create_time": "2026-01-01T11:51:40.936708",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 6160,
+      "name": "msedgewebview2.exe",
+      "cmdline": "C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\143.0.3650.96\\msedgewebview2.exe --type=crashpad-handler --user-data-dir=C:\\Users\\rexxr\\AppData\\Local\\Packages\\Microsoft.MicrosoftOfficeHub_8wekyb3d8bbwe\\LocalState\\EBWebView /prefetch:4 /pfhostedapp:42e2c044a0ef210974a0bbce1152c0751ff230d2 --monitor-self-annotation=ptype=crashpad-handler --database=C:\\Users\\rexxr\\AppData\\Local\\Packages\\Microsoft.MicrosoftOfficeHub_8wekyb3d8bbwe\\LocalState\\EBWebView\\Crashpad --metrics-dir=C:\\Users\\rexxr\\AppData\\Local\\Packages\\Microsoft.MicrosoftOfficeHub_8wekyb3d8bbwe\\LocalState\\EBWebView --annotation=IsOfficialBuild=1 --annotation=channel= --annotation=chromium-version=143.0.7499.147 --annotation=exe=C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\143.0.3650.96\\msedgewebview2.exe --annotation=plat=Win64 --annotation=prod=Edge WebView2 --annotation=ver=143.0.3650.96 --initial-client-data=0x174,0x178,0x17c,0x134,0x184,0x7ffc93d362b8,0x7ffc93d362c4,0x7ffc93d362d0",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.02589967610465047,
+      "create_time": "2026-01-01T11:55:28.482676",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 6408,
+      "name": "msedgewebview2.exe",
+      "cmdline": "C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\143.0.3650.96\\msedgewebview2.exe --type=utility --utility-sub-type=network.mojom.NetworkService --lang=en-US --service-sandbox-type=none --noerrdialogs --user-data-dir=C:\\Users\\rexxr\\AppData\\Local\\Packages\\MicrosoftWindows.Client.WebExperience_cw5n1h2txyewy\\LocalState\\EBWebView --webview-exe-name=Widgets.exe --webview-exe-version=525.31002.10.0 --embedded-browser-webview=1 --no-pre-read-main-dll --startup-read-main-dll --metrics-shmem-handle=1912,i,4820584730392427526,3931839132222302528,524288 --field-trial-handle=1916,i,16921038682033664601,2814298508763312486,262144 --variations-seed-version --trace-process-track-uuid=3190708989122997041 --mojo-platform-channel-handle=2148 /prefetch:11 /pfhostedapp:76852205c3dcdc2fabde49eaabee5fbd2b1e3c7f",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.005390287920257204,
+      "create_time": "2026-01-01T11:54:13.000320",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 6492,
+      "name": "chrome.exe",
+      "cmdline": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe --type=renderer --origin-trial-disabled-features=CanvasTextNg|WebAssemblyCustomDescriptors --video-capture-use-gpu-memory-buffer --lang=en-US --device-scale-factor=1 --num-raster-threads=2 --enable-main-frame-before-activation --renderer-client-id=24 --time-ticks-at-unix-epoch=-1767286278078973 --launch-time-ticks=139111796 --metrics-shmem-handle=8772,i,930691612498238744,2752044993574838843,2097152 --field-trial-handle=2004,i,11491746468440406962,16938629281342729037,262144 --variations-seed-version=20251219-070015.367000 --trace-process-track-uuid=3190709008800875870 --mojo-platform-channel-handle=5024 /prefetch:1",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.3480381025230372,
+      "create_time": "2026-01-01T11:53:37.196335",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 6508,
+      "name": "msedgewebview2.exe",
+      "cmdline": "C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\143.0.3650.96\\msedgewebview2.exe --type=gpu-process --noerrdialogs --user-data-dir=C:\\Users\\rexxr\\AppData\\Local\\Packages\\Microsoft.MicrosoftOfficeHub_8wekyb3d8bbwe\\LocalState\\EBWebView --webview-exe-name=M365Copilot.exe --webview-exe-version=19.2512.53121.0 --embedded-browser-webview=1 --embedded-browser-webview-dpi-awareness=2 --no-pre-read-main-dll --gpu-preferences=SAAAAAAAAADgAAAEAAAAAAAAAAAAAGAAAQAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAQAAAAAAAAABAAAAAAAAAACAAAAAAAAAAIAAAAAAAAAA== --startup-read-main-dll --metrics-shmem-handle=1628,i,3809943935203540524,8883206059202075866,262144 --field-trial-handle=1776,i,5710017705207263571,11232789954704335600,262144 --enable-features=msSingleSignOnOSForPrimaryAccountIsShared --disable-features=msEnhancedTrackingPreventionEnabled --variations-seed-version --trace-process-track-uuid=3190708988185955192 --mojo-platform-channel-handle=1804 /prefetch:2 /pfhostedapp:42e2c044a0ef210974a0bbce1152c0751ff230d2",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.01817877589071221,
+      "create_time": "2026-01-01T11:55:28.694004",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 6568,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.042715940192902986,
+      "create_time": "2026-01-01T11:52:03.878329",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 6612,
+      "name": "Code.exe",
+      "cmdline": "C:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe c:\\Users\\rexxr\\.vscode\\extensions\\ms-python.vscode-pylance-2025.10.4\\dist\\server.bundle.js --cancellationReceive=file:d96e840e9befcd035e5cc9ae21df366a25f4db30cd --node-ipc --clientProcessId=20120",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.3211105666375838,
+      "create_time": "2026-01-02T07:03:10.839770",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 6632,
+      "name": "msedgewebview2.exe",
+      "cmdline": "C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\143.0.3650.96\\msedgewebview2.exe --type=renderer --noerrdialogs --user-data-dir=C:\\Users\\rexxr\\AppData\\Local\\Packages\\Microsoft.MicrosoftOfficeHub_8wekyb3d8bbwe\\LocalState\\EBWebView --webview-exe-name=M365Copilot.exe --webview-exe-version=19.2512.53121.0 --embedded-browser-webview=1 --embedded-browser-webview-dpi-awareness=2 --dma-cps-flags=0 --no-pre-read-main-dll --video-capture-use-gpu-memory-buffer --lang=en-US --js-flags=--expose-gc --device-scale-factor=1 --num-raster-threads=2 --enable-main-frame-before-activation --renderer-client-id=5 --time-ticks-at-unix-epoch=-1767286278079607 --launch-time-ticks=250896138 --ssd-no-pressure-read-main-dll --metrics-shmem-handle=3568,i,1689578530256958129,2971176634929983812,2097152 --field-trial-handle=1776,i,5710017705207263571,11232789954704335600,262144 --enable-features=msSingleSignOnOSForPrimaryAccountIsShared --disable-features=msEnhancedTrackingPreventionEnabled --variations-seed-version --trace-process-track-uuid=3190708990997080739 --mojo-platform-channel-handle=3588 /pfhostedapp:42e2c044a0ef210974a0bbce1152c0751ff230d2 /prefetch:1",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.013350225292521722,
+      "create_time": "2026-01-01T11:55:28.987518",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 6640,
+      "name": "svchost.exe",
+      "cmdline": "C:\\Windows\\system32\\svchost.exe -k PrintWorkflow -s PrintWorkflowUserSvc",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.0411741505216986,
+      "create_time": "2026-01-01T22:52:42.020610",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 6644,
+      "name": "chrome.exe",
+      "cmdline": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe --type=renderer --origin-trial-disabled-features=CanvasTextNg|WebAssemblyCustomDescriptors --video-capture-use-gpu-memory-buffer --lang=en-US --device-scale-factor=1 --num-raster-threads=2 --enable-main-frame-before-activation --renderer-client-id=77 --time-ticks-at-unix-epoch=-1767286278078973 --launch-time-ticks=10348203161 --metrics-shmem-handle=5688,i,9335253341136201598,3748106416905463653,2097152 --field-trial-handle=2004,i,11491746468440406962,16938629281342729037,262144 --variations-seed-version=20251219-070015.367000 --trace-process-track-uuid=3190709058464093867 --mojo-platform-channel-handle=8600 /prefetch:1",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.5101889588736569,
+      "create_time": "2026-01-01T14:43:46.883718",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 6760,
+      "name": "conhost.exe",
+      "cmdline": "\\??\\C:\\Windows\\system32\\conhost.exe 0x4",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.019672758130251346,
+      "create_time": "2026-01-02T09:55:27.599957",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 6792,
+      "name": "conhost.exe",
+      "cmdline": "\\\\?\\C:\\Windows\\system32\\conhost.exe --headless --width 80 --height 30 --signal 0xf88 --server 0xe94",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.02327026736306159,
+      "create_time": "2026-01-02T10:11:09.781577",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 6816,
+      "name": "wslhost.exe",
+      "cmdline": " --vm-id {4547f737-e1a1-47f9-8416-bf3bf8090ff3} --handle 1872",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.03276004254861418,
+      "create_time": "2026-01-01T12:00:17.064094",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 6856,
+      "name": "chrome.exe",
+      "cmdline": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe --type=crashpad-handler --user-data-dir=C:\\Users\\rexxr\\AppData\\Local\\Google\\Chrome\\User Data /prefetch:4 --monitor-self-annotation=ptype=crashpad-handler --database=C:\\Users\\rexxr\\AppData\\Local\\Google\\Chrome\\User Data\\Crashpad --metrics-dir=C:\\Users\\rexxr\\AppData\\Local\\Google\\Chrome\\User Data --url=https://clients2.google.com/cr/report --annotation=channel= --annotation=plat=Win64 --annotation=prod=Chrome --annotation=ver=143.0.7499.170 --initial-client-data=0x11c,0x120,0x124,0xf8,0x128,0x7ffc6c4459e8,0x7ffc6c4459f4,0x7ffc6c445a00",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.024680586597186534,
+      "create_time": "2026-01-01T11:52:24.717294",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 6872,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.042715940192902986,
+      "create_time": "2026-01-01T11:53:43.680344",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 6940,
+      "name": "wslhost.exe",
+      "cmdline": " --distro-id {c0fae63b-e2f5-4080-8ce0-eaaa06433e9f} --vm-id {4547f737-e1a1-47f9-8416-bf3bf8090ff3} --handle 788 --event 816 --parent 820",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.032425390526957414,
+      "create_time": "2026-01-01T12:00:17.131105",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 6952,
+      "name": "conhost.exe",
+      "cmdline": "\\??\\C:\\Windows\\system32\\conhost.exe 0x4",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.02003131386774074,
+      "create_time": "2026-01-01T11:59:52.720609",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 7044,
+      "name": "svchost.exe",
+      "cmdline": "C:\\Windows\\system32\\svchost.exe -k UnistackSvcGroup -s CDPUserSvc",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.08316102738170648,
+      "create_time": "2026-01-01T11:52:03.658201",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 7072,
+      "name": "svchost.exe",
+      "cmdline": "C:\\Windows\\system32\\svchost.exe -k LocalSystemNetworkRestricted -p -s webthreatdefusersvc",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.030405526539100503,
+      "create_time": "2026-01-01T11:52:03.684134",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 7096,
+      "name": "svchost.exe",
+      "cmdline": "C:\\Windows\\system32\\svchost.exe -k UnistackSvcGroup -s WpnUserService",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.11944686801563303,
+      "create_time": "2026-01-01T11:52:03.711791",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 7120,
+      "name": "chrome.exe",
+      "cmdline": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe --type=renderer --extension-process --origin-trial-disabled-features=CanvasTextNg|WebAssemblyCustomDescriptors --video-capture-use-gpu-memory-buffer --lang=en-US --device-scale-factor=1 --num-raster-threads=2 --enable-main-frame-before-activation --renderer-client-id=49 --time-ticks-at-unix-epoch=-1767286278078973 --launch-time-ticks=1613571405 --metrics-shmem-handle=4488,i,5873949126342184468,211338764623158786,2097152 --field-trial-handle=2004,i,11491746468440406962,16938629281342729037,262144 --variations-seed-version=20251219-070015.367000 --trace-process-track-uuid=3190709032226922095 --mojo-platform-channel-handle=4812 /prefetch:9",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.44206336875067226,
+      "create_time": "2026-01-01T12:18:11.732884",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 7208,
+      "name": "explorer.exe",
+      "cmdline": "C:\\Windows\\Explorer.EXE",
+      "cpu_usage": 0.0,
+      "memory_usage": 1.3432454074985956,
+      "create_time": "2026-01-01T11:52:04.285653",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 7236,
+      "name": "wsl.exe",
+      "cmdline": "C:\\Windows\\System32\\wsl.exe -d docker-desktop -e /usr/bin/vpnkit-bridge --pid-file=/run/vpnkit-bridge.pid guest",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.020354014031481193,
+      "create_time": "2026-01-01T12:00:15.551470",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 7284,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.06476711804850065,
+      "create_time": "2026-01-01T11:52:04.414589",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 7412,
+      "name": "Code.exe",
+      "cmdline": "C:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe --type=renderer --user-data-dir=C:\\Users\\rexxr\\AppData\\Roaming\\Code --standard-schemes=vscode-webview,vscode-file --enable-sandbox --secure-schemes=vscode-webview,vscode-file --cors-schemes=vscode-webview,vscode-file --fetch-schemes=vscode-webview,vscode-file --service-worker-schemes=vscode-webview --code-cache-schemes=vscode-webview,vscode-file --app-user-model-id=Microsoft.VisualStudioCode --app-path=C:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\resources\\app --enable-sandbox --enable-blink-features=HighlightAPI --disable-blink-features=FontMatchingCTMigration,StandardizedBrowserZoom, --video-capture-use-gpu-memory-buffer --lang=en-US --device-scale-factor=1 --num-raster-threads=2 --enable-main-frame-before-activation --renderer-client-id=33 --time-ticks-at-unix-epoch=-1767286278078973 --launch-time-ticks=83811470092 --field-trial-handle=1724,i,11735031614327320611,13986067942660001508,262144 --enable-features=DocumentPolicyIncludeJSCallStacksInCrashReports,EarlyEstablishGpuChannel,EnableTransparentHwndEnlargement,EstablishGpuChannelAsync --disable-features=CalculateNativeWinOcclusion,LocalNetworkAccessChecks,ScreenAIOCREnabled,SpareRendererForSitePerProcess,TraceSiteInstanceGetProcessCreation --variations-seed-version --trace-process-track-uuid=3190709017234252511 --mojo-platform-channel-handle=7160 --vscode-window-config=vscode:99c8c2d9-d4b4-4206-b109-72e7eaef4058 /prefetch:1",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.5548411000490026,
+      "create_time": "2026-01-02T11:08:10.232685",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 7588,
+      "name": "wslhost.exe",
+      "cmdline": " --distro-id {c0fae63b-e2f5-4080-8ce0-eaaa06433e9f} --vm-id {4547f737-e1a1-47f9-8416-bf3bf8090ff3} --handle 780 --event 808 --parent 812",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.032425390526957414,
+      "create_time": "2026-01-01T12:00:17.085712",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 7696,
+      "name": "msedgewebview2.exe",
+      "cmdline": "C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\143.0.3650.96\\msedgewebview2.exe --embedded-browser-webview=1 --webview-exe-name=M365Copilot.exe --webview-exe-version=19.2512.53121.0 --user-data-dir=C:\\Users\\rexxr\\AppData\\Local\\Packages\\Microsoft.MicrosoftOfficeHub_8wekyb3d8bbwe\\LocalState\\EBWebView --noerrdialogs --embedded-browser-webview-dpi-awareness=2 --disable-features=msEnhancedTrackingPreventionEnabled --enable-features=msSingleSignOnOSForPrimaryAccountIsShared --mojo-named-platform-channel-pipe=5948.11984.131740478876157250 /pfhostedapp:42e2c044a0ef210974a0bbce1152c0751ff230d2",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.05215790794679033,
+      "create_time": "2026-01-01T11:55:28.438218",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 7764,
+      "name": "chrome.exe",
+      "cmdline": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe --type=renderer --origin-trial-disabled-features=CanvasTextNg|WebAssemblyCustomDescriptors --video-capture-use-gpu-memory-buffer --lang=en-US --device-scale-factor=1 --num-raster-threads=2 --enable-main-frame-before-activation --renderer-client-id=6 --time-ticks-at-unix-epoch=-1767286278078973 --launch-time-ticks=67831859 --metrics-shmem-handle=3428,i,17008435592452512956,16330291956754997826,2097152 --field-trial-handle=2004,i,11491746468440406962,16938629281342729037,262144 --variations-seed-version=20251219-070015.367000 --trace-process-track-uuid=3190708991934122588 --mojo-platform-channel-handle=3444 /prefetch:1",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.18221802579210938,
+      "create_time": "2026-01-01T11:52:25.913336",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 7912,
+      "name": "svchost.exe",
+      "cmdline": "C:\\Windows\\system32\\svchost.exe -k ClipboardSvcGroup -p -s cbdhsvc",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.07699386869688893,
+      "create_time": "2026-01-01T11:52:06.982603",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 8076,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.05802627018370005,
+      "create_time": "2026-01-01T11:53:32.899026",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 8104,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.024023234411789312,
+      "create_time": "2026-01-01T11:52:07.109889",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 8156,
+      "name": "conhost.exe",
+      "cmdline": "\\\\?\\C:\\Windows\\system32\\conhost.exe --headless --width 80 --height 30 --signal 0x10d4 --server 0x10d8",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.023258315505145274,
+      "create_time": "2026-01-02T10:10:45.348253",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 8160,
+      "name": "conhost.exe",
+      "cmdline": "\\\\?\\C:\\Windows\\system32\\conhost.exe --headless --width 80 --height 30 --signal 0xc14 --server 0x8e0",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.0224575410247523,
+      "create_time": "2026-01-02T06:53:25.089827",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 8344,
+      "name": "chrome.exe",
+      "cmdline": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe --type=renderer --origin-trial-disabled-features=CanvasTextNg|WebAssemblyCustomDescriptors --video-capture-use-gpu-memory-buffer --lang=en-US --device-scale-factor=1 --num-raster-threads=2 --enable-main-frame-before-activation --renderer-client-id=22 --time-ticks-at-unix-epoch=-1767286278078973 --launch-time-ticks=134841043 --metrics-shmem-handle=4944,i,13535998048535255057,18109573677660891724,2097152 --field-trial-handle=2004,i,11491746468440406962,16938629281342729037,262144 --variations-seed-version=20251219-070015.367000 --trace-process-track-uuid=3190709006926792172 --mojo-platform-channel-handle=5708 /prefetch:1",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.19130143780850734,
+      "create_time": "2026-01-01T11:53:32.921146",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 8352,
+      "name": "chrome.exe",
+      "cmdline": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+      "cpu_usage": 0.0,
+      "memory_usage": 1.2417741337890975,
+      "create_time": "2026-01-01T11:52:24.661060",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 8372,
+      "name": "chrome.exe",
+      "cmdline": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe --type=utility --utility-sub-type=storage.mojom.StorageService --lang=en-US --service-sandbox-type=service --metrics-shmem-handle=2368,i,13030095554516751977,15447023167036523549,524288 --field-trial-handle=2004,i,11491746468440406962,16938629281342729037,262144 --variations-seed-version=20251219-070015.367000 --trace-process-track-uuid=3190708990060038890 --mojo-platform-channel-handle=1744 /prefetch:13",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.05747648471954966,
+      "create_time": "2026-01-01T11:52:25.593934",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 8468,
+      "name": "msedgewebview2.exe",
+      "cmdline": "C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\143.0.3650.96\\msedgewebview2.exe --type=utility --utility-sub-type=audio.mojom.AudioService --lang=en-US --service-sandbox-type=audio --video-capture-use-gpu-memory-buffer --noerrdialogs --user-data-dir=C:\\Users\\rexxr\\AppData\\Local\\Packages\\MicrosoftWindows.Client.WebExperience_cw5n1h2txyewy\\LocalState\\EBWebView --webview-exe-name=Widgets.exe --webview-exe-version=525.31002.10.0 --embedded-browser-webview=1 --no-pre-read-main-dll --skip-read-main-dll --metrics-shmem-handle=5640,i,901439994850993912,16419778812023299877,524288 --field-trial-handle=1916,i,16921038682033664601,2814298508763312486,262144 --variations-seed-version --trace-process-track-uuid=3190708993808206286 --mojo-platform-channel-handle=5660 /prefetch:12 /pfhostedapp:76852205c3dcdc2fabde49eaabee5fbd2b1e3c7f",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.0015059340974554493,
+      "create_time": "2026-01-01T12:17:16.267095",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 8624,
+      "name": "powershell.exe",
+      "cmdline": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe -noexit -command try { . \"c:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\resources\\app\\out\\vs\\workbench\\contrib\\terminal\\common\\scripts\\shellIntegration.ps1\" } catch {}",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.1645173242180497,
+      "create_time": "2026-01-02T07:03:07.484364",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 8656,
+      "name": "Code.exe",
+      "cmdline": "C:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe --type=utility --utility-sub-type=node.mojom.NodeService --lang=en-US --service-sandbox-type=none --dns-result-order=ipv4first --experimental-network-inspection --inspect-port=0 --video-capture-use-gpu-memory-buffer --user-data-dir=C:\\Users\\rexxr\\AppData\\Roaming\\Code --standard-schemes=vscode-webview,vscode-file --enable-sandbox --secure-schemes=vscode-webview,vscode-file --cors-schemes=vscode-webview,vscode-file --fetch-schemes=vscode-webview,vscode-file --service-worker-schemes=vscode-webview --code-cache-schemes=vscode-webview,vscode-file --field-trial-handle=1724,i,11735031614327320611,13986067942660001508,262144 --enable-features=DocumentPolicyIncludeJSCallStacksInCrashReports,EarlyEstablishGpuChannel,EnableTransparentHwndEnlargement,EstablishGpuChannelAsync --disable-features=CalculateNativeWinOcclusion,LocalNetworkAccessChecks,ScreenAIOCREnabled,SpareRendererForSitePerProcess,TraceSiteInstanceGetProcessCreation --variations-seed-version --trace-process-track-uuid=3190709016297210662 --mojo-platform-channel-handle=3228 /prefetch:14",
+      "cpu_usage": 0.0,
+      "memory_usage": 1.7665443593206562,
+      "create_time": "2026-01-02T09:55:09.637205",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 8860,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.0278478289450095,
+      "create_time": "2026-01-01T11:53:14.767362",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 8948,
+      "name": "svchost.exe",
+      "cmdline": "C:\\Windows\\system32\\svchost.exe -k UdkSvcGroup -s UdkUserSvc",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.06590254455055039,
+      "create_time": "2026-01-01T11:52:08.659965",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 9180,
+      "name": "conhost.exe",
+      "cmdline": "\\??\\C:\\Windows\\system32\\conhost.exe 0x4",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.02622237626839092,
+      "create_time": "2026-01-01T12:12:13.554304",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 9224,
+      "name": "powershell.exe",
+      "cmdline": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe -noexit -command try { . \"c:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\resources\\app\\out\\vs\\workbench\\contrib\\terminal\\common\\scripts\\shellIntegration.ps1\" } catch {}",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.220224933965985,
+      "create_time": "2026-01-02T11:03:08.253095",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 9248,
+      "name": "msedgewebview2.exe",
+      "cmdline": "C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\143.0.3650.96\\msedgewebview2.exe --embedded-browser-webview=1 --webview-exe-name=SearchHost.exe --webview-exe-version=2125.30600.0.0 --user-data-dir=C:\\Users\\rexxr\\AppData\\Local\\Packages\\MicrosoftWindows.Client.CBS_cw5n1h2txyewy\\LocalState\\EBWebView --noerrdialogs --disable-features=msSmartScreenProtection --edge-webview-enable-mojo-ipcz --enable-features=msEdgeFluentOverlayScrollbar --user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64; Cortana 1.18.9.23723; 10.0.0.0.26100.7462) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36 Edge/18.26100 IsWebView2/True (WebView2Version 142.0.3595.94) --lang=en-US --mojo-named-platform-channel-pipe=8608.9228.15272475215067602600 /pfhostedapp:4e9801f7ddbb7c94bfe535abfcc834ca59c79c1e",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.2941830307521304,
+      "create_time": "2026-01-01T11:52:09.926820",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 9360,
+      "name": "msedgewebview2.exe",
+      "cmdline": "C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\143.0.3650.96\\msedgewebview2.exe --type=crashpad-handler --user-data-dir=C:\\Users\\rexxr\\AppData\\Local\\Packages\\MicrosoftWindows.Client.CBS_cw5n1h2txyewy\\LocalState\\EBWebView /prefetch:4 /pfhostedapp:4e9801f7ddbb7c94bfe535abfcc834ca59c79c1e --monitor-self-annotation=ptype=crashpad-handler --database=C:\\Users\\rexxr\\AppData\\Local\\Packages\\MicrosoftWindows.Client.CBS_cw5n1h2txyewy\\LocalState\\EBWebView\\Crashpad --metrics-dir=C:\\Users\\rexxr\\AppData\\Local\\Packages\\MicrosoftWindows.Client.CBS_cw5n1h2txyewy\\LocalState\\EBWebView --annotation=IsOfficialBuild=1 --annotation=channel= --annotation=chromium-version=143.0.7499.147 --annotation=exe=C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\143.0.3650.96\\msedgewebview2.exe --annotation=plat=Win64 --annotation=prod=Edge WebView2 --annotation=ver=143.0.3650.96 --initial-client-data=0x170,0x174,0x178,0x16c,0x17c,0x7ffc93d362b8,0x7ffc93d362c4,0x7ffc93d362d0",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.02382005282721199,
+      "create_time": "2026-01-01T11:52:10.080542",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 9436,
+      "name": "msedgewebview2.exe",
+      "cmdline": "C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\143.0.3650.96\\msedgewebview2.exe --type=renderer --noerrdialogs --user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64; Cortana 1.18.9.23723; 10.0.0.0.26100.7462) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36 Edge/18.26100 IsWebView2/True (WebView2Version 142.0.3595.94) --user-data-dir=C:\\Users\\rexxr\\AppData\\Local\\Packages\\MicrosoftWindows.Client.CBS_cw5n1h2txyewy\\LocalState\\EBWebView --webview-exe-name=SearchHost.exe --webview-exe-version=2125.30600.0.0 --embedded-browser-webview=1 --dma-cps-flags=0 --video-capture-use-gpu-memory-buffer --lang=en-US --js-flags=--expose-gc --device-scale-factor=1 --num-raster-threads=2 --enable-main-frame-before-activation --renderer-client-id=5 --time-ticks-at-unix-epoch=-1767286278078973 --launch-time-ticks=53399415 --always-read-main-dll --metrics-shmem-handle=3292,i,13532518188578637517,15273130785413411379,2097152 --field-trial-handle=2004,i,9656284413261096178,12950367826801430847,262144 --enable-features=msEdgeFluentOverlayScrollbar --disable-features=msSmartScreenProtection --variations-seed-version --trace-process-track-uuid=3190708990997080739 --mojo-platform-channel-handle=3148 /pfhostedapp:4e9801f7ddbb7c94bfe535abfcc834ca59c79c1e /prefetch:1",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.18116626229547383,
+      "create_time": "2026-01-01T11:52:11.578691",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 10096,
+      "name": "Code.exe",
+      "cmdline": "C:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe --type=renderer --user-data-dir=C:\\Users\\rexxr\\AppData\\Roaming\\Code --standard-schemes=vscode-webview,vscode-file --enable-sandbox --secure-schemes=vscode-webview,vscode-file --cors-schemes=vscode-webview,vscode-file --fetch-schemes=vscode-webview,vscode-file --service-worker-schemes=vscode-webview --code-cache-schemes=vscode-webview,vscode-file --app-user-model-id=Microsoft.VisualStudioCode --app-path=C:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\resources\\app --enable-sandbox --enable-blink-features=HighlightAPI --disable-blink-features=FontMatchingCTMigration,StandardizedBrowserZoom, --video-capture-use-gpu-memory-buffer --lang=en-US --device-scale-factor=1 --num-raster-threads=2 --enable-main-frame-before-activation --renderer-client-id=11 --time-ticks-at-unix-epoch=-1767286278078973 --launch-time-ticks=68507929766 --field-trial-handle=1724,i,11735031614327320611,13986067942660001508,262144 --enable-features=DocumentPolicyIncludeJSCallStacksInCrashReports,EarlyEstablishGpuChannel,EnableTransparentHwndEnlargement,EstablishGpuChannelAsync --disable-features=CalculateNativeWinOcclusion,LocalNetworkAccessChecks,ScreenAIOCREnabled,SpareRendererForSitePerProcess,TraceSiteInstanceGetProcessCreation --variations-seed-version --trace-process-track-uuid=3190708996619331833 --mojo-platform-channel-handle=4944 --vscode-window-config=vscode:7aba93d3-fd34-4036-9a76-6610f8946c89 /prefetch:1",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.508551554339122,
+      "create_time": "2026-01-02T06:53:06.614195",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 10160,
+      "name": "msedgewebview2.exe",
+      "cmdline": "C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\143.0.3650.96\\msedgewebview2.exe --type=utility --utility-sub-type=network.mojom.NetworkService --lang=en-US --service-sandbox-type=none --noerrdialogs --user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64; Cortana 1.18.9.23723; 10.0.0.0.26100.7462) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36 Edge/18.26100 IsWebView2/True (WebView2Version 142.0.3595.94) --user-data-dir=C:\\Users\\rexxr\\AppData\\Local\\Packages\\MicrosoftWindows.Client.CBS_cw5n1h2txyewy\\LocalState\\EBWebView --webview-exe-name=SearchHost.exe --webview-exe-version=2125.30600.0.0 --embedded-browser-webview=1 --always-read-main-dll --metrics-shmem-handle=1908,i,2468901359679719661,10423738961781773814,524288 --field-trial-handle=2004,i,9656284413261096178,12950367826801430847,262144 --enable-features=msEdgeFluentOverlayScrollbar --disable-features=msSmartScreenProtection --variations-seed-version --trace-process-track-uuid=3190708989122997041 --mojo-platform-channel-handle=2180 /prefetch:11 /pfhostedapp:4e9801f7ddbb7c94bfe535abfcc834ca59c79c1e",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.11313628703581971,
+      "create_time": "2026-01-01T11:52:11.400416",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 10164,
+      "name": "msedgewebview2.exe",
+      "cmdline": "C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\143.0.3650.96\\msedgewebview2.exe --type=gpu-process --noerrdialogs --user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64; Cortana 1.18.9.23723; 10.0.0.0.26100.7462) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36 Edge/18.26100 IsWebView2/True (WebView2Version 142.0.3595.94) --user-data-dir=C:\\Users\\rexxr\\AppData\\Local\\Packages\\MicrosoftWindows.Client.CBS_cw5n1h2txyewy\\LocalState\\EBWebView --webview-exe-name=SearchHost.exe --webview-exe-version=2125.30600.0.0 --embedded-browser-webview=1 --no-pre-read-main-dll --gpu-preferences=SAAAAAAAAADgAAAEAAAAAAAAAAAAAGAAAQAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAQAAAAAAAAABAAAAAAAAAACAAAAAAAAAAIAAAAAAAAAA== --always-read-main-dll --metrics-shmem-handle=1728,i,16918609698428726451,15112162506235393501,262144 --field-trial-handle=2004,i,9656284413261096178,12950367826801430847,262144 --enable-features=msEdgeFluentOverlayScrollbar --disable-features=msSmartScreenProtection --variations-seed-version --trace-process-track-uuid=3190708988185955192 --mojo-platform-channel-handle=2000 /prefetch:2 /pfhostedapp:4e9801f7ddbb7c94bfe535abfcc834ca59c79c1e",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.1455377738469445,
+      "create_time": "2026-01-01T11:52:11.400418",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 10224,
+      "name": "msedgewebview2.exe",
+      "cmdline": "C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\143.0.3650.96\\msedgewebview2.exe --type=utility --utility-sub-type=storage.mojom.StorageService --lang=en-US --service-sandbox-type=service --noerrdialogs --user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64; Cortana 1.18.9.23723; 10.0.0.0.26100.7462) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36 Edge/18.26100 IsWebView2/True (WebView2Version 142.0.3595.94) --user-data-dir=C:\\Users\\rexxr\\AppData\\Local\\Packages\\MicrosoftWindows.Client.CBS_cw5n1h2txyewy\\LocalState\\EBWebView --webview-exe-name=SearchHost.exe --webview-exe-version=2125.30600.0.0 --embedded-browser-webview=1 --always-read-main-dll --metrics-shmem-handle=2280,i,11114889996820093319,8372282262893456741,524288 --field-trial-handle=2004,i,9656284413261096178,12950367826801430847,262144 --enable-features=msEdgeFluentOverlayScrollbar --disable-features=msSmartScreenProtection --variations-seed-version --trace-process-track-uuid=3190708990060038890 --mojo-platform-channel-handle=3076 /prefetch:13 /pfhostedapp:4e9801f7ddbb7c94bfe535abfcc834ca59c79c1e",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.05575541717960057,
+      "create_time": "2026-01-01T11:52:11.503535",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 10376,
+      "name": "Evernote.exe",
+      "cmdline": "C:\\Users\\rexxr\\AppData\\Local\\Programs\\Evernote\\Evernote.exe --type=utility --utility-sub-type=network.mojom.NetworkService --lang=en-US --service-sandbox-type=none --user-data-dir=C:\\Users\\rexxr\\AppData\\Roaming\\Evernote --standard-schemes=app,en-html --secure-schemes=app,sentry-ipc --bypasscsp-schemes=sentry-ipc --cors-schemes=en-cache,sentry-ipc --fetch-schemes=en-cache,sentry-ipc --field-trial-handle=1784,i,417160232637593874,13625370028556824448,262144 --enable-features=EnableTransparentHwndEnlargement,MacLoopbackAudioForScreenShare,MacSckSystemAudioLoopbackOverride,PdfUseShowSaveFilePicker,PulseaudioLoopbackForScreenShare --disable-features=ScreenAIOCREnabled,SpareRendererForSitePerProcess,WinDelaySpellcheckServiceInit --variations-seed-version --mojo-platform-channel-handle=2052 /prefetch:11",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.16706306995422437,
+      "create_time": "2026-01-01T11:54:01.312058",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 10396,
+      "name": "Evernote.exe",
+      "cmdline": "C:\\Users\\rexxr\\AppData\\Local\\Programs\\Evernote\\Evernote.exe --type=renderer --user-data-dir=C:\\Users\\rexxr\\AppData\\Roaming\\Evernote --standard-schemes=app,en-html --secure-schemes=app,sentry-ipc --bypasscsp-schemes=sentry-ipc --cors-schemes=en-cache,sentry-ipc --fetch-schemes=en-cache,sentry-ipc --app-user-model-id=com.evernote.Evernote --app-path=C:\\Users\\rexxr\\AppData\\Local\\Programs\\Evernote\\resources\\app.asar --no-sandbox --no-zygote --video-capture-use-gpu-memory-buffer --lang=en-US --device-scale-factor=1 --num-raster-threads=2 --enable-main-frame-before-activation --renderer-client-id=4 --time-ticks-at-unix-epoch=-1767286278078986 --launch-time-ticks=163844911 --field-trial-handle=1784,i,417160232637593874,13625370028556824448,262144 --enable-features=EnableTransparentHwndEnlargement,MacLoopbackAudioForScreenShare,MacSckSystemAudioLoopbackOverride,PdfUseShowSaveFilePicker,PulseaudioLoopbackForScreenShare --disable-features=ScreenAIOCREnabled,SpareRendererForSitePerProcess,WinDelaySpellcheckServiceInit --variations-seed-version --mojo-platform-channel-handle=3116 /prefetch:1",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.2984976514599194,
+      "create_time": "2026-01-01T11:54:01.953247",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 10600,
+      "name": "Evernote.exe",
+      "cmdline": "C:\\Users\\rexxr\\AppData\\Local\\Programs\\Evernote\\Evernote.exe --type=gpu-process --user-data-dir=C:\\Users\\rexxr\\AppData\\Roaming\\Evernote --gpu-preferences=UAAAAAAAAADgAAAEAAAAAAAAAAAAAAAAAABgAAEAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAEAAAAAAAAAAIAAAAAAAAAAgAAAAAAAAA --field-trial-handle=1784,i,417160232637593874,13625370028556824448,262144 --enable-features=EnableTransparentHwndEnlargement,MacLoopbackAudioForScreenShare,MacSckSystemAudioLoopbackOverride,PdfUseShowSaveFilePicker,PulseaudioLoopbackForScreenShare --disable-features=ScreenAIOCREnabled,SpareRendererForSitePerProcess,WinDelaySpellcheckServiceInit --variations-seed-version --mojo-platform-channel-handle=1812 /prefetch:2",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.22327265773464483,
+      "create_time": "2026-01-01T11:54:01.219289",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 10848,
+      "name": "msedgewebview2.exe",
+      "cmdline": "C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\143.0.3650.96\\msedgewebview2.exe --type=renderer --noerrdialogs --user-data-dir=C:\\Users\\rexxr\\AppData\\Local\\Packages\\MicrosoftWindows.Client.WebExperience_cw5n1h2txyewy\\LocalState\\EBWebView --webview-exe-name=Widgets.exe --webview-exe-version=525.31002.10.0 --embedded-browser-webview=1 --dma-cps-flags=0 --no-pre-read-main-dll --video-capture-use-gpu-memory-buffer --lang=en-US --js-flags=--expose-gc --device-scale-factor=1 --num-raster-threads=2 --enable-main-frame-before-activation --renderer-client-id=5 --time-ticks-at-unix-epoch=-1767286278079069 --launch-time-ticks=175177119 --ssd-no-pressure-read-main-dll --metrics-shmem-handle=3692,i,11939376178202863130,3335358535495162312,2097152 --field-trial-handle=1916,i,16921038682033664601,2814298508763312486,262144 --variations-seed-version --trace-process-track-uuid=3190708990997080739 --mojo-platform-channel-handle=3720 /pfhostedapp:76852205c3dcdc2fabde49eaabee5fbd2b1e3c7f /prefetch:1",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.015035437258721867,
+      "create_time": "2026-01-01T11:54:13.264832",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 11112,
+      "name": "Code.exe",
+      "cmdline": "C:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe --type=utility --utility-sub-type=network.mojom.NetworkService --lang=en-US --service-sandbox-type=none --user-data-dir=C:\\Users\\rexxr\\AppData\\Roaming\\Code --standard-schemes=vscode-webview,vscode-file --enable-sandbox --secure-schemes=vscode-webview,vscode-file --cors-schemes=vscode-webview,vscode-file --fetch-schemes=vscode-webview,vscode-file --service-worker-schemes=vscode-webview --code-cache-schemes=vscode-webview,vscode-file --field-trial-handle=1724,i,11735031614327320611,13986067942660001508,262144 --enable-features=DocumentPolicyIncludeJSCallStacksInCrashReports,EarlyEstablishGpuChannel,EnableTransparentHwndEnlargement,EstablishGpuChannelAsync --disable-features=CalculateNativeWinOcclusion,LocalNetworkAccessChecks,ScreenAIOCREnabled,SpareRendererForSitePerProcess,TraceSiteInstanceGetProcessCreation --variations-seed-version --trace-process-track-uuid=3190708989122997041 --mojo-platform-channel-handle=1920 /prefetch:11",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.14802376029353762,
+      "create_time": "2026-01-01T11:52:21.607572",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 11180,
+      "name": "chrome.exe",
+      "cmdline": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe --type=gpu-process --gpu-preferences=SAAAAAAAAADgAAAEAAAAAAAAAAAAAGAAAQAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAQAAAAAAAAABAAAAAAAAAACAAAAAAAAAAIAAAAAAAAAA== --metrics-shmem-handle=1708,i,9696290707560900589,14884058319268729261,262144 --field-trial-handle=2004,i,11491746468440406962,16938629281342729037,262144 --variations-seed-version=20251219-070015.367000 --trace-process-track-uuid=3190708988185955192 --mojo-platform-channel-handle=2056 /prefetch:2",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.2476185923101746,
+      "create_time": "2026-01-01T11:52:25.542501",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 11196,
+      "name": "chrome.exe",
+      "cmdline": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe --type=utility --utility-sub-type=network.mojom.NetworkService --lang=en-US --service-sandbox-type=none --metrics-shmem-handle=1476,i,8660622649678335250,3582204041180321068,524288 --field-trial-handle=2004,i,11491746468440406962,16938629281342729037,262144 --variations-seed-version=20251219-070015.367000 --trace-process-track-uuid=3190708989122997041 --mojo-platform-channel-handle=2136 /prefetch:11",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.16559299143051787,
+      "create_time": "2026-01-01T11:52:25.543846",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 11328,
+      "name": "Evernote.exe",
+      "cmdline": "C:\\Users\\rexxr\\AppData\\Local\\Programs\\Evernote\\Evernote.exe --type=renderer --user-data-dir=C:\\Users\\rexxr\\AppData\\Roaming\\Evernote --standard-schemes=app,en-html --secure-schemes=app,sentry-ipc --bypasscsp-schemes=sentry-ipc --cors-schemes=en-cache,sentry-ipc --fetch-schemes=en-cache,sentry-ipc --app-user-model-id=com.evernote.Evernote --app-path=C:\\Users\\rexxr\\AppData\\Local\\Programs\\Evernote\\resources\\app.asar --no-sandbox --no-zygote --video-capture-use-gpu-memory-buffer --lang=en-US --device-scale-factor=1 --num-raster-threads=2 --enable-main-frame-before-activation --renderer-client-id=7 --time-ticks-at-unix-epoch=-1767286278078986 --launch-time-ticks=166418325 --field-trial-handle=1784,i,417160232637593874,13625370028556824448,262144 --enable-features=EnableTransparentHwndEnlargement,MacLoopbackAudioForScreenShare,MacSckSystemAudioLoopbackOverride,PdfUseShowSaveFilePicker,PulseaudioLoopbackForScreenShare --disable-features=ScreenAIOCREnabled,SpareRendererForSitePerProcess,WinDelaySpellcheckServiceInit --variations-seed-version --mojo-platform-channel-handle=4068 --initArgs=eyJpc1BhY2thZ2VkIjp0cnVlLCJ1c2VyQWdlbnRTdHJpbmciOiJldmVybm90ZSBlbGVjdHJvbi8xMC4xNjcuNCgyMDI1MTIyOTIwMjk1Mik7IHdpbi8xMC4wLjI2MTAwOyIsImFwcFZlcnNpb24iOiIxMC4xNjcuNCIsImJvcm9uQ29uZmlnIjp7ImRldiI6eyJtYWluVXJsIjoiaHR0cDovL2xvY2FsaG9zdDozMDAzIiwiaXNGbGVFbmFibGVkIjp0cnVlLCJjZVZlcnNpb24iOiIiLCJjaGVja0ZvckxvY2FsTm90ZWJvb2tzIjpudWxsLCJpc05ldExvZ0VuYWJsZWQiOm51bGx9LCJnZW5lcmFsIjp7ImRlZmF1bHRTZXJ2aWNlSG9zdCI6Imh0dHBzOi8vd3d3LmV2ZXJub3RlLmNvbSIsImZvcmNlVXBkYXRlT25TdGFydCI6dHJ1ZSwicG9wdXBOb3RlV2luZG93TGltaXQiOjIwfSwicWEiOnt9fSwiY3VycmVudEVudmlyb25tZW50IjoicHJvZHVjdGlvbiIsImNvbG9yVGhlbWUiOiJvc19zeW5jIiwib3ZlclF1b3RhIjpmYWxzZSwiaXNTcGVsbGNoZWNrRW5hYmxlZCI6dHJ1ZX0= /prefetch:1",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.2513117164063154,
+      "create_time": "2026-01-01T11:54:04.534184",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 11336,
+      "name": "chrome.exe",
+      "cmdline": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe --type=utility --utility-sub-type=media.mojom.CdmServiceBroker --lang=en-US --service-sandbox-type=cdm --video-capture-use-gpu-memory-buffer --metrics-shmem-handle=8852,i,6194312170391966852,17418524777015917673,524288 --field-trial-handle=2004,i,11491746468440406962,16938629281342729037,262144 --variations-seed-version=20251219-070015.367000 --trace-process-track-uuid=3190709063149303112 --mojo-platform-channel-handle=7800 /prefetch:14",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.09933189114247809,
+      "create_time": "2026-01-01T14:54:02.940494",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 11692,
+      "name": "chrome.exe",
+      "cmdline": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe --type=renderer --origin-trial-disabled-features=CanvasTextNg|WebAssemblyCustomDescriptors --video-capture-use-gpu-memory-buffer --lang=en-US --device-scale-factor=1 --num-raster-threads=2 --enable-main-frame-before-activation --renderer-client-id=5 --time-ticks-at-unix-epoch=-1767286278078973 --launch-time-ticks=67836136 --metrics-shmem-handle=3524,i,13745472636626098296,8993750475165759219,2097152 --field-trial-handle=2004,i,11491746468440406962,16938629281342729037,262144 --variations-seed-version=20251219-070015.367000 --trace-process-track-uuid=3190708990997080739 --mojo-platform-channel-handle=3528 /prefetch:1",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.21017342145836568,
+      "create_time": "2026-01-01T11:52:25.916582",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 11760,
+      "name": "svchost.exe",
+      "cmdline": "C:\\Windows\\system32\\svchost.exe -k UnistackSvcGroup -s CloudBackupRestoreSvc",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.08543188038580597,
+      "create_time": "2026-01-01T11:52:19.980136",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 12000,
+      "name": "Code.exe",
+      "cmdline": "C:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.7441107220117368,
+      "create_time": "2026-01-01T11:52:20.467362",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 12164,
+      "name": "Code.exe",
+      "cmdline": "C:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe --type=crashpad-handler --user-data-dir=C:\\Users\\rexxr\\AppData\\Roaming\\Code /prefetch:4 --no-rate-limit --monitor-self-annotation=ptype=crashpad-handler --database=C:\\Users\\rexxr\\AppData\\Roaming\\Code\\Crashpad --url=appcenter://code?aid=a4e3233c-699c-46ec-b4f4-9c2a77254662&uid=d883b4b3-e682-44e3-b6a8-19e536cdbb1c&iid=d883b4b3-e682-44e3-b6a8-19e536cdbb1c&sid=d883b4b3-e682-44e3-b6a8-19e536cdbb1c --annotation=_companyName=Microsoft --annotation=_productName=VSCode --annotation=_version=1.107.1 --annotation=plat=Win64 --annotation=prod=Electron --annotation=ver=39.2.3 --initial-client-data=0x4e4,0x4e8,0x4ec,0x4e0,0x4f0,0x7ff75cc081ac,0x7ff75cc081b8,0x7ff75cc081c8",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.08464305776332931,
+      "create_time": "2026-01-01T11:52:21.356119",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 12260,
+      "name": "Code.exe",
+      "cmdline": "C:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe --type=gpu-process --user-data-dir=C:\\Users\\rexxr\\AppData\\Roaming\\Code --gpu-preferences=SAAAAAAAAADgAAAEAAAAAAAAAAAAAGAAAQAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAQAAAAAAAAABAAAAAAAAAACAAAAAAAAAAIAAAAAAAAAA== --field-trial-handle=1724,i,11735031614327320611,13986067942660001508,262144 --enable-features=DocumentPolicyIncludeJSCallStacksInCrashReports,EarlyEstablishGpuChannel,EnableTransparentHwndEnlargement,EstablishGpuChannelAsync --disable-features=CalculateNativeWinOcclusion,LocalNetworkAccessChecks,ScreenAIOCREnabled,SpareRendererForSitePerProcess,TraceSiteInstanceGetProcessCreation --variations-seed-version --trace-process-track-uuid=3190708988185955192 --mojo-platform-channel-handle=1720 /prefetch:2",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.5012967765839199,
+      "create_time": "2026-01-01T11:52:21.567662",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 12456,
+      "name": "chrome.exe",
+      "cmdline": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe --type=renderer --origin-trial-disabled-features=CanvasTextNg|WebAssemblyCustomDescriptors --video-capture-use-gpu-memory-buffer --lang=en-US --device-scale-factor=1 --num-raster-threads=2 --enable-main-frame-before-activation --renderer-client-id=10 --time-ticks-at-unix-epoch=-1767286278078973 --launch-time-ticks=69160194 --metrics-shmem-handle=5812,i,13234257519871507025,2558749142091124207,2097152 --field-trial-handle=2004,i,11491746468440406962,16938629281342729037,262144 --variations-seed-version=20251219-070015.367000 --trace-process-track-uuid=3190708995682289984 --mojo-platform-channel-handle=5844 /prefetch:1",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.38386977255614385,
+      "create_time": "2026-01-01T11:52:27.241011",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 12472,
+      "name": "Code.exe",
+      "cmdline": "C:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe --type=utility --utility-sub-type=node.mojom.NodeService --lang=en-US --service-sandbox-type=none --video-capture-use-gpu-memory-buffer --user-data-dir=C:\\Users\\rexxr\\AppData\\Roaming\\Code --standard-schemes=vscode-webview,vscode-file --enable-sandbox --secure-schemes=vscode-webview,vscode-file --cors-schemes=vscode-webview,vscode-file --fetch-schemes=vscode-webview,vscode-file --service-worker-schemes=vscode-webview --code-cache-schemes=vscode-webview,vscode-file --field-trial-handle=1724,i,11735031614327320611,13986067942660001508,262144 --enable-features=DocumentPolicyIncludeJSCallStacksInCrashReports,EarlyEstablishGpuChannel,EnableTransparentHwndEnlargement,EstablishGpuChannelAsync --disable-features=CalculateNativeWinOcclusion,LocalNetworkAccessChecks,ScreenAIOCREnabled,SpareRendererForSitePerProcess,TraceSiteInstanceGetProcessCreation --variations-seed-version --trace-process-track-uuid=3190708991934122588 --mojo-platform-channel-handle=3952 /prefetch:14",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.42142251012919957,
+      "create_time": "2026-01-01T11:52:27.382965",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 12584,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.04458043002784783,
+      "create_time": "2026-01-01T11:53:42.012382",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 12668,
+      "name": "powershell.exe",
+      "cmdline": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe -NoProfile -ExecutionPolicy Bypass -Command Import-Module 'c:\\Users\\rexxr\\.vscode\\extensions\\ms-vscode.powershell-2025.4.0\\modules\\PowerShellEditorServices\\PowerShellEditorServices.psd1'; Start-EditorServices -HostName 'Visual Studio Code Host' -HostProfileId 'Microsoft.VSCode' -HostVersion '2025.4.0' -BundledModulesPath 'c:\\Users\\rexxr\\.vscode\\extensions\\ms-vscode.powershell-2025.4.0\\modules' -EnableConsoleRepl -StartupBanner \"PowerShell Extension v2025.4.0\nCopyright (c) Microsoft Corporation.\n\nhttps://aka.ms/vscode-powershell\nType 'help' to get help.\n\" -LogLevel 'Warning' -LogPath 'c:\\Users\\rexxr\\AppData\\Roaming\\Code\\logs\\20260101T115221\\window1\\exthost\\ms-vscode.powershell' -SessionDetailsPath 'c:\\Users\\rexxr\\AppData\\Roaming\\Code\\User\\globalStorage\\ms-vscode.powershell\\sessions\\PSES-VSCode-12000-644228.json' -FeatureFlags @() ",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.21495416462489095,
+      "create_time": "2026-01-01T11:54:45.598653",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 12832,
+      "name": "chrome.exe",
+      "cmdline": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe --type=renderer --extension-process --origin-trial-disabled-features=CanvasTextNg|WebAssemblyCustomDescriptors --video-capture-use-gpu-memory-buffer --lang=en-US --device-scale-factor=1 --num-raster-threads=2 --enable-main-frame-before-activation --renderer-client-id=584 --time-ticks-at-unix-epoch=-1767286278078973 --launch-time-ticks=84404633706 --metrics-shmem-handle=10872,i,16070821478430644716,10053157267594386201,2097152 --field-trial-handle=2004,i,11491746468440406962,16938629281342729037,262144 --variations-seed-version=20251219-070015.367000 --trace-process-track-uuid=3190709533544311310 --mojo-platform-channel-handle=11420 /prefetch:9",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.2387503137362703,
+      "create_time": "2026-01-02T11:18:03.352678",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 12948,
+      "name": "msedgewebview2.exe",
+      "cmdline": "C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\143.0.3650.96\\msedgewebview2.exe --type=gpu-process --noerrdialogs --user-data-dir=C:\\Users\\rexxr\\AppData\\Local\\Packages\\MicrosoftWindows.Client.WebExperience_cw5n1h2txyewy\\LocalState\\EBWebView --webview-exe-name=Widgets.exe --webview-exe-version=525.31002.10.0 --embedded-browser-webview=1 --no-pre-read-main-dll --gpu-preferences=SAAAAAAAAADgAAAEAAAAAAAAAAAAAGAAAQAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAQAAAAAAAAABAAAAAAAAAACAAAAAAAAAAIAAAAAAAAAA== --startup-read-main-dll --metrics-shmem-handle=1688,i,378745735422784867,13943594532973168833,262144 --field-trial-handle=1916,i,16921038682033664601,2814298508763312486,262144 --variations-seed-version --trace-process-track-uuid=3190708988185955192 --mojo-platform-channel-handle=1908 /prefetch:2 /pfhostedapp:76852205c3dcdc2fabde49eaabee5fbd2b1e3c7f",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.018047305453632766,
+      "create_time": "2026-01-01T11:54:12.998952",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 12956,
+      "name": "svchost.exe",
+      "cmdline": "C:\\Windows\\system32\\svchost.exe -k UnistackSvcGroup",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.04401869270578111,
+      "create_time": "2026-01-01T11:53:44.127865",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 12968,
+      "name": "conhost.exe",
+      "cmdline": "\\\\?\\C:\\Windows\\system32\\conhost.exe --headless --width 66 --height 13 --signal 0x4b4 --server 0x4a8",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.02107112550645998,
+      "create_time": "2026-01-01T11:52:33.286493",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 12984,
+      "name": "wslhost.exe",
+      "cmdline": " --vm-id {4547f737-e1a1-47f9-8416-bf3bf8090ff3} --handle 1008",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.03329787615484827,
+      "create_time": "2026-01-01T12:12:13.444074",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 13048,
+      "name": "msedgewebview2.exe",
+      "cmdline": "C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\143.0.3650.96\\msedgewebview2.exe --type=crashpad-handler --user-data-dir=C:\\Users\\rexxr\\AppData\\Local\\Packages\\MicrosoftWindows.Client.WebExperience_cw5n1h2txyewy\\LocalState\\EBWebView /prefetch:4 /pfhostedapp:76852205c3dcdc2fabde49eaabee5fbd2b1e3c7f --monitor-self-annotation=ptype=crashpad-handler --database=C:\\Users\\rexxr\\AppData\\Local\\Packages\\MicrosoftWindows.Client.WebExperience_cw5n1h2txyewy\\LocalState\\EBWebView\\Crashpad --metrics-dir=C:\\Users\\rexxr\\AppData\\Local\\Packages\\MicrosoftWindows.Client.WebExperience_cw5n1h2txyewy\\LocalState\\EBWebView --annotation=IsOfficialBuild=1 --annotation=channel= --annotation=chromium-version=143.0.7499.147 --annotation=exe=C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\143.0.3650.96\\msedgewebview2.exe --annotation=plat=Win64 --annotation=prod=Edge WebView2 --annotation=ver=143.0.3650.96 --initial-client-data=0x174,0x178,0x17c,0x150,0x18c,0x7ffc93d362b8,0x7ffc93d362c4,0x7ffc93d362d0",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.025015238618843298,
+      "create_time": "2026-01-01T11:54:12.762026",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 13136,
+      "name": "wsl.exe",
+      "cmdline": "C:\\Windows\\System32\\wsl.exe -d docker-desktop -u root -e wsl-bootstrap run --base-image /c/Program Files/Docker/Docker/resources/docker-desktop.iso --cli-iso /c/Program Files/Docker/Docker/resources/wsl/docker-wsl-cli.iso --data-disk 615c5114-7ac4-cd4a-a169-5fe7294232d1",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.020354014031481193,
+      "create_time": "2026-01-01T12:00:15.552291",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 13156,
+      "name": "Code.exe",
+      "cmdline": "C:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe --type=utility --utility-sub-type=node.mojom.NodeService --lang=en-US --service-sandbox-type=none --video-capture-use-gpu-memory-buffer --user-data-dir=C:\\Users\\rexxr\\AppData\\Roaming\\Code --standard-schemes=vscode-webview,vscode-file --enable-sandbox --secure-schemes=vscode-webview,vscode-file --cors-schemes=vscode-webview,vscode-file --fetch-schemes=vscode-webview,vscode-file --service-worker-schemes=vscode-webview --code-cache-schemes=vscode-webview,vscode-file --field-trial-handle=1724,i,11735031614327320611,13986067942660001508,262144 --enable-features=DocumentPolicyIncludeJSCallStacksInCrashReports,EarlyEstablishGpuChannel,EnableTransparentHwndEnlargement,EstablishGpuChannelAsync --disable-features=CalculateNativeWinOcclusion,LocalNetworkAccessChecks,ScreenAIOCREnabled,SpareRendererForSitePerProcess,TraceSiteInstanceGetProcessCreation --variations-seed-version --trace-process-track-uuid=3190708993808206286 --mojo-platform-channel-handle=4140 /prefetch:14",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.47122590206647624,
+      "create_time": "2026-01-01T11:52:30.024774",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 13280,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.027525128781269045,
+      "create_time": "2026-01-01T11:53:41.445090",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 13292,
+      "name": "powershell.exe",
+      "cmdline": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe -noexit -command try { . \"c:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\resources\\app\\out\\vs\\workbench\\contrib\\terminal\\common\\scripts\\shellIntegration.ps1\" } catch {}",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.16438585378097026,
+      "create_time": "2026-01-02T09:55:36.547396",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 13332,
+      "name": "powershell.exe",
+      "cmdline": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe -noexit -command try { . \"c:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\resources\\app\\out\\vs\\workbench\\contrib\\terminal\\common\\scripts\\shellIntegration.ps1\" } catch {}",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.161589119028553,
+      "create_time": "2026-01-01T11:52:33.574156",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 13560,
+      "name": "Code.exe",
+      "cmdline": "C:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe --type=utility --utility-sub-type=audio.mojom.AudioService --lang=en-US --service-sandbox-type=audio --video-capture-use-gpu-memory-buffer --user-data-dir=C:\\Users\\rexxr\\AppData\\Roaming\\Code --standard-schemes=vscode-webview,vscode-file --enable-sandbox --secure-schemes=vscode-webview,vscode-file --cors-schemes=vscode-webview,vscode-file --fetch-schemes=vscode-webview,vscode-file --service-worker-schemes=vscode-webview --code-cache-schemes=vscode-webview,vscode-file --field-trial-handle=1724,i,11735031614327320611,13986067942660001508,262144 --enable-features=DocumentPolicyIncludeJSCallStacksInCrashReports,EarlyEstablishGpuChannel,EnableTransparentHwndEnlargement,EstablishGpuChannelAsync --disable-features=CalculateNativeWinOcclusion,LocalNetworkAccessChecks,ScreenAIOCREnabled,SpareRendererForSitePerProcess,TraceSiteInstanceGetProcessCreation --variations-seed-version --trace-process-track-uuid=3190708995682289984 --mojo-platform-channel-handle=4256 /prefetch:12",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.28992816933392296,
+      "create_time": "2026-01-01T12:02:48.588409",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 13616,
+      "name": "conhost.exe",
+      "cmdline": "\\\\?\\C:\\Windows\\system32\\conhost.exe --headless --width 80 --height 30 --signal 0x5d8 --server 0x5d0",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.021047221790627353,
+      "create_time": "2026-01-01T11:52:43.949640",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 13776,
+      "name": "Code.exe",
+      "cmdline": "C:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe c:\\Users\\rexxr\\.vscode\\extensions\\ms-python.vscode-pylance-2025.10.4\\dist\\server.bundle.js --cancellationReceive=file:ec1f035aa006accf4ae445b9ddbf1aec2a90f9c98a --node-ipc --clientProcessId=8656",
+      "cpu_usage": 0.0,
+      "memory_usage": 2.7198125948678724,
+      "create_time": "2026-01-02T09:55:47.316099",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 13808,
+      "name": "powershell.exe",
+      "cmdline": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe -noexit -command try { . \"c:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\resources\\app\\out\\vs\\workbench\\contrib\\terminal\\common\\scripts\\shellIntegration.ps1\" } catch {}",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.16194767476604238,
+      "create_time": "2026-01-01T11:52:44.469320",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 13940,
+      "name": "conhost.exe",
+      "cmdline": "\\\\?\\C:\\Windows\\system32\\conhost.exe --headless --width 80 --height 30 --signal 0xfec --server 0xfe8",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.023413689658057346,
+      "create_time": "2026-01-02T10:41:19.615881",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 14052,
+      "name": "conhost.exe",
+      "cmdline": "\\\\?\\C:\\Windows\\system32\\conhost.exe --headless --width 80 --height 30 --signal 0xea0 --server 0xf40",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.023330026652643155,
+      "create_time": "2026-01-02T10:25:26.972501",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 14076,
+      "name": "Evernote.exe",
+      "cmdline": "C:\\Users\\rexxr\\AppData\\Local\\Programs\\Evernote\\Evernote.exe --type=renderer --user-data-dir=C:\\Users\\rexxr\\AppData\\Roaming\\Evernote --standard-schemes=app,en-html --secure-schemes=app,sentry-ipc --bypasscsp-schemes=sentry-ipc --cors-schemes=en-cache,sentry-ipc --fetch-schemes=en-cache,sentry-ipc --app-user-model-id=com.evernote.Evernote --app-path=C:\\Users\\rexxr\\AppData\\Local\\Programs\\Evernote\\resources\\app.asar --no-sandbox --no-zygote --video-capture-use-gpu-memory-buffer --lang=en-US --device-scale-factor=1 --num-raster-threads=2 --enable-main-frame-before-activation --renderer-client-id=8 --time-ticks-at-unix-epoch=-1767286278078986 --launch-time-ticks=167654038 --field-trial-handle=1784,i,417160232637593874,13625370028556824448,262144 --enable-features=EnableTransparentHwndEnlargement,MacLoopbackAudioForScreenShare,MacSckSystemAudioLoopbackOverride,PdfUseShowSaveFilePicker,PulseaudioLoopbackForScreenShare --disable-features=ScreenAIOCREnabled,SpareRendererForSitePerProcess,WinDelaySpellcheckServiceInit --variations-seed-version --mojo-platform-channel-handle=4080 --initArgs=eyJpc1BhY2thZ2VkIjp0cnVlLCJ1c2VyQWdlbnRTdHJpbmciOiJldmVybm90ZSBlbGVjdHJvbi8xMC4xNjcuNCgyMDI1MTIyOTIwMjk1Mik7IHdpbi8xMC4wLjI2MTAwOyIsImFwcFZlcnNpb24iOiIxMC4xNjcuNCIsImJvcm9uQ29uZmlnIjp7ImRldiI6eyJtYWluVXJsIjoiaHR0cDovL2xvY2FsaG9zdDozMDAzIiwiaXNGbGVFbmFibGVkIjp0cnVlLCJjZVZlcnNpb24iOiIiLCJjaGVja0ZvckxvY2FsTm90ZWJvb2tzIjpudWxsLCJpc05ldExvZ0VuYWJsZWQiOm51bGx9LCJnZW5lcmFsIjp7ImRlZmF1bHRTZXJ2aWNlSG9zdCI6Imh0dHBzOi8vd3d3LmV2ZXJub3RlLmNvbSIsImZvcmNlVXBkYXRlT25TdGFydCI6dHJ1ZSwicG9wdXBOb3RlV2luZG93TGltaXQiOjIwfSwicWEiOnt9fSwiY3VycmVudEVudmlyb25tZW50IjoicHJvZHVjdGlvbiIsImNvbG9yVGhlbWUiOiJvc19zeW5jIiwib3ZlclF1b3RhIjpmYWxzZSwiaXNTcGVsbGNoZWNrRW5hYmxlZCI6dHJ1ZX0= /prefetch:1",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.47097491305023365,
+      "create_time": "2026-01-01T11:54:05.755426",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 14208,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.044903130191588286,
+      "create_time": "2026-01-01T11:52:45.933261",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 14380,
+      "name": "msedgewebview2.exe",
+      "cmdline": "C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\143.0.3650.96\\msedgewebview2.exe --type=utility --utility-sub-type=storage.mojom.StorageService --lang=en-US --service-sandbox-type=service --noerrdialogs --user-data-dir=C:\\Users\\rexxr\\AppData\\Local\\Packages\\Microsoft.MicrosoftOfficeHub_8wekyb3d8bbwe\\LocalState\\EBWebView --webview-exe-name=M365Copilot.exe --webview-exe-version=19.2512.53121.0 --embedded-browser-webview=1 --embedded-browser-webview-dpi-awareness=2 --no-pre-read-main-dll --startup-read-main-dll --metrics-shmem-handle=2376,i,7739424023144060243,17038458757013840608,524288 --field-trial-handle=1776,i,5710017705207263571,11232789954704335600,262144 --enable-features=msSingleSignOnOSForPrimaryAccountIsShared --disable-features=msEnhancedTrackingPreventionEnabled --variations-seed-version --trace-process-track-uuid=3190708990060038890 --mojo-platform-channel-handle=2388 /prefetch:13 /pfhostedapp:42e2c044a0ef210974a0bbce1152c0751ff230d2",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.0062149661164828075,
+      "create_time": "2026-01-01T11:55:28.744141",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 14552,
+      "name": "Evernote.exe",
+      "cmdline": "C:\\Users\\rexxr\\AppData\\Local\\Programs\\Evernote\\Evernote.exe --was-opened-with-auto-launch",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.4928468130370866,
+      "create_time": "2026-01-01T11:53:54.098024",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 14588,
+      "name": "msedgewebview2.exe",
+      "cmdline": "C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\143.0.3650.96\\msedgewebview2.exe --type=utility --utility-sub-type=storage.mojom.StorageService --lang=en-US --service-sandbox-type=service --noerrdialogs --user-data-dir=C:\\Users\\rexxr\\AppData\\Local\\Packages\\MicrosoftWindows.Client.WebExperience_cw5n1h2txyewy\\LocalState\\EBWebView --webview-exe-name=Widgets.exe --webview-exe-version=525.31002.10.0 --embedded-browser-webview=1 --no-pre-read-main-dll --startup-read-main-dll --metrics-shmem-handle=2416,i,16128932092286128200,6839419636369130741,524288 --field-trial-handle=1916,i,16921038682033664601,2814298508763312486,262144 --variations-seed-version --trace-process-track-uuid=3190708990060038890 --mojo-platform-channel-handle=2572 /prefetch:13 /pfhostedapp:76852205c3dcdc2fabde49eaabee5fbd2b1e3c7f",
+      "cpu_usage": 0.0,
+      "memory_usage": 3.585557374893927e-05,
+      "create_time": "2026-01-01T11:54:13.045161",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 14592,
+      "name": "chrome.exe",
+      "cmdline": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe --type=renderer --extension-process --origin-trial-disabled-features=CanvasTextNg|WebAssemblyCustomDescriptors --video-capture-use-gpu-memory-buffer --lang=en-US --device-scale-factor=1 --num-raster-threads=2 --enable-main-frame-before-activation --renderer-client-id=21 --time-ticks-at-unix-epoch=-1767286278078973 --launch-time-ticks=130138639 --metrics-shmem-handle=8116,i,17939524692140383634,2633843724351285475,2097152 --field-trial-handle=2004,i,11491746468440406962,16938629281342729037,262144 --variations-seed-version=20251219-070015.367000 --trace-process-track-uuid=3190709005989750323 --mojo-platform-channel-handle=8044 /prefetch:9",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.9284681303708662,
+      "create_time": "2026-01-01T11:53:28.218916",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 14988,
+      "name": "conhost.exe",
+      "cmdline": "\\\\?\\C:\\Windows\\system32\\conhost.exe --headless --width 80 --height 30 --signal 0x1120 --server 0x1118",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.025074997908424865,
+      "create_time": "2026-01-02T11:05:03.390617",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 15060,
+      "name": "Code.exe",
+      "cmdline": "C:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe c:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\resources\\app\\extensions\\json-language-features\\server\\dist\\node\\jsonServerMain --node-ipc --clientProcessId=20120",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.3038162282326788,
+      "create_time": "2026-01-02T07:01:32.301177",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 15260,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.07530865673068877,
+      "create_time": "2026-01-01T11:53:40.948373",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 15312,
+      "name": "svchost.exe",
+      "cmdline": "N/A",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.030417478397016817,
+      "create_time": "2026-01-01T11:53:42.645772",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 15440,
+      "name": "powershell.exe",
+      "cmdline": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe -noexit -command try { . \"c:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\resources\\app\\out\\vs\\workbench\\contrib\\terminal\\common\\scripts\\shellIntegration.ps1\" } catch {}",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.2951750349591844,
+      "create_time": "2026-01-02T11:06:18.679785",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 15628,
+      "name": "chrome.exe",
+      "cmdline": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe --type=utility --utility-sub-type=audio.mojom.AudioService --lang=en-US --service-sandbox-type=audio --video-capture-use-gpu-memory-buffer --metrics-shmem-handle=11056,i,17071761856345623426,17025178532269596852,524288 --field-trial-handle=2004,i,11491746468440406962,16938629281342729037,262144 --variations-seed-version=20251219-070015.367000 --trace-process-track-uuid=3190709368624945886 --mojo-platform-channel-handle=3064 /prefetch:12",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.06425318815809918,
+      "create_time": "2026-01-02T06:57:57.682489",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 15804,
+      "name": "wsl.exe",
+      "cmdline": "C:\\Windows\\System32\\wsl.exe -d docker-desktop -u root -e wsl-bootstrap run --base-image /c/Program Files/Docker/Docker/resources/docker-desktop.iso --cli-iso /c/Program Files/Docker/Docker/resources/wsl/docker-wsl-cli.iso --data-disk 615c5114-7ac4-cd4a-a169-5fe7294232d1",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.03417036178273913,
+      "create_time": "2026-01-01T12:00:15.597763",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 15860,
+      "name": "chrome.exe",
+      "cmdline": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe --type=renderer --extension-process --origin-trial-disabled-features=CanvasTextNg|WebAssemblyCustomDescriptors --video-capture-use-gpu-memory-buffer --lang=en-US --device-scale-factor=1 --num-raster-threads=2 --enable-main-frame-before-activation --renderer-client-id=591 --time-ticks-at-unix-epoch=-1767286278078973 --launch-time-ticks=85497141954 --metrics-shmem-handle=12092,i,12466286338369923485,15308740161283158286,2097152 --field-trial-handle=2004,i,11491746468440406962,16938629281342729037,262144 --variations-seed-version=20251219-070015.367000 --trace-process-track-uuid=3190709540103604253 --mojo-platform-channel-handle=8316 /prefetch:9",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.1868912022373878,
+      "create_time": "2026-01-02T11:36:15.798987",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 15908,
+      "name": "conhost.exe",
+      "cmdline": "\\\\?\\C:\\Windows\\system32\\conhost.exe --headless --width 80 --height 30 --signal 0x1080 --server 0x105c",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.024680586597186534,
+      "create_time": "2026-01-02T11:03:08.058294",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 15992,
+      "name": "conhost.exe",
+      "cmdline": "\\\\?\\C:\\Windows\\system32\\conhost.exe --headless --width 80 --height 30 --signal 0x1050 --server 0x11f4",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.025086949766341175,
+      "create_time": "2026-01-02T11:14:09.833853",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 16068,
+      "name": "conhost.exe",
+      "cmdline": "\\??\\C:\\Windows\\system32\\conhost.exe 0x4",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.026341894847554052,
+      "create_time": "2026-01-01T12:12:11.457327",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 16108,
+      "name": "conhost.exe",
+      "cmdline": "\\??\\C:\\Windows\\system32\\conhost.exe 0x4",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.026198472552558295,
+      "create_time": "2026-01-01T12:00:16.766754",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 16120,
+      "name": "conhost.exe",
+      "cmdline": "\\??\\C:\\Windows\\system32\\conhost.exe 0x4",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.02618652069464198,
+      "create_time": "2026-01-01T12:00:17.211358",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 16140,
+      "name": "wslhost.exe",
+      "cmdline": " --vm-id {4547f737-e1a1-47f9-8416-bf3bf8090ff3} --handle 1864",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.035437258721868314,
+      "create_time": "2026-01-01T12:00:16.674083",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 16300,
+      "name": "conhost.exe",
+      "cmdline": "\\??\\C:\\Windows\\system32\\conhost.exe 0x4",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.026198472552558295,
+      "create_time": "2026-01-01T12:00:17.174515",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 16504,
+      "name": "powershell.exe",
+      "cmdline": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe -NoProfile -ExecutionPolicy Bypass -Command Import-Module 'c:\\Users\\rexxr\\.vscode\\extensions\\ms-vscode.powershell-2025.4.0\\modules\\PowerShellEditorServices\\PowerShellEditorServices.psd1'; Start-EditorServices -HostName 'Visual Studio Code Host' -HostProfileId 'Microsoft.VSCode' -HostVersion '2025.4.0' -BundledModulesPath 'c:\\Users\\rexxr\\.vscode\\extensions\\ms-vscode.powershell-2025.4.0\\modules' -EnableConsoleRepl -StartupBanner \"PowerShell Extension v2025.4.0\nCopyright (c) Microsoft Corporation.\n\nhttps://aka.ms/vscode-powershell\nType 'help' to get help.\n\" -LogLevel 'Warning' -LogPath 'c:\\Users\\rexxr\\AppData\\Roaming\\Code\\logs\\20260101T115221\\window3\\exthost\\ms-vscode.powershell' -SessionDetailsPath 'c:\\Users\\rexxr\\AppData\\Roaming\\Code\\User\\globalStorage\\ms-vscode.powershell\\sessions\\PSES-VSCode-12000-730408.json' -FeatureFlags @() ",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.20577513774516246,
+      "create_time": "2026-01-02T06:53:25.336203",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 16576,
+      "name": "powershell.exe",
+      "cmdline": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe -noexit -command try { . \"c:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\resources\\app\\out\\vs\\workbench\\contrib\\terminal\\common\\scripts\\shellIntegration.ps1\" } catch {}",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.17654089328186068,
+      "create_time": "2026-01-01T12:00:53.028525",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 16656,
+      "name": "Code.exe",
+      "cmdline": "C:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe c:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\resources\\app\\extensions\\html-language-features\\server\\dist\\node\\htmlServerMain --node-ipc --clientProcessId=8656",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.31827797631141763,
+      "create_time": "2026-01-02T09:55:31.498622",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 16832,
+      "name": "conhost.exe",
+      "cmdline": "\\\\?\\C:\\Windows\\system32\\conhost.exe --headless --width 80 --height 30 --signal 0xe28 --server 0x1038",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.02354516009513679,
+      "create_time": "2026-01-02T10:35:19.961294",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 16884,
+      "name": "conhost.exe",
+      "cmdline": "\\\\?\\C:\\Windows\\system32\\conhost.exe --headless --width 80 --height 30 --signal 0xd30 --server 0xe44",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.022302166871840227,
+      "create_time": "2026-01-02T07:03:07.075355",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 16900,
+      "name": "powershell.exe",
+      "cmdline": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe -noexit -command try { . \"c:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\resources\\app\\out\\vs\\workbench\\contrib\\terminal\\common\\scripts\\shellIntegration.ps1\" } catch {}",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.16474440951845964,
+      "create_time": "2026-01-01T12:10:37.682144",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 16924,
+      "name": "powershell.exe",
+      "cmdline": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe -noexit -command try { . \"c:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\resources\\app\\out\\vs\\workbench\\contrib\\terminal\\common\\scripts\\shellIntegration.ps1\" } catch {}",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.16466074651304546,
+      "create_time": "2026-01-01T12:01:21.611085",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 17084,
+      "name": "Code.exe",
+      "cmdline": "C:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe c:/Users/rexxr/AppData/Local/Programs/Microsoft VS Code/resources/app/extensions/node_modules/typescript/lib/typingsInstaller.js --globalTypingsCacheLocation C:/Users/rexxr/AppData/Local/Microsoft/TypeScript/5.9 --enableTelemetry --typesMapLocation c:/Users/rexxr/AppData/Local/Programs/Microsoft VS Code/resources/app/extensions/node_modules/typescript/lib/typesMap.json --validateDefaultNpmLocation",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.3096845904695885,
+      "create_time": "2026-01-02T09:55:30.332057",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 17184,
+      "name": "Code.exe",
+      "cmdline": "C:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe --type=renderer --user-data-dir=C:\\Users\\rexxr\\AppData\\Roaming\\Code --standard-schemes=vscode-webview,vscode-file --enable-sandbox --secure-schemes=vscode-webview,vscode-file --cors-schemes=vscode-webview,vscode-file --fetch-schemes=vscode-webview,vscode-file --service-worker-schemes=vscode-webview --code-cache-schemes=vscode-webview,vscode-file --app-user-model-id=Microsoft.VisualStudioCode --app-path=C:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\resources\\app --enable-sandbox --enable-blink-features=HighlightAPI --disable-blink-features=FontMatchingCTMigration,StandardizedBrowserZoom, --video-capture-use-gpu-memory-buffer --lang=en-US --device-scale-factor=1 --num-raster-threads=2 --enable-main-frame-before-activation --renderer-client-id=12 --time-ticks-at-unix-epoch=-1767286278078973 --launch-time-ticks=68508597682 --field-trial-handle=1724,i,11735031614327320611,13986067942660001508,262144 --enable-features=DocumentPolicyIncludeJSCallStacksInCrashReports,EarlyEstablishGpuChannel,EnableTransparentHwndEnlargement,EstablishGpuChannelAsync --disable-features=CalculateNativeWinOcclusion,LocalNetworkAccessChecks,ScreenAIOCREnabled,SpareRendererForSitePerProcess,TraceSiteInstanceGetProcessCreation --variations-seed-version --trace-process-track-uuid=3190708997556373682 --mojo-platform-channel-handle=4804 --vscode-window-config=vscode:47032381-59a2-48a1-8d11-37686a149e4a /prefetch:1",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.645938161087141,
+      "create_time": "2026-01-02T06:53:07.278200",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 17352,
+      "name": "wslhost.exe",
+      "cmdline": " --vm-id {4547f737-e1a1-47f9-8416-bf3bf8090ff3} --handle 3024",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.03326202058109933,
+      "create_time": "2026-01-01T12:12:11.345099",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 17572,
+      "name": "Code.exe",
+      "cmdline": "C:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe --type=renderer --user-data-dir=C:\\Users\\rexxr\\AppData\\Roaming\\Code --standard-schemes=vscode-webview,vscode-file --enable-sandbox --secure-schemes=vscode-webview,vscode-file --cors-schemes=vscode-webview,vscode-file --fetch-schemes=vscode-webview,vscode-file --service-worker-schemes=vscode-webview --code-cache-schemes=vscode-webview,vscode-file --app-user-model-id=Microsoft.VisualStudioCode --app-path=C:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\resources\\app --enable-sandbox --enable-blink-features=HighlightAPI --disable-blink-features=FontMatchingCTMigration,StandardizedBrowserZoom, --video-capture-use-gpu-memory-buffer --lang=en-US --device-scale-factor=1 --num-raster-threads=2 --enable-main-frame-before-activation --renderer-client-id=30 --time-ticks-at-unix-epoch=-1767286278078973 --launch-time-ticks=79426776761 --field-trial-handle=1724,i,11735031614327320611,13986067942660001508,262144 --enable-features=DocumentPolicyIncludeJSCallStacksInCrashReports,EarlyEstablishGpuChannel,EnableTransparentHwndEnlargement,EstablishGpuChannelAsync --disable-features=CalculateNativeWinOcclusion,LocalNetworkAccessChecks,ScreenAIOCREnabled,SpareRendererForSitePerProcess,TraceSiteInstanceGetProcessCreation --variations-seed-version --trace-process-track-uuid=3190709014423126964 --mojo-platform-channel-handle=5436 --vscode-window-config=vscode:99c8c2d9-d4b4-4206-b109-72e7eaef4058 /prefetch:1",
+      "cpu_usage": 0.0,
+      "memory_usage": 5.951786205165592,
+      "create_time": "2026-01-02T09:55:05.583258",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 17692,
+      "name": "powershell.exe",
+      "cmdline": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe -noexit -command try { . \"c:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\resources\\app\\out\\vs\\workbench\\contrib\\terminal\\common\\scripts\\shellIntegration.ps1\" } catch {}",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.1703498308812105,
+      "create_time": "2026-01-02T10:35:20.093932",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 17840,
+      "name": "Code.exe",
+      "cmdline": "C:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe --type=renderer --user-data-dir=C:\\Users\\rexxr\\AppData\\Roaming\\Code --standard-schemes=vscode-webview,vscode-file --enable-sandbox --secure-schemes=vscode-webview,vscode-file --cors-schemes=vscode-webview,vscode-file --fetch-schemes=vscode-webview,vscode-file --service-worker-schemes=vscode-webview --code-cache-schemes=vscode-webview,vscode-file --app-user-model-id=Microsoft.VisualStudioCode --app-path=C:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\resources\\app --enable-sandbox --enable-blink-features=HighlightAPI --disable-blink-features=FontMatchingCTMigration,StandardizedBrowserZoom, --video-capture-use-gpu-memory-buffer --lang=en-US --device-scale-factor=1 --num-raster-threads=2 --enable-main-frame-before-activation --renderer-client-id=27 --time-ticks-at-unix-epoch=-1767286278078973 --launch-time-ticks=69108575685 --field-trial-handle=1724,i,11735031614327320611,13986067942660001508,262144 --enable-features=DocumentPolicyIncludeJSCallStacksInCrashReports,EarlyEstablishGpuChannel,EnableTransparentHwndEnlargement,EstablishGpuChannelAsync --disable-features=CalculateNativeWinOcclusion,LocalNetworkAccessChecks,ScreenAIOCREnabled,SpareRendererForSitePerProcess,TraceSiteInstanceGetProcessCreation --variations-seed-version --trace-process-track-uuid=3190709011612001417 --mojo-platform-channel-handle=5772 --vscode-window-config=vscode:47032381-59a2-48a1-8d11-37686a149e4a /prefetch:1",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.31254108451158735,
+      "create_time": "2026-01-02T07:03:07.239118",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 17920,
+      "name": "chrome.exe",
+      "cmdline": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe --type=renderer --origin-trial-disabled-features=CanvasTextNg|WebAssemblyCustomDescriptors --video-capture-use-gpu-memory-buffer --lang=en-US --device-scale-factor=1 --num-raster-threads=2 --enable-main-frame-before-activation --renderer-client-id=555 --time-ticks-at-unix-epoch=-1767286278078973 --launch-time-ticks=80467086720 --metrics-shmem-handle=9608,i,8272816984481634286,4265676579714517922,2097152 --field-trial-handle=2004,i,11491746468440406962,16938629281342729037,262144 --variations-seed-version=20251219-070015.367000 --trace-process-track-uuid=3190709506370097689 --mojo-platform-channel-handle=9584 /prefetch:1",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.07584649033692287,
+      "create_time": "2026-01-02T10:12:25.902147",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 18196,
+      "name": "Code.exe",
+      "cmdline": "C:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe --type=utility --utility-sub-type=node.mojom.NodeService --lang=en-US --service-sandbox-type=none --video-capture-use-gpu-memory-buffer --user-data-dir=C:\\Users\\rexxr\\AppData\\Roaming\\Code --standard-schemes=vscode-webview,vscode-file --enable-sandbox --secure-schemes=vscode-webview,vscode-file --cors-schemes=vscode-webview,vscode-file --fetch-schemes=vscode-webview,vscode-file --service-worker-schemes=vscode-webview --code-cache-schemes=vscode-webview,vscode-file --field-trial-handle=1724,i,11735031614327320611,13986067942660001508,262144 --enable-features=DocumentPolicyIncludeJSCallStacksInCrashReports,EarlyEstablishGpuChannel,EnableTransparentHwndEnlargement,EstablishGpuChannelAsync --disable-features=CalculateNativeWinOcclusion,LocalNetworkAccessChecks,ScreenAIOCREnabled,SpareRendererForSitePerProcess,TraceSiteInstanceGetProcessCreation --variations-seed-version --trace-process-track-uuid=3190708998493415531 --mojo-platform-channel-handle=4184 /prefetch:14",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.31652105319771956,
+      "create_time": "2026-01-02T06:53:08.507416",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 18204,
+      "name": "powershell.exe",
+      "cmdline": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe -noexit -command try { . \"c:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\resources\\app\\out\\vs\\workbench\\contrib\\terminal\\common\\scripts\\shellIntegration.ps1\" } catch {}",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.2006955981307294,
+      "create_time": "2026-01-02T10:25:27.160294",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 18280,
+      "name": "conhost.exe",
+      "cmdline": "\\\\?\\C:\\Windows\\system32\\conhost.exe --headless --width 17 --height 13 --signal 0xf60 --server 0xe18",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.023330026652643155,
+      "create_time": "2026-01-02T09:57:28.527811",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 18608,
+      "name": "powershell.exe",
+      "cmdline": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe -noexit -command try { . \"c:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\resources\\app\\out\\vs\\workbench\\contrib\\terminal\\common\\scripts\\shellIntegration.ps1\" } catch {}",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.16604716203133776,
+      "create_time": "2026-01-01T21:52:32.842158",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 18704,
+      "name": "chrome.exe",
+      "cmdline": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe --type=utility --utility-sub-type=video_capture.mojom.VideoCaptureService --lang=en-US --service-sandbox-type=none --video-capture-use-gpu-memory-buffer --metrics-shmem-handle=6828,i,80049902018840608,14346698122852547073,524288 --field-trial-handle=2004,i,11491746468440406962,16938629281342729037,262144 --variations-seed-version=20251219-070015.367000 --trace-process-track-uuid=3190709369561987735 --mojo-platform-channel-handle=6028 /prefetch:14",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.11465417299119149,
+      "create_time": "2026-01-02T06:57:57.682108",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 18748,
+      "name": "Code.exe",
+      "cmdline": "C:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe --max-old-space-size=3072 c:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\resources\\app\\extensions\\node_modules\\typescript\\lib\\tsserver.js --serverMode partialSemantic --useInferredProjectPerProjectRoot --disableAutomaticTypingAcquisition --cancellationPipeName C:\\Users\\rexxr\\AppData\\Local\\Temp\\vscode-typescript\\65c7130d63fce76f45fc\\tscancellation-d38d0ff3c2463493fb17.tmp* --globalPlugins @vscode/copilot-typescript-server-plugin --pluginProbeLocations c:\\Users\\rexxr\\.vscode\\extensions\\github.copilot-chat-0.35.2 --locale en --noGetErrOnBackgroundUpdate --canUseWatchEvents --validateDefaultNpmLocation --useNodeIpc",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.30810694522463516,
+      "create_time": "2026-01-02T09:55:28.942561",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 18912,
+      "name": "Code.exe",
+      "cmdline": "C:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe c:\\Users\\rexxr\\.vscode\\extensions\\ms-azuretools.vscode-containers-2.3.0\\dist\\dockerfile-language-server-nodejs\\lib\\server.js --node-ipc --node-ipc --clientProcessId=8656",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.3336361137338799,
+      "create_time": "2026-01-02T09:55:29.712946",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 19036,
+      "name": "conhost.exe",
+      "cmdline": "\\\\?\\C:\\Windows\\system32\\conhost.exe --headless --width 80 --height 30 --signal 0xf08 --server 0xcd0",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.02224240758225866,
+      "create_time": "2026-01-02T09:55:36.205796",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 19236,
+      "name": "chrome.exe",
+      "cmdline": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe --type=renderer --origin-trial-disabled-features=CanvasTextNg|WebAssemblyCustomDescriptors --video-capture-use-gpu-memory-buffer --lang=en-US --device-scale-factor=1 --num-raster-threads=2 --enable-main-frame-before-activation --renderer-client-id=178 --time-ticks-at-unix-epoch=-1767286278078973 --launch-time-ticks=38982058120 --metrics-shmem-handle=5248,i,17850313378451457266,12945274996478364085,2097152 --field-trial-handle=2004,i,11491746468440406962,16938629281342729037,262144 --variations-seed-version=20251219-070015.367000 --trace-process-track-uuid=3190709153105320616 --mojo-platform-channel-handle=6984 /prefetch:1",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.6986099989243327,
+      "create_time": "2026-01-01T22:41:00.754777",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 19372,
+      "name": "conhost.exe",
+      "cmdline": "\\\\?\\C:\\Windows\\system32\\conhost.exe --headless --width 80 --height 30 --signal 0xce0 --server 0xd90",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.022373878019338107,
+      "create_time": "2026-01-01T23:20:21.495955",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 19384,
+      "name": "conhost.exe",
+      "cmdline": "\\\\?\\C:\\Windows\\system32\\conhost.exe --headless --width 80 --height 30 --signal 0xc54 --server 0xe50",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.0222782631560076,
+      "create_time": "2026-01-01T21:52:32.568416",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 19704,
+      "name": "powershell.exe",
+      "cmdline": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe -noexit -command try { . \"c:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\resources\\app\\out\\vs\\workbench\\contrib\\terminal\\common\\scripts\\shellIntegration.ps1\" } catch {}",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.17138964251992975,
+      "create_time": "2026-01-02T10:11:10.134585",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 19808,
+      "name": "conhost.exe",
+      "cmdline": "\\??\\C:\\Windows\\system32\\conhost.exe 0x4",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.019481528403590336,
+      "create_time": "2026-01-02T07:03:05.481566",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 19952,
+      "name": "powershell.exe",
+      "cmdline": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe -noexit -command try { . \"c:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\resources\\app\\out\\vs\\workbench\\contrib\\terminal\\common\\scripts\\shellIntegration.ps1\" } catch {}",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.272179660328198,
+      "create_time": "2026-01-02T11:14:09.994701",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 20008,
+      "name": "powershell.exe",
+      "cmdline": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe -noexit -command try { . \"c:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\resources\\app\\out\\vs\\workbench\\contrib\\terminal\\common\\scripts\\shellIntegration.ps1\" } catch {}",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.2550287442182887,
+      "create_time": "2026-01-02T11:05:03.513202",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 20120,
+      "name": "Code.exe",
+      "cmdline": "C:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe --type=utility --utility-sub-type=node.mojom.NodeService --lang=en-US --service-sandbox-type=none --dns-result-order=ipv4first --experimental-network-inspection --inspect-port=0 --video-capture-use-gpu-memory-buffer --user-data-dir=C:\\Users\\rexxr\\AppData\\Roaming\\Code --standard-schemes=vscode-webview,vscode-file --enable-sandbox --secure-schemes=vscode-webview,vscode-file --cors-schemes=vscode-webview,vscode-file --fetch-schemes=vscode-webview,vscode-file --service-worker-schemes=vscode-webview --code-cache-schemes=vscode-webview,vscode-file --field-trial-handle=1724,i,11735031614327320611,13986067942660001508,262144 --enable-features=DocumentPolicyIncludeJSCallStacksInCrashReports,EarlyEstablishGpuChannel,EnableTransparentHwndEnlargement,EstablishGpuChannelAsync --disable-features=CalculateNativeWinOcclusion,LocalNetworkAccessChecks,ScreenAIOCREnabled,SpareRendererForSitePerProcess,TraceSiteInstanceGetProcessCreation --variations-seed-version --trace-process-track-uuid=3190709001304541078 --mojo-platform-channel-handle=5268 /prefetch:14",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.4861537726039513,
+      "create_time": "2026-01-02T06:53:09.333562",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 20188,
+      "name": "Code.exe",
+      "cmdline": "C:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe c:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\resources\\app\\extensions\\markdown-language-features\\dist\\serverWorkerMain --node-ipc --clientProcessId=8656",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.3136406554398881,
+      "create_time": "2026-01-02T09:55:29.770958",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 20424,
+      "name": "Code.exe",
+      "cmdline": "C:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe --max-old-space-size=3072 c:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\resources\\app\\extensions\\node_modules\\typescript\\lib\\tsserver.js --useInferredProjectPerProjectRoot --enableTelemetry --cancellationPipeName C:\\Users\\rexxr\\AppData\\Local\\Temp\\vscode-typescript\\65c7130d63fce76f45fc\\tscancellation-5102a1f17b867276a692.tmp* --globalPlugins @vscode/copilot-typescript-server-plugin --pluginProbeLocations c:\\Users\\rexxr\\.vscode\\extensions\\github.copilot-chat-0.35.2 --locale en --noGetErrOnBackgroundUpdate --canUseWatchEvents --validateDefaultNpmLocation --useNodeIpc",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.3084176935304593,
+      "create_time": "2026-01-02T09:55:28.976243",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 20428,
+      "name": "Code.exe",
+      "cmdline": "C:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe c:\\Users\\rexxr\\.vscode\\extensions\\ms-azuretools.vscode-containers-2.3.0\\dist\\compose-language-service\\lib\\server.js --node-ipc --node-ipc --clientProcessId=8656",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.31585174915440606,
+      "create_time": "2026-01-02T09:55:29.748250",
+      "threat_level": "HIGH"
+    },
+    {
+      "pid": 20456,
+      "name": "Code.exe",
+      "cmdline": "C:\\Users\\rexxr\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe --type=utility --utility-sub-type=node.mojom.NodeService --lang=en-US --service-sandbox-type=none --video-capture-use-gpu-memory-buffer --user-data-dir=C:\\Users\\rexxr\\AppData\\Roaming\\Code --standard-schemes=vscode-webview,vscode-file --enable-sandbox --secure-schemes=vscode-webview,vscode-file --cors-schemes=vscode-webview,vscode-file --fetch-schemes=vscode-webview,vscode-file --service-worker-schemes=vscode-webview --code-cache-schemes=vscode-webview,vscode-file --field-trial-handle=1724,i,11735031614327320611,13986067942660001508,262144 --enable-features=DocumentPolicyIncludeJSCallStacksInCrashReports,EarlyEstablishGpuChannel,EnableTransparentHwndEnlargement,EstablishGpuChannelAsync --disable-features=CalculateNativeWinOcclusion,LocalNetworkAccessChecks,ScreenAIOCREnabled,SpareRendererForSitePerProcess,TraceSiteInstanceGetProcessCreation --variations-seed-version --trace-process-track-uuid=3190709000367499229 --mojo-platform-channel-handle=5448 /prefetch:14",
+      "cpu_usage": 0.0,
+      "memory_usage": 0.31944925838721633,
+      "create_time": "2026-01-02T06:53:09.202649",
+      "threat_level": "HIGH"
+    }
+  ],
+  "network_anomalies": [
+    {
+      "local": "192.168.12.145:55821",
+      "remote": "52.168.117.175:443",
+      "process": "Code.exe",
+      "pid": 11112,
+      "status": "ESTABLISHED",
+      "threat_level": "MEDIUM"
+    },
+    {
+      "local": "192.168.12.145:51751",
+      "remote": "104.208.203.88:443",
+      "process": "svchost.exe",
+      "pid": 4124,
+      "status": "ESTABLISHED",
+      "threat_level": "MEDIUM"
+    },
+    {
+      "local": "192.168.12.145:57590",
+      "remote": "104.208.203.88:443",
+      "process": "OneDrive.exe",
+      "pid": 11892,
+      "status": "ESTABLISHED",
+      "threat_level": "MEDIUM"
+    },
+    {
+      "local": "2607:fb90:ee86:848e:dc2c:6088:b080:fe0e:63524",
+      "remote": "2606:4700::6812:1fad:443",
+      "process": "chrome.exe",
+      "pid": 11196,
+      "status": "ESTABLISHED",
+      "threat_level": "MEDIUM"
+    },
+    {
+      "local": "192.168.12.145:54298",
+      "remote": "40.71.11.167:443",
+      "process": "Code.exe",
+      "pid": 11112,
+      "status": "ESTABLISHED",
+      "threat_level": "MEDIUM"
+    },
+    {
+      "local": "2607:fb90:ee86:848e:dc2c:6088:b080:fe0e:60254",
+      "remote": "2a04:4e42:4::820:443",
+      "process": "Evernote.exe",
+      "pid": 10376,
+      "status": "ESTABLISHED",
+      "threat_level": "MEDIUM"
+    },
+    {
+      "local": "2607:fb90:ee86:848e:dc2c:6088:b080:fe0e:62676",
+      "remote": "2620:1ec:46::40:443",
+      "process": "Code.exe",
+      "pid": 11112,
+      "status": "ESTABLISHED",
+      "threat_level": "MEDIUM"
+    },
+    {
+      "local": "192.168.12.145:61850",
+      "remote": "140.82.114.25:443",
+      "process": "chrome.exe",
+      "pid": 11196,
+      "status": "ESTABLISHED",
+      "threat_level": "MEDIUM"
+    },
+    {
+      "local": "2607:fb90:ee86:848e:dc2c:6088:b080:fe0e:52573",
+      "remote": "2606:4700::6812:1fad:443",
+      "process": "chrome.exe",
+      "pid": 11196,
+      "status": "ESTABLISHED",
+      "threat_level": "MEDIUM"
+    },
+    {
+      "local": "192.168.12.145:61546",
+      "remote": "140.82.112.22:443",
+      "process": "Code.exe",
+      "pid": 11112,
+      "status": "ESTABLISHED",
+      "threat_level": "MEDIUM"
+    }
+  ],
+  "scan_complete": "2026-01-02T11:36:27.226854",
+  "total_threats": 294,
+  "risk_assessment": "\ud83d\udfe0 HIGH"
+}

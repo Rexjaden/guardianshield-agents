@@ -1,0 +1,444 @@
+{
+  "audit_timestamp": "2026-01-02T11:23:55.235347",
+  "threat_alert_level": "\ud83d\udfe1 ELEVATED",
+  "agent_reports": {
+    "guardian_sentinel": {
+      "suspicious_processes": [],
+      "file_integrity": [
+        {
+          "file": "main.py",
+          "hash": "bc40fc00fa16449af63c6d0bef71e24a36f949dcd3761b36e68f02dd359238bd",
+          "status": "VERIFIED",
+          "timestamp": "2026-01-02T11:23:54.180187"
+        },
+        {
+          "file": "admin_console.py",
+          "hash": "3c8d03e86386f7d377f49a44e6474897e94edd90c8a30d9407ff9ebc310478fb",
+          "status": "VERIFIED",
+          "timestamp": "2026-01-02T11:23:54.180187"
+        },
+        {
+          "file": "api_server.py",
+          "hash": "ecfbeb6b1cae991b6168e6dd7000b94d006ec09819c89b6a5294bc1596e57bcf",
+          "status": "VERIFIED",
+          "timestamp": "2026-01-02T11:23:54.181195"
+        },
+        {
+          "file": "simple_gallery_server.py",
+          "hash": "8e4c6bad4d1aeb0b056d26672459bb354f84fb061c2652f9cc40bd7af03dccba",
+          "status": "VERIFIED",
+          "timestamp": "2026-01-02T11:23:54.181195"
+        }
+      ]
+    },
+    "network_guardian": {
+      "network_connections": [
+        {
+          "local_address": "127.0.0.1:52517",
+          "remote_address": "127.0.0.1:52518",
+          "status": "ESTABLISHED",
+          "pid": 8484
+        },
+        {
+          "local_address": "2607:fb90:ee86:848e:dc2c:6088:b080:fe0e:60254",
+          "remote_address": "2a04:4e42:4::820:443",
+          "status": "ESTABLISHED",
+          "pid": 10376
+        },
+        {
+          "local_address": "2607:fb90:ee86:848e:dc2c:6088:b080:fe0e:52804",
+          "remote_address": "2607:f8b0:4002:c08::bc:5228",
+          "status": "ESTABLISHED",
+          "pid": 11196
+        },
+        {
+          "local_address": "192.168.12.145:52512",
+          "remote_address": "52.182.143.215:443",
+          "status": "ESTABLISHED",
+          "pid": 11892
+        },
+        {
+          "local_address": "192.168.12.145:52502",
+          "remote_address": "51.132.193.104:443",
+          "status": "ESTABLISHED",
+          "pid": 7976
+        },
+        {
+          "local_address": "127.0.0.1:52518",
+          "remote_address": "127.0.0.1:52517",
+          "status": "ESTABLISHED",
+          "pid": 8484
+        },
+        {
+          "local_address": "192.168.12.145:51751",
+          "remote_address": "104.208.203.88:443",
+          "status": "ESTABLISHED",
+          "pid": 4124
+        },
+        {
+          "local_address": "192.168.12.145:49886",
+          "remote_address": "140.82.114.26:443",
+          "status": "ESTABLISHED",
+          "pid": 11196
+        },
+        {
+          "local_address": "192.168.12.145:61426",
+          "remote_address": "140.82.112.22:443",
+          "status": "ESTABLISHED",
+          "pid": 11112
+        },
+        {
+          "local_address": "192.168.12.145:57590",
+          "remote_address": "104.208.203.88:443",
+          "status": "ESTABLISHED",
+          "pid": 11892
+        },
+        {
+          "local_address": "192.168.12.145:55821",
+          "remote_address": "52.168.117.175:443",
+          "status": "ESTABLISHED",
+          "pid": 11112
+        }
+      ],
+      "open_ports": [
+        {
+          "port": 49666,
+          "address": "0.0.0.0",
+          "pid": 2136,
+          "process": "svchost.exe"
+        },
+        {
+          "port": 139,
+          "address": "172.28.224.1",
+          "pid": 4,
+          "process": "System"
+        },
+        {
+          "port": 8545,
+          "address": "::1",
+          "pid": 16304,
+          "process": "wslrelay.exe"
+        },
+        {
+          "port": 8545,
+          "address": "::",
+          "pid": 13920,
+          "process": "com.docker.backend.exe"
+        },
+        {
+          "port": 135,
+          "address": "0.0.0.0",
+          "pid": 1152,
+          "process": "svchost.exe"
+        },
+        {
+          "port": 5040,
+          "address": "0.0.0.0",
+          "pid": 7284,
+          "process": "svchost.exe"
+        },
+        {
+          "port": 7680,
+          "address": "::",
+          "pid": 15260,
+          "process": "svchost.exe"
+        },
+        {
+          "port": 54030,
+          "address": "127.0.0.1",
+          "pid": 8656,
+          "process": "Code.exe"
+        },
+        {
+          "port": 445,
+          "address": "::",
+          "pid": 4,
+          "process": "System"
+        },
+        {
+          "port": 8000,
+          "address": "::",
+          "pid": 13920,
+          "process": "com.docker.backend.exe"
+        },
+        {
+          "port": 49669,
+          "address": "::",
+          "pid": 992,
+          "process": "services.exe"
+        },
+        {
+          "port": 139,
+          "address": "192.168.12.145",
+          "pid": 4,
+          "process": "System"
+        },
+        {
+          "port": 2179,
+          "address": "::",
+          "pid": 1956,
+          "process": "vmms.exe"
+        },
+        {
+          "port": 135,
+          "address": "::",
+          "pid": 1152,
+          "process": "svchost.exe"
+        },
+        {
+          "port": 7680,
+          "address": "0.0.0.0",
+          "pid": 15260,
+          "process": "svchost.exe"
+        },
+        {
+          "port": 49667,
+          "address": "::",
+          "pid": 2180,
+          "process": "svchost.exe"
+        },
+        {
+          "port": 49665,
+          "address": "0.0.0.0",
+          "pid": 860,
+          "process": "wininit.exe"
+        },
+        {
+          "port": 2179,
+          "address": "0.0.0.0",
+          "pid": 1956,
+          "process": "vmms.exe"
+        },
+        {
+          "port": 49664,
+          "address": "::",
+          "pid": 580,
+          "process": "lsass.exe"
+        },
+        {
+          "port": 49668,
+          "address": "0.0.0.0",
+          "pid": 3576,
+          "process": "spoolsv.exe"
+        },
+        {
+          "port": 49667,
+          "address": "0.0.0.0",
+          "pid": 2180,
+          "process": "svchost.exe"
+        },
+        {
+          "port": 8545,
+          "address": "0.0.0.0",
+          "pid": 13920,
+          "process": "com.docker.backend.exe"
+        },
+        {
+          "port": 49666,
+          "address": "::",
+          "pid": 2136,
+          "process": "svchost.exe"
+        },
+        {
+          "port": 49665,
+          "address": "::",
+          "pid": 860,
+          "process": "wininit.exe"
+        },
+        {
+          "port": 8000,
+          "address": "::1",
+          "pid": 16304,
+          "process": "wslrelay.exe"
+        },
+        {
+          "port": 63918,
+          "address": "127.0.0.1",
+          "pid": 20120,
+          "process": "Code.exe"
+        },
+        {
+          "port": 4090,
+          "address": "127.0.0.1",
+          "pid": 6612,
+          "process": "Code.exe"
+        },
+        {
+          "port": 49668,
+          "address": "::",
+          "pid": 3576,
+          "process": "spoolsv.exe"
+        },
+        {
+          "port": 42050,
+          "address": "::1",
+          "pid": 3420,
+          "process": "OneDrive.Sync.Service.exe"
+        },
+        {
+          "port": 4091,
+          "address": "127.0.0.1",
+          "pid": 13776,
+          "process": "Code.exe"
+        },
+        {
+          "port": 139,
+          "address": "172.19.32.1",
+          "pid": 4,
+          "process": "System"
+        },
+        {
+          "port": 49664,
+          "address": "0.0.0.0",
+          "pid": 580,
+          "process": "lsass.exe"
+        },
+        {
+          "port": 445,
+          "address": "0.0.0.0",
+          "pid": 4,
+          "process": "System"
+        },
+        {
+          "port": 8000,
+          "address": "0.0.0.0",
+          "pid": 13920,
+          "process": "com.docker.backend.exe"
+        },
+        {
+          "port": 49669,
+          "address": "0.0.0.0",
+          "pid": 992,
+          "process": "services.exe"
+        }
+      ]
+    },
+    "sovereign_validator": {
+      "system_config": {
+        "python_environment": {
+          "python_version": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+          "executable": "C:\\Users\\rexxr\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+          "status": "\u2705 VERIFIED"
+        },
+        "critical_directories": {
+          "agents/": "\u2705 EXISTS",
+          "contracts/": "\u2705 EXISTS",
+          "token_assets/": "\u2705 EXISTS"
+        },
+        "environment_variables": {
+          "PATH": "\u2705 SET",
+          "PYTHONPATH": "\u26a0\ufe0f NOT SET"
+        },
+        "system_resources": {
+          "cpu_usage": 79.6,
+          "memory_usage": 67.6,
+          "disk_usage": 48.7,
+          "status": "\u2705 NORMAL"
+        }
+      }
+    },
+    "ethereum_storm_lord": {
+      "smart_contracts": [
+        {
+          "contract": "ChainlinkPriceOracle.sol",
+          "size": 5899,
+          "lines": 169,
+          "hash": "07a1b3376482ab88aec0fa0586e466af59069a1f2bb11e43dfa42c37edbf8abd",
+          "status": "\u2705 VERIFIED"
+        },
+        {
+          "contract": "DMER.sol",
+          "size": 2954,
+          "lines": 79,
+          "hash": "d3d52d72a8512d633bce2dfebaff61b22f7e53c10accf4c0d69a406841f6186f",
+          "status": "\u2705 VERIFIED"
+        },
+        {
+          "contract": "EvolutionaryUpgradeableContract.sol",
+          "size": 2501,
+          "lines": 63,
+          "hash": "872cdfe74d11d028341cae382ddd2aa9a76aca9ac5f06348e30e387ea8fd6349",
+          "status": "\u2705 VERIFIED"
+        },
+        {
+          "contract": "GuardianLiquidityPool.sol",
+          "size": 1664,
+          "lines": 43,
+          "hash": "606ec104f062493ac18b5296f71f229ecad73d432878f7a13c37d9d7a0463f62",
+          "status": "\u2705 VERIFIED"
+        },
+        {
+          "contract": "GuardianSecurityController.sol",
+          "size": 15773,
+          "lines": 485,
+          "hash": "8d0dbc426847309f51d517132ffb4c6038d8ba84ec6bedbedc79929a685be95b",
+          "status": "\u2705 VERIFIED"
+        },
+        {
+          "contract": "GuardianShieldNFT.sol",
+          "size": 17532,
+          "lines": 498,
+          "hash": "8ec5c443b69301179e55006bb3db237e5dc324c09f7b4741e9c1758a9f572fa6",
+          "status": "\u2705 VERIFIED"
+        },
+        {
+          "contract": "GuardianShieldOracle.sol",
+          "size": 12418,
+          "lines": 376,
+          "hash": "b62a68568dd01304410bec2c110ef6f785dba951144b79028b932ec9abe73410",
+          "status": "\u2705 VERIFIED"
+        },
+        {
+          "contract": "GuardianShieldToken.sol",
+          "size": 3020,
+          "lines": 82,
+          "hash": "b57106592aa96ae65d68d8557858840b5b1c90682e0ff80ee3a53c1c296007e6",
+          "status": "\u2705 VERIFIED"
+        },
+        {
+          "contract": "GuardianStaking.sol",
+          "size": 1540,
+          "lines": 49,
+          "hash": "515b1d4e34906eae3a57e1779394ac97b5859d7e92edf165b02570c508bfe0d8",
+          "status": "\u2705 VERIFIED"
+        },
+        {
+          "contract": "GuardianToken.sol",
+          "size": 1344,
+          "lines": 41,
+          "hash": "9e2e175b216d4590d312dc68820cfdb4b3cd891ffcbc768d3140c400b765d919",
+          "status": "\u2705 VERIFIED"
+        },
+        {
+          "contract": "GuardianTokenSale.sol",
+          "size": 16124,
+          "lines": 454,
+          "hash": "ed4dbd067f6a1d1e4ae4df9f12b46c39502c9871c8fe65b4aafd87a78127ca9a",
+          "status": "\u2705 VERIFIED"
+        },
+        {
+          "contract": "GuardianTreasury.sol",
+          "size": 11123,
+          "lines": 347,
+          "hash": "80f0d1fd5b881ef2c9d9ccaa209e22209f012ae4218ea17566768c1c8d6ea5c7",
+          "status": "\u2705 VERIFIED"
+        }
+      ],
+      "blockchain_connections": []
+    }
+  },
+  "recommendations": [
+    "\ud83d\udd12 Monitor suspicious high-resource processes",
+    "\ud83c\udf10 Review network connections for unauthorized access",
+    "\ud83d\udd0d Verify integrity of all critical system files",
+    "\u26a1 Ensure blockchain connections are secure",
+    "\ud83d\udcca Continue monitoring system metrics"
+  ],
+  "immediate_actions": [
+    "\u2705 All agents deployed and scanning",
+    "\ud83d\udcdd Comprehensive audit report generated",
+    "\ud83d\udd14 Admin notification sent",
+    "\ud83d\udee1\ufe0f Security monitoring enhanced",
+    "\ud83d\udcca Continuous threat detection active"
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "bootnode_id": "guardian_bootnode_eu_west_001",
+  "region": "eu-west",
+  "location": "ireland",
+  "p2p_port": 26656,
+  "max_peers": 150,
+  "discovery_interval": 30,
+  "peer_timeout": 300,
+  "bootstrap_peers": ["bootnode-us-east.guardianshield.network:26656"],
+  "chain_id": "guardianshield-mainnet",
+  "security": {
+    "rate_limit_per_ip": 15,
+    "ban_threshold": 50,
+    "ban_duration": 3600,
+    "max_connections_per_ip": 5
+  },
+  "firewall": {
+    "allowed_ports": [26656],
+    "blocked_ports": ["*"],
+    "whitelist_ips": [],
+    "blacklist_ips": []
+  },
+  "discovery": {
+    "announce_addr": "bootnode-eu-west.guardianshield.network:26656",
+    "external_ip": "auto",
+    "peer_exchange_enabled": true,
+    "max_peer_list_size": 20
+  }
+}

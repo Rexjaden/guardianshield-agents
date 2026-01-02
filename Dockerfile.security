@@ -1,0 +1,32 @@
+# Security Scanner Container for GuardianShield
+FROM python:3.11-slim
+
+# Set working directory
+WORKDIR /app
+
+# Install security scanning tools
+RUN apt-get update && apt-get install -y \
+    nmap \
+    curl \
+    wget \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements and install Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Install additional security tools
+RUN pip install --no-cache-dir \
+    requests \
+    python-nmap \
+    pycryptodome
+
+# Copy security scanning scripts
+COPY security_assessment.py .
+COPY security_manager.py .
+
+# Create logs directory
+RUN mkdir -p /app/logs
+
+# Default command
+CMD ["python", "security_assessment.py"]

@@ -1,0 +1,10 @@
+{
+  "agent_type": "learning_agent",
+  "description": "3D visualization for learning_agent",
+  "capabilities": [
+    "3d_rendering",
+    "animation",
+    "interaction"
+  ],
+  "created_at": "2026-01-02"
+}

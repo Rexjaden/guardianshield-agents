@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GuardianShield - Web3 Security & Token Sale</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Web3 Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/web3@4.3.0/dist/web3.min.js"></script>
+    <script src="https://unpkg.com/@walletconnect/web3-provider@1.8.0/dist/umd/index.min.js"></script>
+    
+    <style>
+        :root {
+            --primary: #00d2ff;
+            --primary-dark: #0099cc;
+            --secondary: #ff6b6b;
+            --accent: #4ecdc4;
+            --success: #51cf66;
+            --warning: #ffd43b;
+            --error: #ff5757;
+            --dark: #1a1d29;
+            --dark-light: #2a2d3a;
+            --text: #ffffff;
+            --text-secondary: #a0aec0;
+            --border: #3a3d4a;
+            --gradient: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
+            --gradient-dark: linear-gradient(135deg, #1a1d29 0%, #2a2d3a 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--dark);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        .hero-section {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a1d29 0%, #2a2d3a 50%, #0f4c75 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><radialGradient id="shield-gradient"><stop offset="0%" style="stop-color:%2300d2ff;stop-opacity:0.1"/><stop offset="100%" style="stop-color:%2300d2ff;stop-opacity:0.01"/></radialGradient></defs><circle cx="500" cy="500" r="400" fill="url(%23shield-gradient)"/></svg>') center/cover;
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.05); }
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(26, 29, 41, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-link {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+        }
+
+        .nav-link:hover {
+            color: var(--primary);
+            background: rgba(0, 210, 255, 0.1);
+        }
+
+        .wallet-connect {
+            background: var(--gradient);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .wallet-connect:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 210, 255, 0.3);
+        }
+
+        .hero-content {
+            text-align: center;
+            max-width: 800px;
+            z-index: 2;
+            position: relative;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 3rem;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 210, 255, 0.3);
+        }
+
+        .token-sale-section {
+            padding: 4rem 2rem;
+            background: var(--dark-light);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+            font-size: 1.1rem;
+        }
+
+        .token-sale-dashboard {
+            background: var(--dark);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            border: 1px solid var(--border);
+        }
+
+        .sale-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .token-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .token-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .token-details h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .token-symbol {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .price-display {
+            text-align: right;
+        }
+
+        .current-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .price-usd {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .sale-progress {
+            margin-bottom: 2rem;
+        }
+
+        .progress-bar {
+            background: var(--border);
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .progress-fill {
+            background: var(--gradient);
+            height: 100%;
+            transition: width 1s ease;
+        }
+
+        .progress-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .purchase-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .purchase-form {
+            background: var(--dark-light);
+            padding: 1.5rem;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--dark);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 1rem;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .currency-toggle {
+            display: flex;
+            background: var(--dark);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .currency-option {
+            flex: 1;
+            padding: 0.75rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .currency-option.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .purchase-summary {
+            background: var(--dark-light);
+            padding: 1.5rem;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .roadmap-section {
+            padding: 4rem 2rem;
+            background: var(--dark);
+        }
+
+        .roadmap-timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .timeline-line {
+            position: absolute;
+            left: 2rem;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--gradient);
+        }
+
+        .roadmap-item {
+            position: relative;
+            margin-bottom: 3rem;
+            padding-left: 5rem;
+        }
+
+        .roadmap-marker {
+            position: absolute;
+            left: 1rem;
+            top: 0.5rem;
+            width: 2rem;
+            height: 2rem;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .roadmap-content {
+            background: var(--dark-light);
+            padding: 1.5rem;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+        }
+
+        .roadmap-quarter {
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .roadmap-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0.5rem 0;
+        }
+
+        .roadmap-features {
+            list-style: none;
+            margin-top: 1rem;
+        }
+
+        .roadmap-features li {
+            padding: 0.25rem 0;
+            color: var(--text-secondary);
+        }
+
+        .roadmap-features li:before {
+            content: "✓";
+            color: var(--success);
+            margin-right: 0.5rem;
+        }
+
+        .wallet-status {
+            position: fixed;
+            top: 80px;
+            right: 2rem;
+            background: var(--dark-light);
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            display: none;
+        }
+
+        .wallet-status.connected {
+            display: block;
+        }
+
+        .wallet-address {
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .error-message, .success-message {
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            display: none;
+        }
+
+        .error-message {
+            background: rgba(255, 87, 87, 0.1);
+            border: 1px solid var(--error);
+            color: var(--error);
+        }
+
+        .success-message {
+            background: rgba(81, 207, 102, 0.1);
+            border: 1px solid var(--success);
+            color: var(--success);
+        }
+
+        @media (max-width: 768px) {
+            .hero-title { font-size: 2.5rem; }
+            .hero-stats { flex-direction: column; gap: 1rem; }
+            .cta-buttons { flex-direction: column; }
+            .purchase-section { grid-template-columns: 1fr; }
+            .nav-menu { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+                <span>GuardianShield</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#home" class="nav-link">Home</a></li>
+                <li><a href="#token-sale" class="nav-link">Token Sale</a></li>
+                <li><a href="#roadmap" class="nav-link">Roadmap</a></li>
+                <li><a href="#features" class="nav-link">Features</a></li>
+            </ul>
+            <button id="walletConnect" class="wallet-connect">
+                <i class="fas fa-wallet"></i>
+                <span id="walletButtonText">Connect Wallet</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Wallet Status -->
+    <div id="walletStatus" class="wallet-status">
+        <div><strong>Connected:</strong></div>
+        <div class="wallet-address" id="walletAddress"></div>
+        <div><strong>Balance:</strong> <span id="walletBalance">0</span> ETH</div>
+        <div><strong>Network:</strong> <span id="networkName">Unknown</span></div>
+    </div>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero-section">
+        <div class="hero-bg"></div>
+        <div class="hero-content">
+            <h1 class="hero-title">GuardianShield</h1>
+            <p class="hero-subtitle">
+                Advanced Web3 Security & Autonomous Agent Ecosystem
+                <br>Protecting the future of decentralized finance with AI-powered threat intelligence
+            </p>
+            
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="tokensRaised">$2.4M+</div>
+                    <div class="stat-label">Raised</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="tokenHolders">1,250+</div>
+                    <div class="stat-label">Holders</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="securityScore">99.8%</div>
+                    <div class="stat-label">Security Score</div>
+                </div>
+            </div>
+
+            <div class="cta-buttons">
+                <a href="#token-sale" class="btn btn-primary">Buy $GUARD Tokens</a>
+                <a href="#roadmap" class="btn btn-secondary">View Roadmap</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Token Sale Section -->
+    <section id="token-sale" class="token-sale-section">
+        <div class="container">
+            <h2 class="section-title">$GUARD Token Sale</h2>
+            <p class="section-subtitle">
+                Secure your position in the future of Web3 security. Early investors get exclusive discounts and governance rights.
+            </p>
+
+            <div class="token-sale-dashboard">
+                <div class="sale-header">
+                    <div class="token-info">
+                        <div class="token-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="token-details">
+                            <h3>Guardian Token</h3>
+                            <div class="token-symbol">$GUARD • ERC-20</div>
+                        </div>
+                    </div>
+                    <div class="price-display">
+                        <div class="current-price" id="tokenPrice">$0.001</div>
+                        <div class="price-usd">Pre-Sale Price</div>
+                    </div>
+                </div>
+
+                <div class="sale-progress">
+                    <div class="progress-stats">
+                        <span>Progress: <span id="saleProgress">24%</span></span>
+                        <span>Stage: <strong id="currentStage">Pre-Sale</strong></span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill" style="width: 24%"></div>
+                    </div>
+                    <div class="progress-stats">
+                        <span><span id="tokensSold">12M</span> / <span id="tokensTotal">50M</span> GUARD sold</span>
+                        <span>Next Stage: $0.0015</span>
+                    </div>
+                </div>
+
+                <div class="purchase-section">
+                    <div class="purchase-form">
+                        <h4 style="margin-bottom: 1rem;">Purchase Tokens</h4>
+                        
+                        <div class="currency-toggle">
+                            <div class="currency-option active" onclick="selectCurrency('ETH')">
+                                <i class="fab fa-ethereum"></i> ETH
+                            </div>
+                            <div class="currency-option" onclick="selectCurrency('USDC')">
+                                <i class="fas fa-dollar-sign"></i> USDC
+                            </div>
+                            <div class="currency-option" onclick="selectCurrency('USDT')">
+                                <i class="fas fa-dollar-sign"></i> USDT
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Amount to Spend</label>
+                            <input type="number" id="spendAmount" class="form-input" placeholder="0.1" step="0.001" onkeyup="calculateTokens()">
+                            <small class="form-help">Minimum: 0.01 ETH • Maximum: 10 ETH</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Referral Code (Optional)</label>
+                            <input type="text" id="referralCode" class="form-input" placeholder="Enter referral code for 5% bonus">
+                        </div>
+
+                        <div class="error-message" id="errorMessage"></div>
+                        <div class="success-message" id="successMessage"></div>
+
+                        <button class="btn btn-primary" onclick="purchaseTokens()" style="width: 100%; margin-top: 1rem;" id="purchaseButton" disabled>
+                            <i class="fas fa-shopping-cart"></i> Connect Wallet to Purchase
+                        </button>
+                    </div>
+
+                    <div class="purchase-summary">
+                        <h4 style="margin-bottom: 1rem;">Purchase Summary</h4>
+                        
+                        <div class="summary-row">
+                            <span>You Pay:</span>
+                            <span id="summaryPay">0 ETH</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>You Receive:</span>
+                            <span id="summaryReceive">0 GUARD</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Token Price:</span>
+                            <span id="summaryPrice">$0.001</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Referral Bonus:</span>
+                            <span id="summaryBonus">0 GUARD</span>
+                        </div>
+                        <div class="summary-row">
+                            <span><strong>Total Tokens:</strong></span>
+                            <span id="summaryTotal"><strong>0 GUARD</strong></span>
+                        </div>
+
+                        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+                            <small style="color: var(--text-secondary);">
+                                <i class="fas fa-info-circle"></i>
+                                Tokens will be transferred immediately after purchase confirmation
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sale Stages -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
+                <div class="roadmap-content" style="background: rgba(0, 210, 255, 0.1); border-color: var(--primary);">
+                    <div class="roadmap-quarter">STAGE 1 - ACTIVE</div>
+                    <div class="roadmap-title">Pre-Sale</div>
+                    <p style="color: var(--text-secondary); margin: 0.5rem 0;">50% Discount • $0.001 per token</p>
+                    <div style="color: var(--success); font-weight: 600;">50M GUARD Available</div>
+                </div>
+                <div class="roadmap-content">
+                    <div class="roadmap-quarter">STAGE 2 - UPCOMING</div>
+                    <div class="roadmap-title">Public Sale</div>
+                    <p style="color: var(--text-secondary); margin: 0.5rem 0;">25% Discount • $0.0015 per token</p>
+                    <div style="color: var(--text-secondary);">100M GUARD Available</div>
+                </div>
+                <div class="roadmap-content">
+                    <div class="roadmap-quarter">STAGE 3 - UPCOMING</div>
+                    <div class="roadmap-title">Final Sale</div>
+                    <p style="color: var(--text-secondary); margin: 0.5rem 0;">Standard Price • $0.002 per token</p>
+                    <div style="color: var(--text-secondary);">150M GUARD Available</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Roadmap Section -->
+    <section id="roadmap" class="roadmap-section">
+        <div class="container">
+            <h2 class="section-title">Development Roadmap</h2>
+            <p class="section-subtitle">
+                Our strategic roadmap for building the future of Web3 security
+            </p>
+
+            <div class="roadmap-timeline">
+                <div class="timeline-line"></div>
+                
+                <div class="roadmap-item">
+                    <div class="roadmap-marker">Q1</div>
+                    <div class="roadmap-content" style="background: rgba(81, 207, 102, 0.1); border-color: var(--success);">
+                        <div class="roadmap-quarter">Q1 2025 - COMPLETED ✓</div>
+                        <div class="roadmap-title">Foundation & Architecture</div>
+                        <ul class="roadmap-features">
+                            <li>Core smart contracts deployed</li>
+                            <li>Autonomous agent framework</li>
+                            <li>Initial security protocols</li>
+                            <li>Private beta testing</li>
+                            <li>Team expansion</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="roadmap-item">
+                    <div class="roadmap-marker">Q2</div>
+                    <div class="roadmap-content" style="background: rgba(0, 210, 255, 0.1); border-color: var(--primary);">
+                        <div class="roadmap-quarter">Q2 2025 - IN PROGRESS 🚀</div>
+                        <div class="roadmap-title">Token Launch & Public Beta</div>
+                        <ul class="roadmap-features">
+                            <li>$GUARD token public sale</li>
+                            <li>Chainlink price integration</li>
+                            <li>Multi-wallet support</li>
+                            <li>Public beta dashboard</li>
+                            <li>Community governance</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="roadmap-item">
+                    <div class="roadmap-marker">Q3</div>
+                    <div class="roadmap-content">
+                        <div class="roadmap-quarter">Q3 2025 - UPCOMING</div>
+                        <div class="roadmap-title">AI-Powered Threat Detection</div>
+                        <ul class="roadmap-features">
+                            <li>Advanced ML threat models</li>
+                            <li>Real-time blockchain monitoring</li>
+                            <li>Automated threat response</li>
+                            <li>Cross-chain compatibility</li>
+                            <li>Enterprise partnerships</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="roadmap-item">
+                    <div class="roadmap-marker">Q4</div>
+                    <div class="roadmap-content">
+                        <div class="roadmap-quarter">Q4 2025 - PLANNED</div>
+                        <div class="roadmap-title">Ecosystem Expansion</div>
+                        <ul class="roadmap-features">
+                            <li>DeFi protocol integrations</li>
+                            <li>Mobile security app</li>
+                            <li>API marketplace launch</li>
+                            <li>Staking rewards program</li>
+                            <li>Global security network</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="roadmap-item">
+                    <div class="roadmap-marker">26</div>
+                    <div class="roadmap-content">
+                        <div class="roadmap-quarter">2026 - FUTURE</div>
+                        <div class="roadmap-title">Global Security Standard</div>
+                        <ul class="roadmap-features">
+                            <li>Industry-leading security protocol</li>
+                            <li>10M+ protected wallets</li>
+                            <li>Institutional adoption</li>
+                            <li>Regulatory compliance framework</li>
+                            <li>Next-gen AI agents</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Global state
+        let web3 = null;
+        let currentAccount = null;
+        let tokenSaleContract = null;
+        let selectedCurrency = 'ETH';
+        
+        // Contract addresses (update with your deployed addresses)
+        const contracts = {
+            tokenSale: '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512', // Update with deployed address
+            token: '0x5FbDB2315678afecb367f032d93F642f64180aa3'      // Update with deployed address
+        };
+        
+        // Contract ABIs (simplified)
+        const tokenSaleABI = [
+            "function getCurrentSaleInfo() view returns (uint256, string, uint256, uint256, uint256, uint256, bool, uint256, bool)",
+            "function calculateTokens(uint256) view returns (uint256)",
+            "function buyTokens(address) payable",
+            "function buyTokensWithToken(address, uint256, address)"
+        ];
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+            updateSaleStats();
+            setInterval(updateSaleStats, 30000); // Update every 30 seconds
+        });
+
+        async function initializeApp() {
+            // Check for existing wallet connection
+            if (localStorage.getItem('walletConnected') === 'true') {
+                await connectWallet();
+            }
+            
+            // Smooth scrolling for navigation
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            });
+        }
+
+        // Wallet connection
+        document.getElementById('walletConnect').addEventListener('click', async function() {
+            if (currentAccount) {
+                await disconnectWallet();
+            } else {
+                await connectWallet();
+            }
+        });
+
+        async function connectWallet() {
+            try {
+                if (typeof window.ethereum !== 'undefined') {
+                    web3 = new Web3(window.ethereum);
+                    
+                    // Request account access
+                    const accounts = await window.ethereum.request({
+                        method: 'eth_requestAccounts',
+                    });
+                    
+                    if (accounts.length > 0) {
+                        currentAccount = accounts[0];
+                        await updateWalletUI();
+                        localStorage.setItem('walletConnected', 'true');
+                        
+                        // Initialize contract
+                        if (contracts.tokenSale !== '0x0000000000000000000000000000000000000000') {
+                            tokenSaleContract = new web3.eth.Contract(tokenSaleABI, contracts.tokenSale);
+                        }
+                        
+                        showSuccess('Wallet connected successfully!');
+                    }
+                } else if (typeof window.WalletConnect !== 'undefined') {
+                    // WalletConnect fallback
+                    const provider = new WalletConnectProvider.default({
+                        infuraId: "YOUR_INFURA_ID" // Replace with your Infura ID
+                    });
+                    
+                    await provider.enable();
+                    web3 = new Web3(provider);
+                    
+                    const accounts = await web3.eth.getAccounts();
+                    if (accounts.length > 0) {
+                        currentAccount = accounts[0];
+                        await updateWalletUI();
+                        localStorage.setItem('walletConnected', 'true');
+                        showSuccess('Wallet connected via WalletConnect!');
+                    }
+                } else {
+                    showError('Please install MetaMask or use a Web3-enabled browser');
+                }
+            } catch (error) {
+                console.error('Wallet connection failed:', error);
+                showError('Failed to connect wallet: ' + error.message);
+            }
+        }
+
+        async function disconnectWallet() {
+            currentAccount = null;
+            web3 = null;
+            tokenSaleContract = null;
+            localStorage.removeItem('walletConnected');
+            
+            document.getElementById('walletButtonText').textContent = 'Connect Wallet';
+            document.getElementById('walletStatus').classList.remove('connected');
+            document.getElementById('purchaseButton').disabled = true;
+            document.getElementById('purchaseButton').innerHTML = '<i class="fas fa-shopping-cart"></i> Connect Wallet to Purchase';
+        }
+
+        async function updateWalletUI() {
+            if (!currentAccount) return;
+            
+            // Update button
+            const shortAddress = currentAccount.slice(0, 6) + '...' + currentAccount.slice(-4);
+            document.getElementById('walletButtonText').textContent = shortAddress;
+            
+            // Update wallet status
+            const balance = await web3.eth.getBalance(currentAccount);
+            const balanceEth = web3.utils.fromWei(balance, 'ether');
+            
+            document.getElementById('walletAddress').textContent = currentAccount;
+            document.getElementById('walletBalance').textContent = parseFloat(balanceEth).toFixed(4);
+            document.getElementById('walletStatus').classList.add('connected');
+            
+            // Update network
+            const networkId = await web3.eth.net.getId();
+            const networkNames = {
+                1: 'Mainnet',
+                5: 'Goerli',
+                11155111: 'Sepolia',
+                137: 'Polygon',
+                31337: 'Hardhat'
+            };
+            document.getElementById('networkName').textContent = networkNames[networkId] || `Network ${networkId}`;
+            
+            // Enable purchase button
+            document.getElementById('purchaseButton').disabled = false;
+            document.getElementById('purchaseButton').innerHTML = '<i class="fas fa-shopping-cart"></i> Purchase Tokens';
+        }
+
+        // Token sale functions
+        function selectCurrency(currency) {
+            selectedCurrency = currency;
+            
+            // Update UI
+            document.querySelectorAll('.currency-option').forEach(option => {
+                option.classList.remove('active');
+            });
+            event.target.closest('.currency-option').classList.add('active');
+            
+            // Update form
+            const input = document.getElementById('spendAmount');
+            input.placeholder = currency === 'ETH' ? '0.1' : '300';
+            
+            calculateTokens();
+        }
+
+        function calculateTokens() {
+            const amount = parseFloat(document.getElementById('spendAmount').value) || 0;
+            const currentPrice = 0.001; // $0.001 per token
+            
+            if (amount <= 0) {
+                updateSummary(0, 0, 0, 0);
+                return;
+            }
+            
+            let usdValue;
+            let displayAmount;
+            
+            if (selectedCurrency === 'ETH') {
+                usdValue = amount * 3000; // Assume $3000 per ETH
+                displayAmount = amount + ' ETH';
+            } else {
+                usdValue = amount;
+                displayAmount = amount + ' ' + selectedCurrency;
+            }
+            
+            const tokensReceived = usdValue / currentPrice;
+            const referralBonus = document.getElementById('referralCode').value ? tokensReceived * 0.05 : 0;
+            const totalTokens = tokensReceived + referralBonus;
+            
+            updateSummary(displayAmount, tokensReceived, referralBonus, totalTokens);
+        }
+
+        function updateSummary(payAmount, receiveTokens, bonusTokens, totalTokens) {
+            document.getElementById('summaryPay').textContent = payAmount;
+            document.getElementById('summaryReceive').textContent = receiveTokens.toLocaleString(undefined, {maximumFractionDigits: 2}) + ' GUARD';
+            document.getElementById('summaryBonus').textContent = bonusTokens.toLocaleString(undefined, {maximumFractionDigits: 2}) + ' GUARD';
+            document.getElementById('summaryTotal').innerHTML = '<strong>' + totalTokens.toLocaleString(undefined, {maximumFractionDigits: 2}) + ' GUARD</strong>';
+        }
+
+        async function purchaseTokens() {
+            if (!currentAccount || !tokenSaleContract) {
+                showError('Please connect your wallet first');
+                return;
+            }
+            
+            const amount = parseFloat(document.getElementById('spendAmount').value);
+            if (!amount || amount <= 0) {
+                showError('Please enter a valid amount');
+                return;
+            }
+            
+            try {
+                document.getElementById('purchaseButton').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                document.getElementById('purchaseButton').disabled = true;
+                
+                let tx;
+                const referralAddress = '0x0000000000000000000000000000000000000000'; // Default referral
+                
+                if (selectedCurrency === 'ETH') {
+                    const amountWei = web3.utils.toWei(amount.toString(), 'ether');
+                    tx = await tokenSaleContract.methods.buyTokens(referralAddress).send({
+                        from: currentAccount,
+                        value: amountWei
+                    });
+                } else {
+                    // For USDC/USDT purchases (requires token approval first)
+                    showError('Token purchases coming soon! Please use ETH for now.');
+                    return;
+                }
+                
+                showSuccess(`Purchase successful! Transaction: ${tx.transactionHash}`);
+                
+                // Reset form
+                document.getElementById('spendAmount').value = '';
+                calculateTokens();
+                
+                // Update stats
+                updateSaleStats();
+                
+            } catch (error) {
+                console.error('Purchase failed:', error);
+                showError('Purchase failed: ' + error.message);
+            } finally {
+                document.getElementById('purchaseButton').innerHTML = '<i class="fas fa-shopping-cart"></i> Purchase Tokens';
+                document.getElementById('purchaseButton').disabled = false;
+            }
+        }
+
+        async function updateSaleStats() {
+            // Simulate real-time stats (replace with actual contract calls)
+            const stats = {
+                tokensRaised: '$' + (2400000 + Math.random() * 100000).toLocaleString(undefined, {maximumFractionDigits: 0}),
+                tokenHolders: (1250 + Math.floor(Math.random() * 50)).toLocaleString(),
+                securityScore: '99.' + (80 + Math.floor(Math.random() * 20)) + '%',
+                saleProgress: 24 + Math.random() * 2,
+                tokensSold: (12000000 + Math.random() * 1000000).toLocaleString(undefined, {maximumFractionDigits: 0}) + 'M'
+            };
+            
+            // Update hero stats
+            document.getElementById('tokensRaised').textContent = stats.tokensRaised;
+            document.getElementById('tokenHolders').textContent = stats.tokenHolders;
+            document.getElementById('securityScore').textContent = stats.securityScore;
+            
+            // Update sale progress
+            document.getElementById('saleProgress').textContent = stats.saleProgress.toFixed(1) + '%';
+            document.getElementById('progressFill').style.width = stats.saleProgress + '%';
+            document.getElementById('tokensSold').textContent = stats.tokensSold;
+        }
+
+        // Utility functions
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            setTimeout(() => { errorDiv.style.display = 'none'; }, 5000);
+        }
+
+        function showSuccess(message) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+            setTimeout(() => { successDiv.style.display = 'none'; }, 5000);
+        }
+
+        // Referral code input handler
+        document.getElementById('referralCode').addEventListener('input', calculateTokens);
+        document.getElementById('spendAmount').addEventListener('input', calculateTokens);
+
+        // Handle account changes
+        if (typeof window.ethereum !== 'undefined') {
+            window.ethereum.on('accountsChanged', function (accounts) {
+                if (accounts.length === 0) {
+                    disconnectWallet();
+                } else if (accounts[0] !== currentAccount) {
+                    currentAccount = accounts[0];
+                    updateWalletUI();
+                }
+            });
+            
+            window.ethereum.on('chainChanged', function (chainId) {
+                window.location.reload();
+            });
+        }
+    </script>
+</body>
+</html>

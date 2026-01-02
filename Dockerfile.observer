@@ -1,0 +1,164 @@
+# GuardianShield Observer/Archive Node
+# High-capacity analytics and indexing infrastructure
+# Built for comprehensive blockchain data analysis
+
+FROM ubuntu:22.04
+
+# Avoid interactive prompts during package installation
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=UTC
+
+# Create dedicated user for security
+RUN groupadd -r guardian && useradd -r -g guardian -d /home/guardian -s /bin/bash guardian
+
+# Install system dependencies and blockchain tools
+RUN apt-get update && apt-get install -y \
+    curl \
+    wget \
+    jq \
+    git \
+    build-essential \
+    python3 \
+    python3-pip \
+    python3-venv \
+    postgresql-client \
+    redis-tools \
+    htop \
+    iotop \
+    netcat \
+    telnet \
+    vim \
+    tmux \
+    supervisor \
+    nginx \
+    logrotate \
+    ca-certificates \
+    gnupg \
+    lsb-release \
+    software-properties-common \
+    libssl-dev \
+    libffi-dev \
+    libpq-dev \
+    librocksdb-dev \
+    zlib1g-dev \
+    liblz4-dev \
+    libsnappy-dev \
+    libbz2-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Node.js for blockchain indexing tools
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs
+
+# Install Go for blockchain client
+RUN wget https://go.dev/dl/go1.21.5.linux-amd64.tar.gz \
+    && tar -C /usr/local -xzf go1.21.5.linux-amd64.tar.gz \
+    && rm go1.21.5.linux-amd64.tar.gz
+
+ENV PATH=$PATH:/usr/local/go/bin
+
+# Create application directories with proper permissions
+RUN mkdir -p /home/guardian/{blockchain-data,logs,config,indexer,analytics,api} \
+    && mkdir -p /var/log/guardian \
+    && mkdir -p /etc/guardian \
+    && chown -R guardian:guardian /home/guardian /var/log/guardian /etc/guardian
+
+# Create Python virtual environment for analytics
+USER guardian
+WORKDIR /home/guardian
+
+RUN python3 -m venv /home/guardian/analytics-venv \
+    && /home/guardian/analytics-venv/bin/pip install --upgrade pip
+
+# Install Python analytics and indexing packages
+RUN /home/guardian/analytics-venv/bin/pip install \
+    fastapi==0.104.1 \
+    uvicorn==0.24.0 \
+    sqlalchemy==2.0.23 \
+    psycopg2-binary==2.9.9 \
+    redis==5.0.1 \
+    requests==2.31.0 \
+    web3==6.11.3 \
+    pandas==2.1.4 \
+    numpy==1.25.2 \
+    prometheus-client==0.19.0 \
+    pydantic==2.5.1 \
+    asyncpg==0.29.0 \
+    elasticsearch==8.11.0 \
+    kafka-python==2.0.2 \
+    celery==5.3.4 \
+    aiohttp==3.9.1 \
+    websockets==12.0
+
+# Install blockchain indexing tools
+RUN npm install -g --prefix /home/guardian \
+    @blockscout/blockscout-cli \
+    web3 \
+    ethers \
+    @elastic/elasticsearch
+
+# Copy observer node configuration
+COPY --chown=guardian:guardian observer-config/ /etc/guardian/
+COPY --chown=guardian:guardian blockchain_observer.py /home/guardian/
+COPY --chown=guardian:guardian blockchain_indexer.py /home/guardian/
+COPY --chown=guardian:guardian analytics_api.py /home/guardian/
+COPY --chown=guardian:guardian observer_supervisor.conf /etc/supervisor/conf.d/
+
+# Copy nginx configuration for analytics API
+USER root
+COPY observer-nginx.conf /etc/nginx/sites-available/observer-api
+RUN ln -sf /etc/nginx/sites-available/observer-api /etc/nginx/sites-enabled/ \
+    && rm -f /etc/nginx/sites-enabled/default
+
+# Setup log rotation
+COPY observer-logrotate.conf /etc/logrotate.d/guardian-observer
+
+# Create storage directories with appropriate sizing
+RUN mkdir -p /home/guardian/blockchain-data/{blocks,transactions,state,index} \
+    && mkdir -p /home/guardian/analytics/{cache,exports,reports} \
+    && chown -R guardian:guardian /home/guardian
+
+# Set up Prometheus metrics endpoint
+RUN mkdir -p /home/guardian/metrics \
+    && chown -R guardian:guardian /home/guardian/metrics
+
+USER guardian
+
+# Expose ports for various services
+# 26657 - Blockchain RPC
+# 26656 - P2P networking  
+# 8545 - Ethereum-compatible JSON-RPC
+# 8080 - Analytics API
+# 9090 - Prometheus metrics
+# 5432 - PostgreSQL (if embedded)
+# 9200 - Elasticsearch (if embedded)
+EXPOSE 26657 26656 8545 8080 9090 5432 9200
+
+# Health check script
+COPY --chown=guardian:guardian observer-healthcheck.sh /home/guardian/
+RUN chmod +x /home/guardian/observer-healthcheck.sh
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD /home/guardian/observer-healthcheck.sh
+
+# Environment configuration
+ENV OBSERVER_MODE=archive
+ENV STORAGE_ENGINE=rocksdb
+ENV INDEXING_ENABLED=true
+ENV ANALYTICS_ENABLED=true
+ENV PROMETHEUS_ENABLED=true
+ENV LOG_LEVEL=info
+ENV MAX_BLOCK_CACHE=10000
+ENV MAX_TRANSACTION_CACHE=50000
+
+# Volume mounts for persistent data
+VOLUME ["/home/guardian/blockchain-data", "/home/guardian/analytics", "/var/log/guardian"]
+
+# Supervisor configuration for multi-service management
+USER root
+COPY observer-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/observer-entrypoint.sh
+
+# Start services with supervisor
+ENTRYPOINT ["/usr/local/bin/observer-entrypoint.sh"]
+CMD ["supervisord", "-n", "-c", "/etc/supervisor/supervisord.conf"]

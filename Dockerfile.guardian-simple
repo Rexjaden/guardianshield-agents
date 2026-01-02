@@ -1,0 +1,102 @@
+# GuardianShield Simplified Base Image
+# For all node types: validator, sentry, observer, bootnode
+
+FROM ubuntu:22.04
+
+# Prevent interactive prompts during build
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Create guardian user
+RUN groupadd -r guardian && useradd -r -g guardian -d /home/guardian -m guardian
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    # Core system tools
+    curl wget git vim nano htop \
+    # Python and build tools
+    python3 python3-pip python3-venv build-essential \
+    # Network and security tools
+    iptables fail2ban nginx redis-server \
+    # Monitoring tools
+    prometheus-node-exporter \
+    # Process management
+    supervisor \
+    # SSL/TLS support
+    ca-certificates openssl \
+    # JSON processing
+    jq \
+    # Cleanup
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set working directory
+WORKDIR /home/guardian
+
+# Create required directories
+RUN mkdir -p /home/guardian/{blockchain-data,keys,logs,config} \
+    && mkdir -p /var/log/guardian \
+    && chown -R guardian:guardian /home/guardian \
+    && chown -R guardian:guardian /var/log/guardian
+
+# Copy our core files
+COPY --chown=guardian:guardian guardian-node-manager.py /home/guardian/
+COPY --chown=guardian:guardian guardian-simple-entrypoint.sh /home/guardian/
+COPY --chown=guardian:guardian node_interaction_protocol.py /home/guardian/
+COPY --chown=guardian:guardian universal_node_service.py /home/guardian/
+COPY --chown=guardian:guardian universal-healthcheck.sh /home/guardian/
+
+# Make scripts executable
+RUN chmod +x /home/guardian/*.sh
+
+# Install Python dependencies
+RUN python3 -m pip install --no-cache-dir \
+    aiohttp \
+    websockets \
+    prometheus-client \
+    pyjwt \
+    psycopg2-binary \
+    redis \
+    requests \
+    asyncio \
+    dataclasses \
+    typing-extensions
+
+# Create basic supervisor configuration
+RUN echo '[supervisord]\n\
+nodaemon=true\n\
+user=root\n\
+logfile=/var/log/supervisor/supervisord.log\n\
+pidfile=/var/run/supervisord.pid\n\
+\n\
+[unix_http_server]\n\
+file=/var/run/supervisor.sock\n\
+chmod=0700\n\
+\n\
+[rpcinterface:supervisor]\n\
+supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface\n\
+\n\
+[supervisorctl]\n\
+serverurl=unix:///var/run/supervisor.sock\n' > /etc/supervisor/conf.d/supervisord.conf
+
+# Expose common ports
+EXPOSE 8080 8081 9090 26656 26657
+
+# Switch to guardian user
+USER guardian
+
+# Set environment variables
+ENV NODE_TYPE=validator
+ENV NODE_ID=unknown
+ENV HTTP_PORT=8080
+ENV WEBSOCKET_PORT=8081
+ENV P2P_PORT=26656
+ENV RPC_PORT=26657
+ENV METRICS_PORT=9090
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD /home/guardian/universal-healthcheck.sh || exit 1
+
+# Use our universal entrypoint
+ENTRYPOINT ["/home/guardian/guardian-simple-entrypoint.sh"]
+CMD ["guardian-service"]

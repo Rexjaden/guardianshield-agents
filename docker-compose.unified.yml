@@ -1,0 +1,663 @@
+# GuardianShield Multi-Layer Network Architecture
+# All nodes use the same base image with different configurations
+# Nodes interact through proper layers: External -> Sentry -> Observer -> Validator
+
+version: '3.8'
+
+networks:
+  # Public network for external access to sentries
+  guardian-public:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.18.0.0/16
+          gateway: 172.18.0.1
+  
+  # Sentry network for sentry-to-sentry communication
+  guardian-sentry:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+          gateway: 172.20.0.1
+  
+  # Observer network for analytics and indexing
+  guardian-observer:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.21.0.0/16
+          gateway: 172.21.0.1
+  
+  # Validator network (private, isolated)
+  guardian-validator:
+    driver: bridge
+    internal: true
+    ipam:
+      config:
+        - subnet: 172.22.0.0/16
+          gateway: 172.22.0.1
+  
+  # Management network for monitoring and administration
+  guardian-management:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.23.0.0/16
+          gateway: 172.23.0.1
+
+volumes:
+  # Shared volumes for configuration
+  guardian-config:
+    driver: local
+  
+  # Node-specific data volumes
+  validator-us-east-data:
+    driver: local
+  validator-eu-west-data:
+    driver: local
+  validator-asia-pacific-data:
+    driver: local
+  
+  sentry-data:
+    driver: local
+  
+  observer-data:
+    driver: local
+  
+  bootnode-data:
+    driver: local
+  
+  # Additional volumes for monitoring
+  observer-postgres-data:
+    driver: local
+  grafana-data:
+    driver: local
+
+services:
+  # ============================================================================
+  # VALIDATOR NODES (Private Layer)
+  # ============================================================================
+  
+  validator-us-east:
+    build:
+      context: .
+      dockerfile: Dockerfile.guardian-base
+    image: guardianshield/guardian-base:latest
+    container_name: guardian-validator-us-east
+    hostname: validator-us-east
+    restart: unless-stopped
+    networks:
+      guardian-validator:
+        ipv4_address: 172.22.10.10
+      guardian-management:
+        ipv4_address: 172.23.10.10
+    volumes:
+      - validator-us-east-data:/home/guardian/blockchain-data
+      - guardian-config:/etc/guardian/shared
+    environment:
+      - NODE_TYPE=validator
+      - NODE_ID=guardian-validator-us-east-001
+      - NODE_REGION=us-east
+      - NODE_TIER=primary
+      - NETWORK_MODE=multi-layer
+      - SECURITY_MODE=high
+      - P2P_PORT=26656
+      - RPC_PORT=26657
+      - METRICS_PORT=9090
+      - LOG_LEVEL=info
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 8G
+        reservations:
+          cpus: '1.0'
+          memory: 4G
+    healthcheck:
+      test: ["CMD", "/home/guardian/universal-healthcheck.sh"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    logging:
+      driver: json-file
+      options:
+        max-size: "100m"
+        max-file: "5"
+
+  validator-eu-west:
+    build:
+      context: .
+      dockerfile: Dockerfile.guardian-base
+    image: guardianshield/guardian-base:latest
+    container_name: guardian-validator-eu-west
+    hostname: validator-eu-west
+    restart: unless-stopped
+    networks:
+      guardian-validator:
+        ipv4_address: 172.22.10.11
+      guardian-management:
+        ipv4_address: 172.23.10.11
+    volumes:
+      - validator-eu-west-data:/home/guardian/blockchain-data
+      - guardian-config:/etc/guardian/shared
+    environment:
+      - NODE_TYPE=validator
+      - NODE_ID=guardian-validator-eu-west-001
+      - NODE_REGION=eu-west
+      - NODE_TIER=primary
+      - NETWORK_MODE=multi-layer
+      - SECURITY_MODE=high
+      - P2P_PORT=26656
+      - RPC_PORT=26657
+      - METRICS_PORT=9090
+      - LOG_LEVEL=info
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 8G
+        reservations:
+          cpus: '1.0'
+          memory: 4G
+    healthcheck:
+      test: ["CMD", "/home/guardian/universal-healthcheck.sh"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    logging:
+      driver: json-file
+      options:
+        max-size: "100m"
+        max-file: "5"
+
+  validator-asia-pacific:
+    build:
+      context: .
+      dockerfile: Dockerfile.guardian-base
+    image: guardianshield/guardian-base:latest
+    container_name: guardian-validator-asia-pacific
+    hostname: validator-asia-pacific
+    restart: unless-stopped
+    networks:
+      guardian-validator:
+        ipv4_address: 172.22.10.12
+      guardian-management:
+        ipv4_address: 172.23.10.12
+    volumes:
+      - validator-asia-pacific-data:/home/guardian/blockchain-data
+      - guardian-config:/etc/guardian/shared
+    environment:
+      - NODE_TYPE=validator
+      - NODE_ID=guardian-validator-asia-pacific-001
+      - NODE_REGION=asia-pacific
+      - NODE_TIER=primary
+      - NETWORK_MODE=multi-layer
+      - SECURITY_MODE=high
+      - P2P_PORT=26656
+      - RPC_PORT=26657
+      - METRICS_PORT=9090
+      - LOG_LEVEL=info
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 8G
+        reservations:
+          cpus: '1.0'
+          memory: 4G
+    healthcheck:
+      test: ["CMD", "/home/guardian/universal-healthcheck.sh"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    logging:
+      driver: json-file
+      options:
+        max-size: "100m"
+        max-file: "5"
+
+  # ============================================================================
+  # SENTRY NODES (Protection Layer)
+  # ============================================================================
+  
+  sentry-us-east-01:
+    build:
+      context: .
+      dockerfile: Dockerfile.guardian-base
+    image: guardianshield/guardian-base:latest
+    container_name: guardian-sentry-us-east-01
+    hostname: sentry-us-east-01
+    restart: unless-stopped
+    networks:
+      guardian-public:
+        ipv4_address: 172.18.20.10
+      guardian-sentry:
+        ipv4_address: 172.20.20.10
+      guardian-validator:
+        ipv4_address: 172.22.20.10
+      guardian-management:
+        ipv4_address: 172.23.20.10
+    ports:
+      - "80:80"       # HTTP API
+      - "443:443"     # HTTPS API
+      - "26657:26657" # RPC
+      - "8080:8080"   # WebSocket
+    volumes:
+      - sentry-data:/home/guardian/blockchain-data
+      - guardian-config:/etc/guardian/shared
+    environment:
+      - NODE_TYPE=sentry
+      - NODE_ID=guardian-sentry-us-east-001
+      - NODE_REGION=us-east
+      - NODE_TIER=primary
+      - NETWORK_MODE=multi-layer
+      - SECURITY_MODE=standard
+      - LOAD_BALANCER_TIER=primary
+      - RATE_LIMIT_RPM=10000
+      - RATE_LIMIT_IP_RPM=1000
+      - MAX_CONN_PER_IP=50
+      - REDIS_HOST=sentry-redis
+      - LOG_LEVEL=info
+    depends_on:
+      - validator-us-east
+      - sentry-redis
+    deploy:
+      resources:
+        limits:
+          cpus: '3.0'
+          memory: 12G
+        reservations:
+          cpus: '1.5'
+          memory: 6G
+    healthcheck:
+      test: ["CMD", "/home/guardian/universal-healthcheck.sh"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    logging:
+      driver: json-file
+      options:
+        max-size: "100m"
+        max-file: "5"
+
+  sentry-us-east-02:
+    build:
+      context: .
+      dockerfile: Dockerfile.guardian-base
+    image: guardianshield/guardian-base:latest
+    container_name: guardian-sentry-us-east-02
+    hostname: sentry-us-east-02
+    restart: unless-stopped
+    networks:
+      guardian-public:
+        ipv4_address: 172.18.20.11
+      guardian-sentry:
+        ipv4_address: 172.20.20.11
+      guardian-validator:
+        ipv4_address: 172.22.20.11
+      guardian-management:
+        ipv4_address: 172.23.20.11
+    ports:
+      - "8081:80"      # HTTP API (backup)
+      - "8444:443"     # HTTPS API (backup)
+      - "26658:26657"  # RPC (backup)
+      - "8082:8080"    # WebSocket (backup)
+    volumes:
+      - sentry-data:/home/guardian/blockchain-data
+      - guardian-config:/etc/guardian/shared
+    environment:
+      - NODE_TYPE=sentry
+      - NODE_ID=guardian-sentry-us-east-002
+      - NODE_REGION=us-east
+      - NODE_TIER=secondary
+      - NETWORK_MODE=multi-layer
+      - SECURITY_MODE=standard
+      - LOAD_BALANCER_TIER=secondary
+      - RATE_LIMIT_RPM=8000
+      - RATE_LIMIT_IP_RPM=800
+      - MAX_CONN_PER_IP=40
+      - REDIS_HOST=sentry-redis
+      - LOG_LEVEL=info
+    depends_on:
+      - validator-us-east
+      - sentry-redis
+    deploy:
+      resources:
+        limits:
+          cpus: '2.5'
+          memory: 10G
+        reservations:
+          cpus: '1.0'
+          memory: 4G
+    healthcheck:
+      test: ["CMD", "/home/guardian/universal-healthcheck.sh"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    logging:
+      driver: json-file
+      options:
+        max-size: "100m"
+        max-file: "5"
+
+  # ============================================================================
+  # OBSERVER NODES (Analytics Layer)
+  # ============================================================================
+  
+  observer-us-east:
+    build:
+      context: .
+      dockerfile: Dockerfile.guardian-base
+    image: guardianshield/guardian-base:latest
+    container_name: guardian-observer-us-east
+    hostname: observer-us-east
+    restart: unless-stopped
+    networks:
+      guardian-sentry:
+        ipv4_address: 172.20.30.10
+      guardian-observer:
+        ipv4_address: 172.21.30.10
+      guardian-management:
+        ipv4_address: 172.23.30.10
+    ports:
+      - "8545:8545"    # JSON-RPC API
+      - "8083:8080"    # Analytics API
+      - "9091:9090"    # Prometheus metrics
+    volumes:
+      - observer-data:/home/guardian/blockchain-data
+      - guardian-config:/etc/guardian/shared
+    environment:
+      - NODE_TYPE=observer
+      - NODE_ID=guardian-observer-us-east-001
+      - NODE_REGION=us-east
+      - NODE_TIER=primary
+      - NETWORK_MODE=multi-layer
+      - SECURITY_MODE=standard
+      - POSTGRES_HOST=observer-postgres
+      - POSTGRES_DB=guardian_analytics
+      - POSTGRES_USER=observer
+      - POSTGRES_PASSWORD=observer123
+      - REDIS_HOST=observer-redis
+      - REDIS_PASSWORD=redis123
+      - ELASTICSEARCH_HOST=observer-elasticsearch
+      - INDEXING_BATCH_SIZE=500
+      - INDEXING_WORKERS=6
+      - MAX_BLOCK_CACHE=50000
+      - MAX_TX_CACHE=200000
+      - LOG_LEVEL=info
+    depends_on:
+      - sentry-us-east-01
+      - observer-postgres
+      - observer-redis
+      - observer-elasticsearch
+    deploy:
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 16G
+        reservations:
+          cpus: '2.0'
+          memory: 8G
+    healthcheck:
+      test: ["CMD", "/home/guardian/universal-healthcheck.sh"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
+    logging:
+      driver: json-file
+      options:
+        max-size: "100m"
+        max-file: "5"
+
+  # ============================================================================
+  # BOOTNODE (Discovery Layer)
+  # ============================================================================
+  
+  bootnode-us-east:
+    build:
+      context: .
+      dockerfile: Dockerfile.guardian-base
+    image: guardianshield/guardian-base:latest
+    container_name: guardian-bootnode-us-east
+    hostname: bootnode-us-east
+    restart: unless-stopped
+    networks:
+      guardian-public:
+        ipv4_address: 172.18.40.10
+      guardian-sentry:
+        ipv4_address: 172.20.40.10
+      guardian-management:
+        ipv4_address: 172.23.40.10
+    ports:
+      - "26656:26656"  # P2P networking
+    volumes:
+      - bootnode-data:/home/guardian/blockchain-data
+      - guardian-config:/etc/guardian/shared
+    environment:
+      - NODE_TYPE=bootnode
+      - NODE_ID=guardian-bootnode-us-east-001
+      - NODE_REGION=us-east
+      - NODE_TIER=primary
+      - NETWORK_MODE=multi-layer
+      - SECURITY_MODE=minimal
+      - EXTERNAL_ADDRESS=${BOOTNODE_EXTERNAL_ADDRESS:-}
+      - LOG_LEVEL=info
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 2G
+        reservations:
+          cpus: '0.2'
+          memory: 1G
+    healthcheck:
+      test: ["CMD", "/home/guardian/universal-healthcheck.sh"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "3"
+
+  # ============================================================================
+  # INFRASTRUCTURE SERVICES
+  # ============================================================================
+  
+  # Redis for sentry rate limiting
+  sentry-redis:
+    image: redis:7-alpine
+    container_name: guardian-sentry-redis
+    hostname: sentry-redis
+    restart: unless-stopped
+    networks:
+      guardian-sentry:
+        ipv4_address: 172.20.50.10
+      guardian-management:
+        ipv4_address: 172.23.50.10
+    command: redis-server --requirepass redis123 --maxmemory 2gb --maxmemory-policy allkeys-lru
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 2G
+        reservations:
+          cpus: '0.2'
+          memory: 1G
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "3"
+
+  # PostgreSQL for observer analytics
+  observer-postgres:
+    image: postgres:15-alpine
+    container_name: guardian-observer-postgres
+    hostname: observer-postgres
+    restart: unless-stopped
+    networks:
+      guardian-observer:
+        ipv4_address: 172.21.50.11
+      guardian-management:
+        ipv4_address: 172.23.50.11
+    environment:
+      - POSTGRES_DB=guardian_analytics
+      - POSTGRES_USER=observer
+      - POSTGRES_PASSWORD=observer123
+    volumes:
+      - observer-postgres-data:/var/lib/postgresql/data
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 8G
+        reservations:
+          cpus: '1.0'
+          memory: 4G
+    logging:
+      driver: json-file
+      options:
+        max-size: "100m"
+        max-file: "3"
+
+  # Redis for observer caching
+  observer-redis:
+    image: redis:7-alpine
+    container_name: guardian-observer-redis
+    hostname: observer-redis
+    restart: unless-stopped
+    networks:
+      guardian-observer:
+        ipv4_address: 172.21.50.12
+      guardian-management:
+        ipv4_address: 172.23.50.12
+    command: redis-server --requirepass redis123 --maxmemory 4gb --maxmemory-policy allkeys-lru
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 4G
+        reservations:
+          cpus: '0.5'
+          memory: 2G
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "3"
+
+  # Elasticsearch for observer search
+  observer-elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: guardian-observer-elasticsearch
+    hostname: observer-elasticsearch
+    restart: unless-stopped
+    networks:
+      guardian-observer:
+        ipv4_address: 172.21.50.13
+      guardian-management:
+        ipv4_address: 172.23.50.13
+    environment:
+      - node.name=guardian-observer-es
+      - cluster.name=guardian-analytics
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms4g -Xmx4g"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 6G
+        reservations:
+          cpus: '1.0'
+          memory: 4G
+    logging:
+      driver: json-file
+      options:
+        max-size: "100m"
+        max-file: "3"
+
+  # ============================================================================
+  # MONITORING AND MANAGEMENT
+  # ============================================================================
+  
+  # Prometheus for metrics collection
+  prometheus:
+    image: prom/prometheus:v2.47.0
+    container_name: guardian-prometheus
+    hostname: prometheus
+    restart: unless-stopped
+    networks:
+      guardian-management:
+        ipv4_address: 172.23.60.10
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/alert_rules.yml:/etc/prometheus/alert_rules.yml:ro
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.retention.time=90d'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 4G
+        reservations:
+          cpus: '0.5'
+          memory: 2G
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "3"
+
+  # Grafana for visualization
+  grafana:
+    image: grafana/grafana:10.2.0
+    container_name: guardian-grafana
+    hostname: grafana
+    restart: unless-stopped
+    networks:
+      guardian-management:
+        ipv4_address: 172.23.60.11
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=guardian123
+      - GF_INSTALL_PLUGINS=grafana-piechart-panel,grafana-worldmap-panel
+    volumes:
+      - grafana-data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 2G
+        reservations:
+          cpus: '0.2'
+          memory: 1G
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "3"

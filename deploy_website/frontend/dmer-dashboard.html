@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DMER - Dynamic Threat Intelligence Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.min.js"></script>
+    <style>
+        :root {
+            --dmer-primary: #ff0066;
+            --dmer-secondary: #00ffaa;
+            --dmer-accent: #ffaa00;
+            --dmer-critical: #ff3333;
+            --dmer-high: #ff6600;
+            --dmer-medium: #ffaa00;
+            --dmer-low: #00aa00;
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a2e;
+            --bg-tertiary: #16213e;
+            --text-primary: #ffffff;
+            --text-secondary: #cccccc;
+            --border-color: #333333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, var(--bg-tertiary) 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        .dmer-header {
+            background: rgba(0, 0, 0, 0.9);
+            border-bottom: 2px solid var(--dmer-primary);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dmer-logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, var(--dmer-primary), var(--dmer-secondary));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .dmer-status {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 15px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            font-weight: 600;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .status-dot.online { background: var(--dmer-secondary); }
+        .status-dot.warning { background: var(--dmer-accent); }
+        .status-dot.critical { background: var(--dmer-critical); }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.2); }
+        }
+
+        .dmer-main {
+            padding: 30px;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            min-height: calc(100vh - 100px);
+        }
+
+        .threat-dashboard {
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+            gap: 20px;
+        }
+
+        .dashboard-header {
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid var(--dmer-primary);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .dashboard-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, var(--dmer-primary), var(--dmer-secondary));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .threat-metrics {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .metric-card {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(255, 0, 102, 0.3);
+        }
+
+        .metric-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .metric-critical .metric-number { color: var(--dmer-critical); }
+        .metric-high .metric-number { color: var(--dmer-high); }
+        .metric-medium .metric-number { color: var(--dmer-medium); }
+        .metric-low .metric-number { color: var(--dmer-low); }
+
+        .threat-feed {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 25px;
+            overflow-y: auto;
+            max-height: 600px;
+        }
+
+        .feed-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .feed-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dmer-primary);
+        }
+
+        .refresh-btn {
+            background: var(--dmer-primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .refresh-btn:hover {
+            background: var(--dmer-secondary);
+            transform: scale(1.05);
+        }
+
+        .threat-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 4px solid;
+            margin-bottom: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .threat-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .threat-critical { border-left-color: var(--dmer-critical); }
+        .threat-high { border-left-color: var(--dmer-high); }
+        .threat-medium { border-left-color: var(--dmer-medium); }
+        .threat-low { border-left-color: var(--dmer-low); }
+
+        .threat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .threat-type {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .threat-time {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .threat-description {
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+
+        .threat-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            padding: 5px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .block-btn {
+            background: var(--dmer-critical);
+            color: white;
+        }
+
+        .investigate-btn {
+            background: var(--dmer-accent);
+            color: black;
+        }
+
+        .ignore-btn {
+            background: var(--text-secondary);
+            color: white;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .sidebar {
+            display: grid;
+            grid-template-rows: auto auto 1fr;
+            gap: 20px;
+        }
+
+        .ml-status {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--dmer-secondary);
+            border-radius: 15px;
+            padding: 20px;
+        }
+
+        .ml-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--dmer-secondary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .ml-metric {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .threat-patterns {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--dmer-accent);
+            border-radius: 15px;
+            padding: 20px;
+        }
+
+        .patterns-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--dmer-accent);
+            margin-bottom: 15px;
+        }
+
+        .pattern-item {
+            background: rgba(255, 170, 0, 0.1);
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border-left: 3px solid var(--dmer-accent);
+        }
+
+        .pattern-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .pattern-confidence {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .analytics-panel {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 20px;
+        }
+
+        .analytics-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 200px;
+            margin-bottom: 20px;
+        }
+
+        .floating-alert {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background: linear-gradient(45deg, var(--dmer-critical), #ff6666);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(255, 0, 102, 0.5);
+            transform: translateX(400px);
+            transition: transform 0.5s ease;
+            z-index: 1000;
+        }
+
+        .floating-alert.show {
+            transform: translateX(0);
+        }
+
+        .alert-title {
+            font-weight: 700;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 1200px) {
+            .dmer-main {
+                grid-template-columns: 1fr;
+            }
+            
+            .threat-metrics {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .threat-metrics {
+                grid-template-columns: 1fr;
+            }
+            
+            .dmer-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .dmer-status {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="dmer-header">
+        <div class="dmer-logo">
+            <i class="fas fa-shield-virus"></i>
+            <span>DMER Intelligence</span>
+        </div>
+        <div class="dmer-status">
+            <div class="status-indicator">
+                <div class="status-dot online"></div>
+                <span>ML Active</span>
+            </div>
+            <div class="status-indicator">
+                <div class="status-dot online"></div>
+                <span>Real-time Feeds</span>
+            </div>
+            <div class="status-indicator">
+                <div class="status-dot warning"></div>
+                <span id="threat-count">247 Threats</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="dmer-main">
+        <section class="threat-dashboard">
+            <div class="dashboard-header">
+                <h1 class="dashboard-title">Dynamic Threat Intelligence</h1>
+                <p>Real-time Web3 threat monitoring with ML classification and autonomous response</p>
+                
+                <div class="threat-metrics">
+                    <div class="metric-card metric-critical">
+                        <div class="metric-number" id="critical-count">12</div>
+                        <div class="metric-label">Critical Threats</div>
+                    </div>
+                    <div class="metric-card metric-high">
+                        <div class="metric-number" id="high-count">34</div>
+                        <div class="metric-label">High Priority</div>
+                    </div>
+                    <div class="metric-card metric-medium">
+                        <div class="metric-number" id="medium-count">89</div>
+                        <div class="metric-label">Medium Risk</div>
+                    </div>
+                    <div class="metric-card metric-low">
+                        <div class="metric-number" id="low-count">112</div>
+                        <div class="metric-label">Low Impact</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="threat-feed">
+                <div class="feed-header">
+                    <h2 class="feed-title">Live Threat Feed</h2>
+                    <button class="refresh-btn" onclick="refreshThreats()">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+                <div id="threat-list"></div>
+            </div>
+        </section>
+
+        <aside class="sidebar">
+            <div class="ml-status">
+                <h3 class="ml-title">
+                    <i class="fas fa-brain"></i>
+                    ML Classification
+                </h3>
+                <div class="ml-metric">
+                    <span>Model Accuracy:</span>
+                    <span style="color: var(--dmer-secondary);">94.7%</span>
+                </div>
+                <div class="ml-metric">
+                    <span>Confidence Threshold:</span>
+                    <span>0.75</span>
+                </div>
+                <div class="ml-metric">
+                    <span>Training Samples:</span>
+                    <span>12,847</span>
+                </div>
+                <div class="ml-metric">
+                    <span>Last Retrain:</span>
+                    <span>2 min ago</span>
+                </div>
+            </div>
+
+            <div class="threat-patterns">
+                <h3 class="patterns-title">Active Patterns</h3>
+                <div class="pattern-item">
+                    <div class="pattern-name">Address Poisoning</div>
+                    <div class="pattern-confidence">Confidence: 87%</div>
+                </div>
+                <div class="pattern-item">
+                    <div class="pattern-name">Flash Loan Exploit</div>
+                    <div class="pattern-confidence">Confidence: 92%</div>
+                </div>
+                <div class="pattern-item">
+                    <div class="pattern-name">Honeypot Contract</div>
+                    <div class="pattern-confidence">Confidence: 85%</div>
+                </div>
+                <div class="pattern-item">
+                    <div class="pattern-name">Sandwich Attack</div>
+                    <div class="pattern-confidence">Confidence: 78%</div>
+                </div>
+            </div>
+
+            <div class="analytics-panel">
+                <h3 class="analytics-title">Threat Analytics</h3>
+                <div class="chart-container">
+                    <canvas id="threat-chart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <canvas id="confidence-chart"></canvas>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <div class="floating-alert" id="threat-alert">
+        <div class="alert-title">🚨 Critical Threat Detected!</div>
+        <div id="alert-message">Flash loan exploit targeting DeFi protocol detected</div>
+    </div>
+
+    <script>
+        // Sample threat data
+        const threatData = [
+            {
+                id: 1,
+                type: "Address Poisoning",
+                severity: "critical",
+                description: "Suspicious wallet address 0x742d35Cc6634C0532925a3b8D98d4E078b2044Cc detected with similar pattern to legitimate address",
+                time: "2 min ago",
+                source: "ML Classifier",
+                confidence: 0.94
+            },
+            {
+                id: 2,
+                type: "Flash Loan Exploit",
+                severity: "critical",
+                description: "Large flash loan transaction detected on Uniswap V3 with price manipulation indicators",
+                time: "5 min ago",
+                source: "Pattern Match",
+                confidence: 0.89
+            },
+            {
+                id: 3,
+                type: "Honeypot Contract",
+                severity: "high",
+                description: "Smart contract 0x8b7c32e1a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6 allows deposits but blocks withdrawals",
+                time: "8 min ago",
+                source: "Web3 Threat Feed",
+                confidence: 0.87
+            },
+            {
+                id: 4,
+                type: "Phishing Website",
+                severity: "high",
+                description: "Fake MetaMask website detected: metamaask-wallet.com (note extra 'a')",
+                time: "12 min ago",
+                source: "Community Report",
+                confidence: 0.95
+            },
+            {
+                id: 5,
+                type: "Rug Pull Token",
+                severity: "medium",
+                description: "Token SAFEMOON2.0 shows liquidity removal patterns consistent with rug pull",
+                time: "15 min ago",
+                source: "DeFi Analytics",
+                confidence: 0.73
+            }
+        ];
+
+        function renderThreatFeed() {
+            const threatList = document.getElementById('threat-list');
+            threatList.innerHTML = '';
+
+            threatData.forEach(threat => {
+                const threatElement = document.createElement('div');
+                threatElement.className = `threat-item threat-${threat.severity}`;
+                threatElement.innerHTML = `
+                    <div class="threat-header">
+                        <span class="threat-type">${threat.type}</span>
+                        <span class="threat-time">${threat.time}</span>
+                    </div>
+                    <div class="threat-description">${threat.description}</div>
+                    <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 10px;">
+                        Source: ${threat.source} | Confidence: ${(threat.confidence * 100).toFixed(1)}%
+                    </div>
+                    <div class="threat-actions">
+                        <button class="action-btn block-btn" onclick="blockThreat(${threat.id})">Block</button>
+                        <button class="action-btn investigate-btn" onclick="investigateThreat(${threat.id})">Investigate</button>
+                        <button class="action-btn ignore-btn" onclick="ignoreThreat(${threat.id})">Ignore</button>
+                    </div>
+                `;
+                threatList.appendChild(threatElement);
+            });
+        }
+
+        function refreshThreats() {
+            // Simulate new threats
+            const newThreat = {
+                id: Date.now(),
+                type: "MEV Bot Activity",
+                severity: "medium",
+                description: "Suspicious MEV bot detected performing sandwich attacks on DEX transactions",
+                time: "Just now",
+                source: "Real-time Monitor",
+                confidence: 0.81
+            };
+            
+            threatData.unshift(newThreat);
+            renderThreatFeed();
+            
+            // Update counters
+            updateMetrics();
+        }
+
+        function updateMetrics() {
+            const counts = threatData.reduce((acc, threat) => {
+                acc[threat.severity] = (acc[threat.severity] || 0) + 1;
+                return acc;
+            }, {});
+
+            document.getElementById('critical-count').textContent = counts.critical || 0;
+            document.getElementById('high-count').textContent = counts.high || 0;
+            document.getElementById('medium-count').textContent = counts.medium || 0;
+            document.getElementById('low-count').textContent = counts.low || 0;
+            document.getElementById('threat-count').textContent = `${threatData.length} Threats`;
+        }
+
+        function blockThreat(id) {
+            alert(`Threat ${id} has been blocked and added to blacklist`);
+        }
+
+        function investigateThreat(id) {
+            alert(`Opening detailed investigation for threat ${id}`);
+        }
+
+        function ignoreThreat(id) {
+            const index = threatData.findIndex(t => t.id === id);
+            if (index > -1) {
+                threatData.splice(index, 1);
+                renderThreatFeed();
+                updateMetrics();
+            }
+        }
+
+        function showCriticalAlert() {
+            const alert = document.getElementById('threat-alert');
+            alert.classList.add('show');
+            
+            setTimeout(() => {
+                alert.classList.remove('show');
+            }, 5000);
+        }
+
+        // Initialize charts
+        function initCharts() {
+            // Threat trend chart
+            const ctx1 = document.getElementById('threat-chart').getContext('2d');
+            new Chart(ctx1, {
+                type: 'line',
+                data: {
+                    labels: ['6h ago', '5h ago', '4h ago', '3h ago', '2h ago', '1h ago', 'now'],
+                    datasets: [{
+                        label: 'Threats Detected',
+                        data: [12, 19, 25, 22, 30, 28, 35],
+                        borderColor: '#ff0066',
+                        backgroundColor: 'rgba(255, 0, 102, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#ffffff' }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            ticks: { color: '#ffffff' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                        },
+                        x: {
+                            ticks: { color: '#ffffff' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                        }
+                    }
+                }
+            });
+
+            // Confidence distribution chart
+            const ctx2 = document.getElementById('confidence-chart').getContext('2d');
+            new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: ['High Confidence', 'Medium Confidence', 'Low Confidence'],
+                    datasets: [{
+                        data: [65, 25, 10],
+                        backgroundColor: ['#00ffaa', '#ffaa00', '#ff6600']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#ffffff' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            renderThreatFeed();
+            updateMetrics();
+            initCharts();
+            
+            // Show periodic critical alerts
+            setInterval(showCriticalAlert, 30000);
+            
+            // Auto-refresh every 30 seconds
+            setInterval(refreshThreats, 30000);
+        });
+    </script>
+</body>
+</html>

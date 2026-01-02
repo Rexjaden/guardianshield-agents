@@ -1,0 +1,198 @@
+# GuardianShield Multi-Region Validator Network
+# Deploy across multiple regions for high availability and decentralization
+version: '3.8'
+
+services:
+  # ======================= REGION: US-EAST =======================
+  validator-us-east:
+    build:
+      context: .
+      dockerfile: Dockerfile.validator
+    container_name: guardian-validator-us-east
+    environment:
+      - VALIDATOR_REGION=us-east
+      - VALIDATOR_ID=guardian_validator_001
+      - CHAIN_ID=guardianshield-mainnet
+      - MONIKER=GuardianShield-US-East
+      - PERSISTENT_PEERS=guardian_sentry_us_east:26656,guardian_sentry_eu_west:26656
+      - PRIVATE_PEER_IDS=sentry_us_east_001,sentry_eu_west_001
+      - UNCONDITIONAL_PEER_IDS=sentry_us_east_001
+    volumes:
+      - validator_us_east_data:/validator/data
+      - ./secure-keys/us-east:/validator/keys:ro
+      - ./validator-config/us-east.json:/validator/config/validator.json:ro
+    networks:
+      - validator-private-network
+    ports:
+      - "26657:26657"  # RPC (monitoring only, behind VPN)
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - SETUID
+      - SETGID
+
+  # ======================= REGION: EU-WEST =======================
+  validator-eu-west:
+    build:
+      context: .
+      dockerfile: Dockerfile.validator
+    container_name: guardian-validator-eu-west
+    environment:
+      - VALIDATOR_REGION=eu-west
+      - VALIDATOR_ID=guardian_validator_002
+      - CHAIN_ID=guardianshield-mainnet
+      - MONIKER=GuardianShield-EU-West
+      - PERSISTENT_PEERS=guardian_sentry_eu_west:26656,guardian_sentry_asia_pacific:26656
+      - PRIVATE_PEER_IDS=sentry_eu_west_001,sentry_asia_pacific_001
+      - UNCONDITIONAL_PEER_IDS=sentry_eu_west_001
+    volumes:
+      - validator_eu_west_data:/validator/data
+      - ./secure-keys/eu-west:/validator/keys:ro
+      - ./validator-config/eu-west.json:/validator/config/validator.json:ro
+    networks:
+      - validator-private-network
+    ports:
+      - "26658:26657"  # Different port for EU validator
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - SETUID
+      - SETGID
+
+  # ======================= REGION: ASIA-PACIFIC =======================
+  validator-asia-pacific:
+    build:
+      context: .
+      dockerfile: Dockerfile.validator
+    container_name: guardian-validator-asia-pacific
+    environment:
+      - VALIDATOR_REGION=asia-pacific
+      - VALIDATOR_ID=guardian_validator_003
+      - CHAIN_ID=guardianshield-mainnet
+      - MONIKER=GuardianShield-Asia-Pacific
+      - PERSISTENT_PEERS=guardian_sentry_asia_pacific:26656,guardian_sentry_us_east:26656
+      - PRIVATE_PEER_IDS=sentry_asia_pacific_001,sentry_us_east_001
+      - UNCONDITIONAL_PEER_IDS=sentry_asia_pacific_001
+    volumes:
+      - validator_asia_pacific_data:/validator/data
+      - ./secure-keys/asia-pacific:/validator/keys:ro
+      - ./validator-config/asia-pacific.json:/validator/config/validator.json:ro
+    networks:
+      - validator-private-network
+    ports:
+      - "26659:26657"  # Different port for Asia-Pacific validator
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - SETUID
+      - SETGID
+
+  # ======================= MONITORING & SECURITY =======================
+  validator-monitor:
+    image: prom/prometheus:latest
+    container_name: guardian-validator-monitor
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - validator_monitor_data:/prometheus
+    networks:
+      - validator-private-network
+    ports:
+      - "9090:9090"
+    restart: unless-stopped
+
+  # VPN Gateway for secure access
+  validator-vpn:
+    image: kylemanna/openvpn
+    container_name: guardian-validator-vpn
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - "1194:1194/udp"
+    volumes:
+      - ./vpn-config:/etc/openvpn
+    networks:
+      - validator-private-network
+    restart: unless-stopped
+    environment:
+      - OVPN_SERVER_URL=udp://your-validator-ip:1194
+
+  # Key Management Service (HSM simulation)
+  key-manager:
+    build:
+      context: .
+      dockerfile: Dockerfile.key-manager
+    container_name: guardian-key-manager
+    environment:
+      - KMS_MODE=secure
+      - ENCRYPTION_KEY_PATH=/keys/master.key
+    volumes:
+      - ./secure-keys:/keys:ro
+      - key_manager_data:/kms/data
+    networks:
+      - validator-private-network
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    restart: unless-stopped
+
+volumes:
+  validator_us_east_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /opt/guardian/validator-data/us-east
+  validator_eu_west_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /opt/guardian/validator-data/eu-west
+  validator_asia_pacific_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /opt/guardian/validator-data/asia-pacific
+  validator_monitor_data:
+  key_manager_data:
+
+networks:
+  validator-private-network:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: guardian-validators
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+          gateway: 172.20.0.1

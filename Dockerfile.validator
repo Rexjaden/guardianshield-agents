@@ -1,0 +1,73 @@
+# GuardianShield Validator Node - Ultra Secure
+FROM ubuntu:22.04
+
+# Security: Use non-root user
+RUN groupadd -r validator && useradd -r -g validator validator
+
+# Set working directory
+WORKDIR /validator
+
+# Install security tools and dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    wget \
+    git \
+    build-essential \
+    pkg-config \
+    libssl-dev \
+    libclang-dev \
+    ufw \
+    fail2ban \
+    unattended-upgrades \
+    htop \
+    iotop \
+    nethogs \
+    iftop \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Node.js (LTS)
+RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - \
+    && apt-get install -y nodejs
+
+# Configure firewall (only sentry nodes can connect)
+RUN ufw default deny incoming \
+    && ufw default allow outgoing \
+    && ufw allow from 10.0.0.0/8 to any port 26656 \
+    && ufw allow from 172.16.0.0/12 to any port 26656 \
+    && ufw allow from 192.168.0.0/16 to any port 26656
+
+# Security: Configure fail2ban
+RUN systemctl enable fail2ban
+
+# Copy validator configuration
+COPY docker/validator-config/ ./config/
+COPY docker/validator-keys/ ./keys/
+
+# Set secure permissions on key files
+RUN chmod 600 ./keys/* \
+    && chown -R validator:validator ./keys/ \
+    && chown -R validator:validator ./config/
+
+# Install validator software (GuardianShield blockchain)
+COPY guardianshield_chain_core.py ./
+COPY blockchain_node_cluster.js ./
+COPY package*.json ./
+RUN npm ci --only=production
+
+# Create validator data directory with proper permissions
+RUN mkdir -p /validator/data \
+    && chown -R validator:validator /validator/data \
+    && chmod 750 /validator/data
+
+# Security: Drop to non-root user
+USER validator
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:26657/health || exit 1
+
+# Expose only necessary ports (RPC for monitoring)
+EXPOSE 26657
+
+# Start validator with secure configuration
+CMD ["node", "blockchain_node_cluster.js", "--mode=validator", "--config=/validator/config/validator.json"]

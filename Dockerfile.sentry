@@ -1,0 +1,68 @@
+# GuardianShield Sentry Node - Validator Protection Layer
+FROM ubuntu:22.04
+
+# Create sentry user for security
+RUN groupadd -r sentry && useradd -r -g sentry sentry
+
+WORKDIR /sentry
+
+# Install dependencies and security tools
+RUN apt-get update && apt-get install -y \
+    curl \
+    wget \
+    git \
+    build-essential \
+    pkg-config \
+    libssl-dev \
+    ufw \
+    fail2ban \
+    tcpdump \
+    netcat \
+    iptables \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Node.js
+RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - \
+    && apt-get install -y nodejs
+
+# Configure firewall for sentry nodes
+# Allow connections from internet, restrict validator connections
+RUN ufw default deny incoming \
+    && ufw default allow outgoing \
+    && ufw allow 26656/tcp comment 'P2P port for external peers' \
+    && ufw allow 26657/tcp comment 'RPC port (rate limited)' \
+    && ufw allow ssh comment 'SSH for maintenance'
+
+# Configure DDoS protection
+RUN ufw limit ssh/tcp \
+    && ufw limit 26657/tcp
+
+# Install sentry node software
+COPY sentry_node_protection.py ./
+COPY blockchain_node_cluster.js ./
+COPY package*.json ./
+RUN npm ci --only=production
+
+# Create sentry configuration
+COPY docker/sentry-config/ ./config/
+
+# Set proper permissions
+RUN chown -R sentry:sentry /sentry \
+    && chmod 755 /sentry
+
+# Create data directory
+RUN mkdir -p /sentry/data \
+    && chown sentry:sentry /sentry/data
+
+# Drop to non-root user
+USER sentry
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=5 \
+    CMD curl -f http://localhost:26657/health || exit 1
+
+# Expose sentry ports
+EXPOSE 26656 26657
+
+# Start sentry node with protection
+CMD ["node", "blockchain_node_cluster.js", "--mode=sentry", "--config=/sentry/config/sentry.json"]

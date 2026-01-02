@@ -1,0 +1,78 @@
+{
+  "observer_id": "guardian_observer_asia_southeast",
+  "region": "asia-southeast",
+  "zone": "singapore-1a",
+  "blockchain": {
+    "rpc_url": "http://validator-asia-pacific:26657",
+    "websocket_url": "ws://validator-asia-pacific:26657/websocket",
+    "network_id": "guardian-mainnet",
+    "start_block": 0,
+    "block_confirmation_depth": 12
+  },
+  "database": {
+    "host": "observer-postgres",
+    "port": 5432,
+    "database": "guardian_analytics",
+    "username": "observer",
+    "max_connections": 15,
+    "query_timeout": 60
+  },
+  "redis": {
+    "host": "observer-redis",
+    "port": 6379,
+    "db": 2,
+    "max_connections": 10
+  },
+  "elasticsearch": {
+    "hosts": ["http://observer-elasticsearch:9200"],
+    "max_retries": 3,
+    "timeout": 30
+  },
+  "indexing": {
+    "batch_size": 300,
+    "worker_count": 3,
+    "max_retries": 3,
+    "retry_delay": 5,
+    "enable_transaction_indexing": true,
+    "enable_state_indexing": false,
+    "enable_event_indexing": true,
+    "enable_trace_indexing": false,
+    "parallel_processing": false
+  },
+  "analytics": {
+    "enable_real_time": true,
+    "aggregation_intervals": [300, 3600, 86400],
+    "cache_duration": 300,
+    "enable_predictive_analytics": false,
+    "threat_detection_enabled": true
+  },
+  "storage": {
+    "engine": "rocksdb",
+    "compression": "lz4",
+    "cache_size_mb": 4096,
+    "max_open_files": 6000,
+    "bloom_filter_bits": 8
+  },
+  "api": {
+    "bind_address": "0.0.0.0",
+    "port": 8080,
+    "max_concurrent_requests": 600,
+    "request_timeout": 30,
+    "rate_limiting": {
+      "requests_per_minute": 6000,
+      "burst_size": 300
+    }
+  },
+  "monitoring": {
+    "prometheus_port": 9090,
+    "health_check_interval": 30,
+    "metrics_retention": "15d",
+    "log_level": "info"
+  },
+  "performance": {
+    "max_block_cache": 30000,
+    "max_transaction_cache": 100000,
+    "gc_target_percentage": 75,
+    "memory_limit_gb": 8
+  }
+}

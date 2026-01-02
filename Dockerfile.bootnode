@@ -1,0 +1,58 @@
+# GuardianShield Bootnode - Minimal P2P Discovery Only
+FROM alpine:3.18
+
+# Security: Create non-root bootnode user
+RUN addgroup -g 1000 bootnode && \
+    adduser -D -u 1000 -G bootnode -h /bootnode bootnode
+
+# Set working directory
+WORKDIR /bootnode
+
+# Install minimal dependencies
+RUN apk add --no-cache \
+    nodejs \
+    npm \
+    curl \
+    iptables \
+    && rm -rf /var/cache/apk/*
+
+# Copy only essential files
+COPY peer_discovery_service.py ./
+COPY blockchain_node_cluster.js ./
+COPY package*.json ./
+
+# Install minimal Node.js dependencies (P2P only)
+RUN npm ci --only=production --no-audit --no-fund
+
+# Create minimal config directory
+RUN mkdir -p /bootnode/config \
+    && chown -R bootnode:bootnode /bootnode
+
+# Configure ultra-tight firewall (P2P ONLY)
+RUN iptables -F && \
+    iptables -P INPUT DROP && \
+    iptables -P FORWARD DROP && \
+    iptables -P OUTPUT ACCEPT && \
+    iptables -A INPUT -i lo -j ACCEPT && \
+    iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT && \
+    iptables -A INPUT -p tcp --dport 26656 -j ACCEPT && \
+    iptables -A INPUT -p icmp --icmp-type echo-request -m limit --limit 1/s -j ACCEPT && \
+    iptables -A INPUT -j LOG --log-prefix "BOOTNODE-DROP: " && \
+    iptables -A INPUT -j DROP
+
+# NO RPC/API PORTS EXPOSED - P2P ONLY
+# NO HTTP/HTTPS - P2P ONLY
+# NO SSH - P2P ONLY
+
+# Drop to non-root user immediately
+USER bootnode
+
+# Minimal health check (internal only)
+HEALTHCHECK --interval=60s --timeout=5s --start-period=10s --retries=3 \
+    CMD pgrep node || exit 1
+
+# ONLY expose P2P port - NO RPC/API
+EXPOSE 26656
+
+# Start bootnode in discovery-only mode
+CMD ["node", "blockchain_node_cluster.js", "--mode=bootnode", "--discovery-only", "--no-rpc", "--no-api"]

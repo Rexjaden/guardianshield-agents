@@ -1,0 +1,317 @@
+version: '3.8'
+
+networks:
+  # Core blockchain network
+  guardian-core:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+          gateway: 172.20.0.1
+
+  # Public API network
+  guardian-public:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.21.0.0/16
+          gateway: 172.21.0.1
+
+volumes:
+  # Node data volumes
+  validator-data:
+    driver: local
+  sentry-data:
+    driver: local
+  observer-data:
+    driver: local
+  bootnode-data:
+    driver: local
+  observer-postgres-data:
+    driver: local
+  grafana-data:
+    driver: local
+  redis-data:
+    driver: local
+  prometheus-data:
+    driver: local
+
+services:
+  # ============================================================================
+  # VALIDATOR NODE (Core Layer - Protected)
+  # ============================================================================
+  
+  guardian-validator:
+    build:
+      context: .
+      dockerfile: Dockerfile.guardian-simple
+    container_name: guardian-validator-primary
+    hostname: validator-primary
+    networks:
+      - guardian-core
+    environment:
+      - NODE_TYPE=validator
+      - NODE_ID=validator-primary-001
+      - NODE_REGION=us-east
+      - HTTP_PORT=8080
+      - WEBSOCKET_PORT=8081
+      - P2P_PORT=26656
+      - RPC_PORT=26657
+      - METRICS_PORT=9090
+      - NETWORK_MODE=multi-layer
+    volumes:
+      - validator-data:/home/guardian/blockchain-data
+    ports:
+      - "9091:9090"  # Metrics only (no public API)
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 4G
+        reservations:
+          cpus: '1.0'
+          memory: 2G
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "3"
+    depends_on:
+      - observer-postgres
+
+  # ============================================================================
+  # SENTRY NODE (Protection Layer - Public Interface)
+  # ============================================================================
+  
+  guardian-sentry:
+    build:
+      context: .
+      dockerfile: Dockerfile.guardian-simple
+    container_name: guardian-sentry-primary
+    hostname: sentry-primary
+    networks:
+      - guardian-core
+      - guardian-public
+    environment:
+      - NODE_TYPE=sentry
+      - NODE_ID=sentry-primary-001
+      - NODE_REGION=us-east
+      - HTTP_PORT=8080
+      - WEBSOCKET_PORT=8081
+      - P2P_PORT=26656
+      - RPC_PORT=26657
+      - METRICS_PORT=9090
+      - NETWORK_MODE=multi-layer
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    volumes:
+      - sentry-data:/home/guardian/blockchain-data
+    ports:
+      - "8080:8080"  # Public API
+      - "8081:8081"  # WebSocket API
+      - "26656:26656"  # P2P networking
+      - "9092:9090"  # Metrics
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 4G
+        reservations:
+          cpus: '1.0'
+          memory: 2G
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "3"
+    depends_on:
+      - guardian-validator
+      - redis
+
+  # ============================================================================
+  # OBSERVER NODE (Analytics Layer - Data Processing)
+  # ============================================================================
+  
+  guardian-observer:
+    build:
+      context: .
+      dockerfile: Dockerfile.guardian-simple
+    container_name: guardian-observer-primary
+    hostname: observer-primary
+    networks:
+      - guardian-core
+    environment:
+      - NODE_TYPE=observer
+      - NODE_ID=observer-primary-001
+      - NODE_REGION=us-east
+      - HTTP_PORT=8080
+      - WEBSOCKET_PORT=8081
+      - METRICS_PORT=9090
+      - NETWORK_MODE=multi-layer
+      - POSTGRES_HOST=observer-postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=guardian_analytics
+      - POSTGRES_USER=observer
+      - POSTGRES_PASSWORD=secure_observer_password
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    volumes:
+      - observer-data:/home/guardian/blockchain-data
+    ports:
+      - "8082:8080"  # Analytics API
+      - "9093:9090"  # Metrics
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 4G
+        reservations:
+          cpus: '1.0'
+          memory: 2G
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "3"
+    depends_on:
+      - guardian-sentry
+      - observer-postgres
+
+  # ============================================================================
+  # BOOTNODE (Discovery Layer - Peer Discovery)
+  # ============================================================================
+  
+  guardian-bootnode:
+    build:
+      context: .
+      dockerfile: Dockerfile.guardian-simple
+    container_name: guardian-bootnode-primary
+    hostname: bootnode-primary
+    networks:
+      - guardian-core
+      - guardian-public
+    environment:
+      - NODE_TYPE=bootnode
+      - NODE_ID=bootnode-primary-001
+      - NODE_REGION=us-east
+      - P2P_PORT=26656
+      - METRICS_PORT=9090
+      - NETWORK_MODE=multi-layer
+    volumes:
+      - bootnode-data:/home/guardian/blockchain-data
+    ports:
+      - "26657:26656"  # P2P discovery
+      - "9094:9090"  # Metrics
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 1G
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "3"
+
+  # ============================================================================
+  # SUPPORT SERVICES
+  # ============================================================================
+
+  # PostgreSQL for observer analytics
+  observer-postgres:
+    image: postgres:15-alpine
+    container_name: guardian-observer-postgres
+    networks:
+      - guardian-core
+    environment:
+      POSTGRES_DB: guardian_analytics
+      POSTGRES_USER: observer
+      POSTGRES_PASSWORD: secure_observer_password
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - observer-postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 1G
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "3"
+
+  # Redis for caching and rate limiting
+  redis:
+    image: redis:7-alpine
+    container_name: guardian-redis
+    networks:
+      - guardian-core
+    command: redis-server --appendonly yes --maxmemory 1gb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1G
+        reservations:
+          cpus: '0.2'
+          memory: 512M
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "3"
+
+  # Prometheus monitoring
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: guardian-prometheus
+    networks:
+      - guardian-core
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus-configs:/etc/prometheus
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    restart: unless-stopped
+    depends_on:
+      - guardian-validator
+      - guardian-sentry
+      - guardian-observer
+      - guardian-bootnode
+
+  # Grafana dashboards
+  grafana:
+    image: grafana/grafana:latest
+    container_name: guardian-grafana
+    networks:
+      - guardian-core
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=guardian_admin_2026
+    restart: unless-stopped
+    depends_on:
+      - prometheus

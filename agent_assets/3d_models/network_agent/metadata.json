@@ -1,0 +1,10 @@
+{
+  "agent_type": "network_agent",
+  "description": "3D visualization for network_agent",
+  "capabilities": [
+    "3d_rendering",
+    "animation",
+    "interaction"
+  ],
+  "created_at": "2026-01-02"
+}

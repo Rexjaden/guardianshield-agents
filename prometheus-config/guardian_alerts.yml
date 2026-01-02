@@ -1,0 +1,233 @@
+# GuardianShield Critical Alert Rules
+# Advanced monitoring with intelligent thresholds and escalation
+
+groups:
+  # Critical system health alerts
+  - name: guardian.critical
+    interval: 30s
+    rules:
+      - alert: SentryNodeDown
+        expr: up{job=~"sentry-.*"} == 0
+        for: 30s
+        labels:
+          severity: critical
+          team: guardian-ops
+        annotations:
+          summary: "Sentry node {{ $labels.instance }} is down"
+          description: "Sentry shield node {{ $labels.instance }} in region {{ $labels.region }} has been down for {{ $value }} seconds"
+          runbook_url: "https://guardian-ops.internal/runbooks/sentry-down"
+
+      - alert: RegionCompletelyDown
+        expr: count by (region) (up{job=~"sentry-.*"} == 0) >= 2
+        for: 1m
+        labels:
+          severity: critical
+          team: guardian-ops
+          priority: p1
+        annotations:
+          summary: "Complete region failure: {{ $labels.region }}"
+          description: "All sentry nodes in region {{ $labels.region }} are down. Immediate action required."
+          runbook_url: "https://guardian-ops.internal/runbooks/region-failure"
+
+  # Performance and capacity alerts
+  - name: guardian.performance
+    interval: 60s
+    rules:
+      - alert: HighRequestLatency
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{job=~"sentry-.*"}[5m])) > 2
+        for: 5m
+        labels:
+          severity: warning
+          team: guardian-perf
+        annotations:
+          summary: "High request latency on {{ $labels.instance }}"
+          description: "95th percentile latency is {{ $value }}s on sentry {{ $labels.instance }}"
+
+      - alert: RequestRateSpike
+        expr: rate(http_requests_total{job=~"sentry-.*"}[1m]) > 5000
+        for: 2m
+        labels:
+          severity: warning
+          team: guardian-security
+        annotations:
+          summary: "Unusual request rate spike on {{ $labels.instance }}"
+          description: "Request rate is {{ $value }} req/s, significantly above normal"
+
+      - alert: CPUUsageHigh
+        expr: (100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)) > 80
+        for: 5m
+        labels:
+          severity: warning
+          team: guardian-ops
+        annotations:
+          summary: "High CPU usage on {{ $labels.instance }}"
+          description: "CPU usage is {{ $value }}% on node {{ $labels.instance }}"
+
+      - alert: MemoryUsageHigh
+        expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+          team: guardian-ops
+        annotations:
+          summary: "High memory usage on {{ $labels.instance }}"
+          description: "Memory usage is {{ $value }}% on node {{ $labels.instance }}"
+
+  # Security and attack detection alerts
+  - name: guardian.security
+    interval: 15s
+    rules:
+      - alert: DDoSAttackDetected
+        expr: rate(http_requests_total{status_code=~"4..|5.."}[1m]) > 1000
+        for: 30s
+        labels:
+          severity: critical
+          team: guardian-security
+          alert_type: ddos
+        annotations:
+          summary: "Potential DDoS attack on {{ $labels.instance }}"
+          description: "High rate of error responses: {{ $value }} req/s on {{ $labels.instance }}"
+          runbook_url: "https://guardian-ops.internal/runbooks/ddos-response"
+
+      - alert: RateLimitingTriggered
+        expr: rate(guardian_rate_limit_exceeded_total[1m]) > 100
+        for: 1m
+        labels:
+          severity: warning
+          team: guardian-security
+        annotations:
+          summary: "High rate limiting activity on {{ $labels.instance }}"
+          description: "Rate limiting triggered {{ $value }} times/s, indicating potential abuse"
+
+      - alert: IPBanningActive
+        expr: rate(guardian_ip_banned_total[5m]) > 10
+        for: 2m
+        labels:
+          severity: warning
+          team: guardian-security
+        annotations:
+          summary: "Elevated IP banning activity on {{ $labels.instance }}"
+          description: "{{ $value }} IPs/minute being banned, possible coordinated attack"
+
+      - alert: UnusualGeoTraffic
+        expr: increase(guardian_requests_by_country_total[10m]) > 10000
+        for: 5m
+        labels:
+          severity: warning
+          team: guardian-security
+        annotations:
+          summary: "Unusual geographic traffic pattern"
+          description: "{{ $value }} requests from {{ $labels.country }} in 10m window"
+
+  # Blockchain connectivity alerts
+  - name: guardian.blockchain
+    interval: 30s
+    rules:
+      - alert: ValidatorConnectionLost
+        expr: guardian_validator_connection_status == 0
+        for: 1m
+        labels:
+          severity: critical
+          team: guardian-blockchain
+        annotations:
+          summary: "Lost connection to validator {{ $labels.validator }}"
+          description: "Sentry {{ $labels.instance }} lost connection to validator {{ $labels.validator }}"
+          runbook_url: "https://guardian-ops.internal/runbooks/validator-connection"
+
+      - alert: BlockchainSyncLag
+        expr: guardian_blockchain_sync_lag_seconds > 60
+        for: 2m
+        labels:
+          severity: warning
+          team: guardian-blockchain
+        annotations:
+          summary: "Blockchain sync lag on {{ $labels.instance }}"
+          description: "Sync lag is {{ $value }} seconds behind latest block"
+
+      - alert: TransactionPoolFull
+        expr: guardian_transaction_pool_size > 10000
+        for: 3m
+        labels:
+          severity: warning
+          team: guardian-blockchain
+        annotations:
+          summary: "Transaction pool approaching capacity"
+          description: "Transaction pool has {{ $value }} pending transactions"
+
+  # Load balancer and infrastructure alerts
+  - name: guardian.infrastructure
+    interval: 60s
+    rules:
+      - alert: NginxDown
+        expr: up{job="nginx-exporter"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          team: guardian-ops
+        annotations:
+          summary: "Nginx load balancer is down"
+          description: "Primary load balancer is unreachable"
+
+      - alert: RedisConnectionFailure
+        expr: redis_up == 0
+        for: 30s
+        labels:
+          severity: critical
+          team: guardian-ops
+        annotations:
+          summary: "Redis connection failure"
+          description: "Rate limiting Redis instance is down"
+
+      - alert: DiskSpaceLow
+        expr: (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"}) * 100 < 10
+        for: 5m
+        labels:
+          severity: warning
+          team: guardian-ops
+        annotations:
+          summary: "Low disk space on {{ $labels.instance }}"
+          description: "Only {{ $value }}% disk space remaining"
+
+  # Custom GuardianShield application alerts
+  - name: guardian.application
+    interval: 30s
+    rules:
+      - alert: ThreatDetectionEngineDown
+        expr: guardian_threat_engine_status == 0
+        for: 1m
+        labels:
+          severity: critical
+          team: guardian-ai
+        annotations:
+          summary: "Threat detection engine offline"
+          description: "AI threat detection system is not responding"
+
+      - alert: LearningAgentError
+        expr: rate(guardian_learning_agent_errors_total[5m]) > 0.1
+        for: 2m
+        labels:
+          severity: warning
+          team: guardian-ai
+        annotations:
+          summary: "Learning agent errors detected"
+          description: "{{ $value }} errors/s in learning agent on {{ $labels.instance }}"
+
+      - alert: DataIngestionStalled
+        expr: increase(guardian_data_ingestion_records_total[5m]) == 0
+        for: 10m
+        labels:
+          severity: warning
+          team: guardian-data
+        annotations:
+          summary: "Data ingestion appears stalled"
+          description: "No new threat intelligence records in 10 minutes"
+
+      - alert: APIQuotaExhausted
+        expr: guardian_external_api_quota_remaining < 100
+        for: 1m
+        labels:
+          severity: warning
+          team: guardian-ops
+        annotations:
+          summary: "External API quota running low"
+          description: "Only {{ $value }} API calls remaining for {{ $labels.api_service }}"

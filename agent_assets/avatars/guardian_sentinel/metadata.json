@@ -1,0 +1,40 @@
+{
+  "agent_name": "guardian_sentinel",
+  "type": "2d_artwork",
+  "description": "Elite Guardian Sentinel - A formidable armored warrior wreathed in flames, serving as the primary security agent. Features dark medieval-style armor with glowing orange accents and a flaming sword.",
+  "characteristics": {
+    "armor_type": "heavy_plate",
+    "primary_colors": [
+      "black",
+      "dark_gray",
+      "orange",
+      "gold"
+    ],
+    "weapon": "flaming_sword",
+    "effects": [
+      "fire_aura",
+      "glowing_runes",
+      "flame_wreath"
+    ],
+    "stance": "combat_ready",
+    "role": "primary_guardian",
+    "threat_level": "maximum",
+    "special_abilities": [
+      "flame_control",
+      "armor_mastery",
+      "intimidation"
+    ],
+    "visual_style": "dark_fantasy_medieval"
+  },
+  "agent_capabilities": {
+    "security_level": "elite",
+    "combat_effectiveness": "very_high",
+    "protective_instincts": "maximum",
+    "areas_of_responsibility": [
+      "perimeter_defense",
+      "threat_elimination",
+      "asset_protection"
+    ]
+  },
+  "lore": "The Guardian Sentinel represents the ultimate fusion of ancient warrior tradition and modern security protocols. Wreathed in protective flames and clad in impenetrable armor, this agent stands as the final line of defense for critical GuardianShield assets."
+}

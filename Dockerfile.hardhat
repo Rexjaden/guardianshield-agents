@@ -1,0 +1,22 @@
+# Hardhat Development Node for GuardianShield
+FROM node:18-alpine
+
+# Set working directory
+WORKDIR /app
+
+# Copy package.json and package-lock.json
+COPY package*.json ./
+
+# Install dependencies
+RUN npm ci
+
+# Copy hardhat configuration and contracts
+COPY hardhat.config.js ./
+COPY contracts/ ./contracts/
+COPY scripts/ ./scripts/
+
+# Expose the default hardhat node port
+EXPOSE 8545
+
+# Start hardhat node
+CMD ["npx", "hardhat", "node", "--hostname", "0.0.0.0"]

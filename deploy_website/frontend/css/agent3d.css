@@ -1,0 +1,274 @@
+/* GuardianShield 3D Agent Visualization Styles */
+
+.agent-3d-viewport {
+    position: relative;
+    width: 100%;
+    height: 500px;
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+    border-radius: 12px;
+    border: 2px solid var(--primary-color);
+    overflow: hidden;
+    box-shadow: 
+        0 0 20px rgba(0, 255, 255, 0.3),
+        inset 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.agent-3d-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.agent-3d-controls .btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.agent-3d-controls .btn-primary {
+    background: linear-gradient(45deg, var(--primary-color), #0099ff);
+    color: white;
+}
+
+.agent-3d-controls .btn-primary:hover {
+    background: linear-gradient(45deg, #0099ff, var(--primary-color));
+    box-shadow: 0 4px 15px rgba(0, 255, 255, 0.4);
+    transform: translateY(-2px);
+}
+
+.agent-3d-controls .btn-secondary {
+    background: linear-gradient(45deg, #333, #555);
+    color: white;
+    border: 1px solid #666;
+}
+
+.agent-3d-controls .btn-secondary:hover {
+    background: linear-gradient(45deg, #444, #666);
+    transform: translateY(-1px);
+}
+
+.agent-3d-controls .form-select {
+    padding: 8px 12px;
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid var(--primary-color);
+    border-radius: 6px;
+    color: white;
+    font-size: 14px;
+    min-width: 150px;
+}
+
+.agent-3d-controls .form-select:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+}
+
+.loading-spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 10;
+}
+
+.spinner {
+    width: 60px;
+    height: 60px;
+    border: 4px solid rgba(0, 255, 255, 0.3);
+    border-top: 4px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 15px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-spinner p {
+    color: var(--primary-color);
+    font-size: 16px;
+    margin: 0;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+}
+
+.agent-3d-stats {
+    margin-top: 20px;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 8px;
+    border: 1px solid rgba(0, 255, 255, 0.2);
+}
+
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px;
+    background: linear-gradient(135deg, rgba(0, 255, 255, 0.1), rgba(255, 0, 255, 0.1));
+    border-radius: 8px;
+    border: 1px solid rgba(0, 255, 255, 0.3);
+    transition: all 0.3s ease;
+}
+
+.stat-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 20px rgba(0, 255, 255, 0.2);
+    border-color: var(--primary-color);
+}
+
+.stat-label {
+    font-size: 12px;
+    color: #ccc;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.stat-value {
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--primary-color);
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+}
+
+/* Agent Type Specific Colors */
+.agent-master-key { color: #ffd700; }
+.agent-threat-monitor { color: #ff4444; }
+.agent-behavioral-analytics { color: #44ff44; }
+.agent-learning-agent { color: #4444ff; }
+.agent-genetic-evolver { color: #ff44ff; }
+.agent-data-ingestion { color: #44ffff; }
+.agent-external-agent { color: #ffff44; }
+
+/* 3D Canvas Styling */
+canvas {
+    border-radius: 12px;
+    cursor: grab;
+}
+
+canvas:active {
+    cursor: grabbing;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .agent-3d-viewport {
+        height: 350px;
+    }
+    
+    .agent-3d-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .agent-3d-controls .form-select {
+        min-width: unset;
+    }
+    
+    .stat-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .stat-value {
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .agent-3d-viewport {
+        height: 300px;
+    }
+    
+    .stat-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Animation Effects */
+@keyframes pulse-glow {
+    0%, 100% {
+        box-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 25px rgba(0, 255, 255, 0.8);
+    }
+}
+
+.agent-3d-viewport:hover {
+    animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Custom Scrollbar for Stats */
+.agent-3d-stats::-webkit-scrollbar {
+    width: 8px;
+}
+
+.agent-3d-stats::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+}
+
+.agent-3d-stats::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--primary-color), var(--accent-color));
+    border-radius: 4px;
+}
+
+.agent-3d-stats::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, var(--accent-color), var(--primary-color));
+}
+
+/* Enhanced Visual Effects */
+.agent-3d-viewport::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 20% 20%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(255, 0, 255, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+    border-radius: 12px;
+}
+
+/* Status Indicators */
+.agent-status {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 5;
+    display: flex;
+    gap: 10px;
+}
+
+.status-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    animation: pulse 2s ease-in-out infinite;
+    box-shadow: 0 0 10px currentColor;
+}
+
+.status-dot.active { background: #00ff00; }
+.status-dot.warning { background: #ffff00; }
+.status-dot.error { background: #ff0000; }
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}

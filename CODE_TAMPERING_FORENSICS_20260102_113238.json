@@ -1,0 +1,1571 @@
+{
+  "investigation_type": "CODE_TAMPERING_FORENSICS",
+  "threat_level": "\ud83d\udfe0 HIGH - SUSPICIOUS ACTIVITY DETECTED",
+  "evidence": {
+    "recent_file_changes": [
+      {
+        "file": "agent_gallery_server.py",
+        "modified": "2026-01-02T11:05:46.025108",
+        "accessed": "2026-01-02T11:06:20.535019",
+        "size": 23855,
+        "permissions": "666",
+        "status": "\ud83d\udea8 RECENTLY MODIFIED",
+        "threat_level": "HIGH"
+      },
+      {
+        "file": "code_tampering_investigation.py",
+        "modified": "2026-01-02T11:31:50.226954",
+        "accessed": "2026-01-02T11:32:34.296457",
+        "size": 14219,
+        "permissions": "666",
+        "status": "\ud83d\udea8 RECENTLY MODIFIED",
+        "threat_level": "HIGH"
+      },
+      {
+        "file": "create_sovereign_validator.py",
+        "modified": "2026-01-02T10:33:27.010167",
+        "accessed": "2026-01-02T10:33:41.363516",
+        "size": 16154,
+        "permissions": "666",
+        "status": "\ud83d\udea8 RECENTLY MODIFIED",
+        "threat_level": "HIGH"
+      },
+      {
+        "file": "emergency_security_audit.py",
+        "modified": "2026-01-02T11:23:39.666349",
+        "accessed": "2026-01-02T11:23:53.397214",
+        "size": 14534,
+        "permissions": "666",
+        "status": "\ud83d\udea8 RECENTLY MODIFIED",
+        "threat_level": "HIGH"
+      },
+      {
+        "file": "global_sentry_deployment.py",
+        "modified": "2026-01-01T10:56:33.392675",
+        "accessed": "2026-01-02T10:04:31.436848",
+        "size": 29153,
+        "permissions": "666",
+        "status": "\ud83d\udea8 RECENTLY MODIFIED",
+        "threat_level": "HIGH"
+      },
+      {
+        "file": "guardian-cli.py",
+        "modified": "2026-01-01T11:00:11.031608",
+        "accessed": "2026-01-02T10:04:31.436848",
+        "size": 7361,
+        "permissions": "666",
+        "status": "\ud83d\udea8 RECENTLY MODIFIED",
+        "threat_level": "HIGH"
+      },
+      {
+        "file": "guardianshield_token_system.py",
+        "modified": "2026-01-02T11:12:06.395905",
+        "accessed": "2026-01-02T11:13:08.903126",
+        "size": 12642,
+        "permissions": "666",
+        "status": "\ud83d\udea8 RECENTLY MODIFIED",
+        "threat_level": "HIGH"
+      },
+      {
+        "file": "quick_sovereign.py",
+        "modified": "2026-01-02T10:33:55.847896",
+        "accessed": "2026-01-02T10:34:14.897972",
+        "size": 937,
+        "permissions": "666",
+        "status": "\ud83d\udea8 RECENTLY MODIFIED",
+        "threat_level": "HIGH"
+      },
+      {
+        "file": "secure_node_communication.py",
+        "modified": "2026-01-01T10:59:25.904154",
+        "accessed": "2026-01-02T10:04:31.413457",
+        "size": 34261,
+        "permissions": "666",
+        "status": "\ud83d\udea8 RECENTLY MODIFIED",
+        "threat_level": "HIGH"
+      },
+      {
+        "file": "setup_divine_messenger.py",
+        "modified": "2026-01-02T10:58:45.824358",
+        "accessed": "2026-01-02T10:59:10.818335",
+        "size": 3273,
+        "permissions": "666",
+        "status": "\ud83d\udea8 RECENTLY MODIFIED",
+        "threat_level": "HIGH"
+      },
+      {
+        "file": "setup_ethereum_storm_lord.py",
+        "modified": "2026-01-02T10:45:46.982340",
+        "accessed": "2026-01-02T10:46:36.540408",
+        "size": 3605,
+        "permissions": "666",
+        "status": "\ud83d\udea8 RECENTLY MODIFIED",
+        "threat_level": "HIGH"
+      },
+      {
+        "file": "setup_network_guardian.py",
+        "modified": "2026-01-02T10:39:11.861206",
+        "accessed": "2026-01-02T10:39:52.804456",
+        "size": 3211,
+        "permissions": "666",
+        "status": "\ud83d\udea8 RECENTLY MODIFIED",
+        "threat_level": "HIGH"
+      },
+      {
+        "file": "simple_gallery_server.py",
+        "modified": "2026-01-02T11:13:36.664898",
+        "accessed": "2026-01-02T11:23:54.181196",
+        "size": 12398,
+        "permissions": "666",
+        "status": "\ud83d\udea8 RECENTLY MODIFIED",
+        "threat_level": "HIGH"
+      },
+      {
+        "file": "secure-node-management\\guardian-cli.py",
+        "modified": "2026-01-01T10:59:41.617403",
+        "accessed": "2026-01-02T11:32:09.731196",
+        "size": 8767,
+        "permissions": "666",
+        "status": "\ud83d\udea8 RECENTLY MODIFIED",
+        "threat_level": "HIGH"
+      }
+    ],
+    "missing_critical_files": [],
+    "git_history_analysis": [
+      {
+        "recent_commits": [
+          "618e2fb  GuardianShield Chain Launch: Complete blockchain network with 221 mining nodes",
+          "7595bd1  MAJOR UPDATE: GuardianShield Chain Blockchain + Complete Platform Integration",
+          "b8cb361 Merge pull request #10 from Rexjaden/copilot/improve-security-and-api",
+          "4840034 Address code review feedback: fix imports, strengthen CSP, improve test logic",
+          "f913b4e Add comprehensive security tests and validation",
+          "5976330 Phase 1: Conceal admin credentials and add API security hardening",
+          "c250886 Initial plan",
+          "b158479 Merge pull request #9 from Rexjaden/copilot/complete-revert-security-changes",
+          "7ef69df Initial plan",
+          "be67bc2 Merge pull request #7 from Rexjaden/copilot/setup-social-media-profiles"
+        ],
+        "status": "\u2705 GIT HISTORY ACCESSIBLE",
+        "commit_count": 10
+      },
+      {
+        "commit": "4840034 Address code review feedback: fix imports, strengthen CSP, improve test logic",
+        "status": "\u26a0\ufe0f SUSPICIOUS COMMIT MESSAGE",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "commit": "f913b4e Add comprehensive security tests and validation",
+        "status": "\u26a0\ufe0f SUSPICIOUS COMMIT MESSAGE",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "uncommitted_changes": [
+          "M Dockerfile.blockchain",
+          "?? DOMAIN_SETUP_STEPS.md",
+          "?? Dockerfile.bootnode",
+          "?? Dockerfile.guardian-base",
+          "?? Dockerfile.guardian-simple",
+          "?? Dockerfile.hardhat",
+          "?? Dockerfile.key-manager",
+          "?? Dockerfile.observer",
+          "?? Dockerfile.security",
+          "?? Dockerfile.sentry",
+          "?? Dockerfile.sentry-shield",
+          "?? Dockerfile.validator",
+          "?? GuardianShield_Implementation_Roadmap.md",
+          "?? GuardianShield_Whitepaper.md",
+          "?? REAL_SUBMISSION_GUIDE.txt",
+          "?? REAL_SUBMISSION_SYSTEM.py",
+          "?? SECURITY_AUDIT_20260102_112355.json",
+          "?? SECURITY_AUDIT_LOG.jsonl",
+          "?? agent_3d_server.py",
+          "?? agent_3d_showcase.html",
+          "?? agent_3d_visualizer.py",
+          "?? agent_assets/",
+          "?? agent_avatar_system.py",
+          "?? agent_gallery_server.py",
+          "?? blockchain_indexer.py",
+          "?? blockchain_observer.py",
+          "?? bootnode-config/",
+          "?? bootnode-firewall.sh",
+          "?? code_tampering_investigation.py",
+          "?? complete_grant_applications.json",
+          "?? create_sovereign_validator.py",
+          "?? deploy-sentry-shield.sh",
+          "?? deploy_website/",
+          "?? docker-compose.bootnodes.yml",
+          "?? docker-compose.observers.yml",
+          "?? docker-compose.sentry-shield.yml",
+          "?? docker-compose.simple.yml",
+          "?? docker-compose.unified.yml",
+          "?? docker-compose.validators.yml",
+          "?? emergency_security_audit.py",
+          "?? extraordinary_grant_applications.py",
+          "?? foundation_reviewer_presentations.txt",
+          "?? global_sentry_deployment.py",
+          "?? guardian-cli.py",
+          "?? guardian-node-manager.py",
+          "?? guardian-simple-entrypoint.sh",
+          "?? guardian-universal-entrypoint.sh",
+          "?? guardianshield_production_deployment.py",
+          "?? guardianshield_token_system.py",
+          "?? network_config.json",
+          "?? nginx-config/",
+          "?? node_interaction_protocol.py",
+          "?? node_startup.py",
+          "?? observer-config/",
+          "?? observer-entrypoint.sh",
+          "?? observer-healthcheck.sh",
+          "?? peer_discovery_service.py",
+          "?? process_guardian_avatar.py",
+          "?? prometheus-config/",
+          "?? prometheus-configs/",
+          "?? quick_sovereign.py",
+          "?? real_funding_applications.py",
+          "?? real_guardianshield_blockchain.py",
+          "?? requirements.blockchain.txt",
+          "?? reviewer_presentation_formats.py",
+          "?? secure-node-management/",
+          "?? secure_key_management.py",
+          "?? secure_node_communication.py",
+          "?? sentry-config/",
+          "?? sentry_api_gateway.py",
+          "?? sentry_attack_absorber.py",
+          "?? sentry_node_protection.py",
+          "?? sentry_rate_limiter.py",
+          "?? setup-node-communication.sh",
+          "?? setup_divine_messenger.py",
+          "?? setup_ethereum_storm_lord.py",
+          "?? setup_network_guardian.py",
+          "?? simple_gallery_server.py",
+          "?? simple_website_deployment.py",
+          "?? ssh-config",
+          "?? stop-sentry-shield.sh",
+          "?? submit_real_funding_applications.py",
+          "?? token_assets/",
+          "?? universal-healthcheck.sh",
+          "?? universal_node_service.py",
+          "?? vpn-config/",
+          "?? vpn_network_manager.py"
+        ],
+        "status": "\ud83d\udea8 UNCOMMITTED MODIFICATIONS DETECTED",
+        "threat_level": "HIGH"
+      }
+    ],
+    "file_permissions": [
+      {
+        "file": "admin_auth.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "admin_console.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "advanced_4d_graphics_system.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "advanced_deep_learning_orchestrator.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "advanced_liquidity_pool_framework.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "advanced_staking_pool_system.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "agent_3d_server.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "agent_3d_visualizer.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "agent_avatar_system.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "agent_education_completeness_validator.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "agent_gallery_server.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "agent_introduction_system.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "agent_learning_orchestrator.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "agent_physical_forms_system.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "agent_restoration_status.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "ai_performance_dashboard.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "ai_performance_optimizer.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "ai_rebalancer.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "ai_training_system.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "analytics_dashboard.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "analyze_master_algorithm.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "api_server.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "arbitrum_grant_generator.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "auto_sync_github.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "benign_testing.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "blockchain_indexer.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "blockchain_mastery_orchestrator.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "blockchain_observer.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "brand_identity.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "code_tampering_investigation.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "community_portal.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "complete_agent_status.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "comprehensive_ai_test.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "comprehensive_threat_analysis.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "continuous_revenue_monitor.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "continuous_training_system.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "create_sovereign_validator.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "criminal_addresses_database.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "criminal_intelligence_database.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "crypto_payment_gateway.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "defi_revenue_optimizer.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "demo_treasury_pos_systems.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "deploy_contracts.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "dmer_client_interface.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "dmer_status_reporter.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "docker_strengthening_strategy.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "domain_readiness_checker.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "domain_setup_assistant.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "ecosystem_dashboard.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "ecosystem_demo.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "ecosystem_health_check.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "ecosystem_hub.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "ecosystem_manager.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "ecosystem_roadmap.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "ecosystem_status_report.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "ecosystem_summary.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "email_integration.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "emergency_security_audit.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "enhanced_demo.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "enhanced_guardianshield_menu.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "erc8055_strategic_push.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "ethereum_esp_generator.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "extraordinary_grant_applications.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "frontend_animation_coordinator.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "funding_campaign_activation.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "funding_research_system.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "global_sentry_deployment.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "google_cloud_generator.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "google_cloud_submission.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "grant_submission_manager.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "guardian-cli.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "guardian-node-manager.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "guardianshield_chain_core.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "guardianshield_chain_mining_network.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "guardianshield_main_menu.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "guardianshield_platform_integration.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "guardianshield_production_deployment.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "guardianshield_token_system.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "guardian_audit_system.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "guardian_rbac_system.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "guardian_security_orchestrator.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "guardian_security_system.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "guard_token_purchase.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "high_performance_graphics_engine.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "init_databases.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "launch_3d_demo.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "launch_continuous_training.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "launch_dashboard.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "learning_report_analysis.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "live_threat_demo.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "main.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "master_criminal_intelligence_loader.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "maximum_revenue_generator.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "multichain_demo.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "nft_builder.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "node_interaction_protocol.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "node_startup.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "oracle_management_system.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "overnight_training.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "pattern_analysis.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "peer_discovery_service.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "performance_achievement_report.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "pitch_materials_generator.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "polygon_grant_generator.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "populate_threat_database.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "presentation_demo.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "presentation_generator.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "process_guardian_avatar.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "production_health.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "production_security_config.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "quick_sovereign.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "quick_test.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "real_funding_applications.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "real_guardianshield_blockchain.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "REAL_SUBMISSION_SYSTEM.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "remaining_agents_education_system.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "revenue_system_summary.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "reviewer_presentation_formats.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "secure_key_management.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "secure_node_communication.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "security_assessment.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "security_dashboard_api.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "security_integration.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "security_manager.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "security_mastery_orchestrator.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "sentry_api_gateway.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "sentry_attack_absorber.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "sentry_node_protection.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "sentry_rate_limiter.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "setup.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "setup_divine_messenger.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "setup_environment.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "setup_ethereum_storm_lord.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "setup_git_sync.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "setup_network_guardian.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "simple_ai_demo.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "simple_algorithm_check.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "simple_gallery_server.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "simple_website_deployment.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "smart_contract_framework.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "staking_interface.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "start_guardianshield.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "submit_real_funding_applications.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "sync_fixed.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "sync_with_github.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "system_health_check.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "test_auto_generation.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "test_system.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "threat_actor_intelligence_system.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "threat_filing_api.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "tokenomics_dashboard.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "token_pos_system.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "treasury_animation_system.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "ultimate_knowledge_enhancer.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "ultra_agent_enhancement_system.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "universal_node_service.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "validate_security_config.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "verify_all_agents.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "verify_security.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "vpn_network_manager.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "web3_criminal_database.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "agents\\advanced_ai_agents.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "agents\\behavioral_analytics.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "agents\\data_ingestion.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "agents\\dmer_blockchain_registry.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "agents\\dmer_monitor_agent.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "agents\\external_agent.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "agents\\external_security_agent.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "agents\\flare_integration.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "agents\\genetic_evolver.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "agents\\internal_security_agent.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "agents\\learning_agent.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "agents\\master_key_algorithm.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "agents\\multichain_security_hub.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "agents\\security_orchestrator.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "agents\\threat_definitions.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "agents\\threat_filing_system.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "agents\\utils.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "agents\\web3_utils.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "agents\\__init__.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "local_backup\\admin_console.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "local_backup\\agent_introduction_system.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "local_backup\\api_server.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "local_backup\\auto_sync_github.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "local_backup\\guardianshield_main_menu.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "local_backup\\launch_dashboard.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "local_backup\\main.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "local_backup\\setup.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "local_backup\\setup_environment.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "local_backup\\setup_git_sync.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "local_backup\\start_guardianshield.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "local_backup\\sync_fixed.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "local_backup\\sync_with_github.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "local_backup\\test_system.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "local_backup\\agents\\behavioral_analytics.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "local_backup\\agents\\data_ingestion.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "local_backup\\agents\\dmer_monitor_agent.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "local_backup\\agents\\external_agent.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "local_backup\\agents\\flare_integration.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "local_backup\\agents\\genetic_evolver.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "local_backup\\agents\\learning_agent.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "local_backup\\agents\\master_key_algorithm.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "local_backup\\agents\\threat_definitions.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "local_backup\\agents\\utils.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "local_backup\\agents\\web3_utils.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "local_backup\\agents\\__init__.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "local_backup\\tests\\test_agents.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "node_modules\\@ethersproject\\json-wallets\\node_modules\\aes-js\\generate-tests.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "node_modules\\@ethersproject\\json-wallets\\node_modules\\aes-js\\run-readme.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "secure-node-management\\guardian-cli.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "tests\\test_agents.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "tests\\test_security_api.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      },
+      {
+        "file": "tests\\test_security_simple.py",
+        "permissions": "666",
+        "status": "\u26a0\ufe0f SUSPICIOUS PERMISSIONS",
+        "threat_level": "MEDIUM"
+      }
+    ],
+    "backup_status": [
+      {
+        "pattern": ".git/",
+        "files_found": 1,
+        "files": [
+          ".git/"
+        ],
+        "status": "\u2705 BACKUP FILES LOCATED"
+      },
+      {
+        "pattern": "*_backup*",
+        "files_found": 2,
+        "files": [
+          "evolution_backups",
+          "local_backup"
+        ],
+        "status": "\u2705 BACKUP FILES LOCATED"
+      },
+      {
+        "git_stashes": 1,
+        "stash_list": [
+          "stash@{0}: WIP on main: 7595bd1 MAJOR UPDATE: GuardianShield Chain Blockchain + Complete Platform Integration"
+        ],
+        "status": "\u2705 GIT STASHES AVAILABLE"
+      }
+    ],
+    "investigation_timestamp": "2026-01-02T11:32:38.438037"
+  },
+  "recovery_plan": [
+    "\ud83d\udcca MONITOR: Enhanced monitoring activated",
+    "\ud83d\udd0d INVESTIGATE: Continue investigation",
+    "\ud83d\udcbe BACKUP: Create current state backup",
+    "\ud83d\udee1\ufe0f SECURE: Implement additional security measures"
+  ],
+  "critical_issues": 0,
+  "high_issues": 15
+}

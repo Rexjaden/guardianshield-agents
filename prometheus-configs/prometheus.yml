@@ -1,0 +1,44 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  # GuardianShield validator nodes
+  - job_name: 'guardian-validator'
+    static_configs:
+      - targets: ['guardian-validator:9090']
+    scrape_interval: 10s
+    metrics_path: /metrics
+
+  # GuardianShield sentry nodes
+  - job_name: 'guardian-sentry'
+    static_configs:
+      - targets: ['guardian-sentry:9090']
+    scrape_interval: 10s
+    metrics_path: /metrics
+
+  # GuardianShield observer nodes
+  - job_name: 'guardian-observer'
+    static_configs:
+      - targets: ['guardian-observer:9090']
+    scrape_interval: 10s
+    metrics_path: /metrics
+
+  # GuardianShield bootnode
+  - job_name: 'guardian-bootnode'
+    static_configs:
+      - targets: ['guardian-bootnode:9090']
+    scrape_interval: 30s
+    metrics_path: /metrics
+
+  # PostgreSQL exporter (if enabled)
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['observer-postgres:5432']
+    scrape_interval: 30s
+
+  # Redis exporter (if enabled)
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis:6379']
+    scrape_interval: 30s

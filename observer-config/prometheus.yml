@@ -1,0 +1,111 @@
+# GuardianShield Observer Prometheus Configuration
+# Comprehensive monitoring for analytics infrastructure
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'guardian-observer-analytics'
+    environment: 'production'
+
+rule_files:
+  - "alert_rules.yml"
+
+scrape_configs:
+  # Self-monitoring
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+    scrape_interval: 30s
+
+  # Observer nodes monitoring
+  - job_name: 'observer-us-east'
+    static_configs:
+      - targets: ['observer-us-east:9090']
+    labels:
+      region: 'us-east'
+      tier: 'primary'
+      node_type: 'observer-analytics'
+    scrape_interval: 10s
+
+  - job_name: 'observer-eu-central'
+    static_configs:
+      - targets: ['observer-eu-central:9090']
+    labels:
+      region: 'eu-central'
+      tier: 'secondary'
+      node_type: 'observer-analytics'
+    scrape_interval: 15s
+
+  - job_name: 'observer-asia-southeast'
+    static_configs:
+      - targets: ['observer-asia-southeast:9090']
+    labels:
+      region: 'asia-southeast'
+      tier: 'secondary'
+      node_type: 'observer-analytics'
+    scrape_interval: 15s
+
+  # PostgreSQL metrics
+  - job_name: 'postgres-exporter'
+    static_configs:
+      - targets: ['observer-postgres:5432']
+    labels:
+      service: 'postgresql-analytics'
+    scrape_interval: 30s
+
+  # Redis metrics  
+  - job_name: 'redis-exporter'
+    static_configs:
+      - targets: ['observer-redis:6379']
+    labels:
+      service: 'redis-cache'
+    scrape_interval: 20s
+
+  # Elasticsearch metrics
+  - job_name: 'elasticsearch-exporter'
+    static_configs:
+      - targets: ['observer-elasticsearch:9200']
+    labels:
+      service: 'elasticsearch-search'
+    scrape_interval: 30s
+
+  # System metrics
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['observer-node-exporter:9100']
+    labels:
+      service: 'system-metrics'
+    scrape_interval: 15s
+
+  # Container metrics
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['observer-cadvisor:8080']
+    labels:
+      service: 'container-metrics'
+    scrape_interval: 15s
+
+  # Observer application metrics
+  - job_name: 'observer-analytics-api'
+    static_configs:
+      - targets:
+        - 'observer-us-east:8888'
+        - 'observer-eu-central:8888'
+        - 'observer-asia-southeast:8888'
+    labels:
+      service: 'analytics-api'
+    scrape_interval: 10s
+    metrics_path: /analytics/metrics
+
+  # Blockchain indexer metrics
+  - job_name: 'blockchain-indexer'
+    static_configs:
+      - targets:
+        - 'observer-us-east:8889'
+        - 'observer-eu-central:8889'
+        - 'observer-asia-southeast:8889'
+    labels:
+      service: 'blockchain-indexer'
+    scrape_interval: 10s
+    metrics_path: /indexer/metrics

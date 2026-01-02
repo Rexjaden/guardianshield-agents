@@ -1,0 +1,199 @@
+# GuardianShield Unified Node Base Image
+# Single base image for all node types: validators, sentries, observers, bootnodes
+# Configuration-driven specialization for different node roles
+
+FROM ubuntu:22.04
+
+# Avoid interactive prompts during package installation
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=UTC
+
+# Create dedicated user for security
+RUN groupadd -r guardian && useradd -r -g guardian -d /home/guardian -s /bin/bash guardian
+
+# Install system dependencies and blockchain tools
+RUN apt-get update && apt-get install -y \
+    curl \
+    wget \
+    jq \
+    git \
+    build-essential \
+    python3 \
+    python3-pip \
+    python3-venv \
+    postgresql-client \
+    redis-tools \
+    htop \
+    iotop \
+    netcat \
+    telnet \
+    vim \
+    tmux \
+    supervisor \
+    nginx \
+    logrotate \
+    ca-certificates \
+    gnupg \
+    lsb-release \
+    software-properties-common \
+    libssl-dev \
+    libffi-dev \
+    libpq-dev \
+    librocksdb-dev \
+    zlib1g-dev \
+    liblz4-dev \
+    libsnappy-dev \
+    libbz2-dev \
+    iptables \
+    fail2ban \
+    unzip \
+    rsync \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Node.js for blockchain tools and web interfaces
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs
+
+# Install Go for blockchain client compilation
+RUN wget https://go.dev/dl/go1.21.5.linux-amd64.tar.gz \
+    && tar -C /usr/local -xzf go1.21.5.linux-amd64.tar.gz \
+    && rm go1.21.5.linux-amd64.tar.gz
+
+ENV PATH=$PATH:/usr/local/go/bin
+
+# Install Rust for some blockchain components
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+ENV PATH="/root/.cargo/bin:${PATH}"
+
+# Create comprehensive directory structure for all node types
+RUN mkdir -p /home/guardian/{blockchain-data,logs,config,keys,scripts,monitoring,networking} \
+    && mkdir -p /var/log/guardian \
+    && mkdir -p /etc/guardian/{validator,sentry,observer,bootnode,shared} \
+    && mkdir -p /opt/guardian/{bin,lib,tools} \
+    && chown -R guardian:guardian /home/guardian /var/log/guardian /etc/guardian /opt/guardian
+
+# Create Python virtual environment for all services
+USER guardian
+WORKDIR /home/guardian
+
+RUN python3 -m venv /home/guardian/guardian-venv \
+    && /home/guardian/guardian-venv/bin/pip install --upgrade pip
+
+# Install comprehensive Python packages for all node types
+RUN /home/guardian/guardian-venv/bin/pip install \
+    fastapi==0.104.1 \
+    uvicorn==0.24.0 \
+    sqlalchemy==2.0.23 \
+    psycopg2-binary==2.9.9 \
+    redis==5.0.1 \
+    requests==2.31.0 \
+    web3==6.11.3 \
+    pandas==2.1.4 \
+    numpy==1.25.2 \
+    prometheus-client==0.19.0 \
+    pydantic==2.5.1 \
+    asyncpg==0.29.0 \
+    elasticsearch==8.11.0 \
+    kafka-python==2.0.2 \
+    celery==5.3.4 \
+    aiohttp==3.9.1 \
+    websockets==12.0 \
+    cryptography==41.0.7 \
+    eth-keys==0.4.0 \
+    eth-account==0.9.0 \
+    py-ecc==6.0.0 \
+    click==8.1.7 \
+    colorama==0.4.6 \
+    python-dotenv==1.0.0
+
+# Install Node.js packages for blockchain tools
+RUN npm install -g --prefix /home/guardian \
+    @blockscout/blockscout-cli \
+    web3 \
+    ethers \
+    @elastic/elasticsearch \
+    pm2
+
+# Copy universal node management scripts
+COPY --chown=guardian:guardian guardian-node-manager.py /home/guardian/
+COPY --chown=guardian:guardian guardian-network-service.py /home/guardian/
+COPY --chown=guardian:guardian guardian-monitoring-service.py /home/guardian/
+COPY --chown=guardian:guardian guardian-security-service.py /home/guardian/
+
+# Copy node-specific service implementations
+COPY --chown=guardian:guardian services/ /home/guardian/services/
+
+# Copy configuration management system
+COPY --chown=guardian:guardian config-manager.py /home/guardian/
+
+# Copy shared networking and security libraries
+COPY --chown=guardian:guardian guardian-lib/ /home/guardian/guardian-lib/
+
+# Install guardian-lib as a local package
+RUN cd /home/guardian/guardian-lib && /home/guardian/guardian-venv/bin/pip install -e .
+
+# Switch back to root for system configuration
+USER root
+
+# Copy nginx configurations for different node types
+COPY nginx-configs/ /etc/nginx/sites-available/
+
+# Copy fail2ban configurations
+COPY fail2ban-configs/ /etc/fail2ban/jail.d/
+
+# Copy firewall scripts
+COPY firewall-scripts/ /opt/guardian/bin/
+RUN chmod +x /opt/guardian/bin/*.sh
+
+# Copy supervisor configurations for different node types
+COPY supervisor-configs/ /etc/supervisor/conf.d/
+
+# Set up log rotation for all services
+COPY logrotate-configs/ /etc/logrotate.d/
+
+# Create health check scripts for different node types
+COPY --chown=guardian:guardian health-checks/ /home/guardian/health-checks/
+RUN chmod +x /home/guardian/health-checks/*.sh
+
+# Set up Prometheus metrics collection
+RUN mkdir -p /home/guardian/metrics \
+    && chown -R guardian:guardian /home/guardian/metrics
+
+# Environment variables for node configuration
+ENV NODE_TYPE=""
+ENV NODE_REGION=""
+ENV NODE_TIER=""
+ENV CONFIG_FILE="/etc/guardian/node-config.json"
+ENV LOG_LEVEL="info"
+ENV PROMETHEUS_ENABLED="true"
+ENV SECURITY_MODE="standard"
+ENV NETWORK_MODE="multi-layer"
+
+# Expose common ports (specific services bind to specific ports based on config)
+# 26656 - P2P networking
+# 26657 - RPC 
+# 8545 - Ethereum-compatible JSON-RPC
+# 8080 - HTTP API
+# 8443 - HTTPS API
+# 9090 - Prometheus metrics
+# 6379 - Redis (if embedded)
+# 5432 - PostgreSQL (if embedded)
+# 9200 - Elasticsearch (if embedded)
+EXPOSE 26656 26657 8545 8080 8443 9090 6379 5432 9200
+
+# Health check that adapts to node type
+COPY --chown=guardian:guardian universal-healthcheck.sh /home/guardian/
+RUN chmod +x /home/guardian/universal-healthcheck.sh
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD /home/guardian/universal-healthcheck.sh
+
+# Volume mounts for persistent data (shared structure)
+VOLUME ["/home/guardian/blockchain-data", "/home/guardian/logs", "/var/log/guardian", "/etc/guardian"]
+
+# Universal entrypoint that configures node based on NODE_TYPE
+COPY guardian-universal-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/guardian-universal-entrypoint.sh
+
+ENTRYPOINT ["/usr/local/bin/guardian-universal-entrypoint.sh"]
+CMD ["supervisord", "-n", "-c", "/etc/supervisor/supervisord.conf"]

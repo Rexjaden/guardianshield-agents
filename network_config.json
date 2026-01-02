@@ -1,0 +1,4552 @@
+{
+  "genesis_us-east-1_1": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "bridge_us-east-1_1",
+        "address": "191.242.31.235:8333",
+        "region": "us-east-1",
+        "type": "bridge"
+      }
+    ],
+    "listen_address": "43.211.161.119:8333"
+  },
+  "genesis_us-east-1_2": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "bridge_us-east-1_1",
+        "address": "191.242.31.235:8333",
+        "region": "us-east-1",
+        "type": "bridge"
+      }
+    ],
+    "listen_address": "15.151.225.22:8333"
+  },
+  "validator_us-east-1_1": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "bridge_us-east-1_1",
+        "address": "191.242.31.235:8333",
+        "region": "us-east-1",
+        "type": "bridge"
+      }
+    ],
+    "listen_address": "182.134.38.40:8333"
+  },
+  "validator_us-east-1_2": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "bridge_us-east-1_1",
+        "address": "191.242.31.235:8333",
+        "region": "us-east-1",
+        "type": "bridge"
+      }
+    ],
+    "listen_address": "192.179.255.227:8333"
+  },
+  "validator_us-east-1_3": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "bridge_us-east-1_1",
+        "address": "191.242.31.235:8333",
+        "region": "us-east-1",
+        "type": "bridge"
+      }
+    ],
+    "listen_address": "195.210.138.146:8333"
+  },
+  "validator_us-east-1_4": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "bridge_us-east-1_1",
+        "address": "191.242.31.235:8333",
+        "region": "us-east-1",
+        "type": "bridge"
+      }
+    ],
+    "listen_address": "206.16.227.56:8333"
+  },
+  "validator_us-east-1_5": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "bridge_us-east-1_1",
+        "address": "191.242.31.235:8333",
+        "region": "us-east-1",
+        "type": "bridge"
+      }
+    ],
+    "listen_address": "68.47.245.51:8333"
+  },
+  "validator_us-east-1_6": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "bridge_us-east-1_1",
+        "address": "191.242.31.235:8333",
+        "region": "us-east-1",
+        "type": "bridge"
+      }
+    ],
+    "listen_address": "250.139.17.170:8333"
+  },
+  "validator_us-east-1_7": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "bridge_us-east-1_1",
+        "address": "191.242.31.235:8333",
+        "region": "us-east-1",
+        "type": "bridge"
+      }
+    ],
+    "listen_address": "93.94.218.46:8333"
+  },
+  "validator_us-east-1_8": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "bridge_us-east-1_1",
+        "address": "191.242.31.235:8333",
+        "region": "us-east-1",
+        "type": "bridge"
+      }
+    ],
+    "listen_address": "139.153.243.163:8333"
+  },
+  "bridge_us-east-1_1": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "191.242.31.235:8333"
+  },
+  "bridge_us-east-1_2": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "172.250.200.14:8333"
+  },
+  "bridge_us-east-1_3": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "216.195.111.106:8333"
+  },
+  "bridge_us-east-1_4": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "191.131.194.6:8333"
+  },
+  "governance_us-east-1_1": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "171.196.187.228:8333"
+  },
+  "governance_us-east-1_2": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "44.122.12.198:8333"
+  },
+  "genesis_us-west-2_1": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "51.206.130.69:8333"
+  },
+  "validator_us-west-2_1": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "137.44.81.189:8333"
+  },
+  "validator_us-west-2_2": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "244.88.227.208:8333"
+  },
+  "validator_us-west-2_3": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "21.28.252.192:8333"
+  },
+  "validator_us-west-2_4": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "123.100.170.75:8333"
+  },
+  "validator_us-west-2_5": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "204.139.38.199:8333"
+  },
+  "validator_us-west-2_6": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "100.20.125.147:8333"
+  },
+  "bridge_us-west-2_1": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "59.104.141.75:8333"
+  },
+  "bridge_us-west-2_2": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "32.22.66.106:8333"
+  },
+  "bridge_us-west-2_3": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "185.2.8.215:8333"
+  },
+  "governance_us-west-2_1": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "90.191.49.33:8333"
+  },
+  "genesis_eu-central-1_1": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "100.188.207.11:8333"
+  },
+  "validator_eu-central-1_1": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "137.31.144.221:8333"
+  },
+  "validator_eu-central-1_2": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "159.10.120.235:8333"
+  },
+  "validator_eu-central-1_3": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "60.83.181.198:8333"
+  },
+  "validator_eu-central-1_4": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "241.157.24.169:8333"
+  },
+  "validator_eu-central-1_5": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "86.60.246.12:8333"
+  },
+  "validator_eu-central-1_6": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "40.7.81.57:8333"
+  },
+  "bridge_eu-central-1_1": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "107.222.182.246:8333"
+  },
+  "bridge_eu-central-1_2": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "230.231.33.74:8333"
+  },
+  "bridge_eu-central-1_3": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "193.73.15.144:8333"
+  },
+  "governance_eu-central-1_1": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "108.92.178.157:8333"
+  },
+  "genesis_ap-southeast-1_1": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "190.54.120.208:8333"
+  },
+  "validator_ap-southeast-1_1": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "104.87.55.197:8333"
+  },
+  "validator_ap-southeast-1_2": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "195.83.51.83:8333"
+  },
+  "validator_ap-southeast-1_3": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "145.177.110.207:8333"
+  },
+  "validator_ap-southeast-1_4": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "204.182.11.63:8333"
+  },
+  "validator_ap-southeast-1_5": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "130.218.22.126:8333"
+  },
+  "validator_ap-southeast-1_6": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "123.172.155.7:8333"
+  },
+  "bridge_ap-southeast-1_1": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "160.123.64.69:8333"
+  },
+  "bridge_ap-southeast-1_2": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "55.207.117.105:8333"
+  },
+  "bridge_ap-southeast-1_3": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "219.144.48.222:8333"
+  },
+  "governance_ap-southeast-1_1": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "241.223.224.157:8333"
+  },
+  "validator_us-central1_gcp_1": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "121.51.253.138:8333"
+  },
+  "validator_us-central1_gcp_2": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "191.74.101.130:8333"
+  },
+  "validator_us-central1_gcp_3": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "231.90.137.130:8333"
+  },
+  "bridge_us-central1_gcp_1": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "16.146.114.25:8333"
+  },
+  "bridge_us-central1_gcp_2": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "201.89.31.141:8333"
+  },
+  "validator_europe-west1_gcp_1": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "155.97.119.73:8333"
+  },
+  "validator_europe-west1_gcp_2": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "43.137.240.28:8333"
+  },
+  "validator_europe-west1_gcp_3": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "39.93.3.174:8333"
+  },
+  "bridge_europe-west1_gcp_1": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "209.175.228.127:8333"
+  },
+  "bridge_europe-west1_gcp_2": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "80.92.153.225:8333"
+  },
+  "validator_asia-east1_gcp_1": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "238.198.105.203:8333"
+  },
+  "validator_asia-east1_gcp_2": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "102.232.184.7:8333"
+  },
+  "validator_asia-east1_gcp_3": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "93.29.184.253:8333"
+  },
+  "bridge_asia-east1_gcp_1": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "189.160.32.53:8333"
+  },
+  "bridge_asia-east1_gcp_2": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "181.20.153.102:8333"
+  },
+  "validator_nyc1_do_1": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "7.66.111.36:8333"
+  },
+  "validator_nyc1_do_2": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "149.162.41.246:8333"
+  },
+  "validator_fra1_do_1": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "145.227.128.242:8333"
+  },
+  "validator_fra1_do_2": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "68.63.107.206:8333"
+  },
+  "validator_sgp1_do_1": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "106.109.98.49:8333"
+  },
+  "validator_sgp1_do_2": {
+    "peers": [
+      {
+        "id": "genesis_us-east-1_1",
+        "address": "43.211.161.119:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "genesis_us-east-1_2",
+        "address": "15.151.225.22:8333",
+        "region": "us-east-1",
+        "type": "genesis"
+      },
+      {
+        "id": "validator_us-east-1_1",
+        "address": "182.134.38.40:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_2",
+        "address": "192.179.255.227:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_3",
+        "address": "195.210.138.146:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_4",
+        "address": "206.16.227.56:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_5",
+        "address": "68.47.245.51:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_6",
+        "address": "250.139.17.170:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_7",
+        "address": "93.94.218.46:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      },
+      {
+        "id": "validator_us-east-1_8",
+        "address": "139.153.243.163:8333",
+        "region": "us-east-1",
+        "type": "validator"
+      }
+    ],
+    "listen_address": "155.93.205.216:8333"
+  }
+}
