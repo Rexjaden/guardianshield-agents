@@ -1,0 +1,58 @@
+[
+  {
+    "type": "A",
+    "name": "@",
+    "value": "YOUR_SERVER_IP",
+    "ttl": 3600,
+    "purpose": "Main domain (guardian-shield.io)"
+  },
+  {
+    "type": "CNAME",
+    "name": "www",
+    "value": "guardian-shield.io",
+    "ttl": 3600,
+    "purpose": "www redirect"
+  },
+  {
+    "type": "CNAME",
+    "name": "app",
+    "value": "guardian-shield.io",
+    "ttl": 3600,
+    "purpose": "Web application"
+  },
+  {
+    "type": "CNAME",
+    "name": "api",
+    "value": "guardian-shield.io",
+    "ttl": 3600,
+    "purpose": "API endpoints"
+  },
+  {
+    "type": "CNAME",
+    "name": "agents",
+    "value": "guardian-shield.io",
+    "ttl": 3600,
+    "purpose": "Agent gallery"
+  },
+  {
+    "type": "CNAME",
+    "name": "token",
+    "value": "guardian-shield.io",
+    "ttl": 3600,
+    "purpose": "Token system"
+  },
+  {
+    "type": "CNAME",
+    "name": "admin",
+    "value": "guardian-shield.io",
+    "ttl": 3600,
+    "purpose": "Admin console"
+  },
+  {
+    "type": "CNAME",
+    "name": "docs",
+    "value": "guardian-shield.io",
+    "ttl": 3600,
+    "purpose": "Documentation"
+  }
+]

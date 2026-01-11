@@ -1,0 +1,15 @@
+[Unit]
+Description=GuardianShield Agent Gallery
+After=network.target
+
+[Service]
+Type=simple
+User=guardianshield
+WorkingDirectory=/var/www/guardian-shield.io
+ExecStart=python simple_gallery_server.py
+Restart=always
+RestartSec=5
+Environment=PORT=8889
+
+[Install]
+WantedBy=multi-user.target

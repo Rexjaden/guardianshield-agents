@@ -1,0 +1,15 @@
+[Unit]
+Description=GuardianShield Admin Console
+After=network.target
+
+[Service]
+Type=simple
+User=guardianshield
+WorkingDirectory=/var/www/guardian-shield.io
+ExecStart=python admin_console.py
+Restart=always
+RestartSec=5
+Environment=PORT=8001
+
+[Install]
+WantedBy=multi-user.target

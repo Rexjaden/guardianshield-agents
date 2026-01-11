@@ -1,0 +1,15 @@
+[Unit]
+Description=GuardianShield API Server
+After=network.target
+
+[Service]
+Type=simple
+User=guardianshield
+WorkingDirectory=/var/www/guardian-shield.io
+ExecStart=python api_server.py
+Restart=always
+RestartSec=5
+Environment=PORT=8000
+
+[Install]
+WantedBy=multi-user.target
