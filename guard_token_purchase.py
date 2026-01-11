@@ -2,6 +2,9 @@
 """
 GuardianShield GUARD Token Purchase Platform
 Comprehensive token purchase system with fiat and crypto support
+
+LIVE CONTRACT ADDRESSES:
+- GuardianTokenSale: 0xC6A4a2591bb0a9d1f45397da616dBc27e4b7BC8d (DEPLOYED)
 """
 
 import uvicorn
@@ -18,6 +21,14 @@ from decimal import Decimal
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
+
+# LIVE CONTRACT CONFIGURATION
+LIVE_CONTRACTS = {
+    "GuardianTokenSale": "0xC6A4a2591bb0a9d1f45397da616dBc27e4b7BC8d",
+    "network": "ethereum",
+    "chainId": 1,
+    "rpcUrl": "https://eth-mainnet.alchemyapi.io/v2/YOUR-API-KEY"
+}
 
 # Payment Methods
 class PaymentMethod(str, Enum):
