@@ -1,0 +1,171 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forest Guardian - AI Avatar Showcase</title>
+    <link rel="stylesheet" href="animations.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #000000 0%, #1a1a2e 50%, #16213e 100%);
+            color: white;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .avatar-showcase {
+            max-width: 1200px;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .avatar-header {
+            margin-bottom: 40px;
+        }
+        
+        .avatar-title {
+            font-size: 3rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #228B22, #32CD32, #00FF32, #006400);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        .avatar-role {
+            font-size: 1.2rem;
+            color: #228B22;
+            margin-bottom: 20px;
+        }
+        
+        .avatar-image-placeholder {
+            width: 400px;
+            height: 500px;
+            margin: 0 auto 40px;
+            background: linear-gradient(45deg, #228B2220, #32CD3220);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #228B22;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .avatar-image-placeholder::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500"><text x="200" y="250" text-anchor="middle" fill="#228B22" font-size="24">Forest Guardian</text></svg>');
+        }
+        
+        .characteristics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .characteristic-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #228B2240;
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .characteristic-title {
+            color: #228B22;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .lore-section {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 40px;
+            border: 1px solid #228B2230;
+        }
+        
+        .lore-text {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #e0e0e0;
+        }
+        
+        .effects-showcase {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .effect-demo {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #228B22;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="avatar-showcase forest_guardian-glow">
+        <div class="avatar-header">
+            <h1 class="avatar-title forest_guardian-lightning">Forest Guardian</h1>
+            <p class="avatar-role">Network Infrastructure Guardian & Ecosystem Protector</p>
+            <p class="avatar-description">Ancient mystical forest spirit that protects network infrastructure with natural wisdom and organic security protocols. The eternal guardian of digital ecosystems.</p>
+        </div>
+        
+        <div class="avatar-image-placeholder forest_guardian-power">
+            <!-- Your actual avatar image will be integrated here -->
+        </div>
+        
+        <div class="effects-showcase">
+            <div class="effect-demo" title="natural_aura">NA</div><div class="effect-demo" title="rune_glow">RU</div><div class="effect-demo" title="forest_energy">FO</div><div class="effect-demo" title="earth_connection">EA</div><div class="effect-demo" title="mystical_presence">MY</div>
+        </div>
+        
+        <div class="characteristics">
+            <div class="characteristic-card">
+                <div class="characteristic-title">Power Level</div>
+                <div>Ancient_Wisdom</div>
+            </div>
+            
+            <div class="characteristic-card">
+                <div class="characteristic-title">Special Effects</div>
+                <div>natural_aura, rune_glow, forest_energy, earth_connection, mystical_presence</div>
+            </div>
+            
+            <div class="characteristic-card">
+                <div class="characteristic-title">Symbolic Elements</div>
+                <div>ancient_antlers, geometric_runes, forest_torch, bark_armor, nature_symbols</div>
+            </div>
+            
+            <div class="characteristic-card">
+                <div class="characteristic-title">Primary Colors</div>
+                <div>#228B22, #32CD32, #00FF32, #006400</div>
+            </div>
+        </div>
+        
+        <div class="lore-section">
+            <h3>Agent Lore</h3>
+            <p class="lore-text">Born from the first digital trees in the primordial network forests, this ancient guardian has watched over data streams for millennia. With massive antlers that channel network signals and bark-like armor forged from the oldest code trees, the Forest Guardian protects the delicate balance of digital ecosystems. The glowing green runes on its chest represent the sacred geometry of network topology, pulsing with the heartbeat of global data flow. Each symbol is a node in the great network of life, connecting all things in perfect harmony.</p>
+        </div>
+    </div>
+</body>
+</html>
+        

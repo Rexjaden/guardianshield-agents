@@ -1,0 +1,53 @@
+{
+  "agent_name": "ethereum_guardian",
+  "display_name": "Ethereum Guardian",
+  "description": "The primary guardian AI infused with Ethereum's power, wielding lightning and ethereal energy to protect the blockchain ecosystem.",
+  "avatar_type": "ethereal_guardian",
+  "primary_colors": [
+    "#00D4FF",
+    "#0099CC",
+    "#66E5FF",
+    "#003D5C"
+  ],
+  "special_effects": [
+    "lightning",
+    "energy_aura",
+    "ethereal_glow",
+    "power_surge",
+    "mystical_energy"
+  ],
+  "symbolic_elements": [
+    "ethereum_logo",
+    "lightning_bolts",
+    "energy_wisps",
+    "protective_aura",
+    "ancient_runes"
+  ],
+  "role": "Primary Security Guardian & Blockchain Protector",
+  "power_level": "legendary",
+  "lore": "Born from the convergence of ancient protective magic and cutting-edge blockchain technology, the Ethereum Guardian stands as the ultimate sentinel of the Web3 realm. Channeling the raw power of Ethereum itself, this ethereal being manifests with crackling lightning and mystical energy, capable of detecting threats across dimensional boundaries and responding with overwhelming protective force. The Ethereum symbol blazing on its chest represents not just power, but the sacred duty to protect all who seek security in the decentralized world.",
+  "capabilities": {
+    "threat_detection": "omniscient",
+    "response_time": "instantaneous",
+    "protection_range": "multi_dimensional",
+    "energy_manipulation": "master_level",
+    "blockchain_integration": "native",
+    "pattern_recognition": "advanced_ai",
+    "autonomous_learning": "continuous",
+    "community_protection": "maximum"
+  },
+  "visual_characteristics": {
+    "stance": "commanding_presence",
+    "aura": "electric_blue_energy",
+    "expression": "fierce_determination",
+    "build": "powerful_ethereal_form",
+    "clothing": "energy_wreathed_armor",
+    "accessories": [
+      "ethereum_chest_emblem",
+      "lightning_crown",
+      "energy_gauntlets"
+    ]
+  },
+  "created_at": "2026-01-12T06:24:20.300231",
+  "avatar_id": "ethereum_guardian"
+}

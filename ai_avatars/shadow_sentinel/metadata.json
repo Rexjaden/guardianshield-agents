@@ -1,0 +1,54 @@
+{
+  "agent_name": "shadow_sentinel",
+  "display_name": "Shadow Sentinel",
+  "description": "Ultimate dark guardian clad in impenetrable shadow armor, master of stealth protocols and covert security operations.",
+  "avatar_type": "shadow_knight_guardian",
+  "primary_colors": [
+    "#2F2F2F",
+    "#1C1C1C",
+    "#FF4500",
+    "#B22222"
+  ],
+  "special_effects": [
+    "shadow_aura",
+    "flame_wreath",
+    "dark_energy",
+    "stealth_field",
+    "intimidation_presence"
+  ],
+  "symbolic_elements": [
+    "spiked_armor",
+    "flame_sword",
+    "shadow_helm",
+    "dark_diamonds",
+    "fear_aura"
+  ],
+  "role": "Covert Operations Commander & Stealth Security Enforcer",
+  "power_level": "legendary_shadow",
+  "lore": "Born from the deepest shadows of the dark web's most secure vaults, the Shadow Sentinel represents the ultimate fusion of stealth technology and overwhelming combat capability. This heavily armored guardian operates in the spaces between light and darkness, protecting assets through intimidation, covert surveillance, and when necessary, overwhelming force. The diamond symbol blazes with contained fire, representing the precious data it guards with uncompromising dedication.",
+  "capabilities": {
+    "stealth_infiltration": "shadow_mastery",
+    "covert_surveillance": "omniscient_watching",
+    "intimidation_protocols": "fear_projection",
+    "dark_web_navigation": "shadow_travel",
+    "armor_invulnerability": "impenetrable_defense",
+    "flame_sword_combat": "legendary_weapon_mastery",
+    "psychological_warfare": "terror_tactics",
+    "asset_protection": "vault_guardian_protocols"
+  },
+  "visual_characteristics": {
+    "stance": "menacing_guard_position",
+    "aura": "dark_flame_wreath",
+    "expression": "intimidating_vigilance",
+    "build": "heavily_armored_titan",
+    "clothing": "spiked_shadow_plate_armor",
+    "accessories": [
+      "flame_wreathed_helm",
+      "burning_sword",
+      "spiked_gauntlets",
+      "shadow_cloak"
+    ]
+  },
+  "created_at": "2026-01-12T10:54:05.247357",
+  "avatar_id": "shadow_sentinel"
+}

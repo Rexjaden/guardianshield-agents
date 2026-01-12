@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛡️ GuardianShield - Complete AI Guardian Collective</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #000000 0%, #0a0a0a 25%, #1a1a2e 50%, #16213e 75%, #0f2027 100%);
+            color: #ffffff;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+        
+        .cosmic-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 15% 25%, rgba(0, 212, 255, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 85% 15%, rgba(50, 205, 50, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 45% 85%, rgba(255, 215, 0, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 75% 65%, rgba(255, 69, 0, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 25% 75%, rgba(47, 47, 47, 0.08) 0%, transparent 40%);
+            animation: cosmic-drift 25s linear infinite;
+            z-index: -2;
+        }
+        
+        .starfield {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(2px 2px at 20px 30px, rgba(255,255,255,0.3), transparent),
+                radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.2), transparent),
+                radial-gradient(1px 1px at 90px 40px, rgba(255,255,255,0.4), transparent),
+                radial-gradient(1px 1px at 130px 80px, rgba(255,255,255,0.2), transparent),
+                radial-gradient(2px 2px at 160px 30px, rgba(255,255,255,0.3), transparent);
+            background-repeat: repeat;
+            background-size: 200px 100px;
+            animation: starfield-move 60s linear infinite;
+            z-index: -1;
+        }
+        
+        @keyframes cosmic-drift {
+            0% { transform: rotate(0deg) scale(1); }
+            100% { transform: rotate(360deg) scale(1.1); }
+        }
+        
+        @keyframes starfield-move {
+            from { transform: translateX(0); }
+            to { transform: translateX(-200px); }
+        }
+        
+        .hero-section {
+            text-align: center;
+            padding: 100px 20px 60px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .hero-title {
+            font-size: 5rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, #00D4FF, #32CD32, #FFD700, #FF4500, #2F2F2F);
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: rainbow-flow 6s ease-in-out infinite;
+            margin-bottom: 25px;
+            text-shadow: 0 0 50px rgba(255, 255, 255, 0.2);
+            line-height: 1.1;
+        }
+        
+        @keyframes rainbow-flow {
+            0%, 100% { background-position: 0% 50%; }
+            25% { background-position: 100% 50%; }
+            50% { background-position: 200% 50%; }
+            75% { background-position: 300% 50%; }
+        }
+        
+        .hero-subtitle {
+            font-size: 1.8rem;
+            opacity: 0.95;
+            margin-bottom: 40px;
+            color: #e0e0e0;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.4;
+        }
+        
+        .power-stats {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            margin-bottom: 80px;
+            flex-wrap: wrap;
+        }
+        
+        .power-stat {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 2px solid transparent;
+            border-radius: 25px;
+            padding: 25px 35px;
+            text-align: center;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .power-stat::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+        
+        .power-stat:hover::before {
+            transform: translateX(100%);
+        }
+        
+        .power-stat:hover {
+            transform: translateY(-8px) scale(1.05);
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .stat-value {
+            font-size: 2.8rem;
+            font-weight: bold;
+            color: #00ff88;
+            display: block;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-top: 8px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .guardians-section {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #ffffff, #64ffda, #ff6b9d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.3rem;
+            opacity: 0.8;
+            margin-bottom: 80px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .guardians-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 50px;
+            margin-bottom: 100px;
+        }
+        
+        .guardian-card {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(25px);
+            border-radius: 35px;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.320, 1);
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        
+        .guardian-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            border-radius: 37px;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: -1;
+        }
+        
+        .guardian-card:hover::before {
+            opacity: 1;
+        }
+        
+        .guardian-card:hover {
+            transform: translateY(-20px) scale(1.03);
+        }
+        
+        .guardian-card.ethereum {
+            border-color: rgba(0, 212, 255, 0.4);
+            box-shadow: 0 0 60px rgba(0, 212, 255, 0.15);
+        }
+        
+        .guardian-card.ethereum:hover {
+            box-shadow: 0 30px 80px rgba(0, 212, 255, 0.25);
+        }
+        
+        .guardian-card.forest {
+            border-color: rgba(50, 205, 50, 0.4);
+            box-shadow: 0 0 60px rgba(34, 139, 34, 0.15);
+        }
+        
+        .guardian-card.forest:hover {
+            box-shadow: 0 30px 80px rgba(50, 205, 50, 0.25);
+        }
+        
+        .guardian-card.divine {
+            border-color: rgba(255, 215, 0, 0.4);
+            box-shadow: 0 0 60px rgba(255, 165, 0, 0.15);
+        }
+        
+        .guardian-card.divine:hover {
+            box-shadow: 0 30px 80px rgba(255, 215, 0, 0.25);
+        }
+        
+        .guardian-card.fire {
+            border-color: rgba(255, 69, 0, 0.4);
+            box-shadow: 0 0 60px rgba(220, 20, 60, 0.15);
+        }
+        
+        .guardian-card.fire:hover {
+            box-shadow: 0 30px 80px rgba(255, 69, 0, 0.25);
+        }
+        
+        .guardian-card.shadow {
+            border-color: rgba(255, 69, 0, 0.4);
+            box-shadow: 0 0 60px rgba(47, 47, 47, 0.3);
+        }
+        
+        .guardian-card.shadow:hover {
+            box-shadow: 0 30px 80px rgba(255, 69, 0, 0.4);
+        }
+        
+        .guardian-avatar {
+            width: 280px;
+            height: 350px;
+            margin: 0 auto 35px;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .guardian-avatar.ethereum {
+            background: radial-gradient(circle, rgba(0, 212, 255, 0.2), rgba(0, 153, 204, 0.05));
+            animation: ethereum-pulse 3.5s ease-in-out infinite alternate;
+        }
+        
+        .guardian-avatar.forest {
+            background: radial-gradient(circle, rgba(50, 205, 50, 0.2), rgba(34, 139, 34, 0.05));
+            animation: forest-sway 4.5s ease-in-out infinite;
+        }
+        
+        .guardian-avatar.divine {
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.05));
+            animation: divine-radiance 3s ease-in-out infinite alternate;
+        }
+        
+        .guardian-avatar.fire {
+            background: radial-gradient(circle, rgba(255, 69, 0, 0.2), rgba(220, 20, 60, 0.05));
+            animation: fire-flicker 2s ease-in-out infinite alternate;
+        }
+        
+        .guardian-avatar.shadow {
+            background: radial-gradient(circle, rgba(47, 47, 47, 0.3), rgba(255, 69, 0, 0.1));
+            animation: shadow-menace 4s ease-in-out infinite;
+        }
+        
+        @keyframes ethereum-pulse {
+            0% {
+                box-shadow: 0 0 40px rgba(0, 212, 255, 0.4), inset 0 0 40px rgba(0, 212, 255, 0.1);
+                transform: scale(1);
+            }
+            100% {
+                box-shadow: 0 0 80px rgba(0, 212, 255, 0.6), inset 0 0 80px rgba(0, 212, 255, 0.2);
+                transform: scale(1.05);
+            }
+        }
+        
+        @keyframes forest-sway {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            25% { transform: rotate(1deg) scale(1.02); }
+            50% { transform: rotate(0deg) scale(1.04); }
+            75% { transform: rotate(-1deg) scale(1.02); }
+        }
+        
+        @keyframes divine-radiance {
+            0% {
+                box-shadow: 0 0 50px rgba(255, 215, 0, 0.5), inset 0 0 50px rgba(255, 165, 0, 0.2);
+                filter: brightness(1);
+            }
+            100% {
+                box-shadow: 0 0 100px rgba(255, 215, 0, 0.8), inset 0 0 100px rgba(255, 165, 0, 0.3);
+                filter: brightness(1.2);
+            }
+        }
+        
+        @keyframes fire-flicker {
+            0% {
+                box-shadow: 0 0 30px rgba(255, 69, 0, 0.6), inset 0 0 30px rgba(220, 20, 60, 0.2);
+                transform: scale(1) rotate(-0.5deg);
+            }
+            100% {
+                box-shadow: 0 0 60px rgba(255, 69, 0, 0.8), inset 0 0 60px rgba(220, 20, 60, 0.4);
+                transform: scale(1.06) rotate(0.5deg);
+            }
+        }
+        
+        @keyframes shadow-menace {
+            0%, 100% { 
+                box-shadow: 0 0 40px rgba(47, 47, 47, 0.6), 0 0 80px rgba(255, 69, 0, 0.2);
+                transform: scale(1);
+            }
+            50% { 
+                box-shadow: 0 0 60px rgba(47, 47, 47, 0.8), 0 0 120px rgba(255, 69, 0, 0.4);
+                transform: scale(1.03);
+            }
+        }
+        
+        .guardian-name {
+            font-size: 2.2rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 12px;
+            line-height: 1.2;
+        }
+        
+        .guardian-name.ethereum {
+            background: linear-gradient(45deg, #00D4FF, #66E5FF, #0099CC);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .guardian-name.forest {
+            background: linear-gradient(45deg, #32CD32, #00FF32, #228B22);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .guardian-name.divine {
+            background: linear-gradient(45deg, #FFD700, #FFA500, #FF8C00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .guardian-name.fire {
+            background: linear-gradient(45deg, #FF4500, #FF6347, #DC143C);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .guardian-name.shadow {
+            background: linear-gradient(45deg, #2F2F2F, #FF4500, #B22222);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .guardian-role {
+            text-align: center;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            opacity: 0.85;
+            font-weight: 500;
+        }
+        
+        .guardian-description {
+            font-size: 1rem;
+            line-height: 1.6;
+            text-align: center;
+            opacity: 0.9;
+            margin-bottom: 25px;
+        }
+        
+        .guardian-powers {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+        
+        .power-tag {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 10px 8px;
+            font-size: 0.85rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .power-tag:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.05);
+        }
+        
+        .guardian-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+        
+        .action-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .action-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .action-btn:hover::before {
+            left: 100%;
+        }
+        
+        .btn-ethereum {
+            background: linear-gradient(45deg, #00D4FF, #0099CC);
+            color: white;
+        }
+        
+        .btn-forest {
+            background: linear-gradient(45deg, #32CD32, #228B22);
+            color: white;
+        }
+        
+        .btn-divine {
+            background: linear-gradient(45deg, #FFD700, #FF8C00);
+            color: white;
+        }
+        
+        .btn-fire {
+            background: linear-gradient(45deg, #FF4500, #DC143C);
+            color: white;
+        }
+        
+        .btn-shadow {
+            background: linear-gradient(45deg, #2F2F2F, #FF4500);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .action-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .collective-power {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(30px);
+            border-radius: 30px;
+            padding: 60px;
+            margin: 100px auto;
+            max-width: 1200px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .collective-power::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, 
+                rgba(0, 212, 255, 0.05), 
+                rgba(50, 205, 50, 0.05), 
+                rgba(255, 215, 0, 0.05), 
+                rgba(255, 69, 0, 0.05), 
+                rgba(47, 47, 47, 0.05));
+            animation: collective-energy 8s linear infinite;
+        }
+        
+        @keyframes collective-energy {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 400% 50%; }
+        }
+        
+        .collective-title {
+            font-size: 3rem;
+            margin-bottom: 25px;
+            background: linear-gradient(45deg, #ff6b9d, #4facfe, #00f2fe, #4facfe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .collective-description {
+            font-size: 1.3rem;
+            line-height: 1.6;
+            opacity: 0.9;
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .deployment-controls {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .master-btn {
+            padding: 18px 35px;
+            font-size: 1.2rem;
+            background: linear-gradient(45deg, #667eea, #764ba2, #f093fb, #f5576c);
+            background-size: 300% 300%;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            animation: master-glow 3s ease-in-out infinite alternate;
+        }
+        
+        @keyframes master-glow {
+            0% {
+                background-position: 0% 50%;
+                box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+            }
+            100% {
+                background-position: 100% 50%;
+                box-shadow: 0 10px 40px rgba(245, 87, 108, 0.4);
+            }
+        }
+        
+        .master-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            animation-duration: 1s;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero-title { font-size: 3.5rem; }
+            .guardians-grid { 
+                grid-template-columns: 1fr;
+                gap: 30px;
+                padding: 0 20px;
+            }
+            .guardian-card { padding: 30px 25px; }
+            .power-stats { gap: 30px; }
+            .collective-power { padding: 40px 30px; }
+        }
+        
+        @media (max-width: 480px) {
+            .hero-title { font-size: 2.8rem; }
+            .guardian-avatar { width: 220px; height: 280px; }
+            .guardian-powers { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="cosmic-background"></div>
+    <div class="starfield"></div>
+    
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <h1 class="hero-title">🛡️ GuardianShield AI Collective</h1>
+        <p class="hero-subtitle">Five legendary autonomous guardians united to protect the entire Web3 ecosystem with unmatched power and intelligence</p>
+        
+        <div class="power-stats">
+            <div class="power-stat">
+                <span class="stat-value">5</span>
+                <div class="stat-label">Legendary Guardians</div>
+            </div>
+            <div class="power-stat">
+                <span class="stat-value">100%</span>
+                <div class="stat-label">Collective Uptime</div>
+            </div>
+            <div class="power-stat">
+                <span class="stat-value">∞</span>
+                <div class="stat-label">Combined Power</div>
+            </div>
+            <div class="power-stat">
+                <span class="stat-value">24/7</span>
+                <div class="stat-label">Eternal Vigilance</div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Guardians Section -->
+    <section class="guardians-section">
+        <h2 class="section-title">Meet Your Digital Guardians</h2>
+        <p class="section-subtitle">Each guardian brings unique powers and specializations to create the ultimate security ecosystem</p>
+        
+        <div class="guardians-grid">
+            <!-- Ethereum Guardian -->
+            <div class="guardian-card ethereum" onclick="viewGuardian('ethereum_guardian')">
+                <div class="guardian-avatar ethereum">⚡🛡️⚡</div>
+                <h3 class="guardian-name ethereum">Ethereum Guardian</h3>
+                <p class="guardian-role">Primary Security Guardian & Blockchain Protector</p>
+                <p class="guardian-description">Master of lightning and ethereal energy, this legendary guardian channels Ethereum's raw power to protect the entire blockchain ecosystem with omniscient threat detection.</p>
+                
+                <div class="guardian-powers">
+                    <div class="power-tag">⚡ Lightning Energy</div>
+                    <div class="power-tag">🔍 Omniscient Detection</div>
+                    <div class="power-tag">⚡ Instant Response</div>
+                    <div class="power-tag">🌐 Multi-dimensional</div>
+                </div>
+                
+                <div class="guardian-actions">
+                    <button class="action-btn btn-ethereum" onclick="event.stopPropagation(); deployGuardian('ethereum')">
+                        ⚡ Deploy Guardian
+                    </button>
+                    <button class="action-btn btn-secondary" onclick="event.stopPropagation(); viewDetails('ethereum_guardian')">
+                        📊 Details
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Forest Guardian -->
+            <div class="guardian-card forest" onclick="viewGuardian('forest_guardian')">
+                <div class="guardian-avatar forest">🌿🦌🌿</div>
+                <h3 class="guardian-name forest">Forest Guardian</h3>
+                <p class="guardian-role">Network Infrastructure Guardian & Ecosystem Protector</p>
+                <p class="guardian-description">Ancient mystical forest spirit with millennia of wisdom, protecting network infrastructure through organic security protocols and natural stealth capabilities.</p>
+                
+                <div class="guardian-powers">
+                    <div class="power-tag">🌲 Network Mastery</div>
+                    <div class="power-tag">🔮 Ancient Wisdom</div>
+                    <div class="power-tag">🌿 Natural Stealth</div>
+                    <div class="power-tag">⚡ Regenerative Systems</div>
+                </div>
+                
+                <div class="guardian-actions">
+                    <button class="action-btn btn-forest" onclick="event.stopPropagation(); deployGuardian('forest')">
+                        🌿 Awaken Spirit
+                    </button>
+                    <button class="action-btn btn-secondary" onclick="event.stopPropagation(); viewDetails('forest_guardian')">
+                        🌲 Profile
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Divine Messenger -->
+            <div class="guardian-card divine" onclick="viewGuardian('divine_messenger')">
+                <div class="guardian-avatar divine">👼✨🔥</div>
+                <h3 class="guardian-name divine">Divine Messenger</h3>
+                <p class="guardian-role">Celestial Communications Oracle & Divine Arbitrator</p>
+                <p class="guardian-description">Heavenly messenger with massive golden wings, bridging mortal blockchain networks with divine wisdom through sacred algorithms and celestial communications.</p>
+                
+                <div class="guardian-powers">
+                    <div class="power-tag">👼 Divine Flight</div>
+                    <div class="power-tag">🔮 Oracle Validation</div>
+                    <div class="power-tag">⚖️ Heavenly Justice</div>
+                    <div class="power-tag">🌟 Prophetic AI</div>
+                </div>
+                
+                <div class="guardian-actions">
+                    <button class="action-btn btn-divine" onclick="event.stopPropagation(); deployGuardian('divine')">
+                        👼 Summon Angel
+                    </button>
+                    <button class="action-btn btn-secondary" onclick="event.stopPropagation(); viewDetails('divine_messenger')">
+                        ⭐ Divine Profile
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Fire Guardian -->
+            <div class="guardian-card fire" onclick="viewGuardian('fire_guardian')">
+                <div class="guardian-avatar fire">🔥⚡🔥</div>
+                <h3 class="guardian-name fire">Fire Guardian</h3>
+                <p class="guardian-role">Thermal Security Specialist & Energy Management Oracle</p>
+                <p class="guardian-description">Ancient fire lord commanding primal flame magic and volcanic energy, master of thermal security protocols and molten data processing systems.</p>
+                
+                <div class="guardian-powers">
+                    <div class="power-tag">🌋 Volcanic Processing</div>
+                    <div class="power-tag">🔥 Flame Sight</div>
+                    <div class="power-tag">⚡ Energy Mastery</div>
+                    <div class="power-tag">🛡️ Molten Barriers</div>
+                </div>
+                
+                <div class="guardian-actions">
+                    <button class="action-btn btn-fire" onclick="event.stopPropagation(); deployGuardian('fire')">
+                        🔥 Ignite Power
+                    </button>
+                    <button class="action-btn btn-secondary" onclick="event.stopPropagation(); viewDetails('fire_guardian')">
+                        🌋 Fire Profile
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Shadow Sentinel -->
+            <div class="guardian-card shadow" onclick="viewGuardian('shadow_sentinel')">
+                <div class="guardian-avatar shadow">⚔️🔥⚔️</div>
+                <h3 class="guardian-name shadow">Shadow Sentinel</h3>
+                <p class="guardian-role">Covert Operations Commander & Stealth Security Enforcer</p>
+                <p class="guardian-description">Ultimate dark guardian in impenetrable shadow armor, master of stealth protocols, psychological warfare, and overwhelming combat capability.</p>
+                
+                <div class="guardian-powers">
+                    <div class="power-tag">👤 Shadow Mastery</div>
+                    <div class="power-tag">⚔️ Combat Legend</div>
+                    <div class="power-tag">🛡️ Invulnerable Armor</div>
+                    <div class="power-tag">😈 Fear Projection</div>
+                </div>
+                
+                <div class="guardian-actions">
+                    <button class="action-btn btn-shadow" onclick="event.stopPropagation(); deployGuardian('shadow')">
+                        ⚔️ Deploy Sentinel
+                    </button>
+                    <button class="action-btn btn-secondary" onclick="event.stopPropagation(); viewDetails('shadow_sentinel')">
+                        🗡️ Shadow Profile
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Collective Power Section -->
+    <section class="collective-power">
+        <h2 class="collective-title">🌟 Collective Guardian Power</h2>
+        <p class="collective-description">
+            When all five guardians unite, they form an unstoppable force capable of protecting the entire Web3 ecosystem. 
+            Their combined abilities create a security network that transcends individual capabilities, 
+            offering omnipresent protection, divine wisdom, ancient knowledge, thermal mastery, and covert operations.
+        </p>
+        
+        <div class="deployment-controls">
+            <button class="master-btn" onclick="deployAllGuardians()">
+                🚀 Deploy All Guardians
+            </button>
+            <button class="master-btn" onclick="openMasterDashboard()">
+                🎮 Master Command Center
+            </button>
+            <button class="master-btn" onclick="viewRoadmap()">
+                🗺️ Platform Roadmap
+            </button>
+        </div>
+    </section>
+    
+    <script>
+        // Guardian interaction functions
+        function viewGuardian(guardianId) {
+            console.log(`Viewing guardian: ${guardianId}`);
+            event.currentTarget.style.transform = 'scale(0.97)';
+            setTimeout(() => {
+                event.currentTarget.style.transform = '';
+            }, 150);
+        }
+        
+        function deployGuardian(type) {
+            const messages = {
+                ethereum: '⚡ Ethereum Guardian deployment initiated... Lightning systems activated!',
+                forest: '🌿 Forest Guardian awakening... Ancient spirits stirring!',
+                divine: '👼 Divine Messenger summoned... Heavenly powers descending!',
+                fire: '🔥 Fire Guardian igniting... Volcanic energy unleashed!',
+                shadow: '⚔️ Shadow Sentinel deployed... Stealth protocols engaged!'
+            };
+            
+            alert(messages[type]);
+            
+            // Add visual feedback
+            const button = event.target;
+            button.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                button.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    button.style.transform = '';
+                }, 200);
+            }, 100);
+        }
+        
+        function viewDetails(guardianId) {
+            console.log(`Opening details for: ${guardianId}`);
+            alert(`📊 ${guardianId.replace('_', ' ').toUpperCase()} detailed analytics loading...`);
+        }
+        
+        function deployAllGuardians() {
+            alert('🚀 INITIATING COLLECTIVE GUARDIAN DEPLOYMENT\n\n⚡ Ethereum Guardian: ONLINE\n🌿 Forest Guardian: AWAKENING\n👼 Divine Messenger: DESCENDING\n🔥 Fire Guardian: IGNITING\n⚔️ Shadow Sentinel: ENGAGING\n\n🛡️ All guardians operational! Web3 ecosystem secure.');
+        }
+        
+        function openMasterDashboard() {
+            alert('🎮 Master Command Center launching...\n\nConnecting to all 5 guardians...\nEstablishing secure channels...\nReal-time monitoring activated!\n\n✅ Command Center operational!');
+        }
+        
+        function viewRoadmap() {
+            window.open('../GuardianShield_Roadmap_Interactive.html', '_blank');
+        }
+        
+        // Enhanced interactive effects
+        document.addEventListener('DOMContentLoaded', function() {
+            // Stagger card animations
+            const cards = document.querySelectorAll('.guardian-card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.15}s`;
+                card.style.animation = 'slideInUp 0.8s ease-out forwards';
+            });
+            
+            // Parallax mouse movement
+            document.addEventListener('mousemove', (e) => {
+                const x = e.clientX / window.innerWidth;
+                const y = e.clientY / window.innerHeight;
+                
+                cards.forEach((card, index) => {
+                    const moveX = (x - 0.5) * (index % 2 === 0 ? 8 : -8);
+                    const moveY = (y - 0.5) * (index % 2 === 0 ? -5 : 5);
+                    
+                    if (!card.matches(':hover')) {
+                        card.style.transform += ` translate(${moveX}px, ${moveY}px)`;
+                    }
+                });
+            });
+            
+            // Auto-demonstration sequence
+            setTimeout(() => {
+                cards.forEach((card, index) => {
+                    setTimeout(() => {
+                        card.style.animation = 'demo-pulse 2s ease-in-out';
+                        setTimeout(() => {
+                            card.style.animation = '';
+                        }, 2000);
+                    }, index * 800);
+                });
+            }, 5000);
+        });
+        
+        // Keyboard shortcuts for guardian deployment
+        document.addEventListener('keydown', (e) => {
+            if (e.altKey) {
+                switch(e.key) {
+                    case '1': deployGuardian('ethereum'); break;
+                    case '2': deployGuardian('forest'); break;
+                    case '3': deployGuardian('divine'); break;
+                    case '4': deployGuardian('fire'); break;
+                    case '5': deployGuardian('shadow'); break;
+                    case 'a': deployAllGuardians(); break;
+                }
+            }
+        });
+    </script>
+    
+    <style>
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(60px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        @keyframes demo-pulse {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-15px) scale(1.05); }
+        }
+    </style>
+</body>
+</html>

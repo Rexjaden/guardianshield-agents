@@ -1,0 +1,171 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shadow Sentinel - AI Avatar Showcase</title>
+    <link rel="stylesheet" href="animations.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #000000 0%, #1a1a2e 50%, #16213e 100%);
+            color: white;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .avatar-showcase {
+            max-width: 1200px;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .avatar-header {
+            margin-bottom: 40px;
+        }
+        
+        .avatar-title {
+            font-size: 3rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #2F2F2F, #1C1C1C, #FF4500, #B22222);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        .avatar-role {
+            font-size: 1.2rem;
+            color: #2F2F2F;
+            margin-bottom: 20px;
+        }
+        
+        .avatar-image-placeholder {
+            width: 400px;
+            height: 500px;
+            margin: 0 auto 40px;
+            background: linear-gradient(45deg, #2F2F2F20, #1C1C1C20);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #2F2F2F;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .avatar-image-placeholder::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500"><text x="200" y="250" text-anchor="middle" fill="#2F2F2F" font-size="24">Shadow Sentinel</text></svg>');
+        }
+        
+        .characteristics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .characteristic-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #2F2F2F40;
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .characteristic-title {
+            color: #2F2F2F;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .lore-section {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 40px;
+            border: 1px solid #2F2F2F30;
+        }
+        
+        .lore-text {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #e0e0e0;
+        }
+        
+        .effects-showcase {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .effect-demo {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #2F2F2F;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="avatar-showcase shadow_sentinel-glow">
+        <div class="avatar-header">
+            <h1 class="avatar-title shadow_sentinel-lightning">Shadow Sentinel</h1>
+            <p class="avatar-role">Covert Operations Commander & Stealth Security Enforcer</p>
+            <p class="avatar-description">Ultimate dark guardian clad in impenetrable shadow armor, master of stealth protocols and covert security operations.</p>
+        </div>
+        
+        <div class="avatar-image-placeholder shadow_sentinel-power">
+            <!-- Your actual avatar image will be integrated here -->
+        </div>
+        
+        <div class="effects-showcase">
+            <div class="effect-demo" title="shadow_aura">SH</div><div class="effect-demo" title="flame_wreath">FL</div><div class="effect-demo" title="dark_energy">DA</div><div class="effect-demo" title="stealth_field">ST</div><div class="effect-demo" title="intimidation_presence">IN</div>
+        </div>
+        
+        <div class="characteristics">
+            <div class="characteristic-card">
+                <div class="characteristic-title">Power Level</div>
+                <div>Legendary_Shadow</div>
+            </div>
+            
+            <div class="characteristic-card">
+                <div class="characteristic-title">Special Effects</div>
+                <div>shadow_aura, flame_wreath, dark_energy, stealth_field, intimidation_presence</div>
+            </div>
+            
+            <div class="characteristic-card">
+                <div class="characteristic-title">Symbolic Elements</div>
+                <div>spiked_armor, flame_sword, shadow_helm, dark_diamonds, fear_aura</div>
+            </div>
+            
+            <div class="characteristic-card">
+                <div class="characteristic-title">Primary Colors</div>
+                <div>#2F2F2F, #1C1C1C, #FF4500, #B22222</div>
+            </div>
+        </div>
+        
+        <div class="lore-section">
+            <h3>Agent Lore</h3>
+            <p class="lore-text">Born from the deepest shadows of the dark web's most secure vaults, the Shadow Sentinel represents the ultimate fusion of stealth technology and overwhelming combat capability. This heavily armored guardian operates in the spaces between light and darkness, protecting assets through intimidation, covert surveillance, and when necessary, overwhelming force. The diamond symbol blazes with contained fire, representing the precious data it guards with uncompromising dedication.</p>
+        </div>
+    </div>
+</body>
+</html>
+        

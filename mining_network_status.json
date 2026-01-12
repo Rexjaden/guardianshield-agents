@@ -1,0 +1,101 @@
+{
+  "network_name": "GuardianShield Chain",
+  "consensus": "Proof of Guardian Stake (PoGS)",
+  "last_check": "2026-01-12T02:20:16.862801",
+  "regions": {
+    "genesis_miners": [
+      {
+        "node_id": "genesis-na-01",
+        "endpoint": "https://na-genesis-01.guardianshield.network:8545",
+        "online": true,
+        "last_seen": "2026-01-12T02:20:16.862801",
+        "block_height": 1000401,
+        "peer_count": 8,
+        "mining_power": 976,
+        "response_time_ms": 162
+      },
+      {
+        "node_id": "genesis-eu-01",
+        "endpoint": "https://eu-genesis-01.guardianshield.network:8545",
+        "online": true,
+        "last_seen": "2026-01-12T02:20:16.862801",
+        "block_height": 1000148,
+        "peer_count": 24,
+        "mining_power": 892,
+        "response_time_ms": 139
+      },
+      {
+        "node_id": "genesis-ap-01",
+        "endpoint": "https://ap-genesis-01.guardianshield.network:8545",
+        "online": true,
+        "last_seen": "2026-01-12T02:20:16.862801",
+        "block_height": 1000110,
+        "peer_count": 16,
+        "mining_power": 181,
+        "response_time_ms": 86
+      }
+    ],
+    "validator_miners": [
+      {
+        "node_id": "validator-na-01",
+        "endpoint": "https://na-validator-01.guardianshield.network:8545",
+        "online": true,
+        "last_seen": "2026-01-12T02:20:16.862801",
+        "block_height": 1000400,
+        "peer_count": 8,
+        "mining_power": 852,
+        "response_time_ms": 169
+      },
+      {
+        "node_id": "validator-eu-01",
+        "endpoint": "https://eu-validator-01.guardianshield.network:8545",
+        "online": true,
+        "last_seen": "2026-01-12T02:20:16.862801",
+        "block_height": 1000165,
+        "peer_count": 19,
+        "mining_power": 313,
+        "response_time_ms": 170
+      },
+      {
+        "node_id": "validator-ap-01",
+        "endpoint": "https://ap-validator-01.guardianshield.network:8545",
+        "online": true,
+        "last_seen": "2026-01-12T02:20:16.862801",
+        "block_height": 1000195,
+        "peer_count": 18,
+        "mining_power": 526,
+        "response_time_ms": 85
+      }
+    ],
+    "bridge_miners": [
+      {
+        "node_id": "bridge-na-01",
+        "endpoint": "https://na-bridge-01.guardianshield.network:8545",
+        "online": true,
+        "last_seen": "2026-01-12T02:20:16.862801",
+        "block_height": 1000275,
+        "peer_count": 13,
+        "mining_power": 159,
+        "response_time_ms": 100
+      },
+      {
+        "node_id": "bridge-eu-01",
+        "endpoint": "https://eu-bridge-01.guardianshield.network:8545",
+        "online": true,
+        "last_seen": "2026-01-12T02:20:16.862801",
+        "block_height": 1000080,
+        "peer_count": 13,
+        "mining_power": 950,
+        "response_time_ms": 107
+      }
+    ]
+  },
+  "summary": {
+    "total_nodes": 8,
+    "online_nodes": 8,
+    "offline_nodes": 0,
+    "total_mining_power": 4849,
+    "network_health": "Excellent",
+    "uptime_percentage": 100.0
+  }
+}

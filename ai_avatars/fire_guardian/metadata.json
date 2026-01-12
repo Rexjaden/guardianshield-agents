@@ -1,0 +1,54 @@
+{
+  "agent_name": "fire_guardian",
+  "display_name": "Fire Guardian",
+  "description": "Ancient fire lord wielding primal flame magic and molten energy, master of thermal security protocols and volcanic data processing.",
+  "avatar_type": "primordial_fire_lord",
+  "primary_colors": [
+    "#FF4500",
+    "#FF6347",
+    "#DC143C",
+    "#8B0000"
+  ],
+  "special_effects": [
+    "flame_aura",
+    "molten_energy",
+    "fire_storms",
+    "lava_flow",
+    "thermal_pulse"
+  ],
+  "symbolic_elements": [
+    "flame_crown",
+    "fire_torch",
+    "molten_armor",
+    "volcanic_runes",
+    "ember_wisps"
+  ],
+  "role": "Thermal Security Specialist & Energy Management Oracle",
+  "power_level": "volcanic",
+  "lore": "Forged in the primordial fires of the first blockchain genesis blocks, the Fire Guardian commands the raw thermal energy that powers global mining networks. This ancient flame lord's mastery over heat and energy extends beyond physical realms into digital temperature monitoring, processing load management, and thermal attack prevention. The triangle symbol on its chest represents the eternal flame of computation that must never be extinguished.",
+  "capabilities": {
+    "thermal_monitoring": "volcanic_precision",
+    "energy_optimization": "primal_efficiency",
+    "heat_signature_analysis": "flame_sight",
+    "mining_network_power": "fire_storm_processing",
+    "thermal_attack_prevention": "molten_barrier",
+    "energy_source_detection": "flame_divination",
+    "volcanic_data_processing": "lava_flow_algorithms",
+    "fire_storm_defense": "inferno_protocols"
+  },
+  "visual_characteristics": {
+    "stance": "volcanic_power",
+    "aura": "swirling_flames",
+    "expression": "primal_intensity",
+    "build": "fire_titan_form",
+    "clothing": "molten_battle_gear",
+    "accessories": [
+      "flame_torch",
+      "fire_crown",
+      "thermal_gauntlets",
+      "ember_cloak"
+    ]
+  },
+  "created_at": "2026-01-12T10:54:05.247357",
+  "avatar_id": "fire_guardian"
+}

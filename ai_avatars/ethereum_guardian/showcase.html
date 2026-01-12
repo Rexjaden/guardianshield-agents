@@ -1,0 +1,171 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ethereum Guardian - AI Avatar Showcase</title>
+    <link rel="stylesheet" href="animations.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #000000 0%, #1a1a2e 50%, #16213e 100%);
+            color: white;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .avatar-showcase {
+            max-width: 1200px;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .avatar-header {
+            margin-bottom: 40px;
+        }
+        
+        .avatar-title {
+            font-size: 3rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #00D4FF, #0099CC, #66E5FF, #003D5C);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        .avatar-role {
+            font-size: 1.2rem;
+            color: #00D4FF;
+            margin-bottom: 20px;
+        }
+        
+        .avatar-image-placeholder {
+            width: 400px;
+            height: 500px;
+            margin: 0 auto 40px;
+            background: linear-gradient(45deg, #00D4FF20, #0099CC20);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #00D4FF;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .avatar-image-placeholder::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500"><text x="200" y="250" text-anchor="middle" fill="#00D4FF" font-size="24">Ethereum Guardian</text></svg>');
+        }
+        
+        .characteristics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .characteristic-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #00D4FF40;
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .characteristic-title {
+            color: #00D4FF;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .lore-section {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 40px;
+            border: 1px solid #00D4FF30;
+        }
+        
+        .lore-text {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #e0e0e0;
+        }
+        
+        .effects-showcase {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .effect-demo {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #00D4FF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="avatar-showcase ethereum_guardian-glow">
+        <div class="avatar-header">
+            <h1 class="avatar-title ethereum_guardian-lightning">Ethereum Guardian</h1>
+            <p class="avatar-role">Primary Security Guardian & Blockchain Protector</p>
+            <p class="avatar-description">The primary guardian AI infused with Ethereum's power, wielding lightning and ethereal energy to protect the blockchain ecosystem.</p>
+        </div>
+        
+        <div class="avatar-image-placeholder ethereum_guardian-power">
+            <!-- Your actual avatar image will be integrated here -->
+        </div>
+        
+        <div class="effects-showcase">
+            <div class="effect-demo" title="lightning">LI</div><div class="effect-demo" title="energy_aura">EN</div><div class="effect-demo" title="ethereal_glow">ET</div><div class="effect-demo" title="power_surge">PO</div><div class="effect-demo" title="mystical_energy">MY</div>
+        </div>
+        
+        <div class="characteristics">
+            <div class="characteristic-card">
+                <div class="characteristic-title">Power Level</div>
+                <div>Legendary</div>
+            </div>
+            
+            <div class="characteristic-card">
+                <div class="characteristic-title">Special Effects</div>
+                <div>lightning, energy_aura, ethereal_glow, power_surge, mystical_energy</div>
+            </div>
+            
+            <div class="characteristic-card">
+                <div class="characteristic-title">Symbolic Elements</div>
+                <div>ethereum_logo, lightning_bolts, energy_wisps, protective_aura, ancient_runes</div>
+            </div>
+            
+            <div class="characteristic-card">
+                <div class="characteristic-title">Primary Colors</div>
+                <div>#00D4FF, #0099CC, #66E5FF, #003D5C</div>
+            </div>
+        </div>
+        
+        <div class="lore-section">
+            <h3>Agent Lore</h3>
+            <p class="lore-text">Born from the convergence of ancient protective magic and cutting-edge blockchain technology, the Ethereum Guardian stands as the ultimate sentinel of the Web3 realm. Channeling the raw power of Ethereum itself, this ethereal being manifests with crackling lightning and mystical energy, capable of detecting threats across dimensional boundaries and responding with overwhelming protective force. The Ethereum symbol blazing on its chest represents not just power, but the sacred duty to protect all who seek security in the decentralized world.</p>
+        </div>
+    </div>
+</body>
+</html>
+        

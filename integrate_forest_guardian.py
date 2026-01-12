@@ -1,0 +1,67 @@
+#!/usr/bin/env python3
+"""
+Integrate Forest Guardian (Network Guardian)
+Second AI Avatar Integration
+"""
+
+import asyncio
+from datetime import datetime
+from integrate_ai_avatars import AIAvatarIntegrator
+
+async def integrate_forest_guardian():
+    """Integrate the Forest Guardian - Network Guardian AI"""
+    
+    integrator = AIAvatarIntegrator()
+    
+    # Based on the mystical forest guardian image with antlers and green runes
+    forest_guardian_data = {
+        "agent_name": "forest_guardian",
+        "display_name": "Forest Guardian",
+        "description": "Ancient mystical forest spirit that protects network infrastructure with natural wisdom and organic security protocols. The eternal guardian of digital ecosystems.",
+        "avatar_type": "mystical_forest_sentinel",
+        "primary_colors": ["#228B22", "#32CD32", "#00FF32", "#006400"],  # Forest greens
+        "special_effects": ["natural_aura", "rune_glow", "forest_energy", "earth_connection", "mystical_presence"],
+        "symbolic_elements": ["ancient_antlers", "geometric_runes", "forest_torch", "bark_armor", "nature_symbols"],
+        "role": "Network Infrastructure Guardian & Ecosystem Protector",
+        "power_level": "ancient_wisdom",
+        "lore": "Born from the first digital trees in the primordial network forests, this ancient guardian has watched over data streams for millennia. With massive antlers that channel network signals and bark-like armor forged from the oldest code trees, the Forest Guardian protects the delicate balance of digital ecosystems. The glowing green runes on its chest represent the sacred geometry of network topology, pulsing with the heartbeat of global data flow. Each symbol is a node in the great network of life, connecting all things in perfect harmony.",
+        "capabilities": {
+            "network_topology_monitoring": "omniscient",
+            "ecosystem_balance": "natural_harmony", 
+            "data_flow_optimization": "organic_routing",
+            "infrastructure_protection": "root_level_access",
+            "threat_camouflage": "natural_stealth",
+            "healing_protocols": "regenerative_systems",
+            "ancient_knowledge": "millennia_experience",
+            "forest_network_mastery": "complete_integration"
+        },
+        "visual_characteristics": {
+            "stance": "wise_guardian_posture",
+            "aura": "green_runic_energy",
+            "expression": "ancient_wisdom",
+            "build": "massive_forest_spirit",
+            "clothing": "living_bark_armor",
+            "accessories": ["sacred_antlers", "flame_torch", "runic_chest_plate", "nature_crown"]
+        },
+        "created_at": datetime.now().isoformat(),
+        "avatar_id": "forest_guardian"
+    }
+    
+    # Add the avatar
+    avatar = await integrator.add_avatar_from_description(forest_guardian_data)
+    await integrator.generate_master_showcase()
+    
+    print(f"🌿 Successfully integrated: {avatar.display_name}")
+    print(f"🎨 Forest Showcase: ai_avatars/{avatar.avatar_id}/showcase.html")
+    print(f"🔗 Integration: ai_avatars/{avatar.avatar_id}/integration.js")
+    print(f"💫 Nature Animations: ai_avatars/{avatar.avatar_id}/animations.css")
+    
+    # Show updated gallery
+    print(f"\n🏛️ Master Gallery Updated: ai_avatars/master_gallery.html")
+    print(f"📊 Total Avatars: {len(integrator.avatars) + 1}") # +1 because we don't load existing ones in this script
+    
+    return avatar
+
+if __name__ == "__main__":
+    print("🌿 Integrating Forest Guardian (Network Guardian)")
+    asyncio.run(integrate_forest_guardian())

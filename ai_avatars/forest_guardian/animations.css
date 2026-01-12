@@ -1,0 +1,126 @@
+/* Forest Guardian Animation Effects */
+
+.forest_guardian-natural-aura {
+    animation: natural-pulse 4s ease-in-out infinite alternate;
+    box-shadow: 0 0 25px #228B2240, 0 0 50px #32CD3230;
+}
+
+@keyframes natural-pulse {
+    0% { 
+        box-shadow: 0 0 25px #228B2240, inset 0 0 25px #32CD3220;
+        transform: scale(1);
+    }
+    100% { 
+        box-shadow: 0 0 50px #228B2260, inset 0 0 50px #32CD3240;
+        transform: scale(1.02);
+    }
+}
+
+.forest_guardian-rune-glow {
+    animation: runic-energy 3s linear infinite;
+}
+
+@keyframes runic-energy {
+    0%, 100% { 
+        text-shadow: 0 0 10px #00FF32, 0 0 20px #32CD32, 0 0 30px #228B22;
+        filter: brightness(1);
+    }
+    25% { 
+        text-shadow: 0 0 15px #00FF32, 0 0 30px #32CD32, 0 0 45px #228B22;
+        filter: brightness(1.2);
+    }
+    50% { 
+        text-shadow: 0 0 20px #00FF32, 0 0 40px #32CD32, 0 0 60px #228B22;
+        filter: brightness(1.4);
+    }
+    75% { 
+        text-shadow: 0 0 15px #00FF32, 0 0 30px #32CD32, 0 0 45px #228B22;
+        filter: brightness(1.2);
+    }
+}
+
+.forest_guardian-ancient-wisdom {
+    animation: wisdom-sway 6s ease-in-out infinite;
+}
+
+@keyframes wisdom-sway {
+    0%, 100% { transform: rotate(0deg) translateY(0px); }
+    25% { transform: rotate(1deg) translateY(-3px); }
+    50% { transform: rotate(0deg) translateY(-5px); }
+    75% { transform: rotate(-1deg) translateY(-3px); }
+}
+
+.forest_guardian-earth-connection {
+    animation: earth-root 8s ease-in-out infinite;
+}
+
+@keyframes earth-root {
+    0%, 100% { 
+        transform: translateY(0px);
+        box-shadow: 0 5px 15px #228B2230;
+    }
+    33% { 
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px #32CD3240;
+    }
+    66% { 
+        transform: translateY(2px);
+        box-shadow: 0 2px 10px #00640050;
+    }
+}
+
+.forest_guardian-mystical-presence {
+    animation: mystical-float 5s ease-in-out infinite alternate;
+}
+
+@keyframes mystical-float {
+    0% { 
+        transform: translateY(0px) scale(1);
+        opacity: 1;
+    }
+    100% { 
+        transform: translateY(-8px) scale(1.01);
+        opacity: 0.95;
+    }
+}
+
+/* Antler effects */
+.forest_guardian-antlers {
+    animation: antler-energy 4s ease-in-out infinite;
+}
+
+@keyframes antler-energy {
+    0%, 100% {
+        filter: drop-shadow(0 0 5px #32CD32);
+    }
+    50% {
+        filter: drop-shadow(0 0 15px #00FF32) drop-shadow(0 0 25px #228B22);
+    }
+}
+
+/* Runic symbols effects */
+.forest_guardian-runes {
+    animation: runic-pulse 2.5s linear infinite;
+}
+
+@keyframes runic-pulse {
+    0% { opacity: 0.7; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.05); }
+    100% { opacity: 0.7; transform: scale(1); }
+}
+
+/* Torch flame effects */
+.forest_guardian-flame {
+    animation: sacred-flame 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes sacred-flame {
+    0% {
+        text-shadow: 0 0 10px #FF4500, 0 0 20px #FF6347;
+        transform: scale(1) rotate(-1deg);
+    }
+    100% {
+        text-shadow: 0 0 20px #FF4500, 0 0 30px #FF6347, 0 0 40px #FFD700;
+        transform: scale(1.1) rotate(1deg);
+    }
+}

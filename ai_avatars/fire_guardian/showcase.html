@@ -1,0 +1,171 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fire Guardian - AI Avatar Showcase</title>
+    <link rel="stylesheet" href="animations.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #000000 0%, #1a1a2e 50%, #16213e 100%);
+            color: white;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .avatar-showcase {
+            max-width: 1200px;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .avatar-header {
+            margin-bottom: 40px;
+        }
+        
+        .avatar-title {
+            font-size: 3rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #FF4500, #FF6347, #DC143C, #8B0000);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        .avatar-role {
+            font-size: 1.2rem;
+            color: #FF4500;
+            margin-bottom: 20px;
+        }
+        
+        .avatar-image-placeholder {
+            width: 400px;
+            height: 500px;
+            margin: 0 auto 40px;
+            background: linear-gradient(45deg, #FF450020, #FF634720);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #FF4500;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .avatar-image-placeholder::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500"><text x="200" y="250" text-anchor="middle" fill="#FF4500" font-size="24">Fire Guardian</text></svg>');
+        }
+        
+        .characteristics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .characteristic-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #FF450040;
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .characteristic-title {
+            color: #FF4500;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .lore-section {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 40px;
+            border: 1px solid #FF450030;
+        }
+        
+        .lore-text {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #e0e0e0;
+        }
+        
+        .effects-showcase {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .effect-demo {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #FF4500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="avatar-showcase fire_guardian-glow">
+        <div class="avatar-header">
+            <h1 class="avatar-title fire_guardian-lightning">Fire Guardian</h1>
+            <p class="avatar-role">Thermal Security Specialist & Energy Management Oracle</p>
+            <p class="avatar-description">Ancient fire lord wielding primal flame magic and molten energy, master of thermal security protocols and volcanic data processing.</p>
+        </div>
+        
+        <div class="avatar-image-placeholder fire_guardian-power">
+            <!-- Your actual avatar image will be integrated here -->
+        </div>
+        
+        <div class="effects-showcase">
+            <div class="effect-demo" title="flame_aura">FL</div><div class="effect-demo" title="molten_energy">MO</div><div class="effect-demo" title="fire_storms">FI</div><div class="effect-demo" title="lava_flow">LA</div><div class="effect-demo" title="thermal_pulse">TH</div>
+        </div>
+        
+        <div class="characteristics">
+            <div class="characteristic-card">
+                <div class="characteristic-title">Power Level</div>
+                <div>Volcanic</div>
+            </div>
+            
+            <div class="characteristic-card">
+                <div class="characteristic-title">Special Effects</div>
+                <div>flame_aura, molten_energy, fire_storms, lava_flow, thermal_pulse</div>
+            </div>
+            
+            <div class="characteristic-card">
+                <div class="characteristic-title">Symbolic Elements</div>
+                <div>flame_crown, fire_torch, molten_armor, volcanic_runes, ember_wisps</div>
+            </div>
+            
+            <div class="characteristic-card">
+                <div class="characteristic-title">Primary Colors</div>
+                <div>#FF4500, #FF6347, #DC143C, #8B0000</div>
+            </div>
+        </div>
+        
+        <div class="lore-section">
+            <h3>Agent Lore</h3>
+            <p class="lore-text">Forged in the primordial fires of the first blockchain genesis blocks, the Fire Guardian commands the raw thermal energy that powers global mining networks. This ancient flame lord's mastery over heat and energy extends beyond physical realms into digital temperature monitoring, processing load management, and thermal attack prevention. The triangle symbol on its chest represents the eternal flame of computation that must never be extinguished.</p>
+        </div>
+    </div>
+</body>
+</html>
+        

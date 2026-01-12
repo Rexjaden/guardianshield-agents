@@ -1,0 +1,39 @@
+
+.ethereum_guardian-lightning {
+    animation: lightning-pulse 2s infinite alternate;
+}
+
+@keyframes lightning-pulse {
+    0% { text-shadow: 0 0 5px #00D4FF, 0 0 10px #00D4FF, 0 0 15px #00D4FF; }
+    100% { text-shadow: 0 0 10px #00D4FF, 0 0 20px #00D4FF, 0 0 30px #00D4FF; }
+}
+            
+
+.ethereum_guardian-glow {
+    animation: ethereal-glow 3s ease-in-out infinite alternate;
+    box-shadow: 0 0 20px #00D4FF40;
+}
+
+@keyframes ethereal-glow {
+    0% { 
+        box-shadow: 0 0 20px #00D4FF40, inset 0 0 20px #00D4FF20;
+        transform: scale(1);
+    }
+    100% { 
+        box-shadow: 0 0 40px #00D4FF60, inset 0 0 40px #00D4FF30;
+        transform: scale(1.05);
+    }
+}
+            
+
+.ethereum_guardian-power {
+    animation: power-surge 1.5s infinite;
+}
+
+@keyframes power-surge {
+    0%, 100% { transform: translateY(0px) scale(1); opacity: 1; }
+    25% { transform: translateY(-5px) scale(1.02); opacity: 0.9; }
+    50% { transform: translateY(-2px) scale(1.04); opacity: 0.95; }
+    75% { transform: translateY(-8px) scale(1.01); opacity: 0.92; }
+}
+            

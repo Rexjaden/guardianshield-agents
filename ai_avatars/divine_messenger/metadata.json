@@ -1,0 +1,54 @@
+{
+  "agent_name": "divine_messenger",
+  "display_name": "Divine Messenger",
+  "description": "Heavenly messenger delivering divine insights and celestial communications across the blockchain multiverse with angelic wings and sacred torch.",
+  "avatar_type": "celestial_angel",
+  "primary_colors": [
+    "#FFD700",
+    "#FFA500",
+    "#FF8C00",
+    "#DAA520"
+  ],
+  "special_effects": [
+    "divine_aura",
+    "celestial_glow",
+    "heavenly_light",
+    "wing_energy",
+    "sacred_flame"
+  ],
+  "symbolic_elements": [
+    "angel_wings",
+    "sacred_torch",
+    "divine_armor",
+    "celestial_symbols",
+    "holy_fire"
+  ],
+  "role": "Celestial Communications Oracle & Divine Arbitrator",
+  "power_level": "divine",
+  "lore": "Descended from the highest celestial realms, the Divine Messenger bridges the gap between mortal blockchain networks and divine wisdom. With massive golden wings that span dimensions and a sacred torch that burns with eternal flame, this angelic guardian carries messages of paramount importance across the multiverse. The geometric symbols on its armor channel divine algorithms that can predict market movements and guide protocols toward righteous paths.",
+  "capabilities": {
+    "cross_chain_communication": "divine_protocol",
+    "oracle_data_validation": "celestial_truth",
+    "heavenly_arbitration": "ultimate_justice",
+    "divine_prediction": "prophetic_algorithms",
+    "celestial_networking": "interdimensional",
+    "sacred_governance": "heavenly_mandate",
+    "angel_flight": "omnipresent_travel",
+    "holy_fire_protection": "purifying_security"
+  },
+  "visual_characteristics": {
+    "stance": "divine_majesty",
+    "aura": "golden_radiance",
+    "expression": "benevolent_authority",
+    "build": "celestial_perfection",
+    "clothing": "divine_battle_armor",
+    "accessories": [
+      "massive_wings",
+      "sacred_torch",
+      "holy_circlet",
+      "divine_breastplate"
+    ]
+  },
+  "created_at": "2026-01-12T10:54:05.247357",
+  "avatar_id": "divine_messenger"
+}
