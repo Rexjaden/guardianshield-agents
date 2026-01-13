@@ -17,17 +17,6 @@ from dataclasses import dataclass
 from enum import Enum
 import secrets
 
-import os
-from fastapi import HTTPException
-
-def emergency_check():
-    if os.path.exists('.emergency_access_control'):
-        if not os.path.exists('.emergency_admin_session'):
-            raise HTTPException(status_code=503, detail="API locked due to security lockdown")
-    return True
-
-
-
 class CryptoType(Enum):
     """Supported cryptocurrencies for pairing"""
     BITCOIN = "BTC"
@@ -567,13 +556,11 @@ class CryptoPairCalculationRequest(BaseModel):
 # API endpoints
 @app.get("/")
 async def staking_dashboard():
-    emergency_check()
     """Serve the staking dashboard"""
     return HTMLResponse(content=get_staking_html(), status_code=200)
 
 @app.get("/api/staking/pools")
 async def get_staking_pools():
-    emergency_check()
     """Get all available staking pools"""
     return {
         "pools": staking_manager.get_all_pools(),
@@ -584,7 +571,6 @@ async def get_staking_pools():
 
 @app.get("/api/staking/pool/{pool_id}")
 async def get_pool_details(pool_id: str):
-    emergency_check()
     """Get detailed information about a specific pool"""
     pool = staking_manager.get_pool(pool_id)
     if not pool:
@@ -609,7 +595,6 @@ async def get_pool_details(pool_id: str):
 
 @app.post("/api/staking/calculate-rewards")
 async def calculate_rewards(request: RewardCalculationRequest):
-    emergency_check()
     """Calculate potential rewards for a staking scenario"""
     try:
         rewards = staking_manager.calculate_potential_rewards(
@@ -623,7 +608,6 @@ async def calculate_rewards(request: RewardCalculationRequest):
 
 @app.post("/api/staking/stake")
 async def create_stake(request: StakeRequest):
-    emergency_check()
     """Create a new stake (simulation - would interact with smart contracts)"""
     
     pool = staking_manager.get_pool(request.pool_id)
@@ -686,7 +670,6 @@ async def create_stake(request: StakeRequest):
 
 @app.get("/api/staking/user/{user_id}/stakes")
 async def get_user_stakes(user_id: str):
-    emergency_check()
     """Get all stakes for a user"""
     
     conn = sqlite3.connect(staking_manager.db_path)
@@ -734,7 +717,6 @@ async def get_user_stakes(user_id: str):
 
 @app.post("/api/staking/calculate-crypto-pair")
 async def calculate_crypto_pair_requirement(request: CryptoPairCalculationRequest):
-    emergency_check()
     """Calculate GUARD tokens required for crypto pairing"""
     try:
         required_guard = staking_manager.calculate_crypto_guard_ratio(
@@ -772,7 +754,6 @@ async def calculate_crypto_pair_requirement(request: CryptoPairCalculationReques
 
 @app.post("/api/staking/mint-shield")
 async def mint_shield_token(request: ShieldMintRequest):
-    emergency_check()
     """Mint a new SHIELD token from crypto+GUARD pairing"""
     try:
         result = staking_manager.mint_shield_token(
@@ -793,7 +774,6 @@ async def mint_shield_token(request: ShieldMintRequest):
 
 @app.get("/api/staking/user/{user_id}/shields")
 async def get_user_shield_tokens(user_id: str):
-    emergency_check()
     """Get all SHIELD tokens owned by a user"""
     
     conn = sqlite3.connect(staking_manager.db_path)
@@ -848,7 +828,6 @@ async def get_user_shield_tokens(user_id: str):
 
 @app.get("/api/staking/supported-cryptos")
 async def get_supported_cryptocurrencies():
-    emergency_check()
     """Get list of supported cryptocurrencies for pairing"""
     
     return {

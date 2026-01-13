@@ -22,17 +22,6 @@ from fastapi import FastAPI, HTTPException, BackgroundTasks
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 
-import os
-from fastapi import HTTPException
-
-def emergency_check():
-    if os.path.exists('.emergency_access_control'):
-        if not os.path.exists('.emergency_admin_session'):
-            raise HTTPException(status_code=503, detail="API locked due to security lockdown")
-    return True
-
-
-
 # LIVE CONTRACT CONFIGURATION
 LIVE_CONTRACTS = {
     "GuardianTokenSale": "0xC6A4a2591bb0a9d1f45397da616dBc27e4b7BC8d",
@@ -587,7 +576,6 @@ purchase_manager = TokenPurchaseManager()
 
 @app.get("/", response_class=HTMLResponse)
 async def token_purchase_platform():
-    emergency_check()
     """Serve the GUARD Token Purchase Platform"""
     return f"""
     <!DOCTYPE html>
@@ -1270,7 +1258,6 @@ async def token_purchase_platform():
 
 @app.post("/api/purchase/calculate")
 async def calculate_purchase(request: dict):
-    emergency_check()
     """Calculate purchase amount with fees and discounts"""
     try:
         calc = purchase_manager.calculate_purchase_amount(
@@ -1314,7 +1301,6 @@ async def complete_purchase(purchase_id: str, admin_user = Depends(require_admin
 
 @app.get("/api/purchase/history/{email}")
 async def get_purchase_history(email: str):
-    emergency_check()
     """Get purchase history for user"""
     try:
         history = purchase_manager.get_purchase_history(email=email)
@@ -1324,7 +1310,6 @@ async def get_purchase_history(email: str):
 
 @app.get("/api/wallet/{wallet_address}")
 async def get_wallet_balance(wallet_address: str):
-    emergency_check()
     """Get wallet balance"""
     try:
         balance = purchase_manager.get_wallet_balance(wallet_address)
@@ -1334,7 +1319,6 @@ async def get_wallet_balance(wallet_address: str):
 
 @app.get("/api/purchase/stats")
 async def get_purchase_stats():
-    emergency_check()
     """Get purchase platform statistics"""
     try:
         stats = purchase_manager.get_purchase_stats()

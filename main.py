@@ -27,6 +27,9 @@ from agents.flare_integration import FlareIntegrationAgent
 from agents.threat_definitions import evolving_threats
 from admin_console import AdminConsole
 
+# Import Cilium mesh integration
+from cilium_agent_mesh import CiliumAgentMesh, integrate_cilium_with_agents
+
 # Import enhanced systems
 try:
     from enhanced_guardianshield_menu import EnhancedGuardianShieldMenu, launch_enhanced_menu_sync
@@ -54,6 +57,10 @@ class AutonomousAgentOrchestrator:
         self.agents = {}
         self.agent_threads = {}
         self.evolution_threads = {}
+        
+        # Cilium mesh integration
+        self.cilium_mesh = None
+        self.mesh_enabled = os.getenv('CILIUM_MESH_ENABLED', 'false').lower() == 'true'
         
         # Autonomous operation settings
         self.auto_evolution_enabled = True

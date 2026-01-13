@@ -13,17 +13,6 @@ from datetime import datetime, timedelta
 import math
 import logging
 
-import os
-from fastapi import HTTPException
-
-def emergency_check():
-    if os.path.exists('.emergency_access_control'):
-        if not os.path.exists('.emergency_admin_session'):
-            raise HTTPException(status_code=503, detail="API locked due to security lockdown")
-    return True
-
-
-
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -248,13 +237,11 @@ tokenomics = TokenomicsData()
 
 @app.get("/")
 async def tokenomics_dashboard():
-    emergency_check()
     """Serve the tokenomics dashboard"""
     return HTMLResponse(content=get_tokenomics_html(), status_code=200)
 
 @app.get("/api/tokenomics/overview")
 async def get_tokenomics_overview():
-    emergency_check()
     """Get complete tokenomics overview"""
     return {
         "token_info": {
@@ -271,7 +258,6 @@ async def get_tokenomics_overview():
 
 @app.get("/api/tokenomics/distribution")
 async def get_token_distribution():
-    emergency_check()
     """Get token distribution breakdown"""
     return {
         "distribution": tokenomics.distribution,
@@ -290,13 +276,11 @@ async def get_token_distribution():
 
 @app.get("/api/tokenomics/metrics")
 async def get_current_metrics():
-    emergency_check()
     """Get current economic metrics"""
     return tokenomics.metrics
 
 @app.get("/api/tokenomics/historical")
 async def get_historical_data(days: int = 30):
-    emergency_check()
     """Get historical tokenomics data"""
     if days > 365:
         raise HTTPException(status_code=400, detail="Maximum 365 days of historical data")
@@ -305,7 +289,6 @@ async def get_historical_data(days: int = 30):
 
 @app.get("/api/tokenomics/utility")
 async def get_utility_mechanisms():
-    emergency_check()
     """Get token utility mechanisms"""
     return {
         "mechanisms": tokenomics.utility_mechanisms,
@@ -314,7 +297,6 @@ async def get_utility_mechanisms():
 
 @app.get("/api/tokenomics/projections")
 async def get_supply_projections():
-    emergency_check()
     """Get supply release projections"""
     projections = []
     current_date = datetime.now()

@@ -1,0 +1,19 @@
+{
+  "cloudflare": {
+    "apiEmail": "YOUR_CLOUDFLARE_EMAIL",
+    "apiKey": "YOUR_CLOUDFLARE_API_KEY",
+    "zoneId": "YOUR_ZONE_ID",
+    "domain": "guardianshield.io",
+    "proxied": true,
+    "ttl": 300
+  },
+  "external_dns": {
+    "provider": "cloudflare",
+    "domain_filter": "guardianshield.io",
+    "policy": "upsert-only",
+    "txt_owner_id": "guardianshield-cluster",
+    "txt_prefix": "guardianshield-",
+    "interval": "30s",
+    "log_level": "info"
+  }
+}

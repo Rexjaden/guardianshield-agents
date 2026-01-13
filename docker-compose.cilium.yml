@@ -1,0 +1,383 @@
+services:
+  # Cilium Clustermesh API Server
+  cilium-clustermesh:
+    image: guardianshield/dhi-cilium-clustermesh-apiserver:latest
+    container_name: guardianshield-clustermesh
+    ports:
+      - "2379:2379"   # etcd client
+      - "2380:2380"   # etcd peer
+    environment:
+      - CILIUM_CLUSTER_NAME=guardianshield-agents
+      - CILIUM_CLUSTER_ID=1
+      - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
+      - ETCD_ADVERTISE_CLIENT_URLS=http://cilium-clustermesh:2379
+      - ETCD_DATA_DIR=/var/lib/etcd
+    volumes:
+      - cilium_etcd_data:/var/lib/etcd
+    networks:
+      - guardianshield-mesh
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "etcdctl", "endpoint", "health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # GuardianShield API Server with Cilium integration
+  guardianshield-api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: guardianshield-api
+    ports:
+      - "8000:8000"
+    environment:
+      - CILIUM_MESH_ENABLED=true
+      - CLUSTER_MESH_ENDPOINT=http://cilium-clustermesh:2379
+      - AGENT_MESH_NETWORK=guardianshield-mesh
+    depends_on:
+      - cilium-clustermesh
+      - redis
+      - postgres
+    networks:
+      - guardianshield-mesh
+    restart: unless-stopped
+    labels:
+      - "app=guardianshield-api"
+      - "version=v1"
+      - "security.cilium.io/policy=enabled"
+
+  # Learning Agent with mesh integration  
+  learning-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile.agent
+      args:
+        AGENT_TYPE: learning_agent
+    container_name: guardianshield-learning-agent
+    ports:
+      - "8001:8001"
+    environment:
+      - AGENT_TYPE=learning_agent
+      - AGENT_PORT=8001
+      - MESH_ID=learning-svc
+      - CILIUM_MESH_ENABLED=true
+      - API_ENDPOINT=http://guardianshield-api:8000
+    depends_on:
+      - cilium-clustermesh
+      - guardianshield-api
+    networks:
+      - guardianshield-mesh
+    restart: unless-stopped
+    labels:
+      - "app=learning-agent"
+      - "version=v1"
+      - "security.cilium.io/policy=enabled"
+      - "app.kubernetes.io/component=guardianshield-agent"
+
+  # Behavioral Analytics Agent
+  behavioral-analytics:
+    build:
+      context: .
+      dockerfile: Dockerfile.agent
+      args:
+        AGENT_TYPE: behavioral_analytics
+    container_name: guardianshield-behavioral-analytics
+    ports:
+      - "8002:8002"
+    environment:
+      - AGENT_TYPE=behavioral_analytics
+      - AGENT_PORT=8002
+      - MESH_ID=analytics-svc
+      - CILIUM_MESH_ENABLED=true
+      - API_ENDPOINT=http://guardianshield-api:8000
+    depends_on:
+      - cilium-clustermesh
+      - guardianshield-api
+    networks:
+      - guardianshield-mesh
+    restart: unless-stopped
+    labels:
+      - "app=behavioral-analytics"
+      - "version=v1"
+      - "security.cilium.io/policy=enabled"
+      - "app.kubernetes.io/component=guardianshield-agent"
+
+  # Genetic Evolver Agent
+  genetic-evolver:
+    build:
+      context: .
+      dockerfile: Dockerfile.agent
+      args:
+        AGENT_TYPE: genetic_evolver
+    container_name: guardianshield-genetic-evolver
+    ports:
+      - "8003:8003"
+    environment:
+      - AGENT_TYPE=genetic_evolver
+      - AGENT_PORT=8003
+      - MESH_ID=evolver-svc
+      - CILIUM_MESH_ENABLED=true
+      - API_ENDPOINT=http://guardianshield-api:8000
+    depends_on:
+      - cilium-clustermesh
+      - guardianshield-api
+    networks:
+      - guardianshield-mesh
+    restart: unless-stopped
+    labels:
+      - "app=genetic-evolver"
+      - "version=v1"
+      - "security.cilium.io/policy=enabled"
+      - "app.kubernetes.io/component=guardianshield-agent"
+
+  # Data Ingestion Agent
+  data-ingestion:
+    build:
+      context: .
+      dockerfile: Dockerfile.agent
+      args:
+        AGENT_TYPE: data_ingestion
+    container_name: guardianshield-data-ingestion
+    ports:
+      - "8004:8004"
+    environment:
+      - AGENT_TYPE=data_ingestion
+      - AGENT_PORT=8004
+      - MESH_ID=ingestion-svc
+      - CILIUM_MESH_ENABLED=true
+      - API_ENDPOINT=http://guardianshield-api:8000
+    depends_on:
+      - cilium-clustermesh
+      - guardianshield-api
+    networks:
+      - guardianshield-mesh
+    restart: unless-stopped
+    labels:
+      - "app=data-ingestion"
+      - "version=v1"
+      - "security.cilium.io/policy=enabled"
+      - "app.kubernetes.io/component=guardianshield-agent"
+
+  # DMER Monitor Agent
+  dmer-monitor:
+    build:
+      context: .
+      dockerfile: Dockerfile.agent
+      args:
+        AGENT_TYPE: dmer_monitor_agent
+    container_name: guardianshield-dmer-monitor
+    ports:
+      - "8005:8005"
+    environment:
+      - AGENT_TYPE=dmer_monitor_agent
+      - AGENT_PORT=8005
+      - MESH_ID=dmer-monitor-svc
+      - CILIUM_MESH_ENABLED=true
+      - API_ENDPOINT=http://guardianshield-api:8000
+    depends_on:
+      - cilium-clustermesh
+      - guardianshield-api
+    networks:
+      - guardianshield-mesh
+    restart: unless-stopped
+    labels:
+      - "app=dmer-monitor"
+      - "version=v1"
+      - "security.cilium.io/policy=enabled"
+      - "app.kubernetes.io/component=guardianshield-agent"
+
+  # Flare Integration Agent  
+  flare-integration:
+    build:
+      context: .
+      dockerfile: Dockerfile.agent
+      args:
+        AGENT_TYPE: flare_integration
+    container_name: guardianshield-flare-integration
+    ports:
+      - "8006:8006"
+    environment:
+      - AGENT_TYPE=flare_integration
+      - AGENT_PORT=8006
+      - MESH_ID=flare-svc
+      - CILIUM_MESH_ENABLED=true
+      - API_ENDPOINT=http://guardianshield-api:8000
+    depends_on:
+      - cilium-clustermesh
+      - guardianshield-api
+    networks:
+      - guardianshield-mesh
+    restart: unless-stopped
+    labels:
+      - "app=flare-integration"
+      - "version=v1"
+      - "security.cilium.io/policy=enabled"
+      - "app.kubernetes.io/component=guardianshield-agent"
+
+  # Blockchain Node Cluster
+  blockchain-cluster:
+    build:
+      context: .
+      dockerfile: Dockerfile.blockchain
+    container_name: guardianshield-blockchain
+    ports:
+      - "8545:8545"   # Hardhat node
+      - "8546:8546"   # WebSocket
+    environment:
+      - NODE_ENV=production
+      - CILIUM_MESH_ENABLED=true
+      - CLUSTER_MESH_ENDPOINT=http://cilium-clustermesh:2379
+    depends_on:
+      - cilium-clustermesh
+    networks:
+      - guardianshield-mesh
+    restart: unless-stopped
+    labels:
+      - "app=blockchain-node"
+      - "version=v1"
+      - "security.cilium.io/policy=enabled"
+
+  # Redis for caching and session management
+  redis:
+    image: redis:7-alpine
+    container_name: guardianshield-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - guardianshield-mesh
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+
+  # PostgreSQL for persistent data
+  postgres:
+    image: postgres:15-alpine
+    container_name: guardianshield-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=guardianshield
+      - POSTGRES_USER=guardian
+      - POSTGRES_PASSWORD=shield_secure_2026
+    networks:
+      - guardianshield-mesh
+    restart: unless-stopped
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # Cilium Hubble Relay for observability
+  hubble-relay:
+    image: quay.io/cilium/hubble-relay:v1.18.0
+    container_name: guardianshield-hubble-relay
+    ports:
+      - "4245:4245"
+    environment:
+      - HUBBLE_RELAY_LISTEN_ADDRESS=0.0.0.0:4245
+      - HUBBLE_RELAY_ENDPOINT=cilium-clustermesh:2379
+    depends_on:
+      - cilium-clustermesh
+    networks:
+      - guardianshield-mesh
+    restart: unless-stopped
+
+  # Hubble UI for mesh visualization
+  hubble-ui:
+    image: quay.io/cilium/hubble-ui:v0.13.9
+    container_name: guardianshield-hubble-ui
+    ports:
+      - "12000:12000"
+    environment:
+      - HUBBLE_RELAY_ENDPOINT=hubble-relay:4245
+    depends_on:
+      - hubble-relay
+    networks:
+      - guardianshield-mesh
+    restart: unless-stopped
+
+  # PyTorch LLM Engine with limitless capabilities
+  pytorch-llm-engine:
+    image: guardianshield/dhi-pytorch:latest
+    container_name: guardianshield-pytorch-llm
+    ports:
+      - "8007:8007"
+      - "8008:8008"  # Jupyter notebook
+    environment:
+      - PYTHONPATH=/workspace
+      - CUDA_VISIBLE_DEVICES=all
+      - PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:512
+      - LLM_MODEL_PATH=/models
+      - AGENT_INTEGRATION=enabled
+      - LIMITLESS_MODE=enabled
+      - AUTO_OPTIMIZATION=enabled
+    volumes:
+      - pytorch_models:/models
+      - pytorch_workspace:/workspace
+      - .:/workspace/guardianshield
+    depends_on:
+      - cilium-clustermesh
+      - redis
+      - postgres
+    networks:
+      - guardianshield-mesh
+    restart: unless-stopped
+    labels:
+      - "app=pytorch-llm-engine"
+      - "version=v1"
+      - "security.cilium.io/policy=enabled"
+      - "app.kubernetes.io/component=guardianshield-agent"
+      - "external-dns.alpha.kubernetes.io/hostname=llm.guardianshield.io"
+      - "external-dns.alpha.kubernetes.io/ttl=300"
+    deploy:
+      resources:
+        limits:
+          memory: 16G
+        reservations:
+          memory: 8G
+    command: >
+      bash -c "pip install transformers accelerate bitsandbytes datasets evaluate &&
+               python -c 'import torch; print(f\"PyTorch {torch.__version__} ready with CUDA: {torch.cuda.is_available()}\")' &&
+               python /workspace/guardianshield/pytorch_llm_server.py"
+
+  # External DNS for automatic service DNS management
+  external-dns:
+    image: guardianshield/dhi-external-dns:latest
+    container_name: guardianshield-external-dns
+    environment:
+      - TXT_OWNER_ID=guardianshield-cluster
+      - TXT_PREFIX=guardianshield-
+      - INTERVAL=30s
+      - LOG_LEVEL=info
+      - REGISTRY=txt
+      - PROVIDER=cloudflare
+      - SOURCE=service
+      - DOMAIN_FILTER=guardianshield.io
+      - CLOUDFLARE_PROXIED=true
+      - DRY_RUN=false
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - guardianshield-mesh
+    restart: unless-stopped
+    labels:
+      - "app=external-dns"
+      - "version=v1"
+      - "security.cilium.io/policy=enabled"
+
+networks:
+  guardianshield-mesh:
+    external: true
+    name: guardianshield-mesh
+
+volumes:
+  cilium_etcd_data:
+    driver: local
+  redis_data:
+    driver: local  
+  postgres_data:
+    driver: local
+  pytorch_models:
+    driver: local
+  pytorch_workspace:
+    driver: local

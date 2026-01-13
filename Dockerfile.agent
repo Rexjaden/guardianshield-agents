@@ -1,4 +1,4 @@
-# GuardianShield Agent Dockerfile
+# GuardianShield Agent Dockerfile with Cilium Mesh Integration
 FROM python:3.11-slim
 
 WORKDIR /app
@@ -8,6 +8,9 @@ RUN apt-get update && apt-get install -y \
     gcc \
     g++ \
     make \
+    curl \
+    wget \
+    git \
     libffi-dev \
     libssl-dev \
     curl \

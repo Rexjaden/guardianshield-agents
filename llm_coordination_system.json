@@ -1,0 +1,48 @@
+{
+  "coordination_hub": {
+    "endpoint": "http://guardianshield-llm-engine:8007/coordinate",
+    "capabilities": {
+      "task_distribution": "Intelligently distribute tasks across agents",
+      "resource_optimization": "Optimize resource usage across the system",
+      "workflow_coordination": "Coordinate complex multi-agent workflows",
+      "conflict_resolution": "Resolve conflicts between agent decisions",
+      "performance_optimization": "Continuously optimize system performance",
+      "adaptive_scaling": "Dynamically scale agents based on demand"
+    },
+    "agents_managed": [
+      "learning_agent",
+      "behavioral_analytics",
+      "genetic_evolver",
+      "data_ingestion",
+      "dmer_monitor",
+      "flare_integration"
+    ],
+    "coordination_patterns": {
+      "threat_response": {
+        "trigger": "threat_detected",
+        "agents": [
+          "behavioral_analytics",
+          "dmer_monitor",
+          "learning_agent"
+        ],
+        "coordination": "Parallel analysis with LLM synthesis"
+      },
+      "code_evolution": {
+        "trigger": "performance_degradation",
+        "agents": [
+          "genetic_evolver",
+          "learning_agent"
+        ],
+        "coordination": "LLM-guided collaborative improvement"
+      },
+      "blockchain_intelligence": {
+        "trigger": "transaction_anomaly",
+        "agents": [
+          "flare_integration",
+          "behavioral_analytics"
+        ],
+        "coordination": "LLM-enhanced pattern correlation"
+      }
+    }
+  }
+}

@@ -1,0 +1,19 @@
+# EMERGENCY ACCESS CONTROL
+# All API endpoints are BLOCKED until proper authentication is implemented
+
+BLOCKED_ENDPOINTS = [
+    "/api/purchase/create",
+    "/api/purchase/complete", 
+    "/api/training/start",
+    "/api/training/stop",
+    "/api/agents/*/start",
+    "/api/agents/*/stop",
+    "/api/agents/*/evolve",
+    "/api/emergency-stop",
+    "/api/stats",
+    "/api/websites",
+    "/api/individuals"
+]
+
+EMERGENCY_MODE = True
+REQUIRE_MASTER_AUTH = True

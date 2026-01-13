@@ -30,11 +30,8 @@ class BlockchainNodeCluster extends EventEmitter {
             multiSigValidation: config.multiSigValidation || true,
             threatDetection: config.threatDetection || true,
             
-            // Supported chains
-            supportedChains: config.supportedChains || [
-                'ethereum', 'polygon', 'avalanche', 'arbitrum', 
-                'optimism', 'bsc', 'fantom', 'harmony'
-            ]
+            // Supported chains - start with localhost for testing
+            supportedChains: config.supportedChains || ['localhost']
         };
         
         this.nodeCluster = new Map();
@@ -42,6 +39,8 @@ class BlockchainNodeCluster extends EventEmitter {
         this.consensusPool = new Map();
         this.transactionPool = new Map();
         this.crossChainBridge = null;
+        this.consensusEngine = null;
+        this.shardingLayer = null;
         
         this.clusterStats = {
             totalNodes: 0,
@@ -56,49 +55,39 @@ class BlockchainNodeCluster extends EventEmitter {
                 throughput: 0
             }
         };
-        
-        this.init();
     }
-    
-    async init() {
-        console.log('⛓️ GuardianShield Blockchain Node Cluster Initializing...');
-        console.log('='.repeat(65));
-        
-        await this.initializeChainNodes();
-        await this.setupConsensusLayer();
-        await this.initializeCrossChainBridge();
-        await this.setupSharding();
-        await this.startMonitoring();
-        
-        console.log('✅ Blockchain Node Cluster Initialization Complete!');
-    }
-    
-    async initializeChainNodes() {
-        console.log('🔗 Initializing Chain Nodes...');
-        
-        for (const chainName of this.config.supportedChains) {
-            const chainNode = await this.createChainNode(chainName);
-            this.chainNodes.set(chainName, chainNode);
-            
-            // Create multiple validator nodes per chain
-            const validatorNodes = await this.createValidatorNodes(chainName, 3);
-            chainNode.validators = validatorNodes;
-            
-            console.log(`✅ Chain Node '${chainName}' with ${validatorNodes.length} validators`);
-        }
-        
-        this.clusterStats.activeChains = this.chainNodes.size;
-    }
-    
+
     async createChainNode(chainName) {
         const chainConfig = this.getChainConfiguration(chainName);
         
-        // Initialize multiple providers for redundancy
-        const providers = [
-            new ethers.JsonRpcProvider(chainConfig.rpcUrl),
-            new ethers.JsonRpcProvider(chainConfig.backupRpcUrl),
-            new ethers.WebSocketProvider(chainConfig.websocketUrl)
-        ];
+        // Initialize providers with error handling
+        const providers = [];
+        
+        try {
+            const primaryProvider = new ethers.JsonRpcProvider(chainConfig.rpcUrl);
+            providers.push(primaryProvider);
+        } catch (error) {
+            console.warn(`⚠️ Failed to create primary provider for ${chainName}: ${error.message}`);
+        }
+        
+        try {
+            const backupProvider = new ethers.JsonRpcProvider(chainConfig.backupRpcUrl);
+            providers.push(backupProvider);
+        } catch (error) {
+            console.warn(`⚠️ Failed to create backup provider for ${chainName}: ${error.message}`);
+        }
+        
+        // Fallback to localhost if no providers work
+        if (providers.length === 0) {
+            try {
+                const fallbackProvider = new ethers.JsonRpcProvider('http://localhost:8545');
+                providers.push(fallbackProvider);
+                console.log(`🔄 Using localhost fallback for ${chainName}`);
+            } catch (error) {
+                console.error(`❌ All providers failed for ${chainName}`);
+                throw new Error(`No working providers for ${chainName}`);
+            }
+        }
         
         return {
             name: chainName,
@@ -147,9 +136,9 @@ class BlockchainNodeCluster extends EventEmitter {
         const configs = {
             ethereum: {
                 chainId: 1,
-                rpcUrl: process.env.ETHEREUM_RPC_URL || 'https://mainnet.infura.io/v3/your-key',
-                backupRpcUrl: 'https://eth-mainnet.alchemyapi.io/v2/your-key',
-                websocketUrl: 'wss://mainnet.infura.io/ws/v3/your-key',
+                rpcUrl: 'https://ethereum-rpc.publicnode.com',
+                backupRpcUrl: 'https://rpc.ankr.com/eth',
+                websocketUrl: 'wss://ethereum-rpc.publicnode.com',
                 explorerUrl: 'https://etherscan.io',
                 avgBlockTime: 12,
                 minStake: ethers.parseEther('32'),
@@ -157,8 +146,8 @@ class BlockchainNodeCluster extends EventEmitter {
             },
             polygon: {
                 chainId: 137,
-                rpcUrl: process.env.POLYGON_RPC_URL || 'https://polygon-rpc.com',
-                backupRpcUrl: 'https://rpc-mainnet.matic.network',
+                rpcUrl: 'https://polygon-rpc.com',
+                backupRpcUrl: 'https://rpc.ankr.com/polygon',
                 websocketUrl: 'wss://polygon-rpc.com/ws',
                 explorerUrl: 'https://polygonscan.com',
                 avgBlockTime: 2,
@@ -167,7 +156,7 @@ class BlockchainNodeCluster extends EventEmitter {
             },
             avalanche: {
                 chainId: 43114,
-                rpcUrl: process.env.AVALANCHE_RPC_URL || 'https://api.avax.network/ext/bc/C/rpc',
+                rpcUrl: 'https://api.avax.network/ext/bc/C/rpc',
                 backupRpcUrl: 'https://rpc.ankr.com/avalanche',
                 websocketUrl: 'wss://api.avax.network/ext/bc/C/ws',
                 explorerUrl: 'https://snowtrace.io',
@@ -177,7 +166,7 @@ class BlockchainNodeCluster extends EventEmitter {
             },
             arbitrum: {
                 chainId: 42161,
-                rpcUrl: process.env.ARBITRUM_RPC_URL || 'https://arb1.arbitrum.io/rpc',
+                rpcUrl: 'https://arb1.arbitrum.io/rpc',
                 backupRpcUrl: 'https://rpc.ankr.com/arbitrum',
                 websocketUrl: 'wss://arb1.arbitrum.io/ws',
                 explorerUrl: 'https://arbiscan.io',
@@ -187,7 +176,7 @@ class BlockchainNodeCluster extends EventEmitter {
             },
             optimism: {
                 chainId: 10,
-                rpcUrl: process.env.OPTIMISM_RPC_URL || 'https://mainnet.optimism.io',
+                rpcUrl: 'https://mainnet.optimism.io',
                 backupRpcUrl: 'https://rpc.ankr.com/optimism',
                 websocketUrl: 'wss://ws-mainnet.optimism.io',
                 explorerUrl: 'https://optimistic.etherscan.io',
@@ -197,7 +186,7 @@ class BlockchainNodeCluster extends EventEmitter {
             },
             bsc: {
                 chainId: 56,
-                rpcUrl: process.env.BSC_RPC_URL || 'https://bsc-dataseed.binance.org',
+                rpcUrl: 'https://bsc-dataseed.binance.org',
                 backupRpcUrl: 'https://rpc.ankr.com/bsc',
                 websocketUrl: 'wss://bsc-ws-node.nariox.org:443',
                 explorerUrl: 'https://bscscan.com',
@@ -207,7 +196,7 @@ class BlockchainNodeCluster extends EventEmitter {
             },
             fantom: {
                 chainId: 250,
-                rpcUrl: process.env.FANTOM_RPC_URL || 'https://rpc.ftm.tools',
+                rpcUrl: 'https://rpc.ftm.tools',
                 backupRpcUrl: 'https://rpc.ankr.com/fantom',
                 websocketUrl: 'wss://wsapi.fantom.network',
                 explorerUrl: 'https://ftmscan.com',
@@ -215,19 +204,20 @@ class BlockchainNodeCluster extends EventEmitter {
                 minStake: ethers.parseEther('0.1'),
                 nativeToken: 'FTM'
             },
-            harmony: {
-                chainId: 1666600000,
-                rpcUrl: process.env.HARMONY_RPC_URL || 'https://api.harmony.one',
-                backupRpcUrl: 'https://rpc.ankr.com/harmony',
-                websocketUrl: 'wss://ws.s0.t.hmny.io',
-                explorerUrl: 'https://explorer.harmony.one',
-                avgBlockTime: 2,
-                minStake: ethers.parseEther('1000'),
-                nativeToken: 'ONE'
+            // Test chain for local development
+            localhost: {
+                chainId: 31337,
+                rpcUrl: 'http://127.0.0.1:8545',
+                backupRpcUrl: 'http://localhost:8545',
+                websocketUrl: 'ws://localhost:8545',
+                explorerUrl: 'http://localhost:3000',
+                avgBlockTime: 1,
+                minStake: ethers.parseEther('1'),
+                nativeToken: 'ETH'
             }
         };
         
-        return configs[chainName] || {};
+        return configs[chainName] || configs.localhost;
     }
     
     async createValidatorNodes(chainName, count = 3) {
@@ -265,7 +255,30 @@ class BlockchainNodeCluster extends EventEmitter {
         // Generate cryptographic key for validator
         return crypto.randomBytes(32).toString('hex');
     }
-    
+
+    async initializeChainNodes() {
+        console.log('🔗 Initializing chain nodes...');
+        
+        for (const chainName of this.config.supportedChains) {
+            try {
+                // Create chain node
+                const chainNode = await this.createChainNode(chainName);
+                
+                // Create validator nodes for this chain
+                const validatorNodes = await this.createValidatorNodes(chainName, 3);
+                chainNode.validators = validatorNodes;
+                
+                this.chainNodes.set(chainName, chainNode);
+                console.log(`✅ Chain Node '${chainName}' with ${validatorNodes.length} validators`);
+            } catch (error) {
+                console.warn(`⚠️ Failed to initialize ${chainName} node: ${error.message}`);
+            }
+        }
+        
+        this.clusterStats.activeChains = this.chainNodes.size;
+        console.log(`✅ Initialized ${this.chainNodes.size} chain nodes`);
+    }
+
     async setupConsensusLayer() {
         console.log('🤝 Setting up Consensus Layer...');
         
@@ -617,30 +630,50 @@ class BlockchainNodeCluster extends EventEmitter {
     async start() {
         console.log('🚀 Starting GuardianShield Blockchain Node Cluster...');
         
-        // Activate all chain nodes
-        for (const [chainName, node] of this.chainNodes) {
-            node.status = 'active';
-            node.uptime = Date.now();
+        try {
+            // Initialize all chain nodes first
+            await this.initializeChainNodes();
             
-            // Start syncing
-            await this.syncBlockchain(chainName);
+            // Setup consensus layer with validators
+            await this.setupConsensusLayer();
+            
+            // Initialize cross-chain bridge
+            await this.initializeCrossChainBridge();
+            
+            // Setup sharding if enabled
+            await this.setupSharding();
+            
+            // Start monitoring
+            await this.startMonitoring();
+            
+            // Activate all chain nodes
+            for (const [chainName, node] of this.chainNodes) {
+                node.status = 'active';
+                node.uptime = Date.now();
+                
+                // Start syncing
+                await this.syncBlockchain(chainName);
+            }
+            
+            // Start cross-chain operations
+            if (this.crossChainBridge) {
+                this.crossChainBridge.status = 'active';
+            }
+            
+            console.log('\n🎉 Blockchain Node Cluster is OPERATIONAL! 🎉');
+            console.log('='.repeat(60));
+            console.log('📊 Cluster Status:');
+            console.log(`   • Active Chains: ${this.clusterStats.activeChains}`);
+            console.log(`   • Total Validators: ${this.consensusEngine ? this.consensusEngine.validators.size : 0}`);
+            console.log(`   • Cross-Chain Bridge: ${this.crossChainBridge ? 'Active' : 'Disabled'}`);
+            console.log(`   • Sharding: ${this.config.shardingEnabled ? 'Enabled' : 'Disabled'}`);
+            console.log('='.repeat(60));
+            
+            return this;
+        } catch (error) {
+            console.error('❌ Blockchain cluster startup failed:', error);
+            throw error;
         }
-        
-        // Start cross-chain operations
-        if (this.crossChainBridge) {
-            this.crossChainBridge.status = 'active';
-        }
-        
-        console.log('\n🎉 Blockchain Node Cluster is OPERATIONAL! 🎉');
-        console.log('='.repeat(60));
-        console.log('📊 Cluster Status:');
-        console.log(`   • Active Chains: ${this.clusterStats.activeChains}`);
-        console.log(`   • Total Validators: ${this.consensusEngine.validators.size}`);
-        console.log(`   • Cross-Chain Bridge: ${this.crossChainBridge ? 'Active' : 'Disabled'}`);
-        console.log(`   • Sharding: ${this.config.shardingEnabled ? 'Enabled' : 'Disabled'}`);
-        console.log('='.repeat(60));
-        
-        return this;
     }
     
     async syncBlockchain(chainName) {

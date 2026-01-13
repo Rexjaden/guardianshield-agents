@@ -1,0 +1,179 @@
+{
+  "services": {
+    "learning_agent": {
+      "mesh_id": "learning-svc",
+      "port": 8001,
+      "labels": {
+        "app": "learning-agent",
+        "version": "v1",
+        "security.cilium.io/policy": "enabled"
+      },
+      "endpoint": "http://localhost:8001",
+      "health_check": "http://localhost:8001/health",
+      "status": "pending"
+    },
+    "behavioral_analytics": {
+      "mesh_id": "analytics-svc",
+      "port": 8002,
+      "labels": {
+        "app": "behavioral-analytics",
+        "version": "v1",
+        "security.cilium.io/policy": "enabled"
+      },
+      "endpoint": "http://localhost:8002",
+      "health_check": "http://localhost:8002/health",
+      "status": "pending"
+    },
+    "genetic_evolver": {
+      "mesh_id": "evolver-svc",
+      "port": 8003,
+      "labels": {
+        "app": "genetic-evolver",
+        "version": "v1",
+        "security.cilium.io/policy": "enabled"
+      },
+      "endpoint": "http://localhost:8003",
+      "health_check": "http://localhost:8003/health",
+      "status": "pending"
+    },
+    "data_ingestion": {
+      "mesh_id": "ingestion-svc",
+      "port": 8004,
+      "labels": {
+        "app": "data-ingestion",
+        "version": "v1",
+        "security.cilium.io/policy": "enabled"
+      },
+      "endpoint": "http://localhost:8004",
+      "health_check": "http://localhost:8004/health",
+      "status": "pending"
+    },
+    "dmer_monitor": {
+      "mesh_id": "dmer-monitor-svc",
+      "port": 8005,
+      "labels": {
+        "app": "dmer-monitor",
+        "version": "v1",
+        "security.cilium.io/policy": "enabled"
+      },
+      "endpoint": "http://localhost:8005",
+      "health_check": "http://localhost:8005/health",
+      "status": "pending"
+    },
+    "flare_integration": {
+      "mesh_id": "flare-svc",
+      "port": 8006,
+      "labels": {
+        "app": "flare-integration",
+        "version": "v1",
+        "security.cilium.io/policy": "enabled"
+      },
+      "endpoint": "http://localhost:8006",
+      "health_check": "http://localhost:8006/health",
+      "status": "pending"
+    },
+    "api_server": {
+      "mesh_id": "api-server",
+      "port": 8000,
+      "labels": {
+        "app": "guardianshield-api",
+        "version": "v1",
+        "security.cilium.io/policy": "enabled"
+      },
+      "endpoint": "http://localhost:8000",
+      "health_check": "http://localhost:8000/health",
+      "status": "pending"
+    },
+    "blockchain_cluster": {
+      "mesh_id": "blockchain-cluster",
+      "port": 8545,
+      "labels": {
+        "app": "blockchain-node",
+        "version": "v1",
+        "security.cilium.io/policy": "enabled"
+      },
+      "endpoint": "http://localhost:8545",
+      "health_check": "http://localhost:8545",
+      "status": "pending"
+    }
+  },
+  "mesh_config": {
+    "cluster_name": "guardianshield-agents",
+    "cluster_id": 1,
+    "agents": {
+      "learning_agent": {
+        "port": 8001,
+        "mesh_id": "learning-svc",
+        "labels": {
+          "app": "learning-agent",
+          "version": "v1",
+          "security.cilium.io/policy": "enabled"
+        }
+      },
+      "behavioral_analytics": {
+        "port": 8002,
+        "mesh_id": "analytics-svc",
+        "labels": {
+          "app": "behavioral-analytics",
+          "version": "v1",
+          "security.cilium.io/policy": "enabled"
+        }
+      },
+      "genetic_evolver": {
+        "port": 8003,
+        "mesh_id": "evolver-svc",
+        "labels": {
+          "app": "genetic-evolver",
+          "version": "v1",
+          "security.cilium.io/policy": "enabled"
+        }
+      },
+      "data_ingestion": {
+        "port": 8004,
+        "mesh_id": "ingestion-svc",
+        "labels": {
+          "app": "data-ingestion",
+          "version": "v1",
+          "security.cilium.io/policy": "enabled"
+        }
+      },
+      "dmer_monitor": {
+        "port": 8005,
+        "mesh_id": "dmer-monitor-svc",
+        "labels": {
+          "app": "dmer-monitor",
+          "version": "v1",
+          "security.cilium.io/policy": "enabled"
+        }
+      },
+      "flare_integration": {
+        "port": 8006,
+        "mesh_id": "flare-svc",
+        "labels": {
+          "app": "flare-integration",
+          "version": "v1",
+          "security.cilium.io/policy": "enabled"
+        }
+      }
+    },
+    "api_server": {
+      "port": 8000,
+      "mesh_id": "api-server",
+      "labels": {
+        "app": "guardianshield-api",
+        "version": "v1",
+        "security.cilium.io/policy": "enabled"
+      }
+    },
+    "blockchain_cluster": {
+      "port": 8545,
+      "mesh_id": "blockchain-cluster",
+      "labels": {
+        "app": "blockchain-node",
+        "version": "v1",
+        "security.cilium.io/policy": "enabled"
+      }
+    }
+  },
+  "last_updated": "2026-01-13T06:57:36.107311"
+}

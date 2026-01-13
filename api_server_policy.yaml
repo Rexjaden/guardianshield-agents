@@ -1,0 +1,15 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: api-server-access
+spec:
+  endpointSelector:
+    matchLabels:
+      app: guardianshield-api
+  ingress:
+  - fromEndpoints:
+    - matchLabels: {}
+    toPorts:
+    - ports:
+      - port: '8000'
+        protocol: TCP

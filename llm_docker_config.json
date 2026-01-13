@@ -1,0 +1,56 @@
+{
+  "llm-engine": {
+    "image": "guardianshield/dhi-llm-engine:latest",
+    "container_name": "guardianshield-llm-engine",
+    "ports": [
+      "8007:8007"
+    ],
+    "environment": [
+      "LLM_MODEL_PATH=/models",
+      "MAX_TOKENS=unlimited",
+      "TEMPERATURE=0.7",
+      "TOP_P=0.9",
+      "FREQUENCY_PENALTY=0.0",
+      "PRESENCE_PENALTY=0.0",
+      "AGENT_INTEGRATION=enabled",
+      "MESH_NETWORKING=enabled",
+      "AUTONOMOUS_MODE=enabled",
+      "LEARNING_RATE=adaptive",
+      "MEMORY_OPTIMIZATION=enabled"
+    ],
+    "volumes": [
+      "llm_models:/models",
+      "llm_cache:/cache",
+      "./agent_integration:/integration"
+    ],
+    "depends_on": [
+      "cilium-clustermesh",
+      "redis",
+      "postgres"
+    ],
+    "networks": [
+      "guardianshield-mesh"
+    ],
+    "restart": "unless-stopped",
+    "labels": [
+      "app=guardianshield-llm-engine",
+      "version=v1",
+      "security.cilium.io/policy=enabled",
+      "app.kubernetes.io/component=guardianshield-agent",
+      "external-dns.alpha.kubernetes.io/hostname=llm.guardianshield.io",
+      "external-dns.alpha.kubernetes.io/ttl=300"
+    ],
+    "deploy": {
+      "resources": {
+        "limits": {
+          "memory": "16G",
+          "cpus": "8.0"
+        },
+        "reservations": {
+          "memory": "8G",
+          "cpus": "4.0"
+        }
+      }
+    }
+  }
+}

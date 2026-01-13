@@ -1,0 +1,121 @@
+{
+  "learning_agent": {
+    "llm_integration": {
+      "code_generation": {
+        "endpoint": "http://guardianshield-llm-engine:8007/generate-code",
+        "capabilities": [
+          "algorithm_improvement",
+          "bug_fixing",
+          "optimization"
+        ],
+        "autonomous": true
+      },
+      "pattern_analysis": {
+        "endpoint": "http://guardianshield-llm-engine:8007/analyze-patterns",
+        "capabilities": [
+          "trend_detection",
+          "anomaly_identification",
+          "prediction"
+        ],
+        "autonomous": true
+      },
+      "decision_support": {
+        "endpoint": "http://guardianshield-llm-engine:8007/decision-support",
+        "capabilities": [
+          "strategy_generation",
+          "risk_assessment",
+          "optimization"
+        ],
+        "autonomous": true
+      }
+    }
+  },
+  "behavioral_analytics": {
+    "llm_integration": {
+      "threat_prediction": {
+        "endpoint": "http://guardianshield-llm-engine:8007/predict-threats",
+        "capabilities": [
+          "attack_pattern_analysis",
+          "threat_modeling",
+          "risk_scoring"
+        ],
+        "autonomous": true
+      },
+      "behavioral_modeling": {
+        "endpoint": "http://guardianshield-llm-engine:8007/model-behavior",
+        "capabilities": [
+          "user_profiling",
+          "anomaly_detection",
+          "trend_analysis"
+        ],
+        "autonomous": true
+      }
+    }
+  },
+  "genetic_evolver": {
+    "llm_integration": {
+      "algorithm_evolution": {
+        "endpoint": "http://guardianshield-llm-engine:8007/evolve-algorithms",
+        "capabilities": [
+          "code_mutation",
+          "fitness_evaluation",
+          "optimization"
+        ],
+        "autonomous": true
+      },
+      "creative_solutions": {
+        "endpoint": "http://guardianshield-llm-engine:8007/creative-solutions",
+        "capabilities": [
+          "novel_approaches",
+          "breakthrough_algorithms",
+          "innovation"
+        ],
+        "autonomous": true
+      }
+    }
+  },
+  "dmer_monitor": {
+    "llm_integration": {
+      "threat_classification": {
+        "endpoint": "http://guardianshield-llm-engine:8007/classify-threats",
+        "capabilities": [
+          "threat_categorization",
+          "severity_assessment",
+          "response_planning"
+        ],
+        "autonomous": true
+      },
+      "intelligent_monitoring": {
+        "endpoint": "http://guardianshield-llm-engine:8007/intelligent-monitor",
+        "capabilities": [
+          "pattern_recognition",
+          "predictive_alerting",
+          "automated_response"
+        ],
+        "autonomous": true
+      }
+    }
+  },
+  "flare_integration": {
+    "llm_integration": {
+      "smart_contract_analysis": {
+        "endpoint": "http://guardianshield-llm-engine:8007/analyze-contracts",
+        "capabilities": [
+          "vulnerability_detection",
+          "logic_analysis",
+          "optimization"
+        ],
+        "autonomous": true
+      },
+      "transaction_intelligence": {
+        "endpoint": "http://guardianshield-llm-engine:8007/transaction-intelligence",
+        "capabilities": [
+          "pattern_analysis",
+          "fraud_detection",
+          "prediction"
+        ],
+        "autonomous": true
+      }
+    }
+  }
+}

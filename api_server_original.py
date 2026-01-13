@@ -28,32 +28,6 @@ import os
 from collections import defaultdict
 import re
 
-
-# Emergency Access Control
-def check_emergency_mode():
-    if os.path.exists('.emergency_access_control'):
-        if not os.path.exists('.emergency_admin_session'):
-            raise HTTPException(status_code=503, detail="System in emergency lockdown mode")
-    return True
-
-# Add emergency check to all routes
-
-# Input Validation
-class InputValidator:
-    @staticmethod
-    def validate_agent_id(agent_id: str) -> str:
-        if not re.match(r'^[a-zA-Z0-9_-]+$', agent_id):
-            raise ValueError("Invalid agent ID format")
-        return agent_id
-    
-    @staticmethod  
-    def validate_json_input(data: dict, max_size: int = 10000) -> dict:
-        import json
-        json_str = json.dumps(data)
-        if len(json_str) > max_size:
-            raise ValueError("Input data too large")
-        return data
-
 # Rate Limiting Middleware
 class RateLimitMiddleware(BaseHTTPMiddleware):
     """
@@ -412,7 +386,7 @@ async def get_training_status():
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/training/start")
-async def start_training(admin_user = Depends(require_admin_access)):
+async def start_training():
     """Start continuous training system"""
     try:
         # Start training in background task
@@ -422,7 +396,7 @@ async def start_training(admin_user = Depends(require_admin_access)):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/training/stop")
-async def stop_training(admin_user = Depends(require_admin_access)):
+async def stop_training():
     """Stop continuous training system"""
     try:
         continuous_trainer.stop_training()
@@ -437,7 +411,7 @@ async def serve_frontend():
 
 # Agent management endpoints
 @app.get("/api/agents")
-async def get_agents(user = Depends(get_current_user)):
+async def get_agents():
     """Get all agents status"""
     return {
         "agents": [

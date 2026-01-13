@@ -11,17 +11,6 @@ import uvicorn
 from pathlib import Path
 import sys
 
-import os
-from fastapi import HTTPException
-
-def emergency_check():
-    if os.path.exists('.emergency_access_control'):
-        if not os.path.exists('.emergency_admin_session'):
-            raise HTTPException(status_code=503, detail="API locked due to security lockdown")
-    return True
-
-
-
 # Add security dependencies
 try:
     from security_manager import get_current_user, require_admin_access, require_master_admin
@@ -100,7 +89,6 @@ class ThreatUpdate(BaseModel):
 # Health check endpoint
 @app.get("/", tags=["System"])
 async def health_check():
-    emergency_check()
     """Health check endpoint"""
     return {
         "status": "healthy",
@@ -173,7 +161,6 @@ async def add_malicious_website(website: MaliciousWebsite, admin_user = Depends(
 
 @app.get("/api/websites/{website_id}", tags=["Websites"])
 async def get_website(website_id: int):
-    emergency_check()
     """Get specific website by ID"""
     if not threat_filing:
         raise HTTPException(status_code=503, detail="Threat filing system not available")
@@ -195,7 +182,6 @@ async def get_website(website_id: int):
 # Individual endpoints
 @app.post("/api/individuals", tags=["Individuals"])
 async def add_malicious_individual(individual: MaliciousIndividual):
-    emergency_check()
     """Add a malicious individual to the database"""
     if not threat_filing:
         raise HTTPException(status_code=503, detail="Threat filing system not available")
@@ -222,7 +208,6 @@ async def add_malicious_individual(individual: MaliciousIndividual):
 
 @app.get("/api/individuals/{individual_id}", tags=["Individuals"])
 async def get_individual(individual_id: int):
-    emergency_check()
     """Get specific individual by ID"""
     if not threat_filing:
         raise HTTPException(status_code=503, detail="Threat filing system not available")
@@ -244,7 +229,6 @@ async def get_individual(individual_id: int):
 # IPO endpoints
 @app.post("/api/ipos", tags=["IPOs"])
 async def add_fraudulent_ipo(ipo: FraudulentIPO):
-    emergency_check()
     """Add a fraudulent IPO to the database"""
     if not threat_filing:
         raise HTTPException(status_code=503, detail="Threat filing system not available")
@@ -273,7 +257,6 @@ async def add_fraudulent_ipo(ipo: FraudulentIPO):
 
 @app.get("/api/ipos/{ipo_id}", tags=["IPOs"])
 async def get_ipo(ipo_id: int):
-    emergency_check()
     """Get specific IPO by ID"""
     if not threat_filing:
         raise HTTPException(status_code=503, detail="Threat filing system not available")
@@ -295,7 +278,6 @@ async def get_ipo(ipo_id: int):
 # Status update endpoints
 @app.put("/api/threats/{threat_type}/{threat_id}/status", tags=["Management"])
 async def update_threat_status(threat_type: str, threat_id: int, update: ThreatUpdate):
-    emergency_check()
     """Update threat status (active, resolved, monitoring, etc.)"""
     if not threat_filing:
         raise HTTPException(status_code=503, detail="Threat filing system not available")
@@ -344,7 +326,6 @@ async def export_threats(
 # Bulk import endpoint
 @app.post("/api/import", tags=["Import"])
 async def bulk_import_threats(threat_data: List[Dict[str, Any]]):
-    emergency_check()
     """Import multiple threats from external sources"""
     if not threat_filing:
         raise HTTPException(status_code=503, detail="Threat filing system not available")
