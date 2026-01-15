@@ -14,7 +14,7 @@ class GuardianShieldMainMenu:
     def __init__(self):
         self.version = "v2.0.0"
         self.build_date = "October 2025"
-    self.current_time = datetime.now(timezone.utc)
+        self.current_time = datetime.now(timezone.utc)
         
     def clear_screen(self):
         """Clear the terminal screen"""
