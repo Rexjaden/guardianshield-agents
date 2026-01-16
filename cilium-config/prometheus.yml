@@ -1,0 +1,20 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'guardianshield-website'
+    static_configs:
+      - targets: ['guardianshield-enhanced-web:80']
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+    
+  - job_name: 'erc8055-tokens'
+    static_configs:
+      - targets: ['guardianshield-main:8000']
+    metrics_path: '/api/metrics'
+    scrape_interval: 30s
+
+  - job_name: 'cilium-mesh'
+    static_configs:
+      - targets: ['cilium-operator:9963']
+    scrape_interval: 30s

@@ -1,0 +1,114 @@
+version: '3.8'
+
+services:
+  # SHIELD Token Caddy Web Server - Modern HTTP/2 with automatic HTTPS
+  shield-caddy:
+    image: shieldtoken/dhi-caddy
+    ports:
+      - "80:80"
+      - "443:443"
+      - "2019:2019"  # Admin API
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - ./www:/srv
+      - ./caddy_data:/data
+      - ./caddy_config:/config
+    environment:
+      - CADDY_ADMIN=0.0.0.0:2019
+      - SHIELD_TOKEN_DOMAIN=${SHIELD_TOKEN_DOMAIN:-localhost}
+    restart: unless-stopped
+    networks:
+      - shield-web-network
+
+  # SHIELD Token OpenResty - High-performance NGINX + Lua
+  shield-openresty:
+    image: shieldtoken/dhi-openresty
+    ports:
+      - "8080:80"
+      - "8443:443"
+    volumes:
+      - ./nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
+      - ./lua_scripts:/usr/local/openresty/lua
+      - ./www:/var/www/html
+      - ./ssl:/etc/ssl/certs
+    environment:
+      - OPENRESTY_USER=www-data
+      - LUA_PATH=/usr/local/openresty/lua/?.lua
+    restart: unless-stopped
+    networks:
+      - shield-web-network
+
+  # 3D Graphics API Backend
+  shield-3d-api:
+    build:
+      context: .
+      dockerfile: Dockerfile.shield-3d-api
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./3d_assets:/app/assets
+      - ./textures:/app/textures
+    environment:
+      - GPU_ACCELERATION=true
+      - RENDER_QUALITY=ultra_high
+      - WEBSOCKET_ENABLED=true
+    networks:
+      - shield-web-network
+
+  # Redis for session management and caching
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    networks:
+      - shield-web-network
+
+  # Apigee Microgateway - Enterprise API Management
+  shield-apigee-gateway:
+    image: shieldtoken/dhi-apigee-microgateway
+    ports:
+      - "8443:8443"  # Secure API Gateway
+      - "9443:9443"  # Admin interface
+    volumes:
+      - ./apigee-config:/opt/apigee/config
+      - ./apigee-logs:/opt/apigee/logs
+      - ./ssl:/opt/apigee/ssl
+    environment:
+      - APIGEE_ORG=${APIGEE_ORG:-shieldtoken-org}
+      - APIGEE_ENV=${APIGEE_ENV:-production}
+      - APIGEE_KEY=${APIGEE_KEY}
+      - APIGEE_SECRET=${APIGEE_SECRET}
+      - TOKEN_API_ENABLED=true
+      - WEB3_ANALYTICS_ENABLED=true
+    depends_on:
+      - redis
+      - shield-3d-api
+    networks:
+      - shield-web-network
+
+  # Load balancer for high availability
+  haproxy:
+    image: haproxy:2.8-alpine
+    ports:
+      - "8888:8888"  # Stats
+      - "8000:8000"  # Load balanced traffic
+    volumes:
+      - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+    depends_on:
+      - shield-caddy
+      - shield-openresty
+      - shield-apigee-gateway
+    networks:
+      - shield-web-network
+
+networks:
+  shield-web-network:
+    driver: bridge
+
+volumes:
+  redis_data:
+  caddy_data:
+  caddy_config:

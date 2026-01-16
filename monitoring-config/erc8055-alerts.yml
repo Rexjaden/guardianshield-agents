@@ -1,0 +1,138 @@
+# GuardianShield ERC-8055 Alert Rules
+# Comprehensive monitoring for Shield Token ecosystem
+
+groups:
+- name: erc8055-shield-token
+  rules:
+  # Shield Token burn/remint mechanism alerts
+  - alert: ShieldTokenBurnFailure
+    expr: shield_token_burn_failures_total > 0
+    for: 1m
+    labels:
+      severity: critical
+      component: shield-token
+      erc8055_component: burn-mechanism
+    annotations:
+      summary: "ERC-8055 Shield Token burn mechanism failure"
+      description: "Shield Token burn operation failed {{ $value }} times in the last minute"
+      value: "{{ $value }}"
+      
+  - alert: ShieldTokenRemintFailure
+    expr: shield_token_remint_failures_total > 0
+    for: 1m
+    labels:
+      severity: critical
+      component: shield-token
+      erc8055_component: remint-mechanism
+    annotations:
+      summary: "ERC-8055 Shield Token remint mechanism failure"
+      description: "Shield Token remint operation failed {{ $value }} times"
+      
+  - alert: ShieldTokenSerialNumberConflict
+    expr: shield_token_serial_conflicts_total > 0
+    for: 30s
+    labels:
+      severity: critical
+      component: shield-token
+      erc8055_component: serial-tracking
+    annotations:
+      summary: "ERC-8055 serial number conflict detected"
+      description: "Duplicate serial numbers detected in Shield Token system"
+      
+  # Shield Token transaction monitoring
+  - alert: ShieldTokenTransactionLatency
+    expr: shield_token_transaction_duration_seconds > 30
+    for: 2m
+    labels:
+      severity: warning
+      component: shield-token
+      erc8055_component: transactions
+    annotations:
+      summary: "Shield Token transaction latency high"
+      description: "Shield Token transactions taking longer than 30 seconds"
+      
+- name: erc8055-guard-token
+  rules:
+  # Guard Token (ERC-20) monitoring
+  - alert: GuardTokenTransferFailure
+    expr: guard_token_transfer_failures_total > 5
+    for: 5m
+    labels:
+      severity: warning
+      component: guard-token
+      erc8055_component: transfers
+    annotations:
+      summary: "Multiple Guard Token transfer failures"
+      description: "{{ $value }} Guard Token transfers failed in 5 minutes"
+      
+  - alert: GuardTokenStakingIssue
+    expr: guard_token_staking_errors_total > 0
+    for: 1m
+    labels:
+      severity: warning
+      component: guard-token
+      erc8055_component: staking
+    annotations:
+      summary: "Guard Token staking system errors"
+      description: "Staking mechanism experiencing issues"
+      
+- name: erc8055-website-performance
+  rules:
+  # Website performance for ERC-8055 showcase
+  - alert: WebsiteDown
+    expr: up{job="guardianshield-website"} == 0
+    for: 1m
+    labels:
+      severity: critical
+      service: website
+      erc8055_component: frontend
+    annotations:
+      summary: "GuardianShield ERC-8055 website is down"
+      description: "The main ERC-8055 website is unreachable"
+      
+  - alert: WebsiteHighLatency
+    expr: http_request_duration_seconds{job="guardianshield-website"} > 2.0
+    for: 5m
+    labels:
+      severity: warning
+      service: website
+      erc8055_component: performance
+    annotations:
+      summary: "ERC-8055 website high latency"
+      description: "Website response time is {{ $value }}s, above 2s threshold"
+      
+  - alert: TokenShowcaseLoadError
+    expr: token_showcase_errors_total > 0
+    for: 1m
+    labels:
+      severity: warning
+      service: website
+      erc8055_component: token-showcase
+    annotations:
+      summary: "Token showcase loading errors"
+      description: "Shield/Guard token showcase experiencing load errors"
+      
+- name: erc8055-infrastructure
+  rules:
+  # Container and infrastructure monitoring
+  - alert: ContainerRestarting
+    expr: changes(container_start_time_seconds[15m]) > 0
+    for: 0m
+    labels:
+      severity: warning
+      category: infrastructure
+      erc8055_component: containers
+    annotations:
+      summary: "Container restarting frequently"
+      description: "Container {{ $labels.container_label_com_docker_compose_service }} is restarting"
+      
+  - alert: HighMemoryUsage
+    expr: container_memory_usage_bytes / container_spec_memory_limit_bytes > 0.8
+    for: 5m
+    labels:
+      severity: warning
+      category: infrastructure
+      erc8055_component: resources
+    annotations:
+      summary: "High memory usage in container"
+      description: "Container {{ $labels.container_label_com_docker_compose_service }} using {{ $value | humanizePercentage }} of memory"

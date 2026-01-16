@@ -1,0 +1,119 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: erc8055-shield-token-production
+  namespace: argocd
+  labels:
+    component: erc8055
+    tier: production
+    team: blockchain
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+    notifications.argoproj.io/subscribe.on-deployed.slack: erc8055-deployments
+    notifications.argoproj.io/subscribe.on-health-degraded.slack: erc8055-alerts
+spec:
+  project: guardianshield-ecosystem
+  
+  source:
+    repoURL: https://github.com/Rexjaden/shieldtokenerc8055
+    targetRevision: main
+    path: k8s/production
+    helm:
+      valueFiles:
+        - values-production.yaml
+        - secrets-production.yaml
+      parameters:
+        - name: image.tag
+          value: stable-2026.1
+        - name: replicaCount
+          value: "5"
+        - name: resources.requests.memory
+          value: "1Gi"
+        - name: resources.limits.memory
+          value: "4Gi"
+        - name: antifraud.enabled
+          value: "true"
+        - name: serialTracking.persistence
+          value: "true"
+  
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: erc8055-production
+  
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: false
+    syncOptions:
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - ApplyOutOfSyncOnly=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
+  
+  # Health checks for ERC-8055 components
+  ignoreDifferences:
+    - group: apps
+      kind: Deployment
+      jsonPointers:
+        - /spec/replicas
+    - group: ''
+      kind: Secret
+      jsonPointers:
+        - /data
+  
+  # Custom health checks
+  info:
+    - name: 'Shield Token Contract Address'
+      value: '0x...' # Will be populated by deployment
+    - name: 'Guard Token Contract Address'
+      value: '0x...' # Will be populated by deployment
+    - name: 'Anti-Fraud System Status'
+      value: 'Active'
+    - name: 'Serial Number Registry'
+      value: 'Persistent Storage Enabled'
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: erc8055-guard-token-production
+  namespace: argocd
+  labels:
+    component: erc8055
+    tier: production
+    team: blockchain
+  annotations:
+    argocd.argoproj.io/sync-wave: "11"
+spec:
+  project: guardianshield-ecosystem
+  
+  source:
+    repoURL: https://github.com/Rexjaden/shieldtokenerc8055
+    targetRevision: main
+    path: k8s/guard-token
+    helm:
+      valueFiles:
+        - values-production.yaml
+      parameters:
+        - name: guardToken.initialSupply
+          value: "1000000000000000000000000" # 1M tokens with 18 decimals
+        - name: guardToken.burnable
+          value: "false"
+        - name: guardToken.pausable
+          value: "true"
+  
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: erc8055-production
+  
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

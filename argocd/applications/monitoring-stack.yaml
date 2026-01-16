@@ -1,0 +1,153 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: guardianshield-monitoring-stack
+  namespace: argocd
+  labels:
+    component: monitoring
+    tier: production
+    team: infrastructure
+  annotations:
+    argocd.argoproj.io/sync-wave: "5"
+    notifications.argoproj.io/subscribe.on-deployed.slack: monitoring-deployments
+spec:
+  project: guardianshield-ecosystem
+  
+  source:
+    repoURL: https://github.com/Rexjaden/guardianshield-agents
+    targetRevision: main
+    path: charts/dhi-alertmanager-chart
+    helm:
+      valueFiles:
+        - values.yaml
+        - values-production.yaml
+      parameters:
+        - name: global.environment
+          value: production
+        - name: global.clusterName
+          value: guardianshield-mainnet
+        - name: alertmanager.replicaCount
+          value: "3"
+        - name: alertmanager.persistence.enabled
+          value: "true"
+        - name: alertmanager.persistence.size
+          value: "50Gi"
+        - name: ingress.enabled
+          value: "true"
+        - name: ingress.hosts[0].host
+          value: alerts.guardianshield.io
+  
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: guardianshield-monitoring
+  
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+  
+  info:
+    - name: 'AlertManager URL'
+      value: 'https://alerts.guardianshield.io'
+    - name: 'Monitoring Scope'
+      value: 'ERC-8055, Blockchain, Website, Infrastructure'
+    - name: 'Alert Routes'
+      value: 'Critical, Warning, Info channels configured'
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: prometheus-operator
+  namespace: argocd
+  labels:
+    component: monitoring
+    tier: production
+    team: infrastructure
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+spec:
+  project: guardianshield-ecosystem
+  
+  source:
+    repoURL: https://prometheus-community.github.io/helm-charts
+    chart: kube-prometheus-stack
+    targetRevision: 57.1.1
+    helm:
+      parameters:
+        - name: prometheus.prometheusSpec.retention
+          value: "30d"
+        - name: prometheus.prometheusSpec.storageSpec.volumeClaimTemplate.spec.resources.requests.storage
+          value: "100Gi"
+        - name: grafana.adminPassword
+          value: "guardianshield2026"
+        - name: grafana.ingress.enabled
+          value: "true"
+        - name: grafana.ingress.hosts[0]
+          value: grafana.guardianshield.io
+  
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: guardianshield-monitoring
+  
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+  
+  info:
+    - name: 'Grafana URL'
+      value: 'https://grafana.guardianshield.io'
+    - name: 'Prometheus URL'
+      value: 'https://prometheus.guardianshield.io'
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: guardianshield-website
+  namespace: argocd
+  labels:
+    component: website
+    tier: production
+    team: frontend
+  annotations:
+    argocd.argoproj.io/sync-wave: "15"
+spec:
+  project: guardianshield-ecosystem
+  
+  source:
+    repoURL: https://github.com/Rexjaden/guardianshield-agents
+    targetRevision: main
+    path: k8s/website
+    helm:
+      valueFiles:
+        - values-production.yaml
+      parameters:
+        - name: image.tag
+          value: latest
+        - name: ingress.hosts[0].host
+          value: guardianshield.io
+        - name: ingress.tls[0].secretName
+          value: guardianshield-io-tls
+        - name: resources.requests.cpu
+          value: "500m"
+        - name: resources.requests.memory
+          value: "1Gi"
+  
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: guardianshield-production
+  
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

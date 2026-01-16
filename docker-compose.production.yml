@@ -1,8 +1,6 @@
 # GuardianShield Production Deployment
 # Docker Compose configuration for DigitalOcean deployment
 
-version: '3.8'
-
 services:
   guardianshield-app:
     build: .
@@ -14,13 +12,19 @@ services:
       - ENVIRONMENT=production
       - DOMAIN=www.guardian-shield.io
       - ETH_DOMAIN=guardianshield-eth.com
-      - DATABASE_URL=postgresql://guardianuser:${DB_PASSWORD}@db:5432/guardianshield
-      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=postgresql://guardianuser:${DB_PASSWORD}@db:5432/guardianshield?sslmode=require
+      - REDIS_URL=redis://:${REDIS_PASSWORD}@redis:6379
       - EMAIL_SERVER=smtp.guardian-shield.io
       - EMAIL_USER=system@guardian-shield.io
       - EMAIL_PASSWORD=${EMAIL_PASSWORD}
       - SECRET_KEY=${SECRET_KEY}
       - CLAUDE_EMAIL=claude@guardian-shield.io
+      - SSL_ENABLED=true
+      - RATE_LIMIT_ENABLED=true
+      - IP_PROTECTION_ENABLED=true
+      - ADMIN_API_KEY=${ADMIN_API_KEY}
+      - VAULT_TOKEN=${VAULT_TOKEN}
+      - BACKUP_ENCRYPTION_KEY=${BACKUP_ENCRYPTION_KEY}
     volumes:
       - ./data:/app/data
       - ./logs:/app/logs
@@ -30,6 +34,15 @@ services:
       - redis
     networks:
       - guardianshield-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      - "guardianshield.service=api"
+      - "guardianshield.security=critical"
 
   db:
     image: postgres:15-alpine

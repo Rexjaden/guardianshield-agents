@@ -224,8 +224,7 @@ class UserCreationRequest(BaseModel):
         if v not in allowed_roles:
             raise ValueError(f"Role must be one of: {', '.join(allowed_roles)}")
         return v
-
-# Authentication Endpoints
+    
 @app.post("/api/auth/login")
 async def login(login_data: LoginRequest):
     """Authenticate user and return access token"""

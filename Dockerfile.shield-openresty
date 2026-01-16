@@ -1,0 +1,47 @@
+FROM node:18-alpine AS builder
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies
+RUN npm ci --only=production
+
+# Copy application code
+COPY . .
+
+# Build static assets if needed
+RUN npm run build || echo "No build script found"
+
+FROM openresty/openresty:1.21.4.1-alpine
+
+# Install additional packages
+RUN apk add --no-cache \
+    curl \
+    redis \
+    && opm install ledgetech/lua-resty-redis
+
+# Copy custom nginx configuration
+COPY nginx.shield-openresty.conf /usr/local/openresty/nginx/conf/nginx.conf
+
+# Copy Lua scripts
+COPY lua_scripts/ /usr/local/openresty/lua/
+
+# Copy web assets from builder
+COPY --from=builder /app /var/www/html/
+
+# Create necessary directories
+RUN mkdir -p /var/log/nginx /var/cache/nginx
+
+# Set permissions
+RUN chown -R nginx:nginx /var/www/html /var/log/nginx /var/cache/nginx
+
+# Expose ports
+EXPOSE 80 443
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost/health || exit 1
+
+CMD ["/usr/local/openresty/bin/openresty", "-g", "daemon off;"]

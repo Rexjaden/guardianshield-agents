@@ -1,0 +1,182 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: guardianshield-ecosystem
+  namespace: argocd
+  labels:
+    project: guardianshield
+    tier: enterprise
+spec:
+  description: "GuardianShield ERC-8055 Blockchain Ecosystem - Enterprise GitOps Project"
+  
+  # Source repositories for GitOps
+  sourceRepos:
+    - 'https://github.com/Rexjaden/guardianshield-agents'
+    - 'https://github.com/Rexjaden/shieldtokenerc8055'
+    - 'https://github.com/Rexjaden/dhi-alertmanager'
+    - 'https://github.com/Rexjaden/dhi-argocd'
+    - 'https://charts.guardianshield.io/*'
+    - 'https://prometheus-community.github.io/helm-charts'
+    - 'https://grafana.github.io/helm-charts'
+  
+  # Destination clusters and namespaces
+  destinations:
+    # Production cluster
+    - namespace: 'guardianshield-*'
+      server: 'https://kubernetes.default.svc'
+    - namespace: 'erc8055-*'
+      server: 'https://kubernetes.default.svc'
+    - namespace: 'monitoring-*'
+      server: 'https://kubernetes.default.svc'
+    - namespace: 'argocd'
+      server: 'https://kubernetes.default.svc'
+    
+    # Staging cluster (if different)
+    - namespace: '*'
+      server: 'https://staging-k8s-cluster.guardianshield.io'
+    
+    # Development cluster
+    - namespace: '*'
+      server: 'https://dev-k8s-cluster.guardianshield.io'
+  
+  # RBAC for compliance and security
+  roles:
+    # ERC-8055 Development Team
+    - name: erc8055-developers
+      description: "ERC-8055 Shield Token developers with deployment access"
+      policies:
+        - p, proj:guardianshield-ecosystem:erc8055-developers, applications, sync, guardianshield-ecosystem/erc8055-*, allow
+        - p, proj:guardianshield-ecosystem:erc8055-developers, applications, get, guardianshield-ecosystem/erc8055-*, allow
+        - p, proj:guardianshield-ecosystem:erc8055-developers, repositories, get, https://github.com/Rexjaden/shieldtokenerc8055, allow
+      groups:
+        - guardianshield:erc8055-team
+    
+    # Infrastructure Team
+    - name: infrastructure-admins
+      description: "Infrastructure team with full ecosystem access"
+      policies:
+        - p, proj:guardianshield-ecosystem:infrastructure-admins, applications, *, guardianshield-ecosystem/*, allow
+        - p, proj:guardianshield-ecosystem:infrastructure-admins, repositories, *, *, allow
+        - p, proj:guardianshield-ecosystem:infrastructure-admins, clusters, *, *, allow
+      groups:
+        - guardianshield:infra-team
+        - guardianshield:devops-team
+    
+    # Monitoring Team
+    - name: monitoring-operators
+      description: "Monitoring and observability team"
+      policies:
+        - p, proj:guardianshield-ecosystem:monitoring-operators, applications, sync, guardianshield-ecosystem/monitoring-*, allow
+        - p, proj:guardianshield-ecosystem:monitoring-operators, applications, get, guardianshield-ecosystem/monitoring-*, allow
+      groups:
+        - guardianshield:monitoring-team
+    
+    # Security Auditors (read-only)
+    - name: security-auditors
+      description: "Security team with read-only access for compliance"
+      policies:
+        - p, proj:guardianshield-ecosystem:security-auditors, applications, get, guardianshield-ecosystem/*, allow
+        - p, proj:guardianshield-ecosystem:security-auditors, repositories, get, *, allow
+      groups:
+        - guardianshield:security-team
+        - guardianshield:compliance-team
+  
+  # Cluster resource restrictions for compliance
+  clusterResourceWhitelist:
+    - group: ''
+      kind: Namespace
+    - group: ''
+      kind: ConfigMap
+    - group: ''
+      kind: Secret
+    - group: 'apps'
+      kind: Deployment
+    - group: 'apps'
+      kind: StatefulSet
+    - group: 'extensions'
+      kind: Ingress
+    - group: 'networking.k8s.io'
+      kind: Ingress
+    - group: 'networking.k8s.io'
+      kind: NetworkPolicy
+    - group: 'rbac.authorization.k8s.io'
+      kind: Role
+    - group: 'rbac.authorization.k8s.io'
+      kind: RoleBinding
+    - group: 'rbac.authorization.k8s.io'
+      kind: ClusterRole
+    - group: 'rbac.authorization.k8s.io'
+      kind: ClusterRoleBinding
+    - group: 'monitoring.coreos.com'
+      kind: ServiceMonitor
+    - group: 'monitoring.coreos.com'
+      kind: PrometheusRule
+  
+  # Namespace resource restrictions
+  namespaceResourceWhitelist:
+    - group: ''
+      kind: Service
+    - group: ''
+      kind: ServiceAccount
+    - group: ''
+      kind: PersistentVolumeClaim
+    - group: 'apps'
+      kind: DaemonSet
+    - group: 'apps'
+      kind: ReplicaSet
+    - group: 'batch'
+      kind: Job
+    - group: 'batch'
+      kind: CronJob
+  
+  # Sync windows for controlled deployments
+  syncWindows:
+    # Production deployment window
+    - kind: allow
+      schedule: '0 2 * * 1-5'  # Monday-Friday, 2 AM UTC
+      duration: 2h
+      applications:
+        - 'guardianshield-*'
+        - 'erc8055-production'
+      manualSync: false
+    
+    # Emergency deployment window (always allowed)
+    - kind: allow
+      schedule: '* * * * *'
+      duration: 24h
+      applications:
+        - 'guardianshield-hotfix-*'
+        - 'erc8055-emergency-*'
+      manualSync: true
+    
+    # Staging deployment (business hours)
+    - kind: allow
+      schedule: '0 9-18 * * 1-5'  # Business hours Mon-Fri
+      duration: 9h
+      applications:
+        - '*-staging'
+      manualSync: true
+  
+  # Signature keys for compliance
+  signatureKeys:
+    - keyID: guardianshield-signing-key-2026
+  
+  # Orphaned resources policy
+  orphanedResources:
+    warn: true
+    ignore:
+      - group: ''
+        kind: Secret
+        name: 'argocd-*'
+      - group: ''
+        kind: ConfigMap
+        name: 'kube-root-ca.crt'
+  
+  # Additional project-level restrictions
+  clusterResourceBlacklist:
+    - group: 'policy'
+      kind: PodSecurityPolicy
+    - group: 'admissionregistration.k8s.io'
+      kind: MutatingAdmissionWebhook
+    - group: 'admissionregistration.k8s.io'
+      kind: ValidatingAdmissionWebhook

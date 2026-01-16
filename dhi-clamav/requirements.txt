@@ -1,0 +1,66 @@
+# DHI-ClamAV Requirements
+# Security scanning engine dependencies
+
+# Core Python dependencies
+aiohttp==3.9.1
+aiohttp-cors==0.7.0
+aiohttp-jinja2==1.6
+aioredis==2.0.1
+aiofiles==23.2.1
+
+# ClamAV Python bindings
+pyclamd==0.4.0
+clamd==1.0.2
+
+# Security and cryptography
+cryptography==41.0.8
+hashlib-compat==1.0.1
+
+# File analysis
+python-magic==0.4.27
+ssdeep==3.4
+yara-python==4.3.1
+
+# System monitoring
+psutil==5.9.6
+
+# Kubernetes integration
+kubernetes==28.1.0
+
+# Data validation and serialization
+marshmallow==3.20.2
+
+# Monitoring and metrics
+prometheus-client==0.19.0
+
+# HTTP client for URL scanning
+httpx==0.25.2
+
+# Template engine
+jinja2==3.1.2
+
+# Async utilities
+asyncio-mqtt==0.16.1
+
+# Configuration management
+pyyaml==6.0.1
+python-dotenv==1.0.0
+
+# Logging
+structlog==23.2.0
+
+# Process management
+supervisor==4.2.5
+
+# Development dependencies (optional)
+pytest==7.4.3
+pytest-asyncio==0.21.1
+pytest-aiohttp==1.0.5
+black==23.11.0
+isort==5.12.0
+flake8==6.1.0
+mypy==1.7.1
+
+# Additional security tools
+bandit==1.7.5
+safety==2.3.5

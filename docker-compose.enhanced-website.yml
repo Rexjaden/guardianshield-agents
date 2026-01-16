@@ -1,0 +1,91 @@
+# GuardianShield Website Enhancement with Cilium Networking
+# Advanced load balancing and security for ERC-8055 platform
+
+version: '3.8'
+
+services:
+  # Enhanced Website with Cilium Integration
+  guardianshield-website:
+    build: .
+    container_name: guardianshield-enhanced-web
+    environment:
+      - CILIUM_ENABLED=true
+      - LOAD_BALANCING=advanced
+      - SECURITY_LEVEL=enterprise
+      - ERC8055_ENABLED=true
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - cilium-mesh
+      - guardianshield-network
+    labels:
+      # Cilium networking labels
+      - "io.cilium.service-mesh=enabled"
+      - "io.cilium.load-balancer=layer7"
+      - "io.cilium.security.policy=web-security"
+      - "guardianshield.service=website"
+      - "erc8055.component=frontend"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    depends_on:
+      - cilium-operator
+      - website-cache
+
+  # Cilium-powered API Gateway
+  api-gateway:
+    image: envoyproxy/envoy:v1.24-latest
+    container_name: guardianshield-gateway
+    volumes:
+      - ./cilium-config/envoy.yaml:/etc/envoy/envoy.yaml
+    ports:
+      - "8080:8080"
+    networks:
+      - cilium-mesh
+    labels:
+      - "io.cilium.service-mesh=gateway"
+      - "io.cilium.traffic.ingress=enabled"
+
+  # Enhanced Redis with Cilium networking
+  website-cache:
+    image: redis:7-alpine
+    container_name: guardianshield-web-cache
+    command: redis-server --maxmemory 512mb --maxmemory-policy allkeys-lru
+    networks:
+      - cilium-mesh
+    labels:
+      - "io.cilium.service-mesh=cache"
+
+  # Cilium Operator for advanced networking
+  cilium-operator:
+    image: quay.io/cilium/operator-generic:v1.14.5
+    container_name: guardianshield-cilium-operator
+    environment:
+      - CILIUM_K8S_REQUIRE_IPV4_POD_CIDR=true
+      - CILIUM_CLUSTER_NAME=guardianshield-erc8055
+      - CILIUM_CLUSTER_ID=1
+    privileged: true
+    networks:
+      - cilium-mesh
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+networks:
+  cilium-mesh:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+    labels:
+      - "io.cilium.network=service-mesh"
+      - "guardianshield.network=enhanced"
+  
+  guardianshield-network:
+    external: true
+
+volumes:
+  cilium-config:
+    driver: local

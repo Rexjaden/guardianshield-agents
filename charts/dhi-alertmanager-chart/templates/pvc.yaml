@@ -1,0 +1,18 @@
+{{- if .Values.alertmanager.persistence.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "dhi-alertmanager-chart.fullname" . }}-storage
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "dhi-alertmanager-chart.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.alertmanager.persistence.size }}
+  {{- if .Values.alertmanager.persistence.storageClass }}
+  storageClassName: {{ .Values.alertmanager.persistence.storageClass }}
+  {{- end }}
+{{- end }}

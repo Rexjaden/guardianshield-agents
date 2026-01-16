@@ -1,0 +1,43 @@
+{
+  "keys": [
+    {
+      "key_id": "uWVHFUb6BharmrCNcjp896yZYThqpdq46e_GRA4N_ig",
+      "username": "master_admin",
+      "registered_at": "2026-01-14T09:01:55.304329",
+      "device_info": {
+        "FriendlyName": "HID-compliant fido",
+        "Status": "OK",
+        "Present": true,
+        "InstanceId": "HID\\VID_18D1&PID_9470\\6&4280360&0&0000"
+      },
+      "nickname": "Google Titan Key - 2026-01-14",
+      "last_used": null
+    },
+    {
+      "key_id": "23P-wNN8gLjXwZKDb5EuhSK3lyIgeF372ZQvev6Fg94",
+      "username": "master_admin",
+      "registered_at": "2026-01-14T09:02:18.813127",
+      "device_info": {
+        "FriendlyName": "HID-compliant fido",
+        "Status": "OK",
+        "Present": true,
+        "InstanceId": "HID\\VID_18D1&PID_9470\\6&4280360&0&0000"
+      },
+      "nickname": "Google Titan Key - 2026-01-14",
+      "last_used": null
+    },
+    {
+      "key_id": "H2aveljZgJWmdpgjnSH3z2izPnPCPNcQJcHkqU28P1U",
+      "username": "master_admin",
+      "registered_at": "2026-01-14T09:04:30.137997",
+      "device_info": {
+        "FriendlyName": "HID-compliant fido",
+        "Status": "OK",
+        "Present": true,
+        "InstanceId": "HID\\VID_18D1&PID_9470\\6&4280360&0&0000"
+      },
+      "nickname": "Google Titan Key - 2026-01-14",
+      "last_used": null
+    }
+  ]
+}

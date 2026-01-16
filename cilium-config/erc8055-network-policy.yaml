@@ -1,0 +1,40 @@
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: erc8055-web-security
+spec:
+  endpointSelector:
+    matchLabels:
+      guardianshield.service: website
+  ingress:
+  - fromEndpoints:
+    - matchLabels:
+        io.cilium.service-mesh: gateway
+    toPorts:
+    - ports:
+      - port: "80"
+        protocol: TCP
+      - port: "443" 
+        protocol: TCP
+  - fromCIDR:
+    - "0.0.0.0/0"
+    toPorts:
+    - ports:
+      - port: "80"
+        protocol: TCP
+      - port: "443"
+        protocol: TCP
+    rules:
+      http:
+      - method: "GET"
+      - method: "POST"
+        headers:
+        - "Content-Type: application/json"
+  egress:
+  - toEndpoints:
+    - matchLabels:
+        io.cilium.service-mesh: cache
+    toPorts:
+    - ports:
+      - port: "6379"
+        protocol: TCP

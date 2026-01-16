@@ -1,0 +1,382 @@
+# GuardianShield API Routes Configuration
+# Define API routes, upstreams, and security policies
+
+# Main API Routes
+routes:
+  # GuardianShield Core API
+  - id: guardianshield-api
+    name: "GuardianShield Core API"
+    desc: "Main API for GuardianShield services"
+    uri: "/api/v1/*"
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"]
+    host: "api.guardianshield.io"
+    upstream:
+      type: roundrobin
+      nodes:
+        "core-api.guardianshield.svc.cluster.local:8080": 1
+        "core-api-backup.guardianshield.svc.cluster.local:8080": 1
+    plugins:
+      # Rate limiting
+      limit-req:
+        rate: 100
+        burst: 200
+        rejected_code: 429
+        nodelay: true
+      # Authentication
+      jwt-auth:
+        key: "guardianshield-jwt-key"
+        algorithm: "HS256"
+        exp: 86400
+      # Security headers
+      response-rewrite:
+        headers:
+          X-Content-Type-Options: "nosniff"
+          X-Frame-Options: "DENY"
+          X-XSS-Protection: "1; mode=block"
+          Strict-Transport-Security: "max-age=31536000; includeSubDomains"
+      # Threat intelligence
+      guardianshield-threat-intel:
+        threat_intel_endpoint: "http://threat-intel.guardianshield.svc.cluster.local:8080"
+        api_key: "${THREAT_INTEL_API_KEY}"
+        cache_ttl: 3600
+        block_malicious_ips: true
+        threat_score_threshold: 70
+
+  # Web3 RPC Endpoint
+  - id: web3-rpc
+    name: "Web3 RPC Endpoint"
+    desc: "Blockchain RPC proxy with security"
+    uri: "/rpc"
+    methods: ["POST"]
+    host: "rpc.guardianshield.io"
+    upstream:
+      type: least_conn
+      nodes:
+        "ethereum-node-1.guardianshield.svc.cluster.local:8545": 1
+        "ethereum-node-2.guardianshield.svc.cluster.local:8545": 1
+    plugins:
+      # Rate limiting for RPC
+      limit-req:
+        rate: 50
+        burst: 100
+        rejected_code: 429
+      # Web3 security
+      guardianshield-web3-security:
+        enable_rpc_protection: true
+        enable_wallet_protection: true
+        max_rpc_batch_size: 50
+        max_gas_limit: 8000000
+        blocked_rpc_methods:
+          - "admin_addPeer"
+          - "personal_unlockAccount"
+          - "miner_start"
+      # Request validation
+      request-validation:
+        body_schema:
+          type: object
+          properties:
+            jsonrpc:
+              type: string
+              enum: ["2.0"]
+            method:
+              type: string
+            params:
+              type: array
+            id:
+              anyOf:
+                - type: string
+                - type: integer
+          required: ["jsonrpc", "method"]
+
+  # Security Scanning API
+  - id: security-scan
+    name: "Security Scanning API"
+    desc: "File and URL scanning endpoint"
+    uri: "/scan/*"
+    methods: ["POST", "GET"]
+    host: "security-scan.guardianshield.io"
+    upstream:
+      type: roundrobin
+      nodes:
+        "dhi-clamav.guardianshield.svc.cluster.local:8080": 1
+    plugins:
+      # Higher rate limit for scanning
+      limit-req:
+        rate: 20
+        burst: 40
+        rejected_code: 429
+      # Malware scan integration
+      guardianshield-malware-scan:
+        clamav_endpoint: "http://dhi-clamav.guardianshield.svc.cluster.local:8080"
+        auto_quarantine: true
+        scan_timeout: 300
+      # Request size limit for file uploads
+      request-validation:
+        header_schema:
+          type: object
+          properties:
+            content-length:
+              type: integer
+              maximum: 104857600  # 100MB
+
+  # Threat Intelligence API  
+  - id: threat-intel
+    name: "Threat Intelligence API"
+    desc: "Real-time threat intelligence"
+    uri: "/threat-intel/*"
+    methods: ["GET", "POST"]
+    host: "threat-intel.guardianshield.io"
+    upstream:
+      type: roundrobin
+      nodes:
+        "threat-intel.guardianshield.svc.cluster.local:8080": 1
+    plugins:
+      # API key authentication
+      key-auth:
+        key: "X-API-Key"
+      # CORS for threat intelligence dashboard
+      cors:
+        allow_origins: "https://dashboard.guardianshield.io"
+        allow_methods: "GET,POST,OPTIONS"
+        allow_headers: "X-API-Key,Content-Type,Authorization"
+        allow_credentials: true
+
+  # Admin Dashboard
+  - id: admin-dashboard
+    name: "Admin Dashboard"
+    desc: "GuardianShield admin interface"
+    uri: "/admin/*"
+    methods: ["GET", "POST", "PUT", "DELETE"]
+    host: "admin.guardianshield.io"
+    upstream:
+      type: roundrobin
+      nodes:
+        "admin-dashboard.guardianshield.svc.cluster.local:8080": 1
+    plugins:
+      # Strong authentication for admin
+      jwt-auth:
+        key: "guardianshield-admin-jwt-key"
+        algorithm: "HS256"
+        exp: 3600  # 1 hour expiry
+      # IP restriction for admin access
+      ip-restriction:
+        whitelist:
+          - "10.0.0.0/8"
+          - "172.16.0.0/12"
+          - "192.168.0.0/16"
+      # CSRF protection
+      csrf:
+        key: "guardianshield-csrf-key"
+
+  # Agent Communication API
+  - id: agent-api
+    name: "Agent Communication API"
+    desc: "Internal agent communication"
+    uri: "/agents/*"
+    methods: ["GET", "POST", "PUT", "PATCH"]
+    host: "agents.guardianshield.io"
+    upstream:
+      type: roundrobin
+      nodes:
+        "agent-orchestrator.guardianshield.svc.cluster.local:8080": 1
+    plugins:
+      # mTLS for agent authentication
+      jwt-auth:
+        key: "guardianshield-agent-jwt-key"
+        algorithm: "HS256"
+      # Higher rate limits for agents
+      limit-req:
+        rate: 1000
+        burst: 2000
+        rejected_code: 429
+
+  # DeFi Security API
+  - id: defi-security
+    name: "DeFi Security API"
+    desc: "DeFi protocol security monitoring"
+    uri: "/defi/*"
+    methods: ["GET", "POST"]
+    host: "defi.guardianshield.io"
+    upstream:
+      type: roundrobin
+      nodes:
+        "defi-monitor.guardianshield.svc.cluster.local:8080": 1
+    plugins:
+      # Web3 security with DeFi focus
+      guardianshield-web3-security:
+        enable_defi_protection: true
+        enable_nft_protection: false
+        max_transaction_value: "10000000000000000000000"  # 10,000 ETH
+      # Rate limiting
+      limit-req:
+        rate: 30
+        burst: 60
+
+  # NFT Security API
+  - id: nft-security
+    name: "NFT Security API" 
+    desc: "NFT marketplace security"
+    uri: "/nft/*"
+    methods: ["GET", "POST"]
+    host: "nft.guardianshield.io"
+    upstream:
+      type: roundrobin
+      nodes:
+        "nft-monitor.guardianshield.svc.cluster.local:8080": 1
+    plugins:
+      # Web3 security with NFT focus
+      guardianshield-web3-security:
+        enable_nft_protection: true
+        enable_defi_protection: false
+      # Image scanning for NFT metadata
+      guardianshield-malware-scan:
+        scan_images: true
+        scan_metadata: true
+
+  # Metrics and Monitoring
+  - id: metrics
+    name: "Metrics API"
+    desc: "System metrics and monitoring"
+    uri: "/metrics"
+    methods: ["GET"]
+    host: "metrics.guardianshield.io"
+    upstream:
+      type: roundrobin
+      nodes:
+        "prometheus.guardianshield.svc.cluster.local:9090": 1
+    plugins:
+      # Basic auth for metrics
+      basic-auth:
+        username: "metrics"
+      # IP restriction
+      ip-restriction:
+        whitelist:
+          - "10.0.0.0/8"
+          - "172.16.0.0/12"
+
+# Global Upstreams
+upstreams:
+  - id: guardianshield-core
+    name: "GuardianShield Core Services"
+    type: roundrobin
+    hash_on: vars
+    hash_key: remote_addr
+    nodes:
+      "core-api.guardianshield.svc.cluster.local:8080": 1
+      "core-api-backup.guardianshield.svc.cluster.local:8080": 1
+    healthcheck:
+      active:
+        type: http
+        http_path: /health
+        healthy:
+          interval: 2
+          http_statuses: [200, 302]
+          successes: 3
+        unhealthy:
+          interval: 1
+          http_failures: 3
+      passive:
+        healthy:
+          http_statuses: [200, 201, 202, 302, 304]
+          successes: 3
+        unhealthy:
+          http_statuses: [429, 500, 502, 503, 504, 505]
+          http_failures: 3
+          tcp_failures: 3
+
+  - id: ethereum-nodes
+    name: "Ethereum RPC Nodes"
+    type: least_conn
+    nodes:
+      "ethereum-node-1.guardianshield.svc.cluster.local:8545": 1
+      "ethereum-node-2.guardianshield.svc.cluster.local:8545": 1
+      "ethereum-node-3.guardianshield.svc.cluster.local:8545": 1
+    healthcheck:
+      active:
+        type: http
+        http_path: /
+        timeout: 5
+        healthy:
+          interval: 5
+          http_statuses: [200]
+          successes: 2
+        unhealthy:
+          interval: 2
+          http_failures: 2
+
+# Global Consumers (API Keys/Authentication)
+consumers:
+  - username: "admin-user"
+    desc: "Administrator user"
+    plugins:
+      jwt-auth:
+        key: "guardianshield-admin-jwt-key"
+        algorithm: "HS256"
+        exp: 3600
+      key-auth:
+        key: "admin-api-key-12345"
+
+  - username: "agent-system"
+    desc: "Internal agent system"
+    plugins:
+      jwt-auth:
+        key: "guardianshield-agent-jwt-key"
+        algorithm: "HS256"
+        exp: 86400
+      key-auth:
+        key: "agent-system-key-67890"
+
+  - username: "external-partner"
+    desc: "External partner access"
+    plugins:
+      key-auth:
+        key: "partner-api-key-abcdef"
+      limit-req:
+        rate: 100
+        burst: 150
+
+# SSL Certificates
+ssl:
+  - id: guardianshield-wildcard
+    cert: |
+      -----BEGIN CERTIFICATE-----
+      # Your wildcard certificate for *.guardianshield.io
+      -----END CERTIFICATE-----
+    key: |
+      -----BEGIN PRIVATE KEY-----
+      # Your private key
+      -----END PRIVATE KEY-----
+    snis:
+      - "*.guardianshield.io"
+      - "guardianshield.io"
+
+# Global Plugins Configuration
+global_plugins:
+  - name: prometheus
+    config:
+      export_uri: /apisix/prometheus/metrics
+      metric_prefix: "guardianshield_"
+      enable_export_server: true
+      export_addr:
+        ip: "0.0.0.0"
+        port: 9091
+
+  - name: zipkin
+    config:
+      endpoint: "http://zipkin.guardianshield.svc.cluster.local:9411/api/v2/spans"
+      sample_ratio: 0.1
+      service_name: "dhi-apisix"
+
+  - name: request-id
+    config:
+      header_name: "X-Request-ID"
+      include_in_response: true
+
+  - name: real-ip
+    config:
+      source: "http_x_forwarded_for"
+      trusted_addresses:
+        - "127.0.0.1"
+        - "10.0.0.0/8"
+        - "172.16.0.0/12"
+        - "192.168.0.0/16"

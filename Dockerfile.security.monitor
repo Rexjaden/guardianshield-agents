@@ -1,0 +1,98 @@
+# Security Monitoring Container with Fail2Ban and Log Analysis
+FROM ubuntu:22.04
+
+# Install security tools
+RUN apt-get update && apt-get install -y \
+    fail2ban \
+    logwatch \
+    rsyslog \
+    curl \
+    python3 \
+    python3-pip \
+    iptables \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python security monitoring tools
+RUN pip3 install watchdog psutil requests
+
+# Copy fail2ban configuration
+COPY ./security/fail2ban/ /etc/fail2ban/jail.d/
+COPY ./security/logwatch/ /etc/logwatch/
+COPY ./security/monitor.py /app/monitor.py
+
+# Create monitoring script
+RUN mkdir -p /app/logs
+
+# Copy security monitoring script
+COPY <<EOF /app/security_monitor.py
+#!/usr/bin/env python3
+import time
+import json
+import requests
+import psutil
+from datetime import datetime
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+class SecurityMonitor:
+    def __init__(self):
+        self.api_url = "http://guardianshield-app:8000"
+        self.alert_threshold = {
+            'cpu': 80,
+            'memory': 85,
+            'failed_logins': 5
+        }
+    
+    def check_system_health(self):
+        """Monitor system resources and security events"""
+        metrics = {
+            'timestamp': datetime.now().isoformat(),
+            'cpu_percent': psutil.cpu_percent(),
+            'memory_percent': psutil.virtual_memory().percent,
+            'disk_percent': psutil.disk_usage('/').percent
+        }
+        
+        # Check for alerts
+        if metrics['cpu_percent'] > self.alert_threshold['cpu']:
+            self.send_alert(f"High CPU usage: {metrics['cpu_percent']}%")
+        
+        if metrics['memory_percent'] > self.alert_threshold['memory']:
+            self.send_alert(f"High memory usage: {metrics['memory_percent']}%")
+        
+        return metrics
+    
+    def send_alert(self, message):
+        """Send security alert to main application"""
+        try:
+            response = requests.post(
+                f"{self.api_url}/api/security/alert",
+                json={'alert': message, 'timestamp': datetime.now().isoformat()},
+                timeout=5
+            )
+            logger.info(f"Alert sent: {message}")
+        except Exception as e:
+            logger.error(f"Failed to send alert: {e}")
+    
+    def run(self):
+        """Main monitoring loop"""
+        logger.info("Security monitor started")
+        while True:
+            try:
+                metrics = self.check_system_health()
+                logger.info(f"System metrics: {metrics}")
+                time.sleep(60)  # Check every minute
+            except Exception as e:
+                logger.error(f"Monitoring error: {e}")
+                time.sleep(30)
+
+if __name__ == "__main__":
+    monitor = SecurityMonitor()
+    monitor.run()
+EOF
+
+RUN chmod +x /app/security_monitor.py
+
+# Start services
+CMD ["python3", "/app/security_monitor.py"]

@@ -1,0 +1,21 @@
+{
+  "apiVersion": "v1",
+  "kind": "ConfigMap",
+  "metadata": {
+    "name": "shield-token-apigee-policies",
+    "namespace": "shieldtoken"
+  },
+  "data": {
+    "quota-policy.xml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Quota async=\"false\" continueOnError=\"false\" enabled=\"true\" name=\"QuotaTokenAPI\">\n    <DisplayName>Token API Quota</DisplayName>\n    <Properties/>\n    <Allow count=\"1000\" countRef=\"request.header.quota_count\"/>\n    <Interval ref=\"request.header.quota_interval\">1</Interval>\n    <Distributed>true</Distributed>\n    <Synchronous>true</Synchronous>\n    <TimeUnit ref=\"request.header.quota_timeunit\">minute</TimeUnit>\n    <Identifier ref=\"client_id\"/>\n    <MessageWeight ref=\"request.header.weight\"/>\n</Quota>",
+    
+    "spike-arrest-policy.xml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<SpikeArrest async=\"false\" continueOnError=\"false\" enabled=\"true\" name=\"SpikeArrestTokenAPI\">\n    <DisplayName>Token API Spike Arrest</DisplayName>\n    <Properties/>\n    <Identifier ref=\"client_id\"/>\n    <MessageWeight ref=\"request.header.weight\"/>\n    <Rate>30ps</Rate>\n    <UseEffectiveCount>true</UseEffectiveCount>\n</SpikeArrest>",
+    
+    "web3-authentication-policy.xml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Javascript async=\"false\" continueOnError=\"false\" enabled=\"true\" name=\"Web3Authentication\">\n    <DisplayName>Web3 Wallet Authentication</DisplayName>\n    <Properties/>\n    <ResourceURL>jsc://web3-auth.js</ResourceURL>\n</Javascript>",
+    
+    "token-validation-policy.xml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Javascript async=\"false\" continueOnError=\"false\" enabled=\"true\" name=\"TokenValidation\">\n    <DisplayName>SHIELD Token Purchase Validation</DisplayName>\n    <Properties/>\n    <ResourceURL>jsc://token-validation.js</ResourceURL>\n</Javascript>",
+    
+    "cors-policy.xml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<CORS enabled=\"true\" name=\"CORSWeb3\">\n    <DisplayName>CORS for Web3 Integration</DisplayName>\n    <AllowOrigins>*</AllowOrigins>\n    <AllowMethods>GET,POST,PUT,DELETE,OPTIONS</AllowMethods>\n    <AllowHeaders>Content-Type,Authorization,X-Wallet-Address,X-Wallet-Signature,X-Token-Type,X-Amount-USD</AllowHeaders>\n    <MaxAge>3628800</MaxAge>\n    <AllowCredentials>false</AllowCredentials>\n    <GeneratePreflightResponse>true</GeneratePreflightResponse>\n    <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>\n</CORS>",
+    
+    "response-cache-policy.xml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<ResponseCache async=\"false\" continueOnError=\"false\" enabled=\"true\" name=\"ResponseCacheAnalytics\">\n    <DisplayName>Analytics Response Cache</DisplayName>\n    <Properties/>\n    <CacheKey>\n        <Prefix/>\n        <KeyFragment ref=\"request.uri\" type=\"string\"/>\n    </CacheKey>\n    <Scope>Exclusive</Scope>\n    <ExpirySettings>\n        <ExpiryDate/>\n        <TimeOfDay/>\n        <TimeoutInSec ref=\"cache.timeout\">300</TimeoutInSec>\n    </ExpirySettings>\n    <SkipCacheLookup>false</SkipCacheLookup>\n    <SkipCachePopulation>false</SkipCachePopulation>\n</ResponseCache>"
+  }
+}

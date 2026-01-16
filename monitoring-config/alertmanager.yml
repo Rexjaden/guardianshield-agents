@@ -1,0 +1,126 @@
+# GuardianShield ERC-8055 AlertManager Configuration
+# Advanced alerting for Shield Token ecosystem
+
+global:
+  smtp_smarthost: 'localhost:587'
+  smtp_from: 'alerts@guardian-shield.io'
+  smtp_auth_username: 'guardianshield'
+  smtp_auth_password: 'secure_password_2026'
+
+# Alert routing configuration
+route:
+  group_by: ['alertname', 'service', 'erc8055_component']
+  group_wait: 10s
+  group_interval: 10s
+  repeat_interval: 1h
+  receiver: 'erc8055-team'
+  routes:
+  # Critical ERC-8055 Shield Token alerts
+  - match:
+      severity: critical
+      component: shield-token
+    receiver: 'shield-token-critical'
+    group_wait: 5s
+    repeat_interval: 15m
+    
+  # Guard Token alerts
+  - match:
+      severity: warning
+      component: guard-token
+    receiver: 'guard-token-alerts'
+    group_interval: 30s
+    
+  # Website performance alerts
+  - match:
+      service: website
+    receiver: 'website-ops'
+    group_interval: 1m
+    
+  # Database and infrastructure alerts
+  - match:
+      category: infrastructure
+    receiver: 'infrastructure-team'
+
+# Alert receivers
+receivers:
+- name: 'erc8055-team'
+  email_configs:
+  - to: 'team@guardian-shield.io'
+    subject: '[GuardianShield] {{ .GroupLabels.alertname }}'
+    body: |
+      🛡️ GuardianShield ERC-8055 Alert
+      
+      Alert: {{ .GroupLabels.alertname }}
+      Severity: {{ .CommonLabels.severity }}
+      Component: {{ .CommonLabels.erc8055_component }}
+      
+      {{ range .Alerts }}
+      Description: {{ .Annotations.description }}
+      Summary: {{ .Annotations.summary }}
+      Started: {{ .StartsAt }}
+      {{ end }}
+      
+      Dashboard: http://localhost:3000
+      
+- name: 'shield-token-critical'
+  email_configs:
+  - to: 'critical@guardian-shield.io'
+    subject: '🚨 CRITICAL: ERC-8055 Shield Token Alert'
+    body: |
+      🚨 CRITICAL ERC-8055 SHIELD TOKEN ALERT 🚨
+      
+      This is a critical issue with the Shield Token system!
+      
+      {{ range .Alerts }}
+      Alert: {{ .Annotations.summary }}
+      Description: {{ .Annotations.description }}
+      Value: {{ .Annotations.value }}
+      Started: {{ .StartsAt }}
+      {{ end }}
+      
+      IMMEDIATE ACTION REQUIRED!
+      Dashboard: http://localhost:3000
+      
+- name: 'guard-token-alerts'
+  email_configs:
+  - to: 'guard-token@guardian-shield.io'
+    subject: '[GUARD Token] {{ .GroupLabels.alertname }}'
+    body: |
+      🪙 Guard Token Alert
+      
+      {{ range .Alerts }}
+      Description: {{ .Annotations.description }}
+      Started: {{ .StartsAt }}
+      {{ end }}
+      
+- name: 'website-ops'
+  email_configs:
+  - to: 'website-ops@guardian-shield.io'
+    subject: '[Website] {{ .GroupLabels.alertname }}'
+    body: |
+      🌐 GuardianShield Website Alert
+      
+      {{ range .Alerts }}
+      Issue: {{ .Annotations.summary }}
+      Details: {{ .Annotations.description }}
+      {{ end }}
+      
+- name: 'infrastructure-team'
+  email_configs:
+  - to: 'infrastructure@guardian-shield.io'
+    subject: '[Infrastructure] {{ .GroupLabels.alertname }}'
+    body: |
+      🏗️ Infrastructure Alert
+      
+      {{ range .Alerts }}
+      Component: {{ .Labels.component }}
+      Issue: {{ .Annotations.description }}
+      {{ end }}
+
+# Alert inhibition rules
+inhibit_rules:
+- source_match:
+    severity: 'critical'
+  target_match:
+    severity: 'warning'
+  equal: ['alertname', 'service']

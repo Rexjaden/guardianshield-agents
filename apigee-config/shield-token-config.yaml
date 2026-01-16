@@ -1,0 +1,190 @@
+# Apigee Microgateway Configuration for SHIELD Token Platform
+# Enterprise API Management with Web3 Integration
+
+# Organization and Environment
+org: "shieldtoken-org"
+env: "production"
+
+# Edge Configuration
+edge_config:
+  bootstrap: >
+    https://edgemicroservices.apigee.net/edgemicro/bootstrap/organization/shieldtoken-org/environment/production
+  
+  # JWT Settings for Web3 Authentication
+  jwt_public_key: |
+    -----BEGIN CERTIFICATE-----
+    # Your JWT public key certificate here
+    -----END CERTIFICATE-----
+
+# API Proxies for SHIELD Token
+proxies:
+  
+  # Token Purchase API
+  - name: shield-token-purchase
+    base_path: /api/v1/tokens
+    target_endpoint: http://shield-3d-api:9000
+    policies:
+      - quota:
+          allow: 100
+          interval: 1
+          time_unit: minute
+      - spike_arrest:
+          rate: 10ps
+      - oauth_v2:
+          operation: VerifyAccessToken
+      - javascript:
+          source: |
+            // Web3 wallet verification
+            var walletAddress = context.getVariable("request.header.x-wallet-address");
+            var signature = context.getVariable("request.header.x-wallet-signature");
+            
+            if (walletAddress && signature) {
+              context.setVariable("wallet.verified", true);
+              context.setVariable("wallet.address", walletAddress);
+            }
+    
+  # 3D Graphics WebSocket API
+  - name: shield-3d-websocket
+    base_path: /ws
+    target_endpoint: ws://shield-3d-api:9000
+    policies:
+      - spike_arrest:
+          rate: 5ps
+      - javascript:
+          source: |
+            // Monitor WebSocket connections for 3D graphics
+            var connectionId = context.getVariable("messageid");
+            context.setVariable("websocket.connection.id", connectionId);
+    
+  # Analytics and Metrics API
+  - name: shield-analytics
+    base_path: /api/v1/analytics
+    target_endpoint: http://shield-openresty:80
+    policies:
+      - quota:
+          allow: 500
+          interval: 1  
+          time_unit: minute
+      - response_cache:
+          cache_timeout: 300
+
+# Plugins Configuration
+plugins:
+  
+  # OAuth Plugin for Web3 Authentication
+  oauth:
+    allowNoAuthorization: false
+    allowInvalidAuthorization: false
+    
+  # Analytics Plugin
+  analytics:
+    bufferSize: 1000
+    batchSize: 500
+    flushInterval: 5000
+    
+  # Quota Plugin  
+  quota:
+    useRedis: true
+    redisHost: redis
+    redisPort: 6379
+
+# Headers Management
+headers:
+  # CORS for Web3 Integration
+  - name: Access-Control-Allow-Origin
+    value: "*"
+  - name: Access-Control-Allow-Methods
+    value: "GET, POST, PUT, DELETE, OPTIONS"
+  - name: Access-Control-Allow-Headers
+    value: "Content-Type, Authorization, X-Wallet-Address, X-Wallet-Signature"
+  
+  # Security Headers
+  - name: X-Frame-Options
+    value: SAMEORIGIN
+  - name: X-Content-Type-Options
+    value: nosniff
+  - name: Strict-Transport-Security
+    value: "max-age=31536000; includeSubDomains"
+
+# Rate Limiting Configuration
+rate_limiting:
+  - identifier: ip
+    limit: 1000
+    period: 3600
+    
+  - identifier: api_key
+    limit: 10000
+    period: 3600
+    
+  - identifier: wallet_address
+    limit: 50
+    period: 60
+
+# Caching Configuration
+caching:
+  - path: "/api/v1/tokens/prices"
+    ttl: 30
+  - path: "/api/v1/analytics/dashboard"
+    ttl: 60
+
+# Monitoring and Alerting
+monitoring:
+  health_check_interval: 30
+  
+  thresholds:
+    response_time_ms: 500
+    error_rate_percent: 5
+    
+  alerts:
+    - type: email
+      recipients: ["admin@shieldtoken.com"]
+      triggers: ["high_error_rate", "slow_response"]
+
+# Custom Policies for Token Sales
+custom_policies:
+  
+  # Token Purchase Validation
+  - name: validate-token-purchase
+    policy: |
+      const tokenType = request.headers['x-token-type'];
+      const amountUSD = parseFloat(request.headers['x-amount-usd']);
+      
+      // Validate minimum purchase amounts
+      const minimums = {
+        'GUARD': 0.005,
+        'SHIELD': 0.025
+      };
+      
+      if (amountUSD < minimums[tokenType]) {
+        throw new Error(`Minimum purchase for ${tokenType} is $${minimums[tokenType]}`);
+      }
+  
+  # Web3 Signature Verification  
+  - name: verify-web3-signature
+    policy: |
+      const ethUtil = require('ethereumjs-util');
+      const walletAddress = request.headers['x-wallet-address'];
+      const signature = request.headers['x-wallet-signature'];
+      const message = request.headers['x-signed-message'];
+      
+      try {
+        const msgHash = ethUtil.hashPersonalMessage(Buffer.from(message));
+        const sigParams = ethUtil.fromRpcSig(signature);
+        const publicKey = ethUtil.ecrecover(msgHash, sigParams.v, sigParams.r, sigParams.s);
+        const addressBuffer = ethUtil.publicToAddress(publicKey);
+        const recoveredAddress = ethUtil.bufferToHex(addressBuffer);
+        
+        if (recoveredAddress.toLowerCase() !== walletAddress.toLowerCase()) {
+          throw new Error('Invalid wallet signature');
+        }
+      } catch (error) {
+        response.status = 401;
+        response.body = JSON.stringify({error: 'Wallet verification failed'});
+        return false;
+      }
+
+# Development and Testing
+development:
+  debug_mode: true
+  log_level: "DEBUG"
+  mock_target: false

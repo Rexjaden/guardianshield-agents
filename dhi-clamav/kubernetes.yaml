@@ -1,0 +1,673 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dhi-clamav
+  namespace: guardianshield
+  labels:
+    app: dhi-clamav
+    component: security-scanner
+    guardianshield.io/project: GuardianShield
+    guardianshield.io/security-layer: malware-detection
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: dhi-clamav
+  template:
+    metadata:
+      labels:
+        app: dhi-clamav
+        component: security-scanner
+        guardianshield.io/security-layer: malware-detection
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/metrics"
+    spec:
+      serviceAccountName: dhi-clamav
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+        supplementalGroups: [107] # clamav group
+      initContainers:
+      - name: signature-downloader
+        image: clamav/clamav:latest
+        command: ["/bin/sh", "-c"]
+        args:
+        - |
+          echo "Downloading initial virus signatures..."
+          freshclam --quiet --datadir=/signatures || {
+            echo "Initial signature download failed, using cached signatures"
+            exit 0
+          }
+        volumeMounts:
+        - name: virus-signatures
+          mountPath: /signatures
+        securityContext:
+          runAsUser: 107
+          runAsGroup: 107
+      containers:
+      - name: dhi-clamav
+        image: guardianshield/dhi-clamav:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+          name: http-api
+          protocol: TCP
+        - containerPort: 3310
+          name: clamav-daemon
+          protocol: TCP
+        env:
+        - name: CLAMD_HOST
+          value: "localhost"
+        - name: CLAMD_PORT
+          value: "3310"
+        - name: REDIS_URL
+          value: "redis://redis.guardianshield.svc.cluster.local:6379/3"
+        - name: KUBERNETES_SERVICE_HOST
+          value: "kubernetes.default.svc.cluster.local"
+        - name: KUBERNETES_SERVICE_PORT
+          value: "443"
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: MAX_FILE_SIZE
+          value: "104857600" # 100MB
+        - name: MAX_CONCURRENT_SCANS
+          value: "20"
+        - name: AUTO_QUARANTINE
+          value: "true"
+        - name: SIGNATURE_UPDATE_FREQUENCY
+          value: "24" # hours
+        volumeMounts:
+        - name: virus-signatures
+          mountPath: /var/lib/clamav
+        - name: quarantine-storage
+          mountPath: /app/quarantine
+        - name: temp-storage
+          mountPath: /app/temp
+        - name: logs-storage
+          mountPath: /app/logs
+        - name: yara-rules
+          mountPath: /app/yara_rules
+          readOnly: true
+        - name: config-volume
+          mountPath: /app/config
+          readOnly: true
+        - name: clamav-socket
+          mountPath: /var/run/clamav
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "500m"
+            ephemeral-storage: "5Gi"
+          limits:
+            memory: "2Gi"
+            cpu: "1500m"
+            ephemeral-storage: "10Gi"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        startupProbe:
+          httpGet:
+            path: /health
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 12
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: false # ClamAV needs write access
+          runAsNonRoot: true
+          runAsUser: 1000
+          runAsGroup: 1000
+          capabilities:
+            drop:
+            - ALL
+            add:
+            - CHOWN
+            - SETUID
+            - SETGID
+      volumes:
+      - name: virus-signatures
+        persistentVolumeClaim:
+          claimName: dhi-clamav-signatures
+      - name: quarantine-storage
+        persistentVolumeClaim:
+          claimName: dhi-clamav-quarantine
+      - name: temp-storage
+        emptyDir:
+          sizeLimit: 5Gi
+      - name: logs-storage
+        persistentVolumeClaim:
+          claimName: dhi-clamav-logs
+      - name: yara-rules
+        configMap:
+          name: dhi-clamav-yara-rules
+      - name: config-volume
+        configMap:
+          name: dhi-clamav-config
+      - name: clamav-socket
+        emptyDir: {}
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - dhi-clamav
+              topologyKey: kubernetes.io/hostname
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            preference:
+              matchExpressions:
+              - key: guardianshield.io/security-optimized
+                operator: In
+                values:
+                - "true"
+      tolerations:
+      - key: "guardianshield.io/security-scanner"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
+      topologySpreadConstraints:
+      - maxSkew: 1
+        topologyKey: kubernetes.io/hostname
+        whenUnsatisfiable: DoNotSchedule
+        labelSelector:
+          matchLabels:
+            app: dhi-clamav
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dhi-clamav
+  namespace: guardianshield
+  labels:
+    app: dhi-clamav
+    component: security-scanner
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: nlb
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8080"
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8080
+    targetPort: 8080
+    protocol: TCP
+    name: http-api
+  - port: 3310
+    targetPort: 3310
+    protocol: TCP
+    name: clamav-daemon
+  selector:
+    app: dhi-clamav
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dhi-clamav-headless
+  namespace: guardianshield
+  labels:
+    app: dhi-clamav
+    component: security-scanner
+spec:
+  clusterIP: None
+  ports:
+  - port: 8080
+    targetPort: 8080
+    protocol: TCP
+    name: http-api
+  selector:
+    app: dhi-clamav
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: dhi-clamav
+  namespace: guardianshield
+  labels:
+    app: dhi-clamav
+    component: security-scanner
+  annotations:
+    eks.amazonaws.com/role-arn: "arn:aws:iam::ACCOUNT:role/dhi-clamav-role"
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: dhi-clamav
+  labels:
+    app: dhi-clamav
+rules:
+- apiGroups: [""]
+  resources: ["pods", "services", "endpoints", "configmaps", "secrets"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["apps"]
+  resources: ["deployments", "replicasets"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["extensions", "networking.k8s.io"]
+  resources: ["ingresses"]
+  verbs: ["get", "list", "watch"]
+# Threat intelligence integration
+- apiGroups: ["guardianshield.io"]
+  resources: ["threats", "investigations"]
+  verbs: ["get", "list", "create", "update"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: dhi-clamav
+  labels:
+    app: dhi-clamav
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: dhi-clamav
+subjects:
+- kind: ServiceAccount
+  name: dhi-clamav
+  namespace: guardianshield
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: dhi-clamav-signatures
+  namespace: guardianshield
+  labels:
+    app: dhi-clamav
+    component: virus-signatures
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: fast-ssd
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: dhi-clamav-quarantine
+  namespace: guardianshield
+  labels:
+    app: dhi-clamav
+    component: quarantine-storage
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: standard
+  resources:
+    requests:
+      storage: 50Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: dhi-clamav-logs
+  namespace: guardianshield
+  labels:
+    app: dhi-clamav
+    component: logs-storage
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: standard
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dhi-clamav-config
+  namespace: guardianshield
+  labels:
+    app: dhi-clamav
+data:
+  dhi-clamav.yaml: |
+    # DHI-ClamAV Configuration
+    clamd:
+      host: "localhost"
+      port: 3310
+      socket: "/var/run/clamav/clamd.ctl"
+      timeout: 30
+    
+    redis:
+      url: "redis://redis.guardianshield.svc.cluster.local:6379"
+      database: 3
+      max_connections: 20
+      cache_ttl: 3600
+    
+    server:
+      host: "0.0.0.0"
+      port: 8080
+      max_file_size: 104857600  # 100MB
+      max_concurrent_scans: 20
+      workers: 4
+    
+    scanning:
+      auto_quarantine: true
+      quarantine_dir: "/app/quarantine"
+      temp_dir: "/app/temp"
+      yara_rules_dir: "/app/yara_rules"
+      enable_yara: true
+      enable_fuzzy_hash: true
+      
+    threat_intelligence:
+      enabled: true
+      endpoint: "http://threat-intel.guardianshield.svc.cluster.local:8080"
+      api_key: "dhi_threat_intel_key"
+      notify_on_infection: true
+      notify_on_suspicious: true
+    
+    signatures:
+      update_frequency: 24  # hours
+      auto_update: true
+      mirror: "database.clamav.net"
+      custom_signatures:
+        - "/app/custom_signatures/guardianshield.hdb"
+        - "/app/custom_signatures/web3.ndb"
+    
+    cors:
+      allowed_origins:
+        - "https://admin.guardianshield.io"
+        - "https://security.guardianshield.io"
+        - "https://api.guardianshield.io"
+      allowed_methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+      allowed_headers: ["Authorization", "Content-Type", "X-API-Key"]
+      allow_credentials: true
+    
+    monitoring:
+      prometheus_enabled: true
+      metrics_endpoint: "/metrics"
+      health_endpoint: "/health"
+      log_level: "INFO"
+    
+    security:
+      api_key_required: true
+      rate_limiting:
+        enabled: true
+        requests_per_minute: 60
+        burst_size: 100
+      
+    features:
+      websocket_enabled: true
+      bulk_scanning: true
+      url_scanning: true
+      real_time_monitoring: true
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dhi-clamav-yara-rules
+  namespace: guardianshield
+  labels:
+    app: dhi-clamav
+data:
+  guardianshield.yar: |
+    /*
+    GuardianShield YARA Rules
+    Advanced threat detection for Web3 and blockchain security
+    */
+    
+    rule Suspicious_Crypto_Miner
+    {
+        meta:
+            description = "Detects suspicious cryptocurrency miners"
+            threat_level = "medium"
+            category = "crypto-miner"
+            
+        strings:
+            $miner1 = "stratum+tcp://"
+            $miner2 = "mining.pool"
+            $miner3 = "getwork"
+            $miner4 = "cryptonight"
+            
+        condition:
+            any of ($miner*)
+    }
+    
+    rule Web3_Wallet_Stealer
+    {
+        meta:
+            description = "Detects Web3 wallet stealing malware"
+            threat_level = "high"
+            category = "wallet-stealer"
+            
+        strings:
+            $wallet1 = "metamask"
+            $wallet2 = "wallet.dat"
+            $wallet3 = "private_key"
+            $wallet4 = "mnemonic"
+            
+        condition:
+            2 of ($wallet*)
+    }
+    
+    rule Blockchain_RPC_Exploit
+    {
+        meta:
+            description = "Detects blockchain RPC exploits"
+            threat_level = "high"
+            category = "rpc-exploit"
+            
+        strings:
+            $rpc1 = "eth_sendTransaction"
+            $rpc2 = "personal_unlockAccount"
+            $rpc3 = "admin_addPeer"
+            
+        condition:
+            any of ($rpc*)
+    }
+  
+  malware.yar: |
+    /*
+    General Malware Detection Rules
+    */
+    
+    rule Generic_Trojan
+    {
+        meta:
+            description = "Generic trojan detection"
+            threat_level = "high"
+            category = "trojan"
+            
+        strings:
+            $trojan1 = { 4D 5A 90 00 03 00 00 00 04 00 00 00 FF FF }
+            $trojan2 = "CreateRemoteThread"
+            $trojan3 = "WriteProcessMemory"
+            
+        condition:
+            $trojan1 at 0 and (any of ($trojan2, $trojan3))
+    }
+    
+    rule Suspicious_PowerShell
+    {
+        meta:
+            description = "Suspicious PowerShell commands"
+            threat_level = "medium"
+            category = "powershell-malware"
+            
+        strings:
+            $ps1 = "powershell.exe -enc"
+            $ps2 = "Invoke-Expression"
+            $ps3 = "DownloadString"
+            $ps4 = "-WindowStyle Hidden"
+            
+        condition:
+            any of them
+    }
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: dhi-clamav
+  namespace: guardianshield
+  labels:
+    app: dhi-clamav
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "100m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
+    nginx.ingress.kubernetes.io/rate-limit: "60"
+    nginx.ingress.kubernetes.io/rate-limit-window: "1m"
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - security-scan.guardianshield.io
+    secretName: dhi-clamav-tls
+  rules:
+  - host: security-scan.guardianshield.io
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: dhi-clamav
+            port:
+              number: 8080
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: dhi-clamav
+  namespace: guardianshield
+  labels:
+    app: dhi-clamav
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: dhi-clamav
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: dhi-clamav
+  namespace: guardianshield
+  labels:
+    app: dhi-clamav
+spec:
+  podSelector:
+    matchLabels:
+      app: dhi-clamav
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: guardianshield
+    - namespaceSelector:
+        matchLabels:
+          name: ingress-nginx
+    ports:
+    - protocol: TCP
+      port: 8080
+    - protocol: TCP
+      port: 3310
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          name: guardianshield
+    ports:
+    - protocol: TCP
+      port: 6379  # Redis
+    - protocol: TCP
+      port: 8080  # Threat intelligence
+  - to: []
+    ports:
+    - protocol: TCP
+      port: 443   # HTTPS for signature updates
+    - protocol: TCP
+      port: 80    # HTTP for signature updates
+    - protocol: TCP
+      port: 53    # DNS
+    - protocol: UDP
+      port: 53    # DNS
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: dhi-clamav
+  namespace: guardianshield
+  labels:
+    app: dhi-clamav
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: dhi-clamav
+  minReplicas: 3
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+      - type: Percent
+        value: 50
+        periodSeconds: 60
+    scaleUp:
+      stabilizationWindowSeconds: 60
+      policies:
+      - type: Percent
+        value: 100
+        periodSeconds: 30

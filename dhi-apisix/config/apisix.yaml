@@ -1,0 +1,289 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+# GuardianShield DHI-APISIX Configuration
+# Advanced API Security Gateway Configuration
+
+apisix:
+  # Basic configuration
+  node_listen: 9080
+  ssl_listen: 9443
+  admin_listen:
+    ip: 0.0.0.0
+    port: 9180
+  
+  # SSL configuration
+  ssl:
+    enable: true
+    listen:
+      - port: 9443
+        cert: /etc/ssl/apisix.crt
+        key: /etc/ssl/apisix.key
+        http2: true
+    fallback_sni: "api.guardianshield.io"
+    ssl_protocols: "TLSv1.2 TLSv1.3"
+    ssl_ciphers: "ECDHE+AESGCM:ECDHE+CHACHA20:DHE+AESGCM:DHE+CHACHA20:!aNULL:!MD5:!DSS"
+    ssl_prefer_server_ciphers: true
+    ssl_session_cache: "shared:SSL:10m"
+    ssl_session_timeout: "10m"
+    ssl_stapling: true
+    ssl_stapling_verify: true
+
+  # Router configuration
+  router:
+    http: radixtree_host_uri
+    ssl: radixtree_sni
+
+  # Stream configuration for TCP/UDP proxy
+  stream_proxy:
+    tcp:
+      - addr: 9100
+        tls: true
+    udp:
+      - addr: 9200
+
+  # DNS resolver
+  dns_resolver:
+    - 8.8.8.8
+    - 8.8.4.4
+    - 127.0.0.1
+
+  # Resolver configuration
+  resolver_timeout: 5
+
+  # Enable IPv6
+  enable_ipv6: true
+
+  # Server info
+  enable_server_tokens: false
+
+  # Real IP configuration
+  real_ip_header: "X-Real-IP"
+  real_ip_from:
+    - 127.0.0.1
+    - unix:
+
+  # Proxy configuration
+  proxy_cache:
+    cache_ttl: 10s
+    zones:
+      - name: "disk_cache_one"
+        memory_size: "50m"
+        disk_size: "1G"
+        disk_path: "/tmp/disk_cache_one"
+        cache_levels: "1:2"
+
+  # Plugin configuration
+  extra_lua_path: ""
+  extra_lua_cpath: ""
+
+  # Lua configuration
+  lua_shared_dict:
+    internal-status: 10m
+    plugin-limit-req: 10m
+    plugin-limit-count: 10m
+    plugin-limit-conn: 10m
+    prometheus-metrics: 10m
+    plugin-api-breaker: 10m
+    tracing_buffer: 10m
+    balancer_ewma: 10m
+    balancer_ewma_locks: 10m
+    balancer_ewma_last_touched_at: 10m
+
+# etcd configuration
+etcd:
+  host:
+    - "http://etcd.guardianshield.svc.cluster.local:2379"
+  prefix: /apisix
+  timeout: 30
+  startup_retry: 2
+  user: apisix
+  password: "apisix-secret-password"
+  tls:
+    cert: /etc/ssl/etcd-client.pem
+    key: /etc/ssl/etcd-client-key.pem
+    verify: false
+
+# Plugin configuration
+plugins:
+  # Core security plugins
+  - limit-req
+  - limit-conn
+  - limit-count
+  - ip-restriction
+  - referer-restriction
+  - cors
+  - csrf
+  - uri-blocker
+  - request-validation
+  
+  # Authentication plugins
+  - key-auth
+  - jwt-auth
+  - basic-auth
+  - authz-keycloak
+  - authz-casdoor
+  - wolf-rbac
+  - openid-connect
+  - oauth
+  - ldap-auth
+  
+  # Security plugins
+  - consumer-restriction
+  - batch-requests
+  - request-id
+  - fault-injection
+  - mocking
+  - api-breaker
+  - traffic-split
+  - proxy-mirror
+  - public-api
+  
+  # Observability plugins
+  - prometheus
+  - datadog
+  - echo
+  - http-logger
+  - tcp-logger
+  - kafka-logger
+  - rocketmq-logger
+  - syslog
+  - log-rotate
+  - error-log-logger
+  - skywalking
+  - zipkin
+  - jaeger
+  - opentelemetry
+  
+  # Transform plugins  
+  - response-rewrite
+  - proxy-rewrite
+  - grpc-transcode
+  - grpc-web
+  - redirect
+  - real-ip
+  - server-info
+  - ext-plugin-pre-req
+  - ext-plugin-post-req
+  - ext-plugin-post-resp
+  
+  # Custom GuardianShield plugins
+  - guardianshield-threat-intel
+  - guardianshield-web3-security
+  - guardianshield-malware-scan
+  - guardianshield-rate-limit
+  - guardianshield-waf
+
+# Plugin metadata
+plugin_metadata:
+  prometheus:
+    export_uri: /apisix/prometheus/metrics
+    metric_prefix: apisix_
+    enable_export_server: true
+    export_addr:
+      ip: "0.0.0.0"
+      port: 9091
+  
+  error-log-logger:
+    host: "logstash.guardianshield.svc.cluster.local"
+    port: 5044
+    max_retry_count: 3
+    retry_delay: 1
+    buffer_duration: 60
+    inactive_timeout: 10
+    batch_max_size: 500
+
+  skywalking:
+    service_name: "dhi-apisix"
+    service_instance_name: "dhi-apisix-instance"
+    endpoint_addr: "http://skywalking-oap.guardianshield.svc.cluster.local:12800"
+    report_interval: 3
+
+  zipkin:
+    endpoint: "http://zipkin.guardianshield.svc.cluster.local:9411/api/v2/spans"
+    sample_ratio: 1
+
+# Stream plugins (for TCP/UDP proxy)
+stream_plugins:
+  - limit-conn
+  - ip-restriction
+  - mqtt-proxy
+  - syslog
+
+# Discovery configuration
+discovery:
+  kubernetes:
+    service:
+      schema: https
+      host: ${KUBERNETES_SERVICE_HOST}
+      port: ${KUBERNETES_SERVICE_PORT}
+    client:
+      token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+
+# Deployment configuration  
+deployment:
+  role: traditional
+  role_traditional:
+    config_provider: etcd
+  admin:
+    enable_admin_cors: true
+    admin_key_required: true
+    admin_key:
+      - name: "admin"
+        key: "edd1c9f034335f136f87ad84b625c8f1"
+        role: admin
+    allow_admin:
+      - 127.0.0.1/24
+      - 10.0.0.0/8
+      - 172.16.0.0/12
+      - 192.168.0.0/16
+      - ::1
+      - fc00::/7
+
+# Nginx configuration
+nginx_config:
+  error_log_level: "error"
+  worker_processes: "auto"
+  worker_rlimit_nofile: 20480
+  event:
+    worker_connections: 10620
+    use: epoll
+  http:
+    enable_access_log: false
+    keepalive_timeout: 60s
+    client_header_timeout: 60s
+    client_body_timeout: 60s
+    client_max_body_size: 100m
+    send_timeout: 10s
+    underscores_in_headers: "on"
+    real_ip_header: "X-Real-IP"
+    real_ip_recursive: "on"
+    real_ip_from:
+      - 127.0.0.1
+      - 'unix:'
+
+# Wasm configuration
+wasm:
+  plugins:
+    - name: "guardianshield-wasm-security"
+      priority: 7999
+      file: "/usr/local/apisix/wasm/guardianshield-security.wasm"
+
+# External plugins
+ext-plugin:
+  path_for_test: "/tmp/runner.sock"
+  cmd: ["go", "run", "/path/to/go-runner/cmd/go-runner/main.go"]

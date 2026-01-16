@@ -1,0 +1,22 @@
+Contact: security@guardian-shield.io
+Contact: https://guardian-shield.io/security
+Expires: 2027-01-14T16:28:17.000Z
+Acknowledgments: https://guardian-shield.io/security/acknowledgments
+Preferred-Languages: en
+Canonical: https://guardian-shield.io/.well-known/security.txt
+Policy: https://guardian-shield.io/security/policy
+
+# GuardianShield Security Contact Information
+# 
+# If you have discovered a security vulnerability in GuardianShield,
+# please report it to us responsibly. We appreciate your help in
+# keeping our platform secure.
+#
+# Please include:
+# - Description of the vulnerability
+# - Steps to reproduce
+# - Potential impact
+# - Your contact information (optional)
+#
+# We will respond within 24 hours and work with you to address
+# any security issues promptly.

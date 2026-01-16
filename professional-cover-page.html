@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GuardianShield - Enterprise AI Security Platform</title>
+    <meta name="description" content="GuardianShield - Professional AI-powered security platform with autonomous threat detection">
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.0/dist/ethers.umd.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f1419 0%, #1e3c72 50%, #2a5298 100%);
+            color: #ffffff;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        /* Professional Header with Logo */
+        .header {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.95), rgba(20, 30, 50, 0.95));
+            backdrop-filter: blur(20px);
+            padding: 20px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 3px solid rgba(0, 212, 170, 0.4);
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.5);
+        }
+        
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 40px;
+        }
+        
+        /* Professional Logo Design */
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .logo-shield {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #00d4aa 0%, #667eea 50%, #764ba2 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            box-shadow: 
+                0 15px 35px rgba(0, 212, 170, 0.4),
+                0 5px 15px rgba(0, 0, 0, 0.3),
+                inset 0 2px 5px rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .logo-shield::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            50% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        
+        .logo-main {
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #00d4aa 0%, #ffffff 50%, #67e8f9 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            letter-spacing: 1px;
+        }
+        
+        .logo-tagline {
+            font-size: 0.85rem;
+            color: #67e8f9;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-shadow: 0 0 10px rgba(103, 232, 249, 0.5);
+            opacity: 0.9;
+        }
+        
+        /* Navigation Menu */
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 40px;
+            align-items: center;
+        }
+        
+        .nav-menu a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            padding: 10px 15px;
+            border-radius: 8px;
+            position: relative;
+        }
+        
+        .nav-menu a:hover {
+            color: #00d4aa;
+            background: rgba(0, 212, 170, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .nav-menu a::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #00d4aa, #67e8f9);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+        
+        .nav-menu a:hover::before {
+            width: 80%;
+        }
+        
+        .connect-wallet-btn {
+            background: linear-gradient(135deg, #00d4aa 0%, #667eea 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 
+                0 8px 25px rgba(0, 212, 170, 0.3),
+                0 3px 10px rgba(0, 0, 0, 0.2);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .connect-wallet-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 
+                0 15px 40px rgba(0, 212, 170, 0.5),
+                0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .connect-wallet-btn:active {
+            transform: translateY(-1px) scale(1.02);
+        }
+        
+        /* Hero Cover Section */
+        .hero-cover {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: 
+                linear-gradient(135deg, rgba(15, 20, 25, 0.9) 0%, rgba(30, 60, 114, 0.8) 50%, rgba(42, 82, 152, 0.9) 100%),
+                radial-gradient(circle at 20% 50%, rgba(0, 212, 170, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
+                url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(103,232,249,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
+            padding: 120px 20px 80px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-cover::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at center, transparent 0%, rgba(0, 0, 0, 0.3) 70%);
+            pointer-events: none;
+        }
+        
+        .hero-content {
+            text-align: center;
+            max-width: 1000px;
+            z-index: 2;
+            position: relative;
+        }
+        
+        .hero-title {
+            font-size: 4.5rem;
+            font-weight: 900;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #00d4aa 0%, #ffffff 30%, #67e8f9 70%, #667eea 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+            letter-spacing: 2px;
+            line-height: 1.1;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.8rem;
+            color: #67e8f9;
+            margin-bottom: 15px;
+            font-weight: 600;
+            text-shadow: 0 0 20px rgba(103, 232, 249, 0.5);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+        
+        .hero-description {
+            font-size: 1.3rem;
+            color: #b8c6db;
+            margin-bottom: 50px;
+            line-height: 1.8;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .hero-cta {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 60px;
+        }
+        
+        .cta-primary {
+            background: linear-gradient(135deg, #00d4aa 0%, #667eea 100%);
+            color: white;
+            padding: 20px 40px;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 
+                0 10px 30px rgba(0, 212, 170, 0.4),
+                0 4px 15px rgba(0, 0, 0, 0.2);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .cta-primary:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 
+                0 20px 50px rgba(0, 212, 170, 0.6),
+                0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .cta-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 20px 40px;
+            border: 2px solid rgba(103, 232, 249, 0.5);
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(10px);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .cta-secondary:hover {
+            background: rgba(103, 232, 249, 0.2);
+            border-color: #67e8f9;
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(103, 232, 249, 0.3);
+        }
+        
+        /* Professional Stats Section */
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .stat-card {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0, 212, 170, 0.2);
+            border-color: rgba(0, 212, 170, 0.4);
+        }
+        
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 900;
+            color: #00d4aa;
+            text-shadow: 0 0 20px rgba(0, 212, 170, 0.5);
+            margin-bottom: 10px;
+        }
+        
+        .stat-label {
+            color: #67e8f9;
+            font-weight: 600;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .stat-description {
+            color: #b8c6db;
+            font-size: 0.9rem;
+            margin-top: 8px;
+            line-height: 1.4;
+        }
+        
+        /* Token Showcase Section */
+        .token-showcase {
+            margin: 60px auto 40px;
+            max-width: 800px;
+            text-align: center;
+        }
+        
+        .token-showcase-title {
+            font-size: 1.8rem;
+            color: #67e8f9;
+            margin-bottom: 30px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .token-display {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            margin: 40px 0;
+            flex-wrap: wrap;
+        }
+        
+        .token-visual {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            border-radius: 20px;
+            backdrop-filter: blur(15px);
+            border: 2px solid rgba(0, 212, 170, 0.3);
+            transition: all 0.3s ease;
+            min-width: 200px;
+        }
+        
+        .token-visual:hover {
+            transform: translateY(-10px);
+            border-color: rgba(0, 212, 170, 0.6);
+            box-shadow: 0 20px 40px rgba(0, 212, 170, 0.2);
+        }
+        
+        .token-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 900;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .guard-token {
+            background: linear-gradient(135deg, #00d4aa 0%, #00ff88 100%);
+            color: #000000;
+        }
+        
+        .shield-token {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #ffffff;
+        }
+        
+        .token-icon::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transform: rotate(45deg);
+            animation: tokenShine 3s infinite;
+        }
+        
+        @keyframes tokenShine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            50% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        
+        .token-symbol {
+            z-index: 2;
+            position: relative;
+        }
+        
+        .token-info {
+            text-align: center;
+        }
+        
+        .token-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 5px;
+        }
+        
+        .token-price {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #00d4aa;
+            margin-bottom: 5px;
+        }
+        
+        .token-desc {
+            font-size: 0.9rem;
+            color: #b8c6db;
+            font-weight: 500;
+        }
+        
+        .token-cta {
+            background: linear-gradient(135deg, #00d4aa 0%, #667eea 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0, 212, 170, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 20px;
+        }
+        
+        .token-cta:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(0, 212, 170, 0.5);
+        }
+        
+        /* Animated Background Elements */
+        .floating-elements {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        
+        .floating-element {
+            position: absolute;
+            background: linear-gradient(135deg, rgba(0, 212, 170, 0.1), rgba(103, 232, 249, 0.1));
+            border: 1px solid rgba(0, 212, 170, 0.2);
+            border-radius: 50%;
+            animation: float 20s infinite linear;
+        }
+        
+        .floating-element:nth-child(1) {
+            width: 100px;
+            height: 100px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+        
+        .floating-element:nth-child(2) {
+            width: 150px;
+            height: 150px;
+            top: 60%;
+            right: 15%;
+            animation-delay: -5s;
+        }
+        
+        .floating-element:nth-child(3) {
+            width: 80px;
+            height: 80px;
+            bottom: 30%;
+            left: 20%;
+            animation-delay: -10s;
+        }
+        
+        .floating-element:nth-child(4) {
+            width: 120px;
+            height: 120px;
+            top: 40%;
+            right: 30%;
+            animation-delay: -15s;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0px) rotate(0deg);
+                opacity: 0.3;
+            }
+            50% {
+                transform: translateY(-50px) rotate(180deg);
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(0px) rotate(360deg);
+                opacity: 0.3;
+            }
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .nav-container {
+                padding: 0 20px;
+            }
+            
+            .hero-title {
+                font-size: 3.5rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+            
+            .hero-title {
+                font-size: 2.8rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.4rem;
+            }
+            
+            .hero-cta {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .cta-primary,
+            .cta-secondary {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .logo-main {
+                font-size: 1.8rem;
+            }
+            
+            .logo-tagline {
+                font-size: 0.7rem;
+            }
+            
+            .hero-title {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Professional Header with Logo -->
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo-container">
+                <div class="logo-shield">🛡️</div>
+                <div class="logo-text">
+                    <div class="logo-main">GuardianShield</div>
+                    <div class="logo-tagline">Enterprise AI Security Platform</div>
+                </div>
+            </div>
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="professional-cover-page.html">Home</a></li>
+                    <li><a href="services-page.html">Our Services</a></li>
+                    <li><a href="roadmap-page.html">Roadmap</a></li>
+                    <li><a href="whitepaper-page.html">White Paper</a></li>
+                    <li><a href="tokens-page.html">Tokens</a></li>
+                </ul>
+            </nav>
+            <button class="connect-wallet-btn" id="connectWallet">Connect Wallet</button>
+        </div>
+    </header>
+
+    <!-- Hero Cover Section -->
+    <section class="hero-cover" id="home">
+        <div class="floating-elements">
+            <div class="floating-element"></div>
+            <div class="floating-element"></div>
+            <div class="floating-element"></div>
+            <div class="floating-element"></div>
+        </div>
+        
+        <div class="hero-content">
+            <h1 class="hero-title">GuardianShield</h1>
+            <p class="hero-subtitle">Enterprise AI Security Platform</p>
+            <p class="hero-description">
+                Deploy autonomous AI agents that continuously monitor, learn, and protect your digital infrastructure. 
+                Advanced threat detection, real-time response, and intelligent security orchestration powered by cutting-edge machine learning.
+            </p>
+            
+            <div class="hero-cta">
+                <button class="cta-primary" onclick="window.location.href='tokens-page.html'">
+                    <i class="fas fa-rocket"></i> Get Started
+                </button>
+                <button class="cta-secondary" onclick="window.location.href='services-page.html'">
+                    <i class="fas fa-shield-alt"></i> View Services
+                </button>
+            </div>
+            
+            <!-- Token Display Section -->
+            <div class="token-showcase">
+                <h3 class="token-showcase-title">Powered by Dual-Token Ecosystem</h3>
+                <div class="token-display">
+                    <div class="token-visual">
+                        <div class="token-icon guard-token">
+                            <span class="token-symbol">G</span>
+                        </div>
+                        <div class="token-info">
+                            <div class="token-name">GUARD Token</div>
+                            <div class="token-price">$0.005 USD</div>
+                            <div class="token-desc">Utility & Governance</div>
+                        </div>
+                    </div>
+                    <div class="token-visual">
+                        <div class="token-icon shield-token">
+                            <span class="token-symbol">🛡️</span>
+                        </div>
+                        <div class="token-info">
+                            <div class="token-name">SHIELD NFT</div>
+                            <div class="token-price">$0.025 USD</div>
+                            <div class="token-desc">Premium Protection</div>
+                        </div>
+                    </div>
+                </div>
+                <button class="token-cta" onclick="window.location.href='tokens-page.html'">
+                    <i class="fas fa-coins"></i> Purchase Tokens
+                </button>
+            </div>
+            
+            <div class="hero-stats">
+                <div class="stat-card">
+                    <div class="stat-number">50+</div>
+                    <div class="stat-label">AI Agents</div>
+                    <div class="stat-description">Autonomous security agents protecting your infrastructure</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">99.9%</div>
+                    <div class="stat-label">Threat Detection</div>
+                    <div class="stat-description">Advanced machine learning detection accuracy</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">Monitoring</div>
+                    <div class="stat-description">Continuous protection and real-time response</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">Enterprise</div>
+                    <div class="stat-label">Grade Security</div>
+                    <div class="stat-description">Professional-grade protection for businesses</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Web3 Integration
+        let web3;
+        let userAccount;
+
+        // Initialize Web3 Connection
+        async function initWeb3() {
+            if (typeof window.ethereum !== 'undefined') {
+                web3 = new Web3(window.ethereum);
+                return true;
+            } else {
+                console.log('Web3 wallet not detected');
+                return false;
+            }
+        }
+
+        // Connect Wallet
+        async function connectWallet() {
+            try {
+                const accounts = await window.ethereum.request({ 
+                    method: 'eth_requestAccounts' 
+                });
+                
+                if (accounts.length > 0) {
+                    userAccount = accounts[0];
+                    updateWalletButton(true);
+                    console.log('Wallet connected:', userAccount);
+                }
+            } catch (error) {
+                console.error('Wallet connection failed:', error);
+                alert('Failed to connect wallet. Please try again.');
+            }
+        }
+
+        // Update Wallet Button
+        function updateWalletButton(connected) {
+            const connectBtn = document.getElementById('connectWallet');
+            
+            if (connected) {
+                connectBtn.textContent = `${userAccount.substring(0, 6)}...${userAccount.substring(userAccount.length - 4)}`;
+                connectBtn.style.background = 'linear-gradient(135deg, #00d4aa 0%, #00ff88 100%)';
+            }
+        }
+
+        // Smooth Scrolling for Navigation
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize Web3
+            initWeb3();
+            
+            // Connect wallet button
+            document.getElementById('connectWallet').addEventListener('click', connectWallet);
+            
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+            
+            // Add scroll effect to header
+            let lastScrollTop = 0;
+            window.addEventListener('scroll', () => {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const header = document.querySelector('.header');
+                
+                if (scrollTop > lastScrollTop) {
+                    // Scrolling down
+                    if (scrollTop > 100) {
+                        header.style.transform = 'translateY(-100%)';
+                    }
+                } else {
+                    // Scrolling up
+                    header.style.transform = 'translateY(0)';
+                }
+                
+                lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+            });
+        });
+    </script>
+</body>
+</html>

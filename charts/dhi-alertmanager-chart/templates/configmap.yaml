@@ -1,0 +1,224 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "dhi-alertmanager-chart.fullname" . }}-config
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "dhi-alertmanager-chart.labels" . | nindent 4 }}
+data:
+  config.yml: |
+    {{- toYaml .Values.alertmanager.config | nindent 4 }}
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "dhi-alertmanager-chart.fullname" . }}-erc8055-rules
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "dhi-alertmanager-chart.labels" . | nindent 4 }}
+data:
+  erc8055-alerts.yml: |
+    groups:
+      - name: erc8055-shield-token-critical
+        interval: 15s
+        rules:
+          # Shield Token Burn Failures
+          - alert: ShieldTokenBurnFailure
+            expr: increase(shield_token_burn_failures_total[5m]) > 0
+            for: 0m
+            labels:
+              severity: critical
+              component: erc8055
+              service: shield-token
+            annotations:
+              summary: "ERC-8055 Shield Token burn operation failed"
+              description: "Shield Token burn failure detected. This could indicate fraud attempt or system compromise."
+              dashboard_url: "http://grafana.guardianshield.io/d/erc8055-shield"
+              runbook_url: "https://docs.guardianshield.io/runbooks/shield-token-burn-failure"
+          
+          # Shield Token Remint Failures
+          - alert: ShieldTokenRemintFailure
+            expr: increase(shield_token_remint_failures_total[5m]) > 0
+            for: 0m
+            labels:
+              severity: critical
+              component: erc8055
+              service: shield-token
+            annotations:
+              summary: "ERC-8055 Shield Token remint operation failed"
+              description: "Shield Token remint failure detected. Anti-fraud system may be compromised."
+          
+          # Serial Number Collision Detection
+          - alert: SerialNumberCollision
+            expr: increase(shield_token_serial_collisions_total[1m]) > 0
+            for: 0m
+            labels:
+              severity: critical
+              component: erc8055
+              service: shield-token
+            annotations:
+              summary: "ERC-8055 Serial Number Collision Detected"
+              description: "Duplicate serial number detected! This indicates a serious security breach."
+          
+          # Guard Token Transfer Rate Anomaly
+          - alert: GuardTokenHighTransferRate
+            expr: rate(guard_token_transfers_total[5m]) > 100
+            for: 2m
+            labels:
+              severity: warning
+              component: erc8055
+              service: guard-token
+            annotations:
+              summary: "Unusually high Guard Token transfer rate"
+              description: "Guard Token transfers are {{ $value }} per second, which is above normal threshold."
+          
+          # Fraud Attempt Surge
+          - alert: FraudAttemptSurge
+            expr: increase(fraud_attempts_blocked_total[10m]) > 50
+            for: 1m
+            labels:
+              severity: warning
+              component: erc8055
+              service: anti-fraud
+            annotations:
+              summary: "High number of fraud attempts detected"
+              description: "{{ $value }} fraud attempts blocked in the last 10 minutes."
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "dhi-alertmanager-chart.fullname" . }}-blockchain-rules
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "dhi-alertmanager-chart.labels" . | nindent 4 }}
+data:
+  blockchain-alerts.yml: |
+    groups:
+      - name: blockchain-infrastructure
+        interval: 30s
+        rules:
+          # Blockchain Node Down
+          - alert: BlockchainNodeDown
+            expr: up{job="blockchain-node"} == 0
+            for: 30s
+            labels:
+              severity: critical
+              service: blockchain-node
+            annotations:
+              summary: "Blockchain node {{ $labels.instance }} is down"
+              description: "Blockchain node has been down for more than 30 seconds."
+          
+          # Block Height Lag
+          - alert: BlockHeightLag
+            expr: (max(block_height) - on() group_right block_height) > 10
+            for: 2m
+            labels:
+              severity: warning
+              service: blockchain-node
+            annotations:
+              summary: "Blockchain node {{ $labels.instance }} is lagging behind"
+              description: "Node is {{ $value }} blocks behind the latest block."
+          
+          # Low Peer Count
+          - alert: LowPeerCount
+            expr: peer_count < 5
+            for: 5m
+            labels:
+              severity: warning
+              service: blockchain-node
+            annotations:
+              summary: "Low peer count on {{ $labels.instance }}"
+              description: "Peer count is {{ $value }}, which is below the minimum threshold."
+          
+          # Validator Balance Low
+          - alert: ValidatorBalanceLow
+            expr: validator_balance_eth < 16
+            for: 1m
+            labels:
+              severity: critical
+              service: validator-node
+            annotations:
+              summary: "Validator balance critically low"
+              description: "Validator {{ $labels.validator_id }} balance is {{ $value }} ETH, below 16 ETH threshold."
+          
+          # Transaction Pool Congestion
+          - alert: TransactionPoolCongestion
+            expr: transaction_pool_size > 10000
+            for: 3m
+            labels:
+              severity: warning
+              service: blockchain-node
+            annotations:
+              summary: "Transaction pool congestion"
+              description: "Transaction pool size is {{ $value }}, indicating network congestion."
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "dhi-alertmanager-chart.fullname" . }}-website-rules
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "dhi-alertmanager-chart.labels" . | nindent 4 }}
+data:
+  website-alerts.yml: |
+    groups:
+      - name: website-performance
+        interval: 30s
+        rules:
+          # Website Down
+          - alert: WebsiteDown
+            expr: up{job="website"} == 0
+            for: 1m
+            labels:
+              severity: critical
+              service: website
+            annotations:
+              summary: "GuardianShield website is down"
+              description: "Website has been unreachable for more than 1 minute."
+          
+          # High Response Time
+          - alert: HighResponseTime
+            expr: http_request_duration_seconds{quantile="0.95"} > 2
+            for: 3m
+            labels:
+              severity: warning
+              service: website
+            annotations:
+              summary: "High website response time"
+              description: "95th percentile response time is {{ $value }}s, above 2s threshold."
+          
+          # High Error Rate
+          - alert: HighErrorRate
+            expr: rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m]) > 0.05
+            for: 2m
+            labels:
+              severity: warning
+              service: website
+            annotations:
+              summary: "High error rate detected"
+              description: "Error rate is {{ $value | humanizePercentage }}, above 5% threshold."
+          
+          # Low Conversion Rate
+          - alert: LowConversionRate
+            expr: conversion_rate < 0.02
+            for: 10m
+            labels:
+              severity: warning
+              service: website
+            annotations:
+              summary: "Website conversion rate dropped"
+              description: "Conversion rate is {{ $value | humanizePercentage }}, below expected 2%."
+          
+          # API Gateway Issues
+          - alert: APIGatewayDown
+            expr: up{job="api-gateway"} == 0
+            for: 30s
+            labels:
+              severity: critical
+              service: api-gateway
+            annotations:
+              summary: "API Gateway is down"
+              description: "API Gateway has been unreachable for 30 seconds."

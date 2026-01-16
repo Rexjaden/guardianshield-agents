@@ -1,0 +1,478 @@
+# GuardianShield Enterprise CloudNative PostgreSQL Configuration
+# High-availability database clusters with cloud backup and compliance
+
+global:
+  environment: production
+  namespace: guardianshield-database
+  storageClass: fast-ssd
+  
+# CloudNative-PG Operator Configuration
+operator:
+  enabled: true
+  image:
+    repository: ghcr.io/cloudnative-pg/cloudnative-pg
+    tag: "1.23.0"
+    pullPolicy: IfNotPresent
+  
+  # Resource allocation for operator
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+    limits:
+      memory: "1Gi"
+      cpu: "500m"
+  
+  # High availability deployment
+  replicaCount: 2
+  
+  # Monitoring and observability
+  monitoring:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+      namespace: guardianshield-monitoring
+
+# PostgreSQL Cluster Configurations
+clusters:
+  # Main ERC-8055 Token Database
+  erc8055-tokens:
+    enabled: true
+    instances: 3
+    
+    postgresql:
+      parameters:
+        max_connections: "200"
+        shared_buffers: "256MB"
+        effective_cache_size: "1GB"
+        maintenance_work_mem: "64MB"
+        checkpoint_completion_target: "0.9"
+        wal_buffers: "16MB"
+        default_statistics_target: "100"
+        random_page_cost: "1.1"
+        effective_io_concurrency: "200"
+        work_mem: "4MB"
+        huge_pages: "try"
+        min_wal_size: "1GB"
+        max_wal_size: "4GB"
+        # Security settings
+        ssl: "on"
+        ssl_cert_file: "/etc/ssl/certs/server.crt"
+        ssl_key_file: "/etc/ssl/private/server.key"
+        log_statement: "all"
+        log_min_duration_statement: "1000"
+      
+      # Database initialization
+      initdb:
+        database: erc8055_tokens
+        owner: guardian_tokens
+        secret:
+          name: erc8055-tokens-credentials
+      
+      # Extensions for token management
+      extensions:
+        - uuid-ossp
+        - pgcrypto
+        - btree_gin
+        - pg_stat_statements
+        - pg_trgm
+    
+    # Storage configuration
+    storage:
+      size: "500Gi"
+      storageClass: "fast-ssd-encrypted"
+      
+    # Resource allocation
+    resources:
+      requests:
+        memory: "2Gi"
+        cpu: "1000m"
+      limits:
+        memory: "8Gi"
+        cpu: "4000m"
+    
+    # Backup configuration with Barman Cloud
+    backup:
+      enabled: true
+      schedule: "0 2 * * *"  # Daily at 2 AM
+      retentionPolicy: "30d"
+      
+      # Barman Cloud configuration
+      barmanObjectStore:
+        destinationPath: "s3://guardianshield-backups/erc8055-tokens"
+        s3Credentials:
+          accessKeyId:
+            name: s3-backup-credentials
+            key: ACCESS_KEY_ID
+          secretAccessKey:
+            name: s3-backup-credentials
+            key: SECRET_ACCESS_KEY
+        endpointURL: "https://s3.amazonaws.com"
+        wal:
+          retention: "7d"
+          maxParallel: 8
+        data:
+          retention: "30d"
+          jobs: 4
+          compression: gzip
+          encryption: AES256
+    
+    # Recovery configuration
+    recovery:
+      enabled: false  # Enable for disaster recovery
+      # method: backup
+      # backup:
+      #   name: "latest-backup"
+    
+    # Monitoring and alerting
+    monitoring:
+      enabled: true
+      customQueries:
+        - name: "erc8055_shield_token_stats"
+          query: "SELECT COUNT(*) as total_tokens, COUNT(*) FILTER (WHERE status = 'burned') as burned_tokens, COUNT(*) FILTER (WHERE status = 'active') as active_tokens FROM shield_tokens;"
+          metrics:
+            - total_tokens:
+                usage: "GAUGE"
+                description: "Total number of Shield Tokens"
+            - burned_tokens:
+                usage: "GAUGE"
+                description: "Number of burned Shield Tokens"
+            - active_tokens:
+                usage: "GAUGE"
+                description: "Number of active Shield Tokens"
+        
+        - name: "erc8055_guard_token_stats"
+          query: "SELECT COUNT(*) as total_transfers, SUM(amount) as total_volume FROM guard_token_transfers WHERE created_at >= NOW() - INTERVAL '1 hour';"
+          metrics:
+            - total_transfers:
+                usage: "GAUGE"
+                description: "Total Guard Token transfers in last hour"
+            - total_volume:
+                usage: "GAUGE"
+                description: "Total Guard Token volume in last hour"
+  
+  # Blockchain Data Database
+  blockchain-data:
+    enabled: true
+    instances: 3
+    
+    postgresql:
+      parameters:
+        max_connections: "300"
+        shared_buffers: "512MB"
+        effective_cache_size: "2GB"
+        maintenance_work_mem: "128MB"
+        work_mem: "8MB"
+        # Optimized for high-throughput blockchain data
+        checkpoint_completion_target: "0.9"
+        wal_buffers: "32MB"
+        min_wal_size: "2GB"
+        max_wal_size: "8GB"
+        # Indexing optimizations
+        default_statistics_target: "500"
+        random_page_cost: "1.1"
+        effective_io_concurrency: "300"
+      
+      initdb:
+        database: blockchain_data
+        owner: blockchain_indexer
+        secret:
+          name: blockchain-data-credentials
+      
+      extensions:
+        - uuid-ossp
+        - pgcrypto
+        - btree_gin
+        - btree_gist
+        - pg_stat_statements
+        - pg_trgm
+        - hstore
+    
+    storage:
+      size: "2Ti"
+      storageClass: "fast-ssd-encrypted"
+    
+    resources:
+      requests:
+        memory: "4Gi"
+        cpu: "2000m"
+      limits:
+        memory: "16Gi"
+        cpu: "8000m"
+    
+    backup:
+      enabled: true
+      schedule: "0 3 * * *"
+      retentionPolicy: "90d"
+      
+      barmanObjectStore:
+        destinationPath: "s3://guardianshield-backups/blockchain-data"
+        s3Credentials:
+          accessKeyId:
+            name: s3-backup-credentials
+            key: ACCESS_KEY_ID
+          secretAccessKey:
+            name: s3-backup-credentials
+            key: SECRET_ACCESS_KEY
+        endpointURL: "https://s3.amazonaws.com"
+        wal:
+          retention: "14d"
+          maxParallel: 16
+        data:
+          retention: "90d"
+          jobs: 8
+          compression: lz4
+          encryption: AES256
+  
+  # Analytics and Reporting Database
+  analytics:
+    enabled: true
+    instances: 2
+    
+    postgresql:
+      parameters:
+        max_connections: "150"
+        shared_buffers: "256MB"
+        effective_cache_size: "1GB"
+        # Optimized for analytics workloads
+        work_mem: "16MB"
+        maintenance_work_mem: "256MB"
+        default_statistics_target: "1000"
+        random_page_cost: "1.1"
+      
+      initdb:
+        database: guardianshield_analytics
+        owner: analytics_user
+        secret:
+          name: analytics-credentials
+      
+      extensions:
+        - uuid-ossp
+        - pgcrypto
+        - pg_stat_statements
+        - pg_trgm
+        - btree_gin
+        - plpython3u  # For ML analytics
+    
+    storage:
+      size: "1Ti"
+      storageClass: "standard-ssd"
+    
+    resources:
+      requests:
+        memory: "1Gi"
+        cpu: "500m"
+      limits:
+        memory: "4Gi"
+        cpu: "2000m"
+    
+    backup:
+      enabled: true
+      schedule: "0 4 * * *"
+      retentionPolicy: "180d"
+      
+      barmanObjectStore:
+        destinationPath: "s3://guardianshield-backups/analytics"
+        s3Credentials:
+          accessKeyId:
+            name: s3-backup-credentials
+            key: ACCESS_KEY_ID
+          secretAccessKey:
+            name: s3-backup-credentials
+            key: SECRET_ACCESS_KEY
+        endpointURL: "https://s3.amazonaws.com"
+        wal:
+          retention: "30d"
+          maxParallel: 4
+        data:
+          retention: "180d"
+          jobs: 2
+          compression: gzip
+          encryption: AES256
+
+# Barman Cloud Plugin Configuration
+barmanCloud:
+  enabled: true
+  image:
+    repository: ghcr.io/EnterpriseDB/barman-cloud
+    tag: "3.9.0"
+    pullPolicy: IfNotPresent
+  
+  # Cloud storage configuration
+  storage:
+    provider: "s3"  # s3, gcs, azure
+    bucket: "guardianshield-backups"
+    region: "us-west-2"
+    
+    # Encryption settings
+    encryption:
+      enabled: true
+      kmsKeyId: "arn:aws:kms:us-west-2:123456789012:key/12345678-1234-1234-1234-123456789012"
+    
+    # Lifecycle policies
+    lifecycle:
+      enabled: true
+      transitionToIA: 30  # Days to transition to Infrequent Access
+      transitionToGlacier: 90  # Days to transition to Glacier
+      expiration: 2555  # 7 years for compliance
+  
+  # Backup scheduling and retention
+  schedule:
+    full: "0 1 * * 0"  # Weekly full backup on Sunday
+    incremental: "0 2-23 * * *"  # Hourly incremental backups
+    wal: "*/5 * * * *"  # WAL archiving every 5 minutes
+  
+  # Recovery settings
+  recovery:
+    parallelJobs: 8
+    bandwidth: "100MB/s"
+    checksumValidation: true
+
+# Connection Pooling with PgBouncer
+connectionPooling:
+  enabled: true
+  image:
+    repository: pgbouncer/pgbouncer
+    tag: "1.21.0"
+    pullPolicy: IfNotPresent
+  
+  # Pool configuration
+  config:
+    poolMode: "transaction"
+    maxClientConn: 1000
+    defaultPoolSize: 25
+    reservePoolSize: 5
+    reservePoolTimeout: 5
+    serverRoundRobin: 1
+    logConnections: 1
+    logDisconnections: 1
+  
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "50m"
+    limits:
+      memory: "512Mi"
+      cpu: "200m"
+
+# Monitoring and Observability
+monitoring:
+  enabled: true
+  
+  # Prometheus integration
+  prometheus:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+      interval: 30s
+      scrapeTimeout: 10s
+  
+  # Grafana dashboards
+  grafana:
+    enabled: true
+    dashboards:
+      enabled: true
+      namespace: guardianshield-monitoring
+  
+  # Custom metrics
+  customMetrics:
+    enabled: true
+    queries:
+      - name: "database_size_bytes"
+        query: "SELECT pg_database_size(datname) as size_bytes, datname as database FROM pg_database WHERE datistemplate = false;"
+        labels: ["database"]
+      
+      - name: "active_connections"
+        query: "SELECT count(*) as connections, datname as database FROM pg_stat_activity GROUP BY datname;"
+        labels: ["database"]
+      
+      - name: "replication_lag_seconds"
+        query: "SELECT EXTRACT(EPOCH FROM (now() - pg_last_xact_replay_timestamp())) as lag_seconds;"
+
+# Security Configuration
+security:
+  # TLS/SSL configuration
+  tls:
+    enabled: true
+    certificateSecret: "postgresql-tls-certs"
+    
+  # Network policies
+  networkPolicies:
+    enabled: true
+    ingress:
+      - from:
+          - namespaceSelector:
+              matchLabels:
+                name: guardianshield-tokens
+        ports:
+          - protocol: TCP
+            port: 5432
+      - from:
+          - namespaceSelector:
+              matchLabels:
+                name: guardianshield-blockchain
+        ports:
+          - protocol: TCP
+            port: 5432
+  
+  # Pod security context
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 999
+    fsGroup: 999
+    seccompProfile:
+      type: RuntimeDefault
+  
+  # Container security context
+  securityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    runAsNonRoot: true
+    runAsUser: 999
+    capabilities:
+      drop:
+        - ALL
+
+# Compliance and Governance
+compliance:
+  # SOX compliance settings
+  sox:
+    enabled: true
+    auditLogging: true
+    dataRetentionYears: 7
+  
+  # PCI-DSS compliance
+  pciDss:
+    enabled: true
+    encryptionAtRest: true
+    encryptionInTransit: true
+    accessLogging: true
+  
+  # GDPR compliance
+  gdpr:
+    enabled: true
+    dataAnonymization: true
+    rightToErasure: true
+
+# Node Selection and Affinity
+nodeSelector:
+  node-type: database
+
+# Pod affinity rules
+affinity:
+  podAntiAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+            - key: app
+              operator: In
+              values:
+                - postgresql
+        topologyKey: kubernetes.io/hostname
+
+# Tolerations for dedicated database nodes
+tolerations:
+  - key: "database"
+    operator: "Equal"
+    value: "true"
+    effect: "NoSchedule"

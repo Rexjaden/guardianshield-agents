@@ -1,0 +1,148 @@
+# GuardianShield Staging Environment Configuration
+# Testing ground for production deployments
+
+global:
+  environment: staging
+  domain: staging.guardianshield.io
+  clusterName: guardianshield-staging
+  region: us-west-2
+  
+# ERC-8055 Staging Settings
+erc8055:
+  shieldToken:
+    replicaCount: 2
+    resources:
+      requests:
+        cpu: 250m
+        memory: 512Mi
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+    antifraud:
+      enabled: true
+      strictMode: false  # More lenient for testing
+      alertOnSuspicion: false
+      testMode: true
+    serialTracking:
+      persistence: true
+      backupEnabled: false  # No backup in staging
+      encryptionAtRest: false
+  
+  guardToken:
+    replicaCount: 1
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 1Gi
+
+# Monitoring Staging Settings
+monitoring:
+  alertmanager:
+    replicaCount: 1
+    persistence:
+      enabled: true
+      size: 10Gi
+      storageClass: standard
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 1Gi
+  
+  prometheus:
+    retention: 7d
+    storage: 50Gi
+    replicaCount: 1
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        cpu: 2000m
+        memory: 4Gi
+  
+  grafana:
+    replicaCount: 1
+    persistence:
+      enabled: false  # No persistence in staging
+
+# Blockchain Staging Settings
+blockchain:
+  nodes:
+    count: 2  # Reduced for staging
+    resources:
+      requests:
+        cpu: 1000m
+        memory: 4Gi
+      limits:
+        cpu: 2000m
+        memory: 8Gi
+    storage:
+      size: 100Gi
+      storageClass: standard
+  
+  validators:
+    enabled: false  # No validators in staging
+
+# Security Staging Settings
+security:
+  podSecurityStandards: baseline
+  networkPolicies: true
+  encryption:
+    atRest: false
+    inTransit: true
+  vault:
+    enabled: false  # Use Kubernetes secrets in staging
+  
+# Compliance Staging Settings
+compliance:
+  auditLogging: false
+  auditRetention: 30d
+  standards: []
+  reporting:
+    enabled: false
+
+# Disaster Recovery Staging Settings
+disasterRecovery:
+  backup:
+    enabled: false
+  replication:
+    enabled: false
+  
+  objectives:
+    rto: 24h
+    rpo: 24h
+
+# Website Staging Settings
+website:
+  replicaCount: 2
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 1Gi
+  cdn:
+    enabled: false
+  ssl:
+    enabled: true
+    certManager: true
+  
+# API Gateway Staging Settings
+apiGateway:
+  replicaCount: 1
+  rateLimiting:
+    enabled: true
+    rps: 100
+  authentication:
+    jwt: true
+    oauth2: false
+  monitoring:
+    enabled: true
+    detailedMetrics: false

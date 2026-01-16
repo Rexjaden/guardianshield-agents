@@ -1,0 +1,30 @@
+apiVersion: v2
+name: dhi-alertmanager-chart
+description: Enterprise-grade AlertManager for GuardianShield Blockchain Ecosystem
+type: application
+version: 1.0.0
+appVersion: "0.25.0"
+home: https://github.com/Rexjaden/guardianshield-agents
+sources:
+  - https://github.com/Rexjaden/guardianshield-agents
+  - https://github.com/prometheus/alertmanager
+maintainers:
+  - name: GuardianShield Team
+    email: admin@guardianshield.io
+keywords:
+  - monitoring
+  - alerting
+  - blockchain
+  - erc-8055
+  - web3
+  - prometheus
+icon: https://guardianshield.io/assets/shield-icon.png
+dependencies:
+  - name: prometheus
+    version: "15.x.x"
+    repository: https://prometheus-community.github.io/helm-charts
+    condition: prometheus.enabled
+  - name: grafana
+    version: "6.x.x"
+    repository: https://grafana.github.io/helm-charts
+    condition: grafana.enabled

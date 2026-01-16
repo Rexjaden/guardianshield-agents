@@ -17,6 +17,18 @@ from security_manager import (
     require_master_admin,
     require_permission
 )
+# Import advanced security features
+from advanced_api_security import (
+    AdvancedSecurityManager,
+    EnhancedRateLimitMiddleware,
+    APIKeyAuth,
+    log_security_event,
+    get_security_metrics,
+    advanced_security,
+    api_key_auth
+)
+# Import IP protection system
+from ip_protection_manager import ip_protection, get_client_ip, require_admin_ip
 import json
 import asyncio
 import time
@@ -112,6 +124,49 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         
         return response
 
+# IP Protection Middleware
+class IPProtectionMiddleware(BaseHTTPMiddleware):
+    """
+    IP-based security protection middleware
+    Validates IP addresses and applies access controls
+    """
+    async def dispatch(self, request: Request, call_next):
+        # Get client IP
+        client_ip = get_client_ip(request)
+        
+        # Determine access type based on path
+        access_type = "general"
+        if any(admin_path in str(request.url.path) for admin_path in ["/admin", "/api/admin", "/security"]):
+            access_type = "admin"
+        
+        # Validate IP access
+        validation_result = ip_protection.validate_ip_access(client_ip, access_type)
+        
+        if not validation_result["allowed"]:
+            # Log the blocked attempt
+            log_security_event("ip_access_blocked", {
+                "client_ip": validation_result["anonymized_ip"],
+                "reason": validation_result.get("primary_reason", "Access denied"),
+                "path": str(request.url.path),
+                "user_agent": request.headers.get("user-agent", "unknown")
+            })
+            
+            return JSONResponse(
+                status_code=403,
+                content={
+                    "detail": f"Access denied: {validation_result.get('primary_reason', 'IP not authorized')}",
+                    "error": "ip_access_denied",
+                    "client_ip": validation_result["anonymized_ip"]
+                }
+            )
+        
+        # Add IP info to request state for later use
+        request.state.client_ip = client_ip
+        request.state.ip_validation = validation_result
+        
+        response = await call_next(request)
+        return response
+
 # Input Validation Utilities
 class InputValidator:
     """Utility class for input validation and sanitization"""
@@ -163,9 +218,11 @@ app = FastAPI(
     redoc_url="/admin/redoc"     # Move ReDoc to admin area
 )
 
-# Add security middlewares
+# Add security middlewares with enhanced protection
+enhanced_rate_limiter = EnhancedRateLimitMiddleware(advanced_security)
+app.add_middleware(IPProtectionMiddleware)  # Add IP protection first
 app.add_middleware(SecurityHeadersMiddleware)
-app.add_middleware(RateLimitMiddleware, calls=100, period=60)  # 100 requests per minute
+app.middleware("http")(enhanced_rate_limiter)  # Enhanced DDoS protection
 
 # Configure CORS for frontend with stricter settings
 app.add_middleware(
@@ -178,7 +235,7 @@ app.add_middleware(
     ],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE"],
-    allow_headers=["Authorization", "Content-Type"],
+    allow_headers=["Authorization", "Content-Type", "X-API-Key"],  # Added API key header
     max_age=3600  # Cache preflight requests for 1 hour
 )
 
@@ -251,34 +308,91 @@ class UserCreationRequest(BaseModel):
             raise ValueError(f"Role must be one of: {', '.join(allowed_roles)}")
         return v
 
-# Authentication Endpoints
+# Authentication Endpoints with Enhanced Security
 @app.post("/api/auth/login")
-async def login(login_data: LoginRequest):
-    """Authenticate user and return access token"""
+async def login(login_data: LoginRequest, request: Request):
+    """Authenticate user and return access token with enhanced security"""
+    client_ip = request.client.host
+    
     try:
+        # Check if IP is blocked due to failed attempts
+        if advanced_security.is_ip_blocked(client_ip):
+            log_security_event('login_blocked_ip', client_ip, {
+                'username': login_data.username,
+                'reason': 'ip_blocked'
+            })
+            raise HTTPException(status_code=423, detail="IP temporarily blocked")
+        
+        # Authenticate user
         token = security_manager.authenticate_user(login_data.username, login_data.password)
+        
+        # Check if master admin requires Titan key
+        if login_data.username == "master_admin":
+            try:
+                from google_titan_manager import GoogleTitanKeyManager
+                titan_manager = GoogleTitanKeyManager()
+                
+                if titan_manager.settings.get("required_for_admin", False):
+                    # Verify Titan key presence
+                    if not titan_manager.verify_titan_key_present():
+                        log_security_event('login_titan_key_missing', client_ip, {
+                            'username': login_data.username
+                        })
+                        return JSONResponse(
+                            status_code=206,  # Partial content - need second factor
+                            content={
+                                "message": "Insert your Google Titan Security Key and try again",
+                                "requires_titan_key": True,
+                                "error": "titan_key_required"
+                            }
+                        )
+                    
+                    # Authenticate with Titan key
+                    auth_result = titan_manager.authenticate_with_titan_key("master_admin")
+                    if not auth_result.get("success"):
+                        advanced_security.log_failed_auth(client_ip)
+                        log_security_event('login_titan_key_failed', client_ip, {
+                            'username': login_data.username
+                        })
+                        raise HTTPException(status_code=401, detail="Titan key authentication failed")
+            except ImportError:
+                pass  # Titan key not available, continue with password only
+        
+        # Successful login
+        log_security_event('login_success', client_ip, {
+            'username': login_data.username,
+            'auth_method': 'password_titan' if login_data.username == "master_admin" else 'password'
+        })
+        
         return {
             "access_token": token,
             "token_type": "bearer",
             "expires_in": security_manager.token_expiry_hours * 3600,
-            "message": "Authentication successful"
+            "message": "Authentication successful",
+            "requires_titan_key": False
         }
-    except HTTPException as e:
-        # Generic error message to prevent username enumeration
-        return JSONResponse(
-            status_code=401,
-            content={
-                "detail": "Invalid credentials",
-                "error": "authentication_failed"
-            }
-        )
+        
+    except HTTPException:
+        # Log failed authentication attempt
+        advanced_security.log_failed_auth(client_ip)
+        log_security_event('login_failed', client_ip, {
+            'username': login_data.username,
+            'reason': 'invalid_credentials'
+        })
+        raise
     except Exception as e:
-        # Log the error internally but don't expose details
-        print(f"Login error: {str(e)}")
+        # Log failed authentication attempt
+        advanced_security.log_failed_auth(client_ip)
+        log_security_event('login_error', client_ip, {
+            'username': login_data.username,
+            'error': str(e)
+        })
+        
+        # Generic error message to prevent information disclosure
         return JSONResponse(
             status_code=500,
             content={
-                "detail": "Authentication service unavailable",
+                "detail": "Authentication service temporarily unavailable",
                 "error": "service_error"
             }
         )
@@ -297,6 +411,208 @@ async def get_current_user_info(user_info = Depends(get_current_user)):
         "role": user_info["role"],
         "permissions": security_manager.authorized_users.get(user_info["username"], {}).get("permissions", [])
     }
+
+# Enhanced Security Endpoints
+@app.post("/api/security/api-key")
+async def create_api_key(
+    request_data: Dict[str, Any],
+    user_info = Depends(require_master_admin)
+):
+    """Create new API key for programmatic access (Master admin only)"""
+    try:
+        user = request_data.get('user', user_info['username'])
+        permissions = request_data.get('permissions', ['read'])
+        rate_limit = min(request_data.get('rate_limit', 1000), 10000)  # Max 10k req/min
+        
+        api_key = advanced_security.create_api_key(user, permissions, rate_limit)
+        
+        log_security_event('api_key_created', request.client.host, {
+            'created_by': user_info['username'],
+            'target_user': user,
+            'permissions': permissions
+        })
+        
+        return {
+            "api_key": api_key,
+            "user": user,
+            "permissions": permissions,
+            "rate_limit": rate_limit,
+            "created_at": datetime.now().isoformat(),
+            "note": "Store this key securely - it cannot be retrieved again"
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Failed to create API key")
+
+@app.get("/api/security/status")
+async def get_security_status(user_info = Depends(require_admin_access)):
+    """Get current security status and metrics"""
+    try:
+        metrics = get_security_metrics()
+        return {
+            "security_status": "active",
+            "blocked_ips": metrics['active_blocks'],
+            "suspicious_ips": metrics['suspicious_ips'],
+            "api_keys_active": metrics['api_keys_active'],
+            "rate_limit_active": True,
+            "ddos_protection": True,
+            "attack_detection": True,
+            "titan_key_enabled": getattr(security_manager, 'security_key_required', False)
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Failed to get security status")
+
+@app.post("/api/security/unblock-ip")
+async def unblock_ip(
+    request_data: Dict[str, str],
+    user_info = Depends(require_master_admin)
+):
+    """Manually unblock an IP address (Master admin only)"""
+    try:
+        ip = request_data.get('ip', '').strip()
+        if not ip:
+            raise ValueError("IP address required")
+        
+        if ip in advanced_security.blocked_ips:
+            del advanced_security.blocked_ips[ip]
+            log_security_event('ip_unblocked', request.client.host, {
+                'unblocked_by': user_info['username'],
+                'target_ip': ip
+            })
+            return {"message": f"IP {ip} has been unblocked", "unblocked_by": user_info['username']}
+        else:
+            return {"message": f"IP {ip} was not blocked"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Failed to unblock IP")
+
+@app.get("/api/security/events")
+async def get_security_events(
+    limit: int = 100,
+    user_info = Depends(require_admin_access)
+):
+    """Get recent security events"""
+    try:
+        events = []
+        if os.path.exists('security_events.jsonl'):
+            with open('security_events.jsonl', 'r') as f:
+                lines = f.readlines()
+                for line in lines[-limit:]:
+                    try:
+                        event = json.loads(line.strip())
+                        # Sanitize sensitive information
+                        if 'details' in event:
+                            event['details'].pop('password', None)
+                            event['details'].pop('api_key', None)
+                        events.append(event)
+                    except:
+                        continue
+        
+        return {"events": events, "total": len(events)}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Failed to retrieve security events")
+
+# === IP PROTECTION ENDPOINTS ===
+
+@app.get("/api/security/ip-status")
+async def get_ip_protection_status(
+    user_info = Depends(require_admin_access)
+):
+    """Get IP protection system status"""
+    try:
+        status = ip_protection.get_protection_status()
+        return status
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get IP protection status: {e}")
+
+@app.post("/api/security/add-admin-ip")
+async def add_admin_ip(
+    request_data: Dict[str, str],
+    user_info = Depends(require_master_admin)
+):
+    """Add IP address to admin whitelist"""
+    try:
+        ip_address = request_data.get('ip', '').strip()
+        if not ip_address:
+            raise ValueError("IP address required")
+        
+        result = ip_protection.add_admin_ip(ip_address)
+        
+        if result["success"]:
+            log_security_event('admin_ip_added', ip_address, {
+                'added_by': user_info['username'],
+                'ip_address': ip_address
+            })
+        
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to add admin IP: {e}")
+
+@app.post("/api/security/remove-admin-ip")
+async def remove_admin_ip(
+    request_data: Dict[str, str],
+    user_info = Depends(require_master_admin)
+):
+    """Remove IP address from admin whitelist"""
+    try:
+        ip_address = request_data.get('ip', '').strip()
+        if not ip_address:
+            raise ValueError("IP address required")
+        
+        result = ip_protection.remove_admin_ip(ip_address)
+        
+        if result["success"]:
+            log_security_event('admin_ip_removed', ip_address, {
+                'removed_by': user_info['username'],
+                'ip_address': ip_address
+            })
+        
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to remove admin IP: {e}")
+
+@app.get("/api/security/ip-logs")
+async def get_ip_access_logs(
+    limit: int = 100,
+    user_info = Depends(require_admin_access)
+):
+    """Get IP access logs"""
+    try:
+        logs = []
+        if os.path.exists('ip_access_log.jsonl'):
+            with open('ip_access_log.jsonl', 'r') as f:
+                lines = f.readlines()
+                for line in lines[-limit:]:
+                    try:
+                        log_entry = json.loads(line.strip())
+                        logs.append(log_entry)
+                    except:
+                        continue
+        
+        return {"logs": logs, "total": len(logs)}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get IP logs: {e}")
+
+@app.get("/api/security/client-ip")
+async def get_client_ip_info(request: Request):
+    """Get current client IP information (public endpoint)"""
+    try:
+        client_ip = get_client_ip(request)
+        
+        # Get IP validation info if available
+        ip_validation = getattr(request.state, 'ip_validation', None)
+        
+        return {
+            "client_ip": ip_validation["anonymized_ip"] if ip_validation else "unknown",
+            "access_allowed": ip_validation["allowed"] if ip_validation else True,
+            "server_ip": ip_protection.config.get("server_ip", "unknown"),
+            "timestamp": datetime.utcnow().isoformat()
+        }
+    except Exception as e:
+        return {"error": f"Failed to get IP info: {e}"}
+
+# Enhanced authentication with API key support
+def get_enhanced_user(request: Request):
+    """Enhanced user authentication with API key and JWT support"""
+    return api_key_auth(request)
 
 @app.post("/api/auth/create-user")
 async def create_user(

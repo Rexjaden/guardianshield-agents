@@ -1,0 +1,244 @@
+# GuardianShield Enterprise AlertManager Configuration
+# Monitors: ERC-8055 tokens, entire blockchain, website, infrastructure
+
+global:
+  environment: production
+  namespace: guardianshield-monitoring
+  clusterName: guardianshield-mainnet
+  
+alertmanager:
+  enabled: true
+  image:
+    repository: prom/alertmanager
+    tag: v0.25.0
+    pullPolicy: IfNotPresent
+  
+  # Resource allocation for enterprise workloads
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+    limits:
+      memory: "1Gi"
+      cpu: "500m"
+  
+  # High availability setup
+  replicaCount: 3
+  
+  # Persistent storage for alert state
+  persistence:
+    enabled: true
+    size: 10Gi
+    storageClass: fast-ssd
+  
+  # AlertManager configuration
+  config:
+    global:
+      smtp_smarthost: 'smtp.guardianshield.io:587'
+      smtp_from: 'alerts@guardianshield.io'
+      smtp_auth_username: 'alerts@guardianshield.io'
+      smtp_require_tls: true
+    
+    # Route configuration for different alert types
+    route:
+      group_by: ['alertname', 'cluster', 'service']
+      group_wait: 10s
+      group_interval: 10s
+      repeat_interval: 1h
+      receiver: 'web.hook.critical'
+      routes:
+        # ERC-8055 Shield Token Critical Alerts
+        - match:
+            severity: critical
+            component: erc8055
+          receiver: erc8055-critical-team
+          group_wait: 0s
+          repeat_interval: 5m
+        
+        # Blockchain Node Alerts
+        - match:
+            service: blockchain-node
+          receiver: blockchain-ops-team
+          group_wait: 30s
+        
+        # Website Performance Alerts
+        - match:
+            service: website
+          receiver: website-ops-team
+          group_wait: 2m
+        
+        # Infrastructure Alerts
+        - match:
+            service: infrastructure
+          receiver: infrastructure-team
+          group_wait: 1m
+    
+    receivers:
+      - name: 'web.hook.critical'
+        webhook_configs:
+          - url: 'http://guardianshield-webhook-gateway:9093/webhook'
+            send_resolved: true
+      
+      # ERC-8055 specific team
+      - name: 'erc8055-critical-team'
+        email_configs:
+          - to: 'erc8055-team@guardianshield.io'
+            subject: '🚨 CRITICAL: ERC-8055 {{ .GroupLabels.alertname }}'
+            body: |
+              ERC-8055 Shield Token Critical Alert!
+              
+              Alert: {{ .GroupLabels.alertname }}
+              Severity: {{ .CommonLabels.severity }}
+              Instance: {{ .CommonLabels.instance }}
+              
+              {{ range .Alerts }}
+              Description: {{ .Annotations.description }}
+              Summary: {{ .Annotations.summary }}
+              {{ end }}
+              
+              Dashboard: http://grafana.guardianshield.io/d/erc8055
+        slack_configs:
+          - api_url: 'https://hooks.slack.com/services/YOUR/ERC8055/WEBHOOK'
+            channel: '#erc8055-critical'
+            title: 'ERC-8055 Critical Alert'
+      
+      # Blockchain operations team
+      - name: 'blockchain-ops-team'
+        email_configs:
+          - to: 'blockchain-ops@guardianshield.io'
+            subject: '⛓️ Blockchain Alert: {{ .GroupLabels.alertname }}'
+        pagerduty_configs:
+          - routing_key: 'YOUR_PAGERDUTY_BLOCKCHAIN_KEY'
+            description: 'GuardianShield Blockchain Alert'
+      
+      # Website operations team
+      - name: 'website-ops-team'
+        email_configs:
+          - to: 'website-ops@guardianshield.io'
+            subject: '🌐 Website Alert: {{ .GroupLabels.alertname }}'
+        webhook_configs:
+          - url: 'http://website-monitoring-webhook:8080/alert'
+      
+      # Infrastructure team
+      - name: 'infrastructure-team'
+        email_configs:
+          - to: 'infra-ops@guardianshield.io'
+            subject: '🏗️ Infrastructure Alert: {{ .GroupLabels.alertname }}'
+
+# Monitoring targets configuration
+monitoring:
+  targets:
+    # ERC-8055 Shield Token monitoring
+    erc8055:
+      enabled: true
+      endpoints:
+        - shield-token-api:8080
+        - guard-token-api:8081
+      metrics:
+        - shield_token_burns_total
+        - shield_token_remints_total
+        - guard_token_transfers_total
+        - fraud_attempts_blocked_total
+    
+    # Blockchain infrastructure monitoring
+    blockchain:
+      enabled: true
+      endpoints:
+        - blockchain-node-1:8545
+        - blockchain-node-2:8545
+        - blockchain-node-3:8545
+        - validator-node-1:9000
+        - validator-node-2:9000
+      metrics:
+        - block_height
+        - peer_count
+        - sync_status
+        - transaction_pool_size
+        - validator_balance
+        - consensus_participation
+    
+    # Website monitoring
+    website:
+      enabled: true
+      endpoints:
+        - guardianshield-website:3000
+        - api-gateway:8080
+        - cdn-edge-servers
+      metrics:
+        - response_time
+        - uptime_percentage
+        - error_rate
+        - active_users
+        - page_load_time
+        - conversion_rate
+    
+    # Infrastructure monitoring
+    infrastructure:
+      enabled: true
+      endpoints:
+        - kubernetes-apiserver
+        - etcd-cluster
+        - container-registry
+        - load-balancer
+      metrics:
+        - cpu_usage
+        - memory_usage
+        - disk_usage
+        - network_throughput
+        - pod_restart_count
+        - service_availability
+
+# Service configuration
+service:
+  type: ClusterIP
+  port: 9093
+  targetPort: 9093
+
+# Ingress configuration for external access
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/auth-type: basic
+    nginx.ingress.kubernetes.io/auth-secret: alertmanager-auth
+  hosts:
+    - host: alerts.guardianshield.io
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: alertmanager-tls
+      hosts:
+        - alerts.guardianshield.io
+
+# Security context
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 65534
+  fsGroup: 65534
+
+# Node selector for dedicated monitoring nodes
+nodeSelector:
+  node-type: monitoring
+
+# Tolerations for monitoring workloads
+tolerations:
+  - key: "monitoring"
+    operator: "Equal"
+    value: "true"
+    effect: "NoSchedule"
+
+# Anti-affinity for high availability
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+              - key: app
+                operator: In
+                values:
+                  - alertmanager
+          topologyKey: kubernetes.io/hostname

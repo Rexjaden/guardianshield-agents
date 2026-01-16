@@ -1,0 +1,88 @@
+admin:
+  address:
+    socket_address:
+      address: 0.0.0.0
+      port_value: 9901
+
+static_resources:
+  listeners:
+  - name: guardianshield_listener
+    address:
+      socket_address:
+        address: 0.0.0.0
+        port_value: 8080
+    filter_chains:
+    - filters:
+      - name: envoy.filters.network.http_connection_manager
+        typed_config:
+          "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+          stat_prefix: guardianshield_ingress
+          codec_type: AUTO
+          route_config:
+            name: guardianshield_routes
+            virtual_hosts:
+            - name: erc8055_website
+              domains: ["*"]
+              routes:
+              - match:
+                  prefix: "/api/shield-token"
+                route:
+                  cluster: shield_token_service
+                  timeout: 30s
+              - match:
+                  prefix: "/api/guard-token"  
+                route:
+                  cluster: guard_token_service
+                  timeout: 30s
+              - match:
+                  prefix: "/"
+                route:
+                  cluster: website_cluster
+                  timeout: 15s
+          http_filters:
+          - name: envoy.filters.http.router
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
+  
+  clusters:
+  - name: website_cluster
+    connect_timeout: 5s
+    type: LOGICAL_DNS
+    lb_policy: ROUND_ROBIN
+    load_assignment:
+      cluster_name: website_cluster
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address:
+                address: guardianshield-main
+                port_value: 8000
+  
+  - name: shield_token_service
+    connect_timeout: 5s
+    type: LOGICAL_DNS
+    lb_policy: LEAST_REQUEST
+    load_assignment:
+      cluster_name: shield_token_service
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address:
+                address: guardianshield-main
+                port_value: 8000
+                
+  - name: guard_token_service
+    connect_timeout: 5s
+    type: LOGICAL_DNS
+    lb_policy: LEAST_REQUEST
+    load_assignment:
+      cluster_name: guard_token_service
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address:
+                address: guardianshield-main
+                port_value: 8000

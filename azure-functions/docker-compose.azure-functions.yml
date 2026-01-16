@@ -1,0 +1,177 @@
+# GuardianShield Azure Functions Integration
+# Integrates with existing Docker infrastructure
+
+version: '3.8'
+
+services:
+  # Azure Functions Runtime (Custom)
+  guardianshield-azure-functions:
+    build:
+      context: .
+      dockerfile: Dockerfile.azure-functions
+    container_name: guardianshield-azure-functions
+    restart: unless-stopped
+    ports:
+      - "7071:7071"  # Azure Functions development port
+      - "7072:7072"  # Admin port
+    environment:
+      # Azure Functions Core
+      - AzureWebJobsScriptRoot=/home/site/wwwroot
+      - AzureFunctionsJobHost__Logging__Console__IsEnabled=true
+      - FUNCTIONS_WORKER_RUNTIME=python
+      - AZURE_FUNCTIONS_ENVIRONMENT=Development
+      
+      # Database (Connect to existing PostgreSQL)
+      - DATABASE_HOST=guardianshield-postgres
+      - DATABASE_PORT=5432
+      - DATABASE_ERC8055_TOKENS_USERNAME=guardianuser
+      - DATABASE_ERC8055_TOKENS_PASSWORD=${DB_PASSWORD}
+      - DATABASE_BLOCKCHAIN_DATA_USERNAME=guardianuser  
+      - DATABASE_BLOCKCHAIN_DATA_PASSWORD=${DB_PASSWORD}
+      - DATABASE_ANALYTICS_USERNAME=guardianuser
+      - DATABASE_ANALYTICS_PASSWORD=${DB_PASSWORD}
+      
+      # Redis (Connect to existing Redis)
+      - REDIS_HOST=guardianshield-redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      
+      # Azure Services (when available)
+      - AZURE_SUBSCRIPTION_ID=${AZURE_SUBSCRIPTION_ID}
+      - AZURE_RESOURCE_GROUP=${AZURE_RESOURCE_GROUP}
+      - AZURE_KEY_VAULT_URL=${AZURE_KEY_VAULT_URL}
+      - AZURE_STORAGE_ACCOUNT_URL=${AZURE_STORAGE_ACCOUNT_URL}
+      - AZURE_SERVICE_BUS_NAMESPACE=${AZURE_SERVICE_BUS_NAMESPACE}
+      - AZURE_COSMOS_ENDPOINT=${AZURE_COSMOS_ENDPOINT}
+      
+      # Blockchain Configuration
+      - ETHEREUM_RPC_URL=${ETHEREUM_RPC_URL}
+      - SHIELD_TOKEN_CONTRACT_ADDRESS=${SHIELD_TOKEN_CONTRACT_ADDRESS}
+      - GUARD_TOKEN_CONTRACT_ADDRESS=${GUARD_TOKEN_CONTRACT_ADDRESS}
+      
+      # Compliance and Security
+      - COMPLIANCE_MODE=STRICT
+      - AUDIT_LOG_RETENTION_DAYS=2555
+      - SECRET_KEY=${SECRET_KEY}
+      
+      # Monitoring Integration
+      - PROMETHEUS_ENABLED=true
+      - PROMETHEUS_PORT=8080
+      - GRAFANA_ENABLED=true
+      
+    volumes:
+      - ./:/home/site/wwwroot:ro
+      - azure-functions-logs:/home/site/wwwroot/logs
+      - azure-functions-temp:/tmp
+    
+    networks:
+      - guardianshield-network
+      - cilium-mesh
+    
+    labels:
+      - "io.cilium.service-mesh=serverless"
+      - "guardianshield.service=azure-functions"
+      - "erc8055.component=processing"
+      - "prometheus.scrape=true"
+      - "prometheus.port=8080"
+      - "prometheus.path=/api/metrics"
+    
+    depends_on:
+      - guardianshield-postgres
+      - guardianshield-redis
+    
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7071/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "5"
+
+  # ERC-8055 Token Processing Service
+  erc8055-processor:
+    build:
+      context: ./erc8055-processor
+      dockerfile: Dockerfile
+    container_name: erc8055-processor
+    restart: unless-stopped
+    ports:
+      - "7073:80"
+    environment:
+      - DATABASE_HOST=guardianshield-postgres
+      - DATABASE_PORT=5432
+      - DATABASE_NAME=erc8055_tokens
+      - DATABASE_USERNAME=guardianuser
+      - DATABASE_PASSWORD=${DB_PASSWORD}
+      - REDIS_HOST=guardianshield-redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - SHIELD_TOKEN_CONTRACT_ADDRESS=${SHIELD_TOKEN_CONTRACT_ADDRESS}
+      - ETHEREUM_RPC_URL=${ETHEREUM_RPC_URL}
+    networks:
+      - guardianshield-network
+      - cilium-mesh
+    labels:
+      - "io.cilium.service-mesh=token-processing"
+      - "guardianshield.service=erc8055-processor"
+      - "erc8055.component=shield-token"
+    depends_on:
+      - guardianshield-postgres
+      - guardianshield-redis
+    volumes:
+      - erc8055-logs:/app/logs
+
+  # Blockchain Indexer Service  
+  blockchain-indexer:
+    build:
+      context: ./blockchain-indexer
+      dockerfile: Dockerfile
+    container_name: blockchain-indexer
+    restart: unless-stopped
+    ports:
+      - "7074:80"
+    environment:
+      - DATABASE_HOST=guardianshield-postgres
+      - DATABASE_PORT=5432
+      - DATABASE_NAME=blockchain_data
+      - DATABASE_USERNAME=guardianuser
+      - DATABASE_PASSWORD=${DB_PASSWORD}
+      - REDIS_HOST=guardianshield-redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - ETHEREUM_RPC_URL=${ETHEREUM_RPC_URL}
+      - INDEXING_BATCH_SIZE=100
+      - PROMETHEUS_ENABLED=true
+    networks:
+      - guardianshield-network
+      - cilium-mesh
+    labels:
+      - "io.cilium.service-mesh=blockchain-indexing"
+      - "guardianshield.service=blockchain-indexer"
+      - "erc8055.component=indexing"
+    depends_on:
+      - guardianshield-postgres
+      - guardianshield-redis
+    volumes:
+      - blockchain-indexer-logs:/app/logs
+
+networks:
+  guardianshield-network:
+    external: true
+  cilium-mesh:
+    external: true
+
+volumes:
+  azure-functions-logs:
+    driver: local
+  azure-functions-temp:
+    driver: local
+  erc8055-logs:
+    driver: local
+  blockchain-indexer-logs:
+    driver: local

@@ -1,0 +1,78 @@
+# Caddyfile for SHIELD Token Platform
+# High-performance serving with automatic HTTPS
+
+{
+    admin 0.0.0.0:2019
+    auto_https on
+}
+
+# Main SHIELD Token Interface
+:80 {
+    root * /srv
+    
+    # Enable compression for assets
+    encode gzip zstd
+    
+    # Headers for Web3 and blockchain compatibility
+    header {
+        # Security headers
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        X-Frame-Options "SAMEORIGIN"
+        X-Content-Type-Options "nosniff"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        
+        # Web3 compatibility
+        Access-Control-Allow-Origin "*"
+        Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+        Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With"
+        
+        # Caching for static assets
+        Cache-Control "public, max-age=86400" {
+            path *.js *.css *.png *.jpg *.jpeg *.gif *.svg *.ico
+        }
+        
+        # No cache for HTML and dynamic content
+        Cache-Control "no-cache, no-store, must-revalidate" {
+            path *.html
+        }
+    }
+    
+    # Handle CORS preflight
+    @options method OPTIONS
+    respond @options 204
+    
+    # Route to 3D API backend for WebSocket and graphics
+    @api path /api/*
+    reverse_proxy @api shield-3d-api:9000
+    
+    # WebSocket proxy for real-time 3D graphics
+    @ws path /ws*
+    reverse_proxy @ws shield-3d-api:9000 {
+        header_up Upgrade {>Upgrade}
+        header_up Connection {>Connection}
+        header_up Host {host}
+        header_up X-Real-IP {remote}
+        header_up X-Forwarded-For {remote}
+        header_up X-Forwarded-Proto {scheme}
+    }
+    
+    # Serve static files
+    file_server {
+        index index.html
+    }
+    
+    # Handle SPA routing for JavaScript frameworks
+    try_files {path} {path}/ /index.html
+    
+    # Log requests
+    log {
+        output file /var/log/caddy/shield-token.log
+        format json
+        level INFO
+    }
+}
+
+# Admin interface (if needed)
+:2019 {
+    respond "SHIELD Token Caddy Admin Interface Active"
+}

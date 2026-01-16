@@ -434,26 +434,65 @@ class IPProtectionManager:
 ip_protection = IPProtectionManager()
 
 def get_client_ip(request) -> str:
-    """Extract client IP from request (FastAPI/Flask compatible)"""
-    # Check for forwarded IPs (behind proxy/CDN)
-    forwarded_for = getattr(request, 'headers', {}).get('X-Forwarded-For')
-    if forwarded_for:
-        return forwarded_for.split(',')[0].strip()
-    
-    real_ip = getattr(request, 'headers', {}).get('X-Real-IP')
-    if real_ip:
-        return real_ip
-    
-    # Fallback to direct connection
+    """Extract client IP from request (FastAPI/Flask/Starlette compatible)"""
     try:
-        client = getattr(request, 'client', None)
-        if client and hasattr(client, 'host'):
-            return client.host
-        elif client and isinstance(client, tuple) and len(client) > 0:
-            return client[0]
-        return 'unknown'
-    except Exception:
-        return 'unknown'
+        # Handle different request types
+        headers = {}
+        client = None
+        
+        # Get headers - works for FastAPI, Flask, Starlette
+        if hasattr(request, 'headers'):
+            if hasattr(request.headers, 'get'):
+                # FastAPI/Starlette Headers object
+                headers = request.headers
+            else:
+                # Flask-style headers
+                headers = dict(request.headers)
+        
+        # Get client info
+        if hasattr(request, 'client'):
+            client = request.client
+        
+        # Check for forwarded IPs (behind proxy/CDN)
+        forwarded_for = headers.get('X-Forwarded-For') or headers.get('x-forwarded-for')
+        if forwarded_for:
+            # Take the first IP (original client)
+            return forwarded_for.split(',')[0].strip()
+        
+        # Check for real IP header (Cloudflare, etc.)
+        real_ip = headers.get('X-Real-IP') or headers.get('x-real-ip')
+        if real_ip:
+            return real_ip.strip()
+        
+        # Check CF-Connecting-IP (Cloudflare)
+        cf_ip = headers.get('CF-Connecting-IP') or headers.get('cf-connecting-ip')
+        if cf_ip:
+            return cf_ip.strip()
+        
+        # Fallback to direct connection
+        if client:
+            if hasattr(client, 'host') and client.host:
+                return client.host
+            elif isinstance(client, (list, tuple)) and len(client) > 0:
+                return str(client[0])
+            elif hasattr(client, '__getitem__'):
+                # Handle address tuple or similar
+                try:
+                    return str(client[0])
+                except (IndexError, TypeError):
+                    pass
+        
+        # Final fallback - check if request has remote_addr (Flask style)
+        if hasattr(request, 'remote_addr') and request.remote_addr:
+            return request.remote_addr
+        
+        # Ultimate fallback
+        return '127.0.0.1'
+        
+    except Exception as e:
+        # Log error but don't crash
+        print(f"IP extraction error: {e}")
+        return '127.0.0.1'
 
 def require_admin_ip(func):
     """Decorator to require admin IP for access"""

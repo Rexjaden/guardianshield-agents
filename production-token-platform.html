@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GuardianShield - Professional Security Services</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.0/dist/ethers.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #ffffff;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 2px solid rgba(0, 212, 170, 0.3);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #00d4aa;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #00d4aa 0%, #667eea 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 8px 25px rgba(0, 212, 170, 0.3);
+        }
+
+        /* Optimized Canvas Container */
+        .canvas-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.6;
+        }
+
+        /* Token Purchase Section - MAIN REVENUE GENERATOR */
+        .token-purchase-hub {
+            margin-top: 100px;
+            padding: 60px 0;
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .purchase-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #00d4aa;
+            text-shadow: 0 0 20px rgba(0, 212, 170, 0.8);
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            margin-bottom: 50px;
+            color: #b8c6db;
+        }
+
+        .token-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+
+        .token-card {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            border-radius: 20px;
+            padding: 40px;
+            backdrop-filter: blur(15px);
+            border: 2px solid rgba(0, 212, 170, 0.3);
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .token-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0, 212, 170, 0.6);
+            box-shadow: 0 20px 50px rgba(0, 212, 170, 0.2);
+        }
+
+        .token-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .token-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #00d4aa;
+            margin-bottom: 10px;
+        }
+
+        .token-price {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+
+        .token-description {
+            color: #b8c6db;
+            margin-bottom: 30px;
+            line-height: 1.8;
+        }
+
+        .purchase-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .input-label {
+            color: #00d4aa;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .purchase-input {
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .purchase-input:focus {
+            outline: none;
+            border-color: #00d4aa;
+            box-shadow: 0 0 15px rgba(0, 212, 170, 0.3);
+        }
+
+        .purchase-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .purchase-button {
+            background: linear-gradient(135deg, #00d4aa 0%, #667eea 100%);
+            color: white;
+            border: none;
+            padding: 18px 30px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(0, 212, 170, 0.3);
+        }
+
+        .purchase-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(0, 212, 170, 0.5);
+        }
+
+        .purchase-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .connect-wallet-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .connect-wallet-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Service Selection - PUBLIC ACCESS */
+        .services-section {
+            padding: 80px 0;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .service-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 212, 170, 0.2);
+            border-color: rgba(0, 212, 170, 0.5);
+        }
+
+        .service-card.selected {
+            border-color: #00d4aa;
+            box-shadow: 0 15px 40px rgba(0, 212, 170, 0.3);
+        }
+
+        .service-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #00d4aa;
+        }
+
+        .service-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #ffffff;
+        }
+
+        .service-description {
+            color: #b8c6db;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .service-price {
+            color: #00d4aa;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-top: 15px;
+        }
+
+        /* Wallet Status */
+        .wallet-status {
+            text-align: center;
+            margin: 40px 0;
+            padding: 25px;
+            background: rgba(255, 107, 107, 0.1);
+            border-radius: 15px;
+            border: 2px solid rgba(255, 107, 107, 0.3);
+        }
+
+        .wallet-status.connected {
+            background: rgba(0, 212, 170, 0.1);
+            border-color: rgba(0, 212, 170, 0.5);
+        }
+
+        .wallet-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .wallet-address {
+            font-family: 'Courier New', monospace;
+            color: #00d4aa;
+            margin-top: 10px;
+        }
+
+        /* Contract Status Display */
+        .contract-status {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 30px;
+            border-radius: 15px;
+            margin: 40px 0;
+            border: 1px solid rgba(0, 212, 170, 0.3);
+        }
+
+        .contract-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 15px 0;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .contract-name {
+            color: #67e8f9;
+            font-weight: 600;
+        }
+
+        .contract-address {
+            font-family: 'Courier New', monospace;
+            color: #00d4aa;
+            font-size: 0.9rem;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #00ff00;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.6);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .token-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Professional Header -->
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo">
+                <div class="logo-icon">🛡️</div>
+                <span>GuardianShield</span>
+            </div>
+            <button class="connect-wallet-btn" id="connectWallet">Connect Wallet</button>
+        </div>
+    </header>
+
+    <!-- Optimized Background Canvas -->
+    <div class="canvas-bg" id="background-canvas"></div>
+
+    <!-- TOKEN PURCHASE HUB - MAIN REVENUE GENERATOR -->
+    <section class="token-purchase-hub">
+        <div class="purchase-container">
+            <h1 class="section-title">GuardianShield Token Ecosystem</h1>
+            <p class="section-subtitle">Secure your digital infrastructure with our dual-token system</p>
+            
+            <!-- Contract Status Display -->
+            <div class="contract-status">
+                <h3 style="color: #00d4aa; margin-bottom: 20px; text-align: center;">Smart Contract Status</h3>
+                <div class="contract-item">
+                    <span class="contract-name">GUARD Token Contract:</span>
+                    <span class="contract-address" id="guard-contract-addr">Loading...</span>
+                    <div class="status-indicator"></div>
+                </div>
+                <div class="contract-item">
+                    <span class="contract-name">SHIELD NFT Contract:</span>
+                    <span class="contract-address" id="shield-contract-addr">Loading...</span>
+                    <div class="status-indicator"></div>
+                </div>
+                <div class="contract-item">
+                    <span class="contract-name">Token Sale Contract:</span>
+                    <span class="contract-address" id="sale-contract-addr">Loading...</span>
+                    <div class="status-indicator"></div>
+                </div>
+            </div>
+
+            <!-- Wallet Connection Status -->
+            <div class="wallet-status" id="walletStatus">
+                <div class="wallet-text" id="walletText">Connect your wallet to purchase tokens</div>
+                <div class="wallet-address" id="walletAddress"></div>
+            </div>
+
+            <!-- Token Purchase Grid -->
+            <div class="token-grid">
+                <!-- GUARD Token Card -->
+                <div class="token-card">
+                    <div class="token-header">
+                        <div class="token-name">GUARD Token</div>
+                        <div class="token-price">$0.005 USD</div>
+                    </div>
+                    <div class="token-description">
+                        Utility token for accessing GuardianShield services, governance voting, and staking rewards. Essential for platform participation and agent deployment.
+                    </div>
+                    <form class="purchase-form" id="guardPurchaseForm">
+                        <div class="input-group">
+                            <label class="input-label">USD Amount (minimum $0.005)</label>
+                            <input type="number" class="purchase-input" id="guardUsdAmount" 
+                                   placeholder="Enter USD amount" step="0.005" min="0.005">
+                        </div>
+                        <div class="input-group">
+                            <label class="input-label">GUARD Tokens You'll Receive</label>
+                            <input type="text" class="purchase-input" id="guardTokenAmount" 
+                                   placeholder="Tokens calculated automatically" readonly>
+                        </div>
+                        <div class="input-group">
+                            <label class="input-label">Your Wallet Address</label>
+                            <input type="text" class="purchase-input" id="guardWalletAddr" 
+                                   placeholder="Connect wallet first" readonly>
+                        </div>
+                        <button type="submit" class="purchase-button" id="buyGuard" disabled>
+                            Purchase GUARD Tokens
+                        </button>
+                    </form>
+                </div>
+
+                <!-- SHIELD NFT Card -->
+                <div class="token-card">
+                    <div class="token-header">
+                        <div class="token-name">SHIELD Protection NFT</div>
+                        <div class="token-price">$0.025 USD</div>
+                    </div>
+                    <div class="token-description">
+                        NFT-based protection system providing enhanced security features, premium agent access, and exclusive platform benefits.
+                    </div>
+                    <form class="purchase-form" id="shieldPurchaseForm">
+                        <div class="input-group">
+                            <label class="input-label">USD Amount (minimum $0.025)</label>
+                            <input type="number" class="purchase-input" id="shieldUsdAmount" 
+                                   placeholder="Enter USD amount" step="0.025" min="0.025">
+                        </div>
+                        <div class="input-group">
+                            <label class="input-label">Shield Serial Number</label>
+                            <input type="number" class="purchase-input" id="shieldSerial" 
+                                   placeholder="Choose your shield number" min="1">
+                        </div>
+                        <div class="input-group">
+                            <label class="input-label">Protection Level (1-100%)</label>
+                            <input type="number" class="purchase-input" id="protectionLevel" 
+                                   placeholder="Set protection strength" min="1" max="100">
+                        </div>
+                        <div class="input-group">
+                            <label class="input-label">Your Wallet Address</label>
+                            <input type="text" class="purchase-input" id="shieldWalletAddr" 
+                                   placeholder="Connect wallet first" readonly>
+                        </div>
+                        <button type="submit" class="purchase-button" id="mintShield" disabled>
+                            Mint SHIELD Protection
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SERVICE SELECTION - PUBLIC ACCESS -->
+    <section class="services-section">
+        <div class="purchase-container">
+            <h2 class="section-title">Select Your Security Services</h2>
+            <p class="section-subtitle">Choose the protection services that fit your needs</p>
+            
+            <div class="services-grid">
+                <div class="service-card" data-service="threat-detection" onclick="selectService(this)">
+                    <div class="service-icon">🔍</div>
+                    <div class="service-title">Advanced Threat Detection</div>
+                    <div class="service-description">AI-powered threat identification and real-time monitoring</div>
+                    <div class="service-price">5 GUARD/month</div>
+                </div>
+                
+                <div class="service-card" data-service="incident-response" onclick="selectService(this)">
+                    <div class="service-icon">⚡</div>
+                    <div class="service-title">Automated Incident Response</div>
+                    <div class="service-description">Instant response to security incidents with AI coordination</div>
+                    <div class="service-price">10 GUARD/month</div>
+                </div>
+                
+                <div class="service-card" data-service="behavioral-analytics" onclick="selectService(this)">
+                    <div class="service-icon">📊</div>
+                    <div class="service-title">Behavioral Analytics</div>
+                    <div class="service-description">Deep learning analysis of user and system behavior patterns</div>
+                    <div class="service-price">8 GUARD/month</div>
+                </div>
+                
+                <div class="service-card" data-service="blockchain-security" onclick="selectService(this)">
+                    <div class="service-icon">⛓️</div>
+                    <div class="service-title">Multi-Chain Security</div>
+                    <div class="service-description">Comprehensive blockchain and Web3 security monitoring</div>
+                    <div class="service-price">15 GUARD/month</div>
+                </div>
+                
+                <div class="service-card" data-service="ai-orchestration" onclick="selectService(this)">
+                    <div class="service-icon">🤖</div>
+                    <div class="service-title">AI Agent Orchestration</div>
+                    <div class="service-description">Deploy and manage autonomous security agents</div>
+                    <div class="service-price">20 GUARD/month</div>
+                </div>
+                
+                <div class="service-card" data-service="enterprise-suite" onclick="selectService(this)">
+                    <div class="service-icon">🏢</div>
+                    <div class="service-title">Enterprise Security Suite</div>
+                    <div class="service-description">Full platform access with premium support</div>
+                    <div class="service-price">50 GUARD/month</div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 40px;">
+                <button class="purchase-button" id="setupServices" style="font-size: 1.2rem; padding: 20px 40px;">
+                    Setup Selected Services
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // SCALED-BACK but Professional 3D Background
+        let scene, camera, renderer;
+        let particles;
+        
+        function initBackground() {
+            const container = document.getElementById('background-canvas');
+            
+            // Lightweight scene setup
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            
+            // Optimized renderer - much lighter load
+            renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5)); // Limit pixel ratio
+            
+            container.appendChild(renderer.domElement);
+            
+            // Simple particle system - only 500 particles instead of 50,000
+            const particleCount = 500;
+            const positions = new Float32Array(particleCount * 3);
+            const colors = new Float32Array(particleCount * 3);
+            
+            for (let i = 0; i < particleCount; i++) {
+                positions[i * 3] = (Math.random() - 0.5) * 200;
+                positions[i * 3 + 1] = (Math.random() - 0.5) * 200;
+                positions[i * 3 + 2] = (Math.random() - 0.5) * 200;
+                
+                colors[i * 3] = 0;
+                colors[i * 3 + 1] = 0.83;
+                colors[i * 3 + 2] = 0.67;
+            }
+            
+            const geometry = new THREE.BufferGeometry();
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+            
+            const material = new THREE.PointsMaterial({
+                size: 1,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.6
+            });
+            
+            particles = new THREE.Points(geometry, material);
+            scene.add(particles);
+            
+            camera.position.z = 100;
+            
+            // Lightweight animation loop
+            function animate() {
+                requestAnimationFrame(animate);
+                
+                if (particles) {
+                    particles.rotation.x += 0.001;
+                    particles.rotation.y += 0.001;
+                }
+                
+                renderer.render(scene, camera);
+            }
+            
+            animate();
+        }
+
+        // Smart Contract Configuration - REVENUE SYSTEM
+        const CONTRACTS = {
+            GUARD_TOKEN: '0x742d35Cc60A68F9D63C4768FcDf9a22dF9C0e59b',
+            SHIELD_NFT: '0x1234567890123456789012345678901234567890',
+            TOKEN_SALE: '0x0987654321098765432109876543210987654321'
+        };
+
+        // Web3 Integration
+        let web3;
+        let userAccount;
+        let selectedServices = [];
+
+        // Initialize Web3 Connection
+        async function initWeb3() {
+            if (typeof window.ethereum !== 'undefined') {
+                web3 = new Web3(window.ethereum);
+                
+                // Update contract addresses in UI
+                document.getElementById('guard-contract-addr').textContent = CONTRACTS.GUARD_TOKEN;
+                document.getElementById('shield-contract-addr').textContent = CONTRACTS.SHIELD_NFT;
+                document.getElementById('sale-contract-addr').textContent = CONTRACTS.TOKEN_SALE;
+                
+                return true;
+            } else {
+                alert('Please install MetaMask or another Web3 wallet to purchase tokens.');
+                return false;
+            }
+        }
+
+        // Connect Wallet Function
+        async function connectWallet() {
+            try {
+                const accounts = await window.ethereum.request({ 
+                    method: 'eth_requestAccounts' 
+                });
+                
+                if (accounts.length > 0) {
+                    userAccount = accounts[0];
+                    updateWalletStatus(true);
+                    enablePurchaseButtons();
+                    console.log('Wallet connected:', userAccount);
+                }
+            } catch (error) {
+                console.error('Wallet connection failed:', error);
+                alert('Failed to connect wallet. Please try again.');
+            }
+        }
+
+        // Update Wallet Status Display
+        function updateWalletStatus(connected) {
+            const statusDiv = document.getElementById('walletStatus');
+            const textSpan = document.getElementById('walletText');
+            const addressSpan = document.getElementById('walletAddress');
+            const connectBtn = document.getElementById('connectWallet');
+            
+            if (connected) {
+                statusDiv.classList.add('connected');
+                textSpan.textContent = 'Wallet Connected Successfully!';
+                addressSpan.textContent = `${userAccount.substring(0, 10)}...${userAccount.substring(userAccount.length - 8)}`;
+                connectBtn.textContent = 'Wallet Connected ✓';
+                connectBtn.disabled = true;
+                
+                // Update wallet address fields
+                document.getElementById('guardWalletAddr').value = userAccount;
+                document.getElementById('shieldWalletAddr').value = userAccount;
+            }
+        }
+
+        // Enable Purchase Buttons
+        function enablePurchaseButtons() {
+            document.getElementById('buyGuard').disabled = false;
+            document.getElementById('mintShield').disabled = false;
+        }
+
+        // Update Token Amounts Based on USD Input
+        function updateTokenAmounts() {
+            // GUARD Token Calculation
+            const guardUsd = parseFloat(document.getElementById('guardUsdAmount').value || 0);
+            if (guardUsd >= 0.005) {
+                const guardTokens = Math.floor(guardUsd / 0.005);
+                document.getElementById('guardTokenAmount').value = `${guardTokens.toLocaleString()} GUARD`;
+            } else {
+                document.getElementById('guardTokenAmount').value = '';
+            }
+        }
+
+        // Service Selection
+        function selectService(serviceCard) {
+            const serviceName = serviceCard.dataset.service;
+            
+            if (serviceCard.classList.contains('selected')) {
+                serviceCard.classList.remove('selected');
+                selectedServices = selectedServices.filter(s => s !== serviceName);
+            } else {
+                serviceCard.classList.add('selected');
+                selectedServices.push(serviceName);
+            }
+            
+            console.log('Selected services:', selectedServices);
+        }
+
+        // Token Purchase Functions
+        async function buyGuardTokens(event) {
+            event.preventDefault();
+            
+            const usdAmount = document.getElementById('guardUsdAmount').value;
+            if (!usdAmount || parseFloat(usdAmount) < 0.005) {
+                alert('Minimum purchase amount is $0.005');
+                return;
+            }
+            
+            try {
+                // Here you would implement the actual smart contract interaction
+                console.log('Purchasing GUARD tokens:', usdAmount);
+                alert(`Token purchase initiated!\nAmount: $${usdAmount}\nWallet: ${userAccount}\n\nTransaction will be processed on the blockchain.`);
+            } catch (error) {
+                console.error('Purchase failed:', error);
+                alert('Purchase failed. Please try again.');
+            }
+        }
+
+        async function mintShieldProtection(event) {
+            event.preventDefault();
+            
+            const usdAmount = document.getElementById('shieldUsdAmount').value;
+            const serialNumber = document.getElementById('shieldSerial').value;
+            const protectionLevel = document.getElementById('protectionLevel').value;
+            
+            if (!usdAmount || parseFloat(usdAmount) < 0.025) {
+                alert('Minimum SHIELD cost is $0.025');
+                return;
+            }
+            
+            if (!serialNumber || !protectionLevel) {
+                alert('Please enter serial number and protection level');
+                return;
+            }
+            
+            try {
+                console.log('Minting SHIELD NFT:', { usdAmount, serialNumber, protectionLevel });
+                alert(`SHIELD NFT minting initiated!\nSerial: ${serialNumber}\nProtection: ${protectionLevel}%\nCost: $${usdAmount}\n\nNFT will be minted to: ${userAccount}`);
+            } catch (error) {
+                console.error('Minting failed:', error);
+                alert('Minting failed. Please try again.');
+            }
+        }
+
+        // Setup Services Function
+        function setupServices() {
+            if (selectedServices.length === 0) {
+                alert('Please select at least one service to setup.');
+                return;
+            }
+            
+            if (!userAccount) {
+                alert('Please connect your wallet first.');
+                return;
+            }
+            
+            alert(`Setting up services: ${selectedServices.join(', ')}\n\nServices will be activated for wallet: ${userAccount}\n\nYou will be contacted within 24 hours to complete the setup.`);
+        }
+
+        // Initialize Everything
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Initialize lightweight background
+            initBackground();
+            
+            // Initialize Web3
+            await initWeb3();
+            
+            // Event Listeners
+            document.getElementById('connectWallet').addEventListener('click', connectWallet);
+            document.getElementById('guardUsdAmount').addEventListener('input', updateTokenAmounts);
+            document.getElementById('guardPurchaseForm').addEventListener('submit', buyGuardTokens);
+            document.getElementById('shieldPurchaseForm').addEventListener('submit', mintShieldProtection);
+            document.getElementById('setupServices').addEventListener('click', setupServices);
+            
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                if (camera && renderer) {
+                    camera.aspect = window.innerWidth / window.innerHeight;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(window.innerWidth, window.innerHeight);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

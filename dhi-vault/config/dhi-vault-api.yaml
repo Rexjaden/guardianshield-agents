@@ -1,0 +1,79 @@
+# DHI-Vault Python API Configuration
+vault:
+  address: "http://127.0.0.1:8200"
+  token_file: "/var/run/secrets/vault/token"
+  ca_cert: "/vault/tls/ca.crt"
+  timeout: 30
+  retries: 3
+  verify_ssl: true
+
+server:
+  host: "0.0.0.0"
+  port: 8080
+  workers: 2
+  max_connections: 100
+  
+redis:
+  url: "redis://redis.guardianshield.svc.cluster.local:6379"
+  database: 5
+  max_connections: 20
+  cache_ttl: 3600
+  
+database:
+  url: "postgresql://vault_user:vault_pass@postgres.guardianshield.svc.cluster.local:5432/vault_db"
+  pool_size: 10
+  max_overflow: 20
+  echo: false
+  
+security:
+  max_secrets_per_path: 1000
+  secret_version_limit: 100
+  audit_log_enabled: true
+  audit_log_path: "/app/audit-logs"
+  
+encryption:
+  key_rotation_days: 30
+  algorithm: "AES256"
+  key_derivation: "PBKDF2"
+  iterations: 100000
+  
+policies:
+  default_policy: "guardianshield-default"
+  admin_policy: "guardianshield-admin"
+  read_policy: "guardianshield-read"
+  
+monitoring:
+  metrics_enabled: true
+  health_check_enabled: true
+  prometheus_metrics: true
+  log_level: "INFO"
+  
+features:
+  auto_unseal: true
+  ha_enabled: true
+  plugin_support: true
+  backup_enabled: true
+  
+backup:
+  enabled: true
+  schedule: "0 2 * * *"  # Daily at 2 AM
+  retention_days: 30
+  storage_path: "/app/backups"
+  
+integrations:
+  kubernetes:
+    enabled: true
+    service_account_path: "/var/run/secrets/kubernetes.io/serviceaccount"
+    
+  guardianshield:
+    threat_intel_endpoint: "http://threat-intel.guardianshield.svc.cluster.local:8080"
+    agent_api_endpoint: "http://agent-orchestrator.guardianshield.svc.cluster.local:8080"
+    
+cors:
+  allowed_origins:
+    - "https://vault.guardianshield.io"
+    - "https://admin.guardianshield.io"
+    - "https://api.guardianshield.io"
+  allowed_methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+  allowed_headers: ["Authorization", "Content-Type", "X-Vault-Token"]
+  allow_credentials: true

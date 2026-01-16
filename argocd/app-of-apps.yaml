@@ -1,0 +1,131 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: guardianshield-ecosystem-master
+  namespace: argocd
+  labels:
+    app: guardianshield-master
+    tier: production
+    pattern: app-of-apps
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+    notifications.argoproj.io/subscribe.on-deployed.slack: gitops-deployments
+    notifications.argoproj.io/subscribe.on-sync-failed.email: devops@guardianshield.io
+spec:
+  project: guardianshield-ecosystem
+  
+  source:
+    repoURL: https://github.com/Rexjaden/guardianshield-agents
+    targetRevision: main
+    path: argocd/applications
+  
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: false
+    syncOptions:
+      - CreateNamespace=false  # argocd namespace already exists
+      - ApplyOutOfSyncOnly=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
+  
+  info:
+    - name: 'Deployment Pattern'
+      value: 'App of Apps (GitOps)'
+    - name: 'Applications Managed'
+      value: 'ERC-8055, Monitoring, Blockchain, Website, Compliance'
+    - name: 'Sync Strategy'
+      value: 'Automated with controlled windows'
+    - name: 'Environment'
+      value: 'Production with staging promotion'
+
+---
+# Environment-specific App of Apps for staging
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: guardianshield-ecosystem-staging
+  namespace: argocd
+  labels:
+    app: guardianshield-staging
+    tier: staging
+    pattern: app-of-apps
+spec:
+  project: guardianshield-ecosystem
+  
+  source:
+    repoURL: https://github.com/Rexjaden/guardianshield-agents
+    targetRevision: staging
+    path: argocd/applications
+    helm:
+      valueFiles:
+        - ../environments/staging.yaml
+      parameters:
+        - name: global.environment
+          value: staging
+        - name: global.domain
+          value: staging.guardianshield.io
+        - name: alertmanager.replicaCount
+          value: "1"
+        - name: erc8055.antifraud.testMode
+          value: "true"
+  
+  destination:
+    server: https://staging-k8s-cluster.guardianshield.io
+    namespace: argocd
+  
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=false
+
+---
+# Development environment App of Apps
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: guardianshield-ecosystem-development
+  namespace: argocd
+  labels:
+    app: guardianshield-dev
+    tier: development
+    pattern: app-of-apps
+spec:
+  project: guardianshield-ecosystem
+  
+  source:
+    repoURL: https://github.com/Rexjaden/guardianshield-agents
+    targetRevision: develop
+    path: argocd/applications
+    helm:
+      valueFiles:
+        - ../environments/development.yaml
+      parameters:
+        - name: global.environment
+          value: development
+        - name: global.domain
+          value: dev.guardianshield.io
+        - name: monitoring.retention
+          value: "7d"
+        - name: erc8055.debug.enabled
+          value: "true"
+  
+  destination:
+    server: https://dev-k8s-cluster.guardianshield.io
+    namespace: argocd
+  
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

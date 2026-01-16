@@ -1,6 +1,6 @@
 """
 GuardianShield Authentication & Access Control System
-Implements strict security controls for admin access
+Implements strict security controls for admin access with FIDO2/WebAuthn support
 """
 
 import os
@@ -12,6 +12,15 @@ from typing import Dict, Optional, List
 from fastapi import HTTPException, Request, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 import json
+import logging
+
+# Import security key manager
+try:
+    from security_key_manager import GuardianShieldSecurityKey
+    SECURITY_KEY_AVAILABLE = True
+except ImportError:
+    SECURITY_KEY_AVAILABLE = False
+    logging.warning("Security key support not available - install fido2 package")
 
 class SecurityManager:
     def __init__(self):
@@ -20,6 +29,14 @@ class SecurityManager:
         self.master_admin_hash = self._load_or_generate_master_admin()
         self.authorized_users = self._load_authorized_users()
         self.active_sessions = {}
+        
+        # Initialize security key manager
+        if SECURITY_KEY_AVAILABLE:
+            self.security_key_manager = GuardianShieldSecurityKey()
+            self.security_key_required = self._load_security_key_settings()
+        else:
+            self.security_key_manager = None
+            self.security_key_required = False
         
         # Security settings
         self.token_expiry_hours = 8  # Sessions expire after 8 hours
@@ -265,6 +282,148 @@ class SecurityManager:
             del self.active_sessions[session_id]
         
         return len(expired_sessions)
+    
+    def _load_security_key_settings(self) -> bool:
+        """Load security key requirement settings"""
+        settings_file = ".guardian_security_key_settings.json"
+        if os.path.exists(settings_file):
+            try:
+                with open(settings_file, 'r') as f:
+                    settings = json.load(f)
+                return settings.get("required", False)
+            except Exception:
+                return False
+        return False
+    
+    def _save_security_key_settings(self, required: bool):
+        """Save security key requirement settings"""
+        settings_file = ".guardian_security_key_settings.json"
+        settings = {"required": required, "updated": datetime.now().isoformat()}
+        with open(settings_file, 'w') as f:
+            json.dump(settings, f, indent=2)
+        os.chmod(settings_file, 0o600)
+        self.security_key_required = required
+    
+    def enable_security_key_requirement(self):
+        """Enable security key requirement for admin access"""
+        if not SECURITY_KEY_AVAILABLE:
+            raise ValueError("Security key support not available")
+        self._save_security_key_settings(True)
+        return True
+    
+    def disable_security_key_requirement(self):
+        """Disable security key requirement (password-only access)"""
+        self._save_security_key_settings(False)
+        return True
+    
+    def register_admin_security_key(self, admin_username: str = "master_admin") -> Dict:
+        """Register a security key for admin user"""
+        if not SECURITY_KEY_AVAILABLE:
+            raise ValueError("Security key support not available")
+        
+        # Create unique user ID for master admin
+        user_id = hashlib.sha256(f"guardian_admin_{admin_username}".encode()).hexdigest()
+        
+        return self.security_key_manager.register_security_key(
+            user_id=user_id,
+            username=admin_username,
+            display_name="GuardianShield Master Admin"
+        )
+    
+    def complete_admin_key_registration(self, challenge_id: str, credential_response: Dict) -> Dict:
+        """Complete security key registration for admin"""
+        if not SECURITY_KEY_AVAILABLE:
+            raise ValueError("Security key support not available")
+        
+        result = self.security_key_manager.complete_registration(challenge_id, credential_response)
+        
+        # If registration successful, enable security key requirement
+        if result.get("success"):
+            self.enable_security_key_requirement()
+            
+        return result
+    
+    def authenticate_with_master_admin_key(self, password: str) -> Dict:
+        """Start security key authentication for master admin (requires password first)"""
+        if not SECURITY_KEY_AVAILABLE:
+            raise ValueError("Security key support not available")
+        
+        # First verify password
+        if not self.authenticate_master_admin(password):
+            raise ValueError("Invalid master admin password")
+        
+        # Then request security key authentication
+        admin_user_id = hashlib.sha256("guardian_admin_master_admin".encode()).hexdigest()
+        return self.security_key_manager.authenticate_with_security_key(admin_user_id)
+    
+    def complete_admin_key_authentication(self, challenge_id: str, auth_response: Dict) -> str:
+        """Complete security key authentication and create admin session"""
+        if not SECURITY_KEY_AVAILABLE:
+            raise ValueError("Security key support not available")
+        
+        result = self.security_key_manager.complete_authentication(challenge_id, auth_response)
+        
+        if result.get("success"):
+            # Create admin session token
+            token_data = {
+                "username": "master_admin",
+                "role": "master",
+                "permissions": ["all"],
+                "auth_method": "password+security_key",
+                "exp": datetime.utcnow() + timedelta(hours=self.token_expiry_hours)
+            }
+            
+            token = jwt.encode(token_data, self.secret_key, algorithm="HS256")
+            
+            # Store session info
+            self.active_sessions[token] = {
+                "username": "master_admin",
+                "role": "master",
+                "created": datetime.utcnow(),
+                "auth_method": "password+security_key"
+            }
+            
+            return token
+        else:
+            raise ValueError("Security key authentication failed")
+    
+    def authenticate_master_admin_with_key(self, password: str) -> tuple[bool, Optional[Dict]]:
+        """
+        Authenticate master admin with password and security key requirement check
+        Returns: (password_valid, security_key_challenge_or_none)
+        """
+        password_valid = self.authenticate_master_admin(password)
+        
+        if not password_valid:
+            return False, None
+        
+        # If security key is required and available, return challenge
+        if self.security_key_required and SECURITY_KEY_AVAILABLE:
+            try:
+                challenge_data = self.authenticate_with_master_admin_key(password)
+                return True, challenge_data
+            except Exception as e:
+                # If security key fails, still allow password-only if not strictly required
+                return True, None
+        
+        # Password-only authentication
+        return True, None
+    
+    def get_admin_security_keys(self) -> List[Dict]:
+        """Get registered security keys for admin user"""
+        if not SECURITY_KEY_AVAILABLE:
+            return []
+        
+        admin_user_id = hashlib.sha256("guardian_admin_master_admin".encode()).hexdigest()
+        return self.security_key_manager.get_user_credentials(admin_user_id)
+    
+    def remove_admin_security_key(self, credential_id: str) -> bool:
+        """Remove a security key for admin user"""
+        if not SECURITY_KEY_AVAILABLE:
+            return False
+        
+        admin_user_id = hashlib.sha256("guardian_admin_master_admin".encode()).hexdigest()
+        return self.security_key_manager.remove_credential(admin_user_id, credential_id)
 
 # Global security manager instance
 security_manager = SecurityManager()

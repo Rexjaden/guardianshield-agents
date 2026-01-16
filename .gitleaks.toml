@@ -1,0 +1,23 @@
+
+[allowlist]
+  description = "GuardianShield allowed patterns"
+  paths = [
+    ".env.example",
+    ".env.template",
+    "tests/",
+  ]
+
+[[rules]]
+  id = "generic-api-key"
+  description = "Generic API Key"
+  regex = '''(?i)((access.key|api.key|secret.key)['"]*\s*[:=]\s*['"][a-zA-Z0-9]+['"])'''
+  
+[[rules]]
+  id = "github-token"
+  description = "GitHub Token"
+  regex = '''ghp_[0-9A-Za-z]{36}'''
+  
+[[rules]]  
+  id = "github-app-token"
+  description = "GitHub App Token"
+  regex = '''(ghu|ghs)_[0-9A-Za-z]{36}'''

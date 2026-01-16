@@ -1,0 +1,159 @@
+# Production-hardened GuardianShield API Container
+FROM python:3.11-slim
+
+# Security: Create non-root user
+RUN groupadd -r guardian && useradd -r -g guardian guardian
+
+# Install system dependencies and security tools
+RUN apt-get update && apt-get install -y \
+    curl \
+    wget \
+    gnupg \
+    ca-certificates \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set working directory
+WORKDIR /app
+
+# Copy requirements and install Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
+
+# Copy application code
+COPY . .
+
+# Security: Set proper file permissions
+RUN chown -R guardian:guardian /app && \
+    chmod -R 755 /app && \
+    chmod +x /app/api_server.py
+
+# Create directories for logs and secrets
+RUN mkdir -p /app/logs /app/secrets && \
+    chown guardian:guardian /app/logs /app/secrets && \
+    chmod 750 /app/logs /app/secrets
+
+# Production security configurations
+COPY <<EOF /app/production_config.py
+import os
+from datetime import timedelta
+
+class ProductionConfig:
+    # Security configurations
+    SECRET_KEY = os.getenv('SECRET_KEY')
+    ADMIN_API_KEY = os.getenv('ADMIN_API_KEY')
+    
+    # Database security
+    DATABASE_URL = os.getenv('DATABASE_URL')
+    DATABASE_POOL_SIZE = 20
+    DATABASE_POOL_TIMEOUT = 30
+    
+    # Redis configuration
+    REDIS_URL = os.getenv('REDIS_URL')
+    
+    # SSL/HTTPS
+    SSL_ENABLED = os.getenv('SSL_ENABLED', 'true').lower() == 'true'
+    
+    # Rate limiting
+    RATE_LIMIT_ENABLED = os.getenv('RATE_LIMIT_ENABLED', 'true').lower() == 'true'
+    RATE_LIMIT_REQUESTS = 1000
+    RATE_LIMIT_WINDOW = timedelta(minutes=15)
+    
+    # IP Protection
+    IP_PROTECTION_ENABLED = os.getenv('IP_PROTECTION_ENABLED', 'true').lower() == 'true'
+    
+    # Session security
+    SESSION_COOKIE_SECURE = True
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SAMESITE = 'Lax'
+    
+    # CORS security
+    CORS_ALLOW_CREDENTIALS = True
+    CORS_ORIGINS = [
+        "https://guardian-shield.io",
+        "https://www.guardian-shield.io",
+        "https://guardianshield-eth.com"
+    ]
+    
+    # Security headers
+    SECURITY_HEADERS = {
+        'X-Content-Type-Options': 'nosniff',
+        'X-Frame-Options': 'DENY',
+        'X-XSS-Protection': '1; mode=block',
+        'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+        'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'",
+        'Referrer-Policy': 'strict-origin-when-cross-origin'
+    }
+    
+    # Logging
+    LOG_LEVEL = 'INFO'
+    LOG_FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+EOF
+
+# Copy production startup script
+COPY <<EOF /app/production_start.py
+#!/usr/bin/env python3
+import os
+import sys
+import logging
+import uvicorn
+from api_server import app
+from production_config import ProductionConfig
+
+# Configure logging
+logging.basicConfig(
+    level=getattr(logging, ProductionConfig.LOG_LEVEL),
+    format=ProductionConfig.LOG_FORMAT,
+    handlers=[
+        logging.FileHandler('/app/logs/guardian_api.log'),
+        logging.StreamHandler(sys.stdout)
+    ]
+)
+
+logger = logging.getLogger(__name__)
+
+def main():
+    """Start production API server with security configurations"""
+    logger.info("Starting GuardianShield API in production mode")
+    
+    # Validate required environment variables
+    required_vars = ['SECRET_KEY', 'DATABASE_URL', 'ADMIN_API_KEY']
+    missing_vars = [var for var in required_vars if not os.getenv(var)]
+    
+    if missing_vars:
+        logger.error(f"Missing required environment variables: {missing_vars}")
+        sys.exit(1)
+    
+    # Start server with production configuration
+    uvicorn.run(
+        app,
+        host="0.0.0.0",
+        port=8000,
+        log_level=ProductionConfig.LOG_LEVEL.lower(),
+        access_log=True,
+        server_header=False,  # Hide server version for security
+        date_header=False,    # Reduce information leakage
+        workers=1,  # Single worker in container
+        loop="uvloop",  # High-performance event loop
+        http="httptools",  # High-performance HTTP parser
+    )
+
+if __name__ == "__main__":
+    main()
+EOF
+
+RUN chmod +x /app/production_start.py
+
+# Security: Switch to non-root user
+USER guardian
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8000/health || exit 1
+
+# Expose port
+EXPOSE 8000
+
+# Start production server
+CMD ["python3", "/app/production_start.py"]

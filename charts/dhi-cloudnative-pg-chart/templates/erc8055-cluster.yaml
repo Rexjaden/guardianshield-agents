@@ -1,0 +1,259 @@
+{{- if .Values.clusters.erc8055-tokens.enabled }}
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: erc8055-tokens-cluster
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app.kubernetes.io/name: erc8055-tokens-cluster
+    app.kubernetes.io/component: database
+    app.kubernetes.io/part-of: guardianshield
+    guardianshield.io/cluster-type: erc8055-tokens
+    compliance.guardianshield.io/level: critical
+spec:
+  instances: {{ .Values.clusters.erc8055-tokens.instances }}
+  
+  # PostgreSQL configuration
+  postgresql:
+    parameters:
+      {{- range $key, $value := .Values.clusters.erc8055-tokens.postgresql.parameters }}
+      {{ $key }}: {{ $value | quote }}
+      {{- end }}
+    
+    # Shared preload libraries for performance and monitoring
+    shared_preload_libraries:
+      - "pg_stat_statements"
+      - "pg_prewarm"
+      - "pgaudit"
+    
+    # Additional PostgreSQL configuration
+    pg_hba:
+      - "hostssl all all 0.0.0.0/0 md5"
+      - "hostssl replication streaming_replica 0.0.0.0/0 md5"
+    
+    # Database initialization
+    initdb:
+      database: {{ .Values.clusters.erc8055-tokens.postgresql.initdb.database }}
+      owner: {{ .Values.clusters.erc8055-tokens.postgresql.initdb.owner }}
+      secret:
+        name: {{ .Values.clusters.erc8055-tokens.postgresql.initdb.secret.name }}
+  
+  # Bootstrap configuration
+  bootstrap:
+    initdb:
+      database: {{ .Values.clusters.erc8055-tokens.postgresql.initdb.database }}
+      owner: {{ .Values.clusters.erc8055-tokens.postgresql.initdb.owner }}
+      secret:
+        name: {{ .Values.clusters.erc8055-tokens.postgresql.initdb.secret.name }}
+      
+      # Initialize ERC-8055 database schema
+      postInitApplicationSQL:
+        - |
+          -- ERC-8055 Shield Token schema
+          CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+          CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+          CREATE EXTENSION IF NOT EXISTS "btree_gin";
+          CREATE EXTENSION IF NOT EXISTS "pg_stat_statements";
+          CREATE EXTENSION IF NOT EXISTS "pg_trgm";
+          
+          -- Shield Tokens table with serial number tracking
+          CREATE TABLE shield_tokens (
+            id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+            token_id BIGINT NOT NULL UNIQUE,
+            serial_number VARCHAR(64) NOT NULL UNIQUE,
+            owner_address VARCHAR(42) NOT NULL,
+            status VARCHAR(20) NOT NULL DEFAULT 'active', -- active, burned, reminted
+            burn_transaction_hash VARCHAR(66),
+            burn_block_number BIGINT,
+            burn_timestamp TIMESTAMP WITH TIME ZONE,
+            remint_transaction_hash VARCHAR(66),
+            remint_block_number BIGINT,
+            remint_timestamp TIMESTAMP WITH TIME ZONE,
+            created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+          );
+          
+          -- Indexes for performance
+          CREATE INDEX idx_shield_tokens_serial ON shield_tokens USING gin (serial_number gin_trgm_ops);
+          CREATE INDEX idx_shield_tokens_owner ON shield_tokens (owner_address);
+          CREATE INDEX idx_shield_tokens_status ON shield_tokens (status);
+          CREATE INDEX idx_shield_tokens_burn_block ON shield_tokens (burn_block_number) WHERE burn_block_number IS NOT NULL;
+          
+          -- Guard Token transfers table
+          CREATE TABLE guard_token_transfers (
+            id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+            transaction_hash VARCHAR(66) NOT NULL UNIQUE,
+            block_number BIGINT NOT NULL,
+            from_address VARCHAR(42) NOT NULL,
+            to_address VARCHAR(42) NOT NULL,
+            amount NUMERIC(78, 0) NOT NULL, -- Support for 256-bit integers
+            timestamp TIMESTAMP WITH TIME ZONE NOT NULL,
+            gas_used BIGINT,
+            gas_price BIGINT,
+            created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+          );
+          
+          -- Indexes for Guard Token transfers
+          CREATE INDEX idx_guard_transfers_from ON guard_token_transfers (from_address);
+          CREATE INDEX idx_guard_transfers_to ON guard_token_transfers (to_address);
+          CREATE INDEX idx_guard_transfers_block ON guard_token_transfers (block_number);
+          CREATE INDEX idx_guard_transfers_timestamp ON guard_token_transfers (timestamp);
+          
+          -- Fraud detection logs
+          CREATE TABLE fraud_detection_logs (
+            id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+            detection_type VARCHAR(50) NOT NULL, -- serial_collision, suspicious_burn, etc.
+            shield_token_id UUID REFERENCES shield_tokens(id),
+            transaction_hash VARCHAR(66),
+            risk_score INTEGER NOT NULL CHECK (risk_score >= 0 AND risk_score <= 100),
+            blocked BOOLEAN NOT NULL DEFAULT FALSE,
+            details JSONB,
+            created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+          );
+          
+          -- Compliance audit trail
+          CREATE TABLE compliance_audit_trail (
+            id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+            event_type VARCHAR(50) NOT NULL,
+            entity_type VARCHAR(50) NOT NULL, -- shield_token, guard_token, user
+            entity_id VARCHAR(255) NOT NULL,
+            old_values JSONB,
+            new_values JSONB,
+            user_address VARCHAR(42),
+            transaction_hash VARCHAR(66),
+            compliance_flags TEXT[],
+            created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+          );
+          
+          -- Create audit trigger function
+          CREATE OR REPLACE FUNCTION audit_trigger_function()
+          RETURNS TRIGGER AS $$
+          BEGIN
+            INSERT INTO compliance_audit_trail (
+              event_type,
+              entity_type,
+              entity_id,
+              old_values,
+              new_values
+            ) VALUES (
+              TG_OP,
+              TG_TABLE_NAME,
+              COALESCE(NEW.id::TEXT, OLD.id::TEXT),
+              CASE WHEN TG_OP != 'INSERT' THEN row_to_json(OLD) ELSE NULL END,
+              CASE WHEN TG_OP != 'DELETE' THEN row_to_json(NEW) ELSE NULL END
+            );
+            RETURN COALESCE(NEW, OLD);
+          END;
+          $$ LANGUAGE plpgsql;
+          
+          -- Apply audit triggers
+          CREATE TRIGGER shield_tokens_audit_trigger
+            AFTER INSERT OR UPDATE OR DELETE ON shield_tokens
+            FOR EACH ROW EXECUTE FUNCTION audit_trigger_function();
+          
+          CREATE TRIGGER guard_token_transfers_audit_trigger
+            AFTER INSERT OR UPDATE OR DELETE ON guard_token_transfers
+            FOR EACH ROW EXECUTE FUNCTION audit_trigger_function();
+  
+  # Storage configuration
+  storage:
+    size: {{ .Values.clusters.erc8055-tokens.storage.size }}
+    storageClass: {{ .Values.clusters.erc8055-tokens.storage.storageClass }}
+  
+  # Resource allocation
+  resources:
+    requests:
+      memory: {{ .Values.clusters.erc8055-tokens.resources.requests.memory }}
+      cpu: {{ .Values.clusters.erc8055-tokens.resources.requests.cpu }}
+    limits:
+      memory: {{ .Values.clusters.erc8055-tokens.resources.limits.memory }}
+      cpu: {{ .Values.clusters.erc8055-tokens.resources.limits.cpu }}
+  
+  # Backup configuration with Barman Cloud
+  {{- if .Values.clusters.erc8055-tokens.backup.enabled }}
+  backup:
+    barmanObjectStore:
+      destinationPath: {{ .Values.clusters.erc8055-tokens.backup.barmanObjectStore.destinationPath }}
+      endpointURL: {{ .Values.clusters.erc8055-tokens.backup.barmanObjectStore.endpointURL }}
+      
+      # S3 credentials
+      s3Credentials:
+        accessKeyId:
+          name: {{ .Values.clusters.erc8055-tokens.backup.barmanObjectStore.s3Credentials.accessKeyId.name }}
+          key: {{ .Values.clusters.erc8055-tokens.backup.barmanObjectStore.s3Credentials.accessKeyId.key }}
+        secretAccessKey:
+          name: {{ .Values.clusters.erc8055-tokens.backup.barmanObjectStore.s3Credentials.secretAccessKey.name }}
+          key: {{ .Values.clusters.erc8055-tokens.backup.barmanObjectStore.s3Credentials.secretAccessKey.key }}
+      
+      # WAL configuration
+      wal:
+        retention: {{ .Values.clusters.erc8055-tokens.backup.barmanObjectStore.wal.retention }}
+        maxParallel: {{ .Values.clusters.erc8055-tokens.backup.barmanObjectStore.wal.maxParallel }}
+      
+      # Data backup configuration
+      data:
+        retention: {{ .Values.clusters.erc8055-tokens.backup.barmanObjectStore.data.retention }}
+        jobs: {{ .Values.clusters.erc8055-tokens.backup.barmanObjectStore.data.jobs }}
+        compression: {{ .Values.clusters.erc8055-tokens.backup.barmanObjectStore.data.compression }}
+        encryption: {{ .Values.clusters.erc8055-tokens.backup.barmanObjectStore.data.encryption }}
+    
+    # Backup schedule
+    schedule: {{ .Values.clusters.erc8055-tokens.backup.schedule | quote }}
+    retentionPolicy: {{ .Values.clusters.erc8055-tokens.backup.retentionPolicy }}
+  {{- end }}
+  
+  # Monitoring configuration
+  {{- if .Values.clusters.erc8055-tokens.monitoring.enabled }}
+  monitoring:
+    enabled: true
+    customQueriesConfigMap:
+      - name: erc8055-custom-queries
+        key: erc8055-queries.yaml
+  {{- end }}
+  
+  # Security context
+  {{- if .Values.security.podSecurityContext }}
+  securityContext:
+    {{- toYaml .Values.security.podSecurityContext | nindent 4 }}
+  {{- end }}
+  
+  # Node selector and affinity
+  {{- if .Values.nodeSelector }}
+  nodeSelector:
+    {{- toYaml .Values.nodeSelector | nindent 4 }}
+  {{- end }}
+  
+  {{- if .Values.affinity }}
+  affinity:
+    {{- toYaml .Values.affinity | nindent 4 }}
+  {{- end }}
+  
+  {{- if .Values.tolerations }}
+  tolerations:
+    {{- toYaml .Values.tolerations | nindent 4 }}
+  {{- end }}
+
+---
+# ConfigMap for custom monitoring queries
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: erc8055-custom-queries
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app.kubernetes.io/name: erc8055-custom-queries
+    app.kubernetes.io/component: monitoring
+data:
+  erc8055-queries.yaml: |
+    {{- range .Values.clusters.erc8055-tokens.monitoring.customQueries }}
+    {{ .name }}:
+      query: {{ .query | quote }}
+      metrics:
+        {{- range $metric, $config := .metrics }}
+        - {{ $metric }}:
+            usage: {{ $config.usage }}
+            description: {{ $config.description | quote }}
+        {{- end }}
+    {{- end }}
+
+{{- end }}

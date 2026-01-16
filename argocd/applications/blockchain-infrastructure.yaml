@@ -1,0 +1,123 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: guardianshield-blockchain-nodes
+  namespace: argocd
+  labels:
+    component: blockchain
+    tier: production
+    team: blockchain
+  annotations:
+    argocd.argoproj.io/sync-wave: "8"
+    notifications.argoproj.io/subscribe.on-health-degraded.pagerduty: blockchain-critical
+spec:
+  project: guardianshield-ecosystem
+  
+  source:
+    repoURL: https://github.com/Rexjaden/guardianshield-agents
+    targetRevision: main
+    path: k8s/blockchain
+    helm:
+      valueFiles:
+        - values-production.yaml
+      parameters:
+        - name: nodes.count
+          value: "3"
+        - name: nodes.resources.requests.cpu
+          value: "2000m"
+        - name: nodes.resources.requests.memory
+          value: "8Gi"
+        - name: nodes.storage.size
+          value: "1Ti"
+        - name: validator.enabled
+          value: "true"
+        - name: validator.stakingAmount
+          value: "32"
+        - name: monitoring.enabled
+          value: "true"
+  
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: guardianshield-blockchain
+  
+  syncPolicy:
+    automated:
+      prune: false  # Never auto-prune blockchain nodes
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - RespectIgnoreDifferences=true
+    retry:
+      limit: 3
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 5m
+  
+  # Never delete blockchain data
+  ignoreDifferences:
+    - group: apps
+      kind: StatefulSet
+      jsonPointers:
+        - /spec/volumeClaimTemplates
+    - group: ''
+      kind: PersistentVolumeClaim
+      jsonPointers:
+        - /spec/resources/requests/storage
+  
+  info:
+    - name: 'Blockchain Network'
+      value: 'GuardianShield Mainnet'
+    - name: 'Node Count'
+      value: '3 Full Nodes'
+    - name: 'Validator Status'
+      value: 'Active with 32 ETH stake'
+    - name: 'Sync Status'
+      value: 'Monitored via Prometheus'
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: guardianshield-multi-chain-bridge
+  namespace: argocd
+  labels:
+    component: bridge
+    tier: production
+    team: blockchain
+  annotations:
+    argocd.argoproj.io/sync-wave: "12"
+spec:
+  project: guardianshield-ecosystem
+  
+  source:
+    repoURL: https://github.com/Rexjaden/guardianshield-agents
+    targetRevision: main
+    path: k8s/multi-chain-bridge
+    helm:
+      valueFiles:
+        - values-production.yaml
+      parameters:
+        - name: bridges.ethereum.enabled
+          value: "true"
+        - name: bridges.polygon.enabled
+          value: "true"
+        - name: bridges.arbitrum.enabled
+          value: "true"
+        - name: bridges.flare.enabled
+          value: "true"
+        - name: security.multisig.threshold
+          value: "3"
+        - name: security.timelock.delay
+          value: "86400"
+  
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: guardianshield-bridge
+  
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

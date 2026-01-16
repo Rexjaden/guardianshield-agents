@@ -1,0 +1,376 @@
+# GuardianShield Enterprise Governance Policies
+# Compliance framework for blockchain and financial regulations
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: guardianshield-governance-policies
+  namespace: guardianshield-compliance
+  labels:
+    app.kubernetes.io/name: governance-policies
+    app.kubernetes.io/component: compliance
+    guardianshield.io/policy-level: enterprise
+data:
+  # Financial Services Compliance (SOX, PCI-DSS, etc.)
+  financial-compliance.yaml: |
+    policies:
+      - name: "SOX-Compliance"
+        description: "Sarbanes-Oxley Act compliance for financial reporting"
+        enforcement: "strict"
+        requirements:
+          - audit_trail_required: true
+          - change_approval_required: true
+          - segregation_of_duties: true
+          - data_retention_years: 7
+          - encryption_at_rest: true
+          - encryption_in_transit: true
+        
+      - name: "PCI-DSS-Level-1"
+        description: "Payment Card Industry Data Security Standard"
+        enforcement: "strict"
+        requirements:
+          - secure_network_configuration: true
+          - cardholder_data_protection: true
+          - vulnerability_management: true
+          - access_control_measures: true
+          - regular_monitoring: true
+          - information_security_policy: true
+        
+      - name: "AML-KYC-Compliance"
+        description: "Anti-Money Laundering and Know Your Customer"
+        enforcement: "strict"
+        requirements:
+          - transaction_monitoring: true
+          - suspicious_activity_reporting: true
+          - customer_identification: true
+          - record_keeping: true
+          - compliance_training: true
+  
+  # Blockchain and Cryptocurrency Compliance
+  blockchain-compliance.yaml: |
+    policies:
+      - name: "ERC-8055-Token-Compliance"
+        description: "Regulatory compliance for ERC-8055 Shield Token operations"
+        enforcement: "critical"
+        requirements:
+          - burn_operation_audit: true
+          - remint_operation_audit: true
+          - serial_number_tracking: true
+          - fraud_detection_enabled: true
+          - transaction_immutability: true
+          - regulatory_reporting: true
+        
+      - name: "DeFi-Regulatory-Framework"
+        description: "Decentralized Finance regulatory compliance"
+        enforcement: "high"
+        requirements:
+          - liquidity_pool_monitoring: true
+          - yield_farming_disclosure: true
+          - smart_contract_audits: true
+          - governance_transparency: true
+          - risk_disclosure: true
+        
+      - name: "Cross-Chain-Compliance"
+        description: "Multi-blockchain regulatory requirements"
+        enforcement: "high"
+        requirements:
+          - bridge_security_audits: true
+          - asset_custody_compliance: true
+          - jurisdictional_compliance: true
+          - sanctions_screening: true
+  
+  # Data Protection and Privacy
+  data-protection.yaml: |
+    policies:
+      - name: "GDPR-Compliance"
+        description: "General Data Protection Regulation compliance"
+        enforcement: "strict"
+        requirements:
+          - data_minimization: true
+          - purpose_limitation: true
+          - consent_management: true
+          - right_to_erasure: true
+          - data_portability: true
+          - privacy_by_design: true
+        
+      - name: "CCPA-Compliance"
+        description: "California Consumer Privacy Act compliance"
+        enforcement: "strict"
+        requirements:
+          - consumer_rights_disclosure: true
+          - opt_out_mechanisms: true
+          - data_sale_restrictions: true
+          - third_party_disclosures: true
+  
+  # Security and Infrastructure Compliance
+  security-compliance.yaml: |
+    policies:
+      - name: "ISO-27001-Controls"
+        description: "Information Security Management System"
+        enforcement: "high"
+        requirements:
+          - security_policy_framework: true
+          - risk_management_process: true
+          - access_control_procedures: true
+          - incident_response_plan: true
+          - business_continuity_planning: true
+          - security_awareness_training: true
+        
+      - name: "NIST-Cybersecurity-Framework"
+        description: "NIST CSF implementation requirements"
+        enforcement: "high"
+        requirements:
+          - identify_assets_and_risks: true
+          - protect_critical_infrastructure: true
+          - detect_cybersecurity_events: true
+          - respond_to_incidents: true
+          - recover_from_incidents: true
+        
+      - name: "SOC2-Type-II"
+        description: "Service Organization Control 2 compliance"
+        enforcement: "high"
+        requirements:
+          - security_controls: true
+          - availability_controls: true
+          - processing_integrity: true
+          - confidentiality_controls: true
+          - privacy_controls: true
+  
+  # Operational Compliance
+  operational-compliance.yaml: |
+    policies:
+      - name: "Change-Management"
+        description: "ITIL-based change management processes"
+        enforcement: "medium"
+        requirements:
+          - change_request_approval: true
+          - impact_assessment: true
+          - rollback_procedures: true
+          - change_documentation: true
+          - post_implementation_review: true
+        
+      - name: "Incident-Management"
+        description: "Security incident response procedures"
+        enforcement: "high"
+        requirements:
+          - incident_classification: true
+          - escalation_procedures: true
+          - forensic_evidence_collection: true
+          - stakeholder_communication: true
+          - lessons_learned_documentation: true
+        
+      - name: "Audit-and-Monitoring"
+        description: "Continuous compliance monitoring"
+        enforcement: "high"
+        requirements:
+          - continuous_monitoring: true
+          - automated_compliance_checks: true
+          - regular_audit_reports: true
+          - compliance_dashboard: true
+          - violation_alerting: true
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: guardianshield-compliance-rules
+  namespace: guardianshield-compliance
+  labels:
+    app.kubernetes.io/name: compliance-rules
+    app.kubernetes.io/component: compliance
+data:
+  # Open Policy Agent (OPA) rules for automated compliance
+  opa-rules.rego: |
+    package guardianshield.compliance
+    
+    # ERC-8055 Shield Token Compliance Rules
+    shield_token_burn_compliant[msg] {
+        input.operation == "burn"
+        not input.audit_trail
+        msg := "Shield token burn operations must have audit trail"
+    }
+    
+    shield_token_remint_compliant[msg] {
+        input.operation == "remint"
+        not input.serial_number_verified
+        msg := "Shield token remint must verify serial number authenticity"
+    }
+    
+    # Financial Transaction Compliance
+    financial_transaction_compliant[msg] {
+        input.transaction_amount > 10000
+        not input.kyc_verified
+        msg := "Transactions over $10,000 require KYC verification"
+    }
+    
+    # Data Protection Compliance
+    gdpr_compliant[msg] {
+        input.data_type == "personal"
+        not input.consent_obtained
+        msg := "Personal data processing requires explicit consent"
+    }
+    
+    # Security Compliance
+    security_compliant[msg] {
+        input.network_access == "external"
+        not input.tls_enabled
+        msg := "External network access must use TLS encryption"
+    }
+    
+    # Infrastructure Compliance
+    infrastructure_compliant[msg] {
+        input.resource_type == "database"
+        not input.encryption_enabled
+        msg := "Database resources must have encryption enabled"
+    }
+  
+  # Compliance monitoring queries
+  compliance-queries.sql: |
+    -- ERC-8055 Token Compliance Monitoring
+    
+    -- Shield Token Operations Audit
+    SELECT 
+        operation_type,
+        token_serial_number,
+        transaction_hash,
+        block_number,
+        timestamp,
+        audit_trail_complete
+    FROM shield_token_operations 
+    WHERE audit_trail_complete = false
+        AND timestamp > NOW() - INTERVAL '24 HOURS';
+    
+    -- Guard Token High-Value Transactions
+    SELECT 
+        from_address,
+        to_address,
+        amount,
+        transaction_hash,
+        kyc_status,
+        aml_screening_result
+    FROM guard_token_transfers 
+    WHERE amount > 10000 
+        AND (kyc_status != 'verified' OR aml_screening_result = 'flagged');
+    
+    -- Cross-Chain Bridge Compliance
+    SELECT 
+        source_chain,
+        destination_chain,
+        asset_amount,
+        bridge_transaction_hash,
+        compliance_check_status
+    FROM cross_chain_transfers 
+    WHERE compliance_check_status != 'approved'
+        AND timestamp > NOW() - INTERVAL '1 HOUR';
+    
+    -- Data Protection Compliance
+    SELECT 
+        user_id,
+        data_type,
+        consent_status,
+        processing_purpose,
+        retention_period
+    FROM user_data_processing 
+    WHERE consent_status = 'withdrawn'
+        OR (timestamp + retention_period) < NOW();
+    
+    -- Security Incident Tracking
+    SELECT 
+        incident_id,
+        severity_level,
+        incident_type,
+        response_time,
+        resolution_status,
+        compliance_impact
+    FROM security_incidents 
+    WHERE resolution_status != 'resolved'
+        AND severity_level IN ('critical', 'high');
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: compliance-monitor
+  namespace: guardianshield-compliance
+  labels:
+    app.kubernetes.io/name: compliance-monitor
+    app.kubernetes.io/component: compliance
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: compliance-monitor
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: compliance-monitor
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/metrics"
+    spec:
+      serviceAccountName: compliance-monitor
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        fsGroup: 65534
+      containers:
+        - name: compliance-monitor
+          image: guardianshield/compliance-monitor:latest
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          env:
+            - name: COMPLIANCE_MODE
+              value: "STRICT"
+            - name: GOVERNANCE_POLICIES_PATH
+              value: "/config/governance"
+            - name: OPA_RULES_PATH
+              value: "/config/opa"
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: compliance-db-secret
+                  key: database-url
+            - name: AUDIT_LOG_RETENTION_DAYS
+              value: "2555"  # 7 years for SOX compliance
+          volumeMounts:
+            - name: governance-policies
+              mountPath: /config/governance
+              readOnly: true
+            - name: compliance-rules
+              mountPath: /config/opa
+              readOnly: true
+            - name: audit-logs
+              mountPath: /var/log/audit
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+      volumes:
+        - name: governance-policies
+          configMap:
+            name: guardianshield-governance-policies
+        - name: compliance-rules
+          configMap:
+            name: guardianshield-compliance-rules
+        - name: audit-logs
+          persistentVolumeClaim:
+            claimName: compliance-audit-logs

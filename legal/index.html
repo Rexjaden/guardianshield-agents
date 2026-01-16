@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legal - GuardianShield</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <style>
+        .legal-nav {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .legal-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .legal-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation Bar -->
+    <nav class="legal-nav text-white py-4 shadow-lg">
+        <div class="container mx-auto px-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <a href="/" class="text-2xl font-bold">🛡️ GuardianShield</a>
+                    <span class="text-sm opacity-75">Legal Center</span>
+                </div>
+                <div class="flex space-x-6">
+                    <a href="/" class="hover:text-blue-200 transition-colors">Home</a>
+                    <a href="/dashboard" class="hover:text-blue-200 transition-colors">Dashboard</a>
+                    <a href="/support" class="hover:text-blue-200 transition-colors">Support</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <div class="bg-white py-12">
+        <div class="container mx-auto px-6 text-center">
+            <h1 class="text-4xl font-bold text-gray-800 mb-4">Legal & Privacy Center</h1>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Your privacy and security are our top priorities. Review our comprehensive legal documentation 
+                to understand how we protect your data and your rights as a GuardianShield user.
+            </p>
+        </div>
+    </div>
+
+    <!-- Legal Documents Grid -->
+    <div class="container mx-auto px-6 py-12">
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            
+            <!-- Privacy Policy -->
+            <div class="legal-card rounded-lg p-6 transition-all duration-300">
+                <div class="flex items-center mb-4">
+                    <div class="w-12 h-12 bg-blue-500 text-white rounded-lg flex items-center justify-center mr-4">
+                        🔒
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800">Privacy Policy</h3>
+                </div>
+                <p class="text-gray-600 mb-4">
+                    Learn how we collect, use, and protect your personal information. Includes CCPA rights for California residents.
+                </p>
+                <div class="flex flex-col space-y-2">
+                    <a href="/legal/privacy-policy" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors text-center">
+                        Read Policy
+                    </a>
+                    <a href="/legal/privacy-policy.pdf" class="text-blue-500 hover:text-blue-600 transition-colors text-center text-sm">
+                        Download PDF
+                    </a>
+                </div>
+            </div>
+
+            <!-- Terms of Service -->
+            <div class="legal-card rounded-lg p-6 transition-all duration-300">
+                <div class="flex items-center mb-4">
+                    <div class="w-12 h-12 bg-green-500 text-white rounded-lg flex items-center justify-center mr-4">
+                        📋
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800">Terms of Service</h3>
+                </div>
+                <p class="text-gray-600 mb-4">
+                    Understand your rights and responsibilities when using GuardianShield's Web3 threat intelligence platform.
+                </p>
+                <div class="flex flex-col space-y-2">
+                    <a href="/legal/terms-of-service" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors text-center">
+                        Read Terms
+                    </a>
+                    <a href="/legal/terms-of-service.pdf" class="text-green-500 hover:text-green-600 transition-colors text-center text-sm">
+                        Download PDF
+                    </a>
+                </div>
+            </div>
+
+            <!-- CCPA Compliance -->
+            <div class="legal-card rounded-lg p-6 transition-all duration-300">
+                <div class="flex items-center mb-4">
+                    <div class="w-12 h-12 bg-purple-500 text-white rounded-lg flex items-center justify-center mr-4">
+                        🇺🇸
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800">CCPA Rights</h3>
+                </div>
+                <p class="text-gray-600 mb-4">
+                    California residents have additional privacy rights under CCPA. Learn how to exercise your rights.
+                </p>
+                <div class="flex flex-col space-y-2">
+                    <a href="/legal/ccpa-compliance" class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600 transition-colors text-center">
+                        View Rights
+                    </a>
+                    <a href="/ccpa-request" class="text-purple-500 hover:text-purple-600 transition-colors text-center text-sm">
+                        Submit CCPA Request
+                    </a>
+                </div>
+            </div>
+
+            <!-- Security Policy -->
+            <div class="legal-card rounded-lg p-6 transition-all duration-300">
+                <div class="flex items-center mb-4">
+                    <div class="w-12 h-12 bg-red-500 text-white rounded-lg flex items-center justify-center mr-4">
+                        🛡️
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800">Security Policy</h3>
+                </div>
+                <p class="text-gray-600 mb-4">
+                    Discover our comprehensive security measures, including Web3 blockchain security and threat detection.
+                </p>
+                <div class="flex flex-col space-y-2">
+                    <a href="/legal/security-policy" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors text-center">
+                        Read Security
+                    </a>
+                    <a href="/security-report" class="text-red-500 hover:text-red-600 transition-colors text-center text-sm">
+                        Security Report
+                    </a>
+                </div>
+            </div>
+
+            <!-- Data Retention -->
+            <div class="legal-card rounded-lg p-6 transition-all duration-300">
+                <div class="flex items-center mb-4">
+                    <div class="w-12 h-12 bg-yellow-500 text-white rounded-lg flex items-center justify-center mr-4">
+                        📊
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800">Data Retention</h3>
+                </div>
+                <p class="text-gray-600 mb-4">
+                    Learn how long we keep your data, why we keep it, and how you can request deletion or modifications.
+                </p>
+                <div class="flex flex-col space-y-2">
+                    <a href="/legal/data-retention-policy" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 transition-colors text-center">
+                        View Policy
+                    </a>
+                    <a href="/data-request" class="text-yellow-500 hover:text-yellow-600 transition-colors text-center text-sm">
+                        Request Data
+                    </a>
+                </div>
+            </div>
+
+            <!-- Contact Legal -->
+            <div class="legal-card rounded-lg p-6 transition-all duration-300">
+                <div class="flex items-center mb-4">
+                    <div class="w-12 h-12 bg-gray-500 text-white rounded-lg flex items-center justify-center mr-4">
+                        📞
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800">Legal Contact</h3>
+                </div>
+                <p class="text-gray-600 mb-4">
+                    Have questions about our legal policies? Need to report a security issue? Contact our legal team.
+                </p>
+                <div class="flex flex-col space-y-2">
+                    <a href="mailto:legal@guardian-shield.io" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition-colors text-center">
+                        Email Legal Team
+                    </a>
+                    <a href="tel:+15551234567" class="text-gray-500 hover:text-gray-600 transition-colors text-center text-sm">
+                        Call: (555) 123-4567
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Last Updated Notice -->
+    <div class="bg-gray-100 py-8">
+        <div class="container mx-auto px-6 text-center">
+            <p class="text-gray-600">
+                <strong>Last Updated:</strong> January 14, 2026 | 
+                <strong>Effective Date:</strong> January 14, 2026 | 
+                <strong>Next Review:</strong> July 14, 2026
+            </p>
+            <p class="text-sm text-gray-500 mt-2">
+                All policies apply to users within the United States only. 
+                We will notify you of any material changes 30 days in advance.
+            </p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div>
+                    <h3 class="text-lg font-semibold mb-2">🛡️ GuardianShield</h3>
+                    <p class="text-gray-400">Web3 Threat Intelligence & Autonomous Security</p>
+                </div>
+                <div class="flex space-x-6 mt-4 md:mt-0">
+                    <a href="/legal" class="text-blue-400 hover:text-blue-300">Legal Center</a>
+                    <a href="/support" class="text-blue-400 hover:text-blue-300">Support</a>
+                    <a href="/contact" class="text-blue-400 hover:text-blue-300">Contact</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Add smooth scrolling and interactive elements
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add click tracking for legal document access
+            const legalLinks = document.querySelectorAll('a[href^="/legal/"]');
+            legalLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    // Track legal document access for compliance
+                    console.log('Legal document accessed:', this.href);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

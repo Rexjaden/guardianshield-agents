@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHIELD 3D Effects Control Panel</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .control-panel {
+            max-width: 800px;
+            margin: 0 auto;
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(25px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+        }
+        h1 {
+            text-align: center;
+            background: linear-gradient(135deg, #00d4aa 0%, #667eea 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 30px;
+        }
+        .control-group {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .control-group h3 {
+            color: #00d4aa;
+            margin-top: 0;
+            border-bottom: 2px solid #00d4aa;
+            padding-bottom: 10px;
+        }
+        .control-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        .control-label {
+            font-weight: 600;
+            min-width: 200px;
+        }
+        .control-input {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        button {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #00d4aa 0%, #667eea 100%);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 212, 170, 0.3);
+        }
+        button.stop {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+        }
+        button.stop:hover {
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
+        }
+        input[type="range"] {
+            width: 150px;
+            margin: 0 10px;
+        }
+        input[type="number"] {
+            width: 80px;
+            padding: 5px 10px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            color: white;
+        }
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ff6b6b;
+            margin-left: 10px;
+        }
+        .status-indicator.active {
+            background: #00d4aa;
+            box-shadow: 0 0 10px rgba(0, 212, 170, 0.5);
+        }
+        .preset-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+        .preset-btn {
+            padding: 8px 15px;
+            font-size: 0.9rem;
+            background: rgba(102, 126, 234, 0.7);
+        }
+    </style>
+</head>
+<body>
+    <div class="control-panel">
+        <h1>🛡️ SHIELD 3D Effects Control Panel</h1>
+        
+        <!-- Particle System Controls -->
+        <div class="control-group">
+            <h3>⚡ Interactive Particle System</h3>
+            
+            <div class="control-row">
+                <span class="control-label">Particle System</span>
+                <div class="control-input">
+                    <button onclick="toggleParticles()" id="particleToggle">Stop Particles</button>
+                    <div class="status-indicator active" id="particleStatus"></div>
+                </div>
+            </div>
+            
+            <div class="control-row">
+                <span class="control-label">Particle Count</span>
+                <div class="control-input">
+                    <input type="range" min="50" max="500" value="200" id="particleCount" onchange="updateParticleCount(this.value)">
+                    <span id="particleCountValue">200</span>
+                </div>
+            </div>
+            
+            <div class="control-row">
+                <span class="control-label">Animation Speed</span>
+                <div class="control-input">
+                    <input type="range" min="0.1" max="3" step="0.1" value="1" id="animationSpeed" onchange="updateAnimationSpeed(this.value)">
+                    <span id="speedValue">1x</span>
+                </div>
+            </div>
+            
+            <div class="control-row">
+                <span class="control-label">Mouse Interaction</span>
+                <div class="control-input">
+                    <button onclick="toggleMouseInteraction()" id="mouseToggle">Disable Mouse</button>
+                    <div class="status-indicator active" id="mouseStatus"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 3D Token Scene Controls -->
+        <div class="control-group">
+            <h3>🎯 3D Token Scenes</h3>
+            
+            <div class="control-row">
+                <span class="control-label">GUARD Token 3D</span>
+                <div class="control-input">
+                    <button onclick="toggle3DToken('guard')" id="guard3DToggle">Stop GUARD 3D</button>
+                    <div class="status-indicator active" id="guard3DStatus"></div>
+                </div>
+            </div>
+            
+            <div class="control-row">
+                <span class="control-label">SHIELD Token 3D</span>
+                <div class="control-input">
+                    <button onclick="toggle3DToken('shield')" id="shield3DToggle">Stop SHIELD 3D</button>
+                    <div class="status-indicator active" id="shield3DStatus"></div>
+                </div>
+            </div>
+            
+            <div class="control-row">
+                <span class="control-label">Rotation Speed</span>
+                <div class="control-input">
+                    <input type="range" min="0" max="0.05" step="0.005" value="0.01" id="rotationSpeed" onchange="updateRotationSpeed(this.value)">
+                    <span id="rotationValue">1x</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Matrix Effect Controls -->
+        <div class="control-group">
+            <h3>💚 Matrix Digital Rain</h3>
+            
+            <div class="control-row">
+                <span class="control-label">Matrix Effect</span>
+                <div class="control-input">
+                    <button onclick="toggleMatrix()" id="matrixToggle">Stop Matrix</button>
+                    <div class="status-indicator active" id="matrixStatus"></div>
+                </div>
+            </div>
+            
+            <div class="control-row">
+                <span class="control-label">Matrix Opacity</span>
+                <div class="control-input">
+                    <input type="range" min="0" max="1" step="0.1" value="0.15" id="matrixOpacity" onchange="updateMatrixOpacity(this.value)">
+                    <span id="opacityValue">15%</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Holographic Effects -->
+        <div class="control-group">
+            <h3>✨ Holographic Effects</h3>
+            
+            <div class="control-row">
+                <span class="control-label">Holographic Overlays</span>
+                <div class="control-input">
+                    <button onclick="toggleHolographic()" id="holoToggle">Disable Holo</button>
+                    <div class="status-indicator active" id="holoStatus"></div>
+                </div>
+            </div>
+            
+            <div class="control-row">
+                <span class="control-label">Glow Effects</span>
+                <div class="control-input">
+                    <button onclick="toggleGlow()" id="glowToggle">Disable Glow</button>
+                    <div class="status-indicator active" id="glowStatus"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Performance Presets -->
+        <div class="control-group">
+            <h3>🚀 Performance Presets</h3>
+            <div class="preset-buttons">
+                <button class="preset-btn" onclick="applyPreset('performance')">High Performance</button>
+                <button class="preset-btn" onclick="applyPreset('balanced')">Balanced</button>
+                <button class="preset-btn" onclick="applyPreset('quality')">Max Quality</button>
+                <button class="preset-btn" onclick="applyPreset('minimal')">Minimal Effects</button>
+                <button class="preset-btn stop" onclick="applyPreset('off')">All Effects Off</button>
+            </div>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="control-group">
+            <h3>⚡ Quick Actions</h3>
+            <div class="preset-buttons">
+                <button onclick="pauseAll()">Pause All</button>
+                <button onclick="resumeAll()">Resume All</button>
+                <button onclick="resetDefaults()">Reset Defaults</button>
+                <button class="stop" onclick="stopAll()">Stop Everything</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Global state tracking
+        let effectStates = {
+            particles: true,
+            guard3D: true,
+            shield3D: true,
+            matrix: true,
+            holographic: true,
+            glow: true,
+            mouseInteraction: true
+        };
+        
+        // Control Functions
+        function toggleParticles() {
+            const btn = document.getElementById('particleToggle');
+            const status = document.getElementById('particleStatus');
+            
+            if (effectStates.particles) {
+                // Stop particles in parent window
+                if (parent.window.interactiveParticleSystem) {
+                    parent.window.interactiveParticleSystem.stop();
+                }
+                btn.textContent = 'Start Particles';
+                status.classList.remove('active');
+                effectStates.particles = false;
+            } else {
+                // Start particles in parent window
+                if (parent.window.interactiveParticleSystem) {
+                    parent.window.interactiveParticleSystem.start();
+                }
+                btn.textContent = 'Stop Particles';
+                status.classList.add('active');
+                effectStates.particles = true;
+            }
+        }
+        
+        function updateParticleCount(count) {
+            document.getElementById('particleCountValue').textContent = count;
+            // Update particle count in parent window
+            if (parent.window.interactiveParticleSystem) {
+                parent.window.interactiveParticleSystem.setParticleCount(parseInt(count));
+            }
+        }
+        
+        function updateAnimationSpeed(speed) {
+            document.getElementById('speedValue').textContent = speed + 'x';
+            // Update animation speed in parent window
+            if (parent.window.interactiveParticleSystem) {
+                parent.window.interactiveParticleSystem.setSpeed(parseFloat(speed));
+            }
+        }
+        
+        function toggle3DToken(type) {
+            const btn = document.getElementById(type + '3DToggle');
+            const status = document.getElementById(type + '3DStatus');
+            const isActive = effectStates[type + '3D'];
+            
+            if (isActive) {
+                // Stop 3D token animation
+                btn.textContent = 'Start ' + type.toUpperCase() + ' 3D';
+                status.classList.remove('active');
+                effectStates[type + '3D'] = false;
+                
+                // Stop animation in parent window
+                if (parent.window[type + 'TokenScene']) {
+                    parent.window[type + 'TokenScene'].paused = true;
+                }
+            } else {
+                // Start 3D token animation
+                btn.textContent = 'Stop ' + type.toUpperCase() + ' 3D';
+                status.classList.add('active');
+                effectStates[type + '3D'] = true;
+                
+                // Resume animation in parent window
+                if (parent.window[type + 'TokenScene']) {
+                    parent.window[type + 'TokenScene'].paused = false;
+                }
+            }
+        }
+        
+        function updateRotationSpeed(speed) {
+            const value = (parseFloat(speed) / 0.01).toFixed(1);
+            document.getElementById('rotationValue').textContent = value + 'x';
+            
+            // Update rotation speed in parent window
+            if (parent.window.guardTokenScene) {
+                parent.window.guardTokenScene.rotationSpeed = parseFloat(speed);
+            }
+            if (parent.window.shieldTokenScene) {
+                parent.window.shieldTokenScene.rotationSpeed = parseFloat(speed) * 0.8;
+            }
+        }
+        
+        function toggleMatrix() {
+            const btn = document.getElementById('matrixToggle');
+            const status = document.getElementById('matrixStatus');
+            
+            if (effectStates.matrix) {
+                // Stop matrix effect
+                if (parent.window.matrixAnimation) {
+                    clearInterval(parent.window.matrixAnimation);
+                }
+                btn.textContent = 'Start Matrix';
+                status.classList.remove('active');
+                effectStates.matrix = false;
+            } else {
+                // Start matrix effect
+                if (parent.window.initMatrixRain) {
+                    parent.window.initMatrixRain();
+                }
+                btn.textContent = 'Stop Matrix';
+                status.classList.add('active');
+                effectStates.matrix = true;
+            }
+        }
+        
+        function updateMatrixOpacity(opacity) {
+            const percentage = Math.round(parseFloat(opacity) * 100);
+            document.getElementById('opacityValue').textContent = percentage + '%';
+            
+            // Update matrix canvas opacity in parent window
+            const matrixCanvas = parent.document.getElementById('matrixCanvas');
+            if (matrixCanvas) {
+                matrixCanvas.style.opacity = opacity;
+            }
+        }
+        
+        function toggleHolographic() {
+            const btn = document.getElementById('holoToggle');
+            const status = document.getElementById('holoStatus');
+            
+            if (effectStates.holographic) {
+                // Hide holographic overlays
+                const holoElements = parent.document.querySelectorAll('.holographic-overlay');
+                holoElements.forEach(el => el.style.display = 'none');
+                btn.textContent = 'Enable Holo';
+                status.classList.remove('active');
+                effectStates.holographic = false;
+            } else {
+                // Show holographic overlays
+                const holoElements = parent.document.querySelectorAll('.holographic-overlay');
+                holoElements.forEach(el => el.style.display = 'block');
+                btn.textContent = 'Disable Holo';
+                status.classList.add('active');
+                effectStates.holographic = true;
+            }
+        }
+        
+        function toggleGlow() {
+            const btn = document.getElementById('glowToggle');
+            const status = document.getElementById('glowStatus');
+            
+            if (effectStates.glow) {
+                // Disable glow effects
+                const style = parent.document.createElement('style');
+                style.id = 'glow-disable';
+                style.textContent = '.guard-symbol, .shield-symbol { animation: none !important; text-shadow: none !important; }';
+                parent.document.head.appendChild(style);
+                btn.textContent = 'Enable Glow';
+                status.classList.remove('active');
+                effectStates.glow = false;
+            } else {
+                // Enable glow effects
+                const style = parent.document.getElementById('glow-disable');
+                if (style) style.remove();
+                btn.textContent = 'Disable Glow';
+                status.classList.add('active');
+                effectStates.glow = true;
+            }
+        }
+        
+        // Performance Presets
+        function applyPreset(preset) {
+            switch(preset) {
+                case 'performance':
+                    // High performance - minimal effects
+                    updateParticleCount(50);
+                    updateAnimationSpeed(0.5);
+                    updateMatrixOpacity(0.05);
+                    break;
+                    
+                case 'balanced':
+                    // Balanced settings
+                    updateParticleCount(150);
+                    updateAnimationSpeed(1);
+                    updateMatrixOpacity(0.1);
+                    break;
+                    
+                case 'quality':
+                    // Max quality - all effects
+                    updateParticleCount(300);
+                    updateAnimationSpeed(1.5);
+                    updateMatrixOpacity(0.2);
+                    break;
+                    
+                case 'minimal':
+                    // Minimal effects
+                    updateParticleCount(25);
+                    updateAnimationSpeed(0.3);
+                    updateMatrixOpacity(0.02);
+                    if (effectStates.holographic) toggleHolographic();
+                    break;
+                    
+                case 'off':
+                    // Turn everything off
+                    stopAll();
+                    break;
+            }
+        }
+        
+        function pauseAll() {
+            // Pause all animations without stopping them
+            if (parent.window.interactiveParticleSystem) {
+                parent.window.interactiveParticleSystem.pause();
+            }
+        }
+        
+        function resumeAll() {
+            // Resume all paused animations
+            if (parent.window.interactiveParticleSystem) {
+                parent.window.interactiveParticleSystem.resume();
+            }
+        }
+        
+        function stopAll() {
+            // Stop all effects
+            if (effectStates.particles) toggleParticles();
+            if (effectStates.guard3D) toggle3DToken('guard');
+            if (effectStates.shield3D) toggle3DToken('shield');
+            if (effectStates.matrix) toggleMatrix();
+            if (effectStates.holographic) toggleHolographic();
+        }
+        
+        function resetDefaults() {
+            // Reset to default values
+            document.getElementById('particleCount').value = 200;
+            updateParticleCount(200);
+            
+            document.getElementById('animationSpeed').value = 1;
+            updateAnimationSpeed(1);
+            
+            document.getElementById('matrixOpacity').value = 0.15;
+            updateMatrixOpacity(0.15);
+            
+            document.getElementById('rotationSpeed').value = 0.01;
+            updateRotationSpeed(0.01);
+            
+            // Ensure all effects are enabled
+            if (!effectStates.particles) toggleParticles();
+            if (!effectStates.guard3D) toggle3DToken('guard');
+            if (!effectStates.shield3D) toggle3DToken('shield');
+            if (!effectStates.matrix) toggleMatrix();
+            if (!effectStates.holographic) toggleHolographic();
+            if (!effectStates.glow) toggleGlow();
+        }
+    </script>
+</body>
+</html>

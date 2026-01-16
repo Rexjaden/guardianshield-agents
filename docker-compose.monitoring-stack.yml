@@ -1,0 +1,120 @@
+# GuardianShield ERC-8055 AlertManager Integration
+# Advanced monitoring and alerting for Shield Token ecosystem
+
+version: '3.8'
+
+services:
+  # AlertManager for ERC-8055 monitoring
+  guardianshield-alertmanager:
+    image: prom/alertmanager:v0.26.0
+    container_name: guardianshield-alertmanager
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./monitoring-config/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+      - alertmanager-data:/alertmanager
+    networks:
+      - cilium-mesh
+      - guardianshield-network
+    labels:
+      - "io.cilium.service-mesh=alerting"
+      - "guardianshield.service=alertmanager"
+      - "erc8055.component=monitoring"
+    environment:
+      - ALERTMANAGER_CLUSTER_LISTEN_ADDRESS=0.0.0.0:9094
+      - ALERTMANAGER_WEB_EXTERNAL_URL=http://localhost:9093
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+      - '--storage.path=/alertmanager'
+      - '--web.console.libraries=/etc/alertmanager/console_libraries'
+      - '--web.console.templates=/etc/alertmanager/consoles'
+      - '--web.external-url=http://localhost:9093'
+      - '--cluster.listen-address=0.0.0.0:9094'
+      - '--log.level=info'
+
+  # Enhanced Prometheus with AlertManager integration
+  guardianshield-prometheus:
+    image: prom/prometheus:v2.48.0
+    container_name: guardianshield-prometheus-enhanced
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring-config/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./monitoring-config/erc8055-alerts.yml:/etc/prometheus/erc8055-alerts.yml
+      - ./monitoring-config/website-alerts.yml:/etc/prometheus/website-alerts.yml
+      - prometheus-data:/prometheus
+    networks:
+      - cilium-mesh
+      - guardianshield-network
+    labels:
+      - "io.cilium.service-mesh=metrics"
+      - "guardianshield.service=prometheus"
+      - "erc8055.component=monitoring"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=30d'
+      - '--web.enable-lifecycle'
+      - '--alertmanager.url=http://guardianshield-alertmanager:9093'
+
+  # Grafana with AlertManager integration
+  guardianshield-grafana:
+    image: grafana/grafana:10.2.2
+    container_name: guardianshield-grafana-enhanced
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./monitoring-config/grafana-datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
+      - ./monitoring-config/grafana-dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml
+      - ./monitoring-config/dashboards:/var/lib/grafana/dashboards
+      - grafana-data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=guardianshield2026
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_ALERTING_ENABLED=true
+      - GF_UNIFIED_ALERTING_ENABLED=true
+      - GF_SERVER_DOMAIN=localhost
+      - GF_SERVER_ROOT_URL=http://localhost:3000
+    networks:
+      - cilium-mesh
+      - guardianshield-network
+    labels:
+      - "io.cilium.service-mesh=dashboard"
+      - "guardianshield.service=grafana"
+      - "erc8055.component=visualization"
+    depends_on:
+      - guardianshield-prometheus
+      - guardianshield-alertmanager
+
+  # Notification Gateway for alerts
+  notification-gateway:
+    image: timonwong/prometheus-webhook-dingtalk:v2.1.0
+    container_name: guardianshield-notifications
+    ports:
+      - "8060:8060"
+    environment:
+      - WEBHOOK_URL=http://localhost:8060/dingtalk/webhook
+    networks:
+      - cilium-mesh
+    labels:
+      - "io.cilium.service-mesh=notifications"
+      - "guardianshield.service=alerts"
+
+networks:
+  cilium-mesh:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+  guardianshield-network:
+    external: true
+
+volumes:
+  prometheus-data:
+    driver: local
+  alertmanager-data:
+    driver: local
+  grafana-data:
+    driver: local

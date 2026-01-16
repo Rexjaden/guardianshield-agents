@@ -3,490 +3,558 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GuardianShield - Public Dashboard</title>
-    <link rel="stylesheet" href="/static/css/dashboard.css">
-    <link rel="stylesheet" href="/static/css/components.css">
+    <title>GuardianShield - Coming Soon | AI Security Platform</title>
+    <meta name="description" content="GuardianShield AI Security Platform - Revolutionary Web3 threat intelligence and autonomous security agents. Coming Soon.">
+    <meta name="keywords" content="AI Security, Web3, Blockchain Security, Threat Intelligence, GuardianShield">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="GuardianShield - Coming Soon">
+    <meta property="og:description" content="Revolutionary AI Security Platform for Web3 and Blockchain Protection">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://guardian-shield.io">
+    
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-color: #00ffff;
+            --secondary-color: #ff00ff;
+            --accent-color: #0099ff;
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a2e;
+            --bg-tertiary: #16213e;
+            --text-primary: #ffffff;
+            --text-secondary: #cccccc;
+            --text-muted: #888888;
+            --success-color: #00ff88;
+            --warning-color: #ffaa00;
+            --glow-cyan: 0 0 20px rgba(0, 255, 255, 0.5);
+            --glow-magenta: 0 0 20px rgba(255, 0, 255, 0.5);
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, var(--bg-tertiary) 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(circle at 25% 25%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(255, 0, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(0, 153, 255, 0.05) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Floating Particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+            opacity: 0.7;
+        }
+        
+        .particle:nth-child(even) {
+            background: var(--secondary-color);
+            animation-duration: 8s;
+            animation-delay: -2s;
+        }
+        
+        .particle:nth-child(3n) {
+            background: var(--accent-color);
+            animation-duration: 10s;
+            animation-delay: -4s;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); opacity: 0.7; }
+            25% { transform: translateY(-20px) translateX(10px); opacity: 1; }
+            50% { transform: translateY(-40px) translateX(-5px); opacity: 0.8; }
+            75% { transform: translateY(-20px) translateX(-10px); opacity: 1; }
+        }
+        
+        /* Main Container */
+        .coming-soon-container {
+            text-align: center;
+            max-width: 800px;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        /* Logo */
+        .logo {
+            margin-bottom: 30px;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        .logo i {
+            font-size: 4rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            display: block;
+            filter: drop-shadow(var(--glow-cyan));
+        }
+        
+        .logo h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        
+        .logo .tagline {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        @keyframes glow {
+            0% { filter: drop-shadow(var(--glow-cyan)); }
+            100% { filter: drop-shadow(var(--glow-magenta)); }
+        }
+        
+        /* Coming Soon Text */
+        .coming-soon-text {
+            margin: 40px 0;
+        }
+        
+        .coming-soon-text h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+        }
+        
+        .coming-soon-text p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+        }
+        
+        /* Features Preview */
+        .features-preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin: 50px 0;
+        }
+        
+        .feature-card {
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.05), rgba(255, 0, 255, 0.05));
+            padding: 30px 20px;
+            border-radius: 15px;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--glow-cyan);
+            border-color: var(--primary-color);
+        }
+        
+        .feature-card i {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            display: block;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--text-primary);
+        }
+        
+        .feature-card p {
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        
+        /* Notify Me Section */
+        .notify-section {
+            margin: 50px 0;
+        }
+        
+        .notify-form {
+            display: flex;
+            max-width: 500px;
+            margin: 0 auto;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .notify-input {
+            flex: 1;
+            min-width: 250px;
+            padding: 15px 20px;
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            color: var(--text-primary);
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        
+        .notify-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: var(--glow-cyan);
+        }
+        
+        .notify-input::placeholder {
+            color: var(--text-muted);
+        }
+        
+        .notify-btn {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            border: none;
+            border-radius: 10px;
+            color: var(--bg-primary);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .notify-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--glow-cyan);
+        }
+        
+        /* Progress Bar */
+        .progress-section {
+            margin: 40px 0;
+        }
+        
+        .progress-label {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            width: 0%;
+            animation: progress 3s ease-out forwards;
+            border-radius: 10px;
+        }
+        
+        @keyframes progress {
+            0% { width: 0%; }
+            100% { width: 85%; }
+        }
+        
+        .progress-text {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--success-color);
+        }
+        
+        /* Social Links */
+        .social-links {
+            margin-top: 40px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        
+        .social-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            border-radius: 50%;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .social-link:hover {
+            border-color: var(--primary-color);
+            color: var(--bg-primary);
+            background: var(--primary-color);
+            box-shadow: var(--glow-cyan);
+            transform: translateY(-3px);
+        }
+        
+        /* Admin Access */
+        .admin-access {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        
+        .admin-btn {
+            padding: 10px 20px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 5px;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .admin-btn:hover {
+            background: rgba(0, 255, 255, 0.1);
+            border-color: var(--primary-color);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .logo h1 {
+                font-size: 2.5rem;
+            }
+            
+            .coming-soon-text h2 {
+                font-size: 2rem;
+            }
+            
+            .features-preview {
+                grid-template-columns: 1fr;
+            }
+            
+            .notify-form {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .notify-input {
+                min-width: unset;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .coming-soon-container {
+                padding: 20px 15px;
+            }
+            
+            .logo h1 {
+                font-size: 2rem;
+            }
+            
+            .logo .tagline {
+                font-size: 1rem;
+            }
+            
+            .coming-soon-text h2 {
+                font-size: 1.8rem;
+            }
+            
+            .coming-soon-text p {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- Security Notice -->
-    <div id="security-notice" style="
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        background: linear-gradient(90deg, #ff4444, #ff6666);
-        color: white;
-        text-align: center;
-        padding: 10px;
-        z-index: 10001;
-        font-weight: 600;
-        display: none;
-    ">
-        <i class="fas fa-shield-alt"></i> 
-        Agent monitoring and control features require admin access. 
-        <a href="start.html" style="color: #ffff00; text-decoration: underline;">Return to Start Page</a>
+    <!-- Animated Background -->
+    <div class="bg-animation"></div>
+    
+    <!-- Floating Particles -->
+    <div class="particles">
+        <!-- Particles will be generated by JavaScript -->
     </div>
-
-    <div class="app-container">
-        <!-- Sidebar -->
-        <nav class="sidebar">
-            <div class="sidebar-header">
-                <div class="logo">
-                    <i class="fas fa-shield-alt"></i>
-                    <h2>GuardianShield</h2>
-                </div>
-                <button class="sidebar-toggle" onclick="toggleSidebar()">
-                    <i class="fas fa-bars"></i>
-                </button>
+    
+    <!-- Admin Access -->
+    <div class="admin-access">
+        <a href="start.html" class="admin-btn">
+            <i class="fas fa-shield-alt"></i> Admin Access
+        </a>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="coming-soon-container">
+        <!-- Logo -->
+        <div class="logo">
+            <i class="fas fa-shield-alt"></i>
+            <h1>GuardianShield</h1>
+            <p class="tagline">AI Security Platform</p>
+        </div>
+        
+        <!-- Coming Soon Text -->
+        <div class="coming-soon-text">
+            <h2>Something Amazing is Coming</h2>
+            <p>
+                We're building the next generation of AI-powered Web3 security. 
+                GuardianShield combines autonomous agents, advanced threat intelligence, 
+                and blockchain security to protect your digital assets like never before.
+            </p>
+        </div>
+        
+        <!-- Features Preview -->
+        <div class="features-preview">
+            <div class="feature-card">
+                <i class="fas fa-robot"></i>
+                <h3>Autonomous AI Agents</h3>
+                <p>Self-learning security agents that adapt and evolve to protect against emerging threats in real-time.</p>
             </div>
             
-            <ul class="nav-menu">
-                <li class="nav-item active">
-                    <a href="#" onclick="showSection('dashboard')" class="nav-link">
-                        <i class="fas fa-tachometer-alt"></i>
-                        <span>Dashboard</span>
-                    </a>
-                </li>
-                <li class="nav-item restricted" onclick="showRestrictedAccess('agents')">
-                    <a href="#" class="nav-link">
-                        <i class="fas fa-robot"></i>
-                        <span>Agents</span>
-                        <i class="fas fa-lock" style="margin-left: auto; color: #ff4444;"></i>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" onclick="showSection('threats')" class="nav-link">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        <span>Threat Monitor</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" onclick="showSection('analytics')" class="nav-link">
-                        <i class="fas fa-chart-line"></i>
-                        <span>Analytics</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" onclick="showSection('logs')" class="nav-link">
-                        <i class="fas fa-file-alt"></i>
-                        <span>Logs</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" onclick="showSection('settings')" class="nav-link">
-                        <i class="fas fa-cog"></i>
-                        <span>Settings</span>
-                    </a>
-                </li>
-            </ul>
+            <div class="feature-card">
+                <i class="fas fa-eye"></i>
+                <h3>Threat Intelligence</h3>
+                <p>Advanced monitoring and analysis of Web3 threats with predictive security capabilities.</p>
+            </div>
             
-            <div class="sidebar-footer">
-                <div class="system-status">
-                    <div class="status-indicator online"></div>
-                    <span>System Online</span>
-                </div>
+            <div class="feature-card">
+                <i class="fas fa-network-wired"></i>
+                <h3>Blockchain Security</h3>
+                <p>Comprehensive protection for smart contracts, DeFi protocols, and blockchain transactions.</p>
             </div>
-        </nav>
-
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Header -->
-            <header class="top-header">
-                <div class="header-left">
-                    <h1 id="page-title">Dashboard</h1>
-                    <div class="breadcrumb">
-                        <span>Home</span> / <span id="breadcrumb-current">Dashboard</span>
-                    </div>
-                </div>
-                <div class="header-right">
-                    <div class="header-actions">
-                        <button class="btn-emergency" onclick="emergencyStop()">
-                            <i class="fas fa-stop"></i>
-                            Emergency Stop
-                        </button>
-                        <button class="notification-btn" onclick="toggleNotifications()">
-                            <i class="fas fa-bell"></i>
-                            <span class="notification-badge">3</span>
-                        </button>
-                        <div class="user-menu">
-                            <img src="/static/assets/avatar.png" alt="Admin" class="user-avatar" onerror="this.style.display='none'">
-                            <span>Admin</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </div>
-                    </div>
-                </div>
-            </header>
-
-            <!-- Dashboard Content -->
-            <div class="content-area">
-                <!-- Dashboard Section -->
-                <section id="dashboard-section" class="content-section active">
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-icon">
-                                <i class="fas fa-robot"></i>
-                            </div>
-                            <div class="stat-content">
-                                <h3 id="active-agents">8</h3>
-                                <p>Active Agents</p>
-                                <span class="stat-change positive">+2 today</span>
-                            </div>
-                        </div>
-                        
-                        <div class="stat-card">
-                            <div class="stat-icon">
-                                <i class="fas fa-shield-alt"></i>
-                            </div>
-                            <div class="stat-content">
-                                <h3 id="threats-blocked">247</h3>
-                                <p>Threats Blocked</p>
-                                <span class="stat-change positive">+12 today</span>
-                            </div>
-                        </div>
-                        
-                        <div class="stat-card">
-                            <div class="stat-icon">
-                                <i class="fas fa-brain"></i>
-                            </div>
-                            <div class="stat-content">
-                                <h3 id="evolutions">15</h3>
-                                <p>Agent Evolutions</p>
-                                <span class="stat-change positive">+3 today</span>
-                            </div>
-                        </div>
-                        
-                        <div class="stat-card">
-                            <div class="stat-icon">
-                                <i class="fas fa-exclamation-circle"></i>
-                            </div>
-                            <div class="stat-content">
-                                <h3 id="alerts">3</h3>
-                                <p>Active Alerts</p>
-                                <span class="stat-change neutral">No change</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="dashboard-grid">
-                        <div class="dashboard-card">
-                            <div class="card-header">
-                                <h3>Real-Time Agent Activity</h3>
-                                <button class="btn-refresh" onclick="refreshAgentActivity()">
-                                    <i class="fas fa-sync-alt"></i>
-                                </button>
-                            </div>
-                            <div class="card-content">
-                                <div id="agent-activity-list" class="activity-list">
-                                    <!-- Dynamic content will be loaded here -->
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="dashboard-card">
-                            <div class="card-header">
-                                <h3>Threat Intelligence Feed</h3>
-                                <div class="feed-controls">
-                                    <button class="btn-small" onclick="pauseFeed()">
-                                        <i class="fas fa-pause"></i>
-                                    </button>
-                                    <button class="btn-small" onclick="clearFeed()">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="card-content">
-                                <div id="threat-feed" class="threat-feed">
-                                    <!-- Dynamic threat feed content -->
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="dashboard-card">
-                            <div class="card-header">
-                                <h3>System Performance</h3>
-                                <select class="time-range-select" onchange="updatePerformanceChart(this.value)">
-                                    <option value="1h">Last Hour</option>
-                                    <option value="24h">Last 24 Hours</option>
-                                    <option value="7d">Last 7 Days</option>
-                                </select>
-                            </div>
-                            <div class="card-content">
-                                <canvas id="performance-chart"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Agents Section -->
-                <section id="agents-section" class="content-section">
-                    <div class="section-header">
-                        <div class="section-title">
-                            <h2>Agent Management</h2>
-                            <p>Monitor and control autonomous agents</p>
-                        </div>
-                        <div class="section-actions">
-                            <button class="btn-primary" onclick="deployNewAgent()">
-                                <i class="fas fa-plus"></i>
-                                Deploy Agent
-                            </button>
-                        </div>
-                    </div>
-
-                    <div id="agents-grid" class="agents-grid">
-                        <!-- Agent cards will be dynamically generated -->
-                    </div>
-                </section>
-
-                <!-- Threats Section -->
-                <section id="threats-section" class="content-section">
-                    <div class="section-header">
-                        <div class="section-title">
-                            <h2>Threat Monitoring</h2>
-                            <p>Real-time threat detection and analysis</p>
-                        </div>
-                        <div class="section-actions">
-                            <button class="btn-secondary" onclick="exportThreats()">
-                                <i class="fas fa-download"></i>
-                                Export Data
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="threats-dashboard">
-                        <div class="threat-map">
-                            <h3>Global Threat Map</h3>
-                            <div id="threat-map-container" class="map-container">
-                                <!-- Threat map visualization -->
-                            </div>
-                        </div>
-                        
-                        <div class="threat-timeline">
-                            <h3>Recent Threats</h3>
-                            <div id="threat-timeline-list" class="timeline-list">
-                                <!-- Timeline items -->
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Analytics Section -->
-                <section id="analytics-section" class="content-section">
-                    <div class="section-header">
-                        <div class="section-title">
-                            <h2>Analytics & Insights</h2>
-                            <p>Deep analysis and performance metrics</p>
-                        </div>
-                    </div>
-
-                    <div class="analytics-grid">
-                        <div class="analytics-card">
-                            <h3>Agent Evolution Trends</h3>
-                            <canvas id="evolution-chart"></canvas>
-                        </div>
-                        
-                        <div class="analytics-card">
-                            <h3>Threat Detection Accuracy</h3>
-                            <canvas id="accuracy-chart"></canvas>
-                        </div>
-                        
-                        <div class="analytics-card">
-                            <h3>Response Time Analytics</h3>
-                            <canvas id="response-chart"></canvas>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Logs Section -->
-                <section id="logs-section" class="content-section">
-                    <div class="section-header">
-                        <div class="section-title">
-                            <h2>System Logs</h2>
-                            <p>Detailed activity and debug information</p>
-                        </div>
-                        <div class="section-actions">
-                            <button class="btn-secondary" onclick="clearLogs()">
-                                <i class="fas fa-trash"></i>
-                                Clear Logs
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="logs-container">
-                        <div class="log-filters">
-                            <select id="log-level-filter" onchange="filterLogs()">
-                                <option value="all">All Levels</option>
-                                <option value="error">Error</option>
-                                <option value="warn">Warning</option>
-                                <option value="info">Info</option>
-                                <option value="debug">Debug</option>
-                            </select>
-                            <input type="text" id="log-search" placeholder="Search logs..." onkeyup="searchLogs()">
-                        </div>
-                        
-                        <div id="logs-display" class="logs-display">
-                            <!-- Log entries will be displayed here -->
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Settings Section -->
-                <section id="settings-section" class="content-section">
-                    <div class="section-header">
-                        <div class="section-title">
-                            <h2>System Settings</h2>
-                            <p>Configure GuardianShield parameters</p>
-                        </div>
-                    </div>
-
-                    <div class="settings-grid">
-                        <div class="settings-card">
-                            <h3>Agent Configuration</h3>
-                            <div class="setting-item">
-                                <label>Autonomy Level</label>
-                                <input type="range" id="autonomy-level" min="1" max="10" value="10" onchange="updateAutonomyLevel(this.value)">
-                                <span id="autonomy-value">10</span>
-                            </div>
-                            <div class="setting-item">
-                                <label>Auto Evolution</label>
-                                <input type="checkbox" id="auto-evolution" checked onchange="toggleAutoEvolution(this.checked)">
-                            </div>
-                        </div>
-                        
-                        <div class="settings-card">
-                            <h3>Security Settings</h3>
-                            <div class="setting-item">
-                                <label>Critical Action Threshold</label>
-                                <input type="number" id="critical-threshold" min="1" max="10" value="8" onchange="updateThreshold(this.value)">
-                            </div>
-                            <div class="setting-item">
-                                <label>Monitoring Interval (seconds)</label>
-                                <input type="number" id="monitoring-interval" min="5" max="300" value="30" onchange="updateInterval(this.value)">
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            </div>
-        </main>
-    </div>
-
-    <!-- Notification Panel -->
-    <div id="notification-panel" class="notification-panel">
-        <div class="notification-header">
-            <h3>Notifications</h3>
-            <button onclick="toggleNotifications()">
-                <i class="fas fa-times"></i>
-            </button>
         </div>
-        <div class="notification-list">
-            <!-- Notifications will be loaded here -->
+        
+        <!-- Progress Section -->
+        <div class="progress-section">
+            <p class="progress-label">Development Progress</p>
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+            <p class="progress-text">85% Complete</p>
+        </div>
+        
+        <!-- Notify Me Section -->
+        <div class="notify-section">
+            <h3 style="color: var(--text-primary); margin-bottom: 20px; font-size: 1.5rem;">Get Notified When We Launch</h3>
+            <form class="notify-form" action="#" method="POST" onsubmit="handleNotification(event)">
+                <input type="email" class="notify-input" placeholder="Enter your email address" required>
+                <button type="submit" class="notify-btn">Notify Me</button>
+            </form>
+        </div>
+        
+        <!-- Social Links -->
+        <div class="social-links">
+            <a href="#" class="social-link" title="Discord Community">
+                <i class="fab fa-discord"></i>
+            </a>
+            <a href="#" class="social-link" title="Twitter Updates">
+                <i class="fab fa-twitter"></i>
+            </a>
+            <a href="#" class="social-link" title="GitHub Repository">
+                <i class="fab fa-github"></i>
+            </a>
+            <a href="#" class="social-link" title="Telegram Channel">
+                <i class="fab fa-telegram"></i>
+            </a>
         </div>
     </div>
-
-    <!-- Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-    <script src="/static/js/dashboard.js"></script>
-    <script src="/static/js/threats.js"></script>
-    <script src="/static/js/analytics.js"></script>
-    <script src="/static/js/websocket.js"></script>
+    
     <script>
-        // Security restrictions for public dashboard
-        function showRestrictedAccess(section) {
-            const notice = document.getElementById('security-notice');
-            notice.style.display = 'block';
+        // Generate floating particles
+        function createParticles() {
+            const particlesContainer = document.querySelector('.particles');
+            const particleCount = 50;
             
-            // Show restricted access modal
-            const modal = document.createElement('div');
-            modal.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0, 0, 0, 0.8);
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                z-index: 10000;
-            `;
-            
-            modal.innerHTML = `
-                <div style="
-                    background: linear-gradient(135deg, #1a1a2e, #16213e);
-                    border: 2px solid #ff4444;
-                    border-radius: 15px;
-                    padding: 30px;
-                    text-align: center;
-                    max-width: 400px;
-                    color: white;
-                ">
-                    <i class="fas fa-shield-alt" style="font-size: 3rem; color: #ff4444; margin-bottom: 20px;"></i>
-                    <h2 style="color: #ff4444; margin-bottom: 15px;">Restricted Access</h2>
-                    <p style="margin-bottom: 25px;">Agent monitoring and control features require admin access through the secure console.</p>
-                    <div style="display: flex; gap: 15px; justify-content: center;">
-                        <button onclick="this.parentElement.parentElement.parentElement.remove()" style="
-                            background: #666;
-                            color: white;
-                            border: none;
-                            padding: 10px 20px;
-                            border-radius: 5px;
-                            cursor: pointer;
-                        ">Cancel</button>
-                        <button onclick="window.location.href='start.html'" style="
-                            background: #00ffff;
-                            color: #1a1a2e;
-                            border: none;
-                            padding: 10px 20px;
-                            border-radius: 5px;
-                            cursor: pointer;
-                            font-weight: 600;
-                        ">Admin Access</button>
-                    </div>
-                </div>
-            `;
-            
-            document.body.appendChild(modal);
-            
-            setTimeout(() => {
-                notice.style.display = 'none';
-            }, 5000);
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particlesContainer.appendChild(particle);
+            }
         }
         
-        // Override agent-related functions for security
-        function toggleAgent() {
-            showRestrictedAccess('agents');
+        // Handle notification form
+        function handleNotification(event) {
+            event.preventDefault();
+            const email = event.target.querySelector('.notify-input').value;
+            
+            // Show success message (replace with actual API call)
+            alert('Thank you! We\'ll notify you when GuardianShield launches.');
+            event.target.reset();
+            
+            // Here you would typically send the email to your backend
+            console.log('Email subscription:', email);
         }
         
-        function editAgent() {
-            showRestrictedAccess('agents');
-        }
+        // Initialize particles when page loads
+        document.addEventListener('DOMContentLoaded', createParticles);
         
-        function deleteAgent() {
-            showRestrictedAccess('agents');
-        }
-        
-        // Remove agent control capabilities from this dashboard
-        document.addEventListener('DOMContentLoaded', function() {
-            // Add restricted styling
-            const style = document.createElement('style');
-            style.textContent = `
-                .nav-item.restricted {
-                    opacity: 0.7;
-                    cursor: not-allowed;
-                }
-                .nav-item.restricted:hover {
-                    background: rgba(255, 68, 68, 0.1) !important;
-                }
-                .security-notice {
-                    animation: pulse 2s ease-in-out infinite;
-                }
-                @keyframes pulse {
-                    0%, 100% { opacity: 1; }
-                    50% { opacity: 0.8; }
-                }
-            `;
-            document.head.appendChild(style);
+        // Add some interactivity to feature cards
+        document.querySelectorAll('.feature-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.background = 'linear-gradient(135deg, rgba(0, 255, 255, 0.1), rgba(255, 0, 255, 0.1))';
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.background = 'linear-gradient(135deg, rgba(0, 255, 255, 0.05), rgba(255, 0, 255, 0.05))';
+            });
         });
     </script>
 </body>

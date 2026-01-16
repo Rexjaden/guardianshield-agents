@@ -1,0 +1,28 @@
+# GuardianShield Coming Soon Page Deployment
+# Lightweight deployment while full system is in development
+
+services:
+  # Nginx serving coming soon page
+  coming-soon-web:
+    image: nginx:alpine
+    container_name: guardianshield-coming-soon
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./public:/usr/share/nginx/html:ro
+      - ./nginx/nginx.coming-soon.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - guardianshield-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    environment:
+      - TZ=UTC
+
+networks:
+  guardianshield-network:
+    driver: bridge

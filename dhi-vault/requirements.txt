@@ -1,0 +1,50 @@
+# DHI-Vault Requirements
+# Distributed HashiCorp Intelligence Vault dependencies
+
+# Core dependencies
+aiohttp==3.9.1
+aiohttp-cors==0.7.0
+aioredis==2.0.1
+aiojobs==1.2.1
+aiofiles==23.2.1
+
+# Vault and security
+hvac==2.1.0
+cryptography==41.0.8
+pyjwt[crypto]==2.8.0
+fernet==1.0.1
+
+# Kubernetes integration
+kubernetes==28.1.0
+
+# Data validation and serialization
+marshmallow==3.20.2
+
+# Monitoring and metrics
+prometheus-client==0.19.0
+
+# HTTP client
+httpx==0.25.2
+
+# Async utilities
+asyncio-mqtt==0.16.1
+
+# Configuration management
+pyyaml==6.0.1
+python-dotenv==1.0.0
+
+# Logging and debugging
+structlog==23.2.0
+
+# Development dependencies (optional)
+pytest==7.4.3
+pytest-asyncio==0.21.1
+pytest-aiohttp==1.0.5
+black==23.11.0
+isort==5.12.0
+flake8==6.1.0
+mypy==1.7.1
+
+# Database adapters (optional)
+asyncpg==0.29.0
+aiomysql==0.2.0

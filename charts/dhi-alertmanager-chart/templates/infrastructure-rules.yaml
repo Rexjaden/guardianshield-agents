@@ -1,0 +1,147 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "dhi-alertmanager-chart.fullname" . }}-infrastructure-rules
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "dhi-alertmanager-chart.labels" . | nindent 4 }}
+data:
+  infrastructure-alerts.yml: |
+    groups:
+      - name: kubernetes-infrastructure
+        interval: 30s
+        rules:
+          # Kubernetes API Server Down
+          - alert: KubernetesAPIServerDown
+            expr: up{job="kubernetes-apiserver"} == 0
+            for: 1m
+            labels:
+              severity: critical
+              service: infrastructure
+              component: kubernetes
+            annotations:
+              summary: "Kubernetes API Server is down"
+              description: "Kubernetes API Server has been unreachable for 1 minute."
+          
+          # Pod Crash Looping
+          - alert: PodCrashLooping
+            expr: increase(kube_pod_container_status_restarts_total[15m]) > 5
+            for: 0m
+            labels:
+              severity: warning
+              service: infrastructure
+              component: kubernetes
+            annotations:
+              summary: "Pod {{ $labels.pod }} is crash looping"
+              description: "Pod has restarted {{ $value }} times in the last 15 minutes."
+          
+          # Node CPU High
+          - alert: NodeCPUHigh
+            expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 85
+            for: 5m
+            labels:
+              severity: warning
+              service: infrastructure
+              component: node
+            annotations:
+              summary: "High CPU usage on node {{ $labels.instance }}"
+              description: "CPU usage is {{ $value }}% for more than 5 minutes."
+          
+          # Node Memory High
+          - alert: NodeMemoryHigh
+            expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 90
+            for: 3m
+            labels:
+              severity: critical
+              service: infrastructure
+              component: node
+            annotations:
+              summary: "High memory usage on node {{ $labels.instance }}"
+              description: "Memory usage is {{ $value }}% for more than 3 minutes."
+          
+          # Disk Space Low
+          - alert: DiskSpaceLow
+            expr: (1 - (node_filesystem_avail_bytes / node_filesystem_size_bytes)) * 100 > 85
+            for: 5m
+            labels:
+              severity: warning
+              service: infrastructure
+              component: storage
+            annotations:
+              summary: "Low disk space on {{ $labels.instance }}"
+              description: "Disk usage is {{ $value }}% on {{ $labels.mountpoint }}."
+          
+          # Container Registry Issues
+          - alert: ContainerRegistryDown
+            expr: up{job="container-registry"} == 0
+            for: 2m
+            labels:
+              severity: critical
+              service: infrastructure
+              component: registry
+            annotations:
+              summary: "Container Registry is down"
+              description: "Container registry has been unreachable for 2 minutes."
+          
+          # Load Balancer Health
+          - alert: LoadBalancerUnhealthy
+            expr: haproxy_backend_up{backend!~"stats"} == 0
+            for: 1m
+            labels:
+              severity: critical
+              service: infrastructure
+              component: load-balancer
+            annotations:
+              summary: "Load balancer backend {{ $labels.backend }} is down"
+              description: "Backend server is not responding to health checks."
+          
+          # etcd Cluster Issues
+          - alert: EtcdClusterDegraded
+            expr: up{job="etcd"} == 0
+            for: 30s
+            labels:
+              severity: critical
+              service: infrastructure
+              component: etcd
+            annotations:
+              summary: "etcd cluster member {{ $labels.instance }} is down"
+              description: "etcd cluster is degraded and may lose quorum."
+      
+      - name: multi-chain-monitoring
+        interval: 45s
+        rules:
+          # Multi-chain Network Issues
+          - alert: ChainSyncIssue
+            expr: abs(chain_latest_block - chain_synced_block) > 100
+            for: 2m
+            labels:
+              severity: warning
+              service: infrastructure
+              component: multi-chain
+            annotations:
+              summary: "{{ $labels.chain }} sync issue detected"
+              description: "Chain {{ $labels.chain }} is {{ $value }} blocks behind."
+          
+          # Cross-chain Bridge Issues
+          - alert: BridgeConnectionFailed
+            expr: bridge_connection_status == 0
+            for: 1m
+            labels:
+              severity: critical
+              service: infrastructure
+              component: bridge
+            annotations:
+              summary: "Cross-chain bridge connection failed"
+              description: "Bridge to {{ $labels.target_chain }} is disconnected."
+          
+          # Gas Price Anomaly
+          - alert: GasPriceAnomaly
+            expr: (gas_price_current / gas_price_average_1h) > 3
+            for: 10m
+            labels:
+              severity: warning
+              service: infrastructure
+              component: gas-tracker
+            annotations:
+              summary: "Unusual gas price spike on {{ $labels.chain }}"
+              description: "Gas price is {{ $value }}x higher than 1-hour average."

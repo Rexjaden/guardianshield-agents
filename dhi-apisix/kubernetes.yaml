@@ -1,0 +1,767 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dhi-apisix
+  namespace: guardianshield
+  labels:
+    app: dhi-apisix
+    component: api-gateway
+    guardianshield.io/project: GuardianShield
+    guardianshield.io/security-layer: api-security
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: dhi-apisix
+  template:
+    metadata:
+      labels:
+        app: dhi-apisix
+        component: api-gateway
+        guardianshield.io/security-layer: api-security
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9091"
+        prometheus.io/path: "/apisix/prometheus/metrics"
+    spec:
+      serviceAccountName: dhi-apisix
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+      initContainers:
+      - name: wait-for-etcd
+        image: busybox:1.35
+        command: ['sh', '-c']
+        args:
+        - |
+          echo "Waiting for etcd to be ready..."
+          until nc -z etcd.guardianshield.svc.cluster.local 2379; do
+            echo "Waiting for etcd..."
+            sleep 2
+          done
+          echo "etcd is ready!"
+      containers:
+      - name: apisix
+        image: apache/apisix:3.7.0-debian
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 9080
+          name: http
+          protocol: TCP
+        - containerPort: 9443
+          name: https
+          protocol: TCP  
+        - containerPort: 9180
+          name: admin
+          protocol: TCP
+        - containerPort: 9091
+          name: metrics
+          protocol: TCP
+        - containerPort: 9100
+          name: stream-tcp
+          protocol: TCP
+        - containerPort: 9200
+          name: stream-udp
+          protocol: UDP
+        env:
+        - name: APISIX_STAND_ALONE
+          value: "false"
+        - name: APISIX_DEPLOYMENT_ETCD_HOST
+          value: "http://etcd.guardianshield.svc.cluster.local:2379"
+        - name: APISIX_DEPLOYMENT_ETCD_PREFIX
+          value: "/apisix"
+        - name: APISIX_DEPLOYMENT_ETCD_TIMEOUT
+          value: "30"
+        - name: APISIX_DEPLOYMENT_ETCD_USER
+          value: "apisix"
+        - name: APISIX_DEPLOYMENT_ETCD_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: dhi-apisix-secret
+              key: etcd-password
+        - name: KUBERNETES_SERVICE_HOST
+          value: "kubernetes.default.svc.cluster.local"
+        - name: KUBERNETES_SERVICE_PORT
+          value: "443"
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        volumeMounts:
+        - name: apisix-config
+          mountPath: /usr/local/apisix/conf/config.yaml
+          subPath: apisix.yaml
+          readOnly: true
+        - name: custom-plugins
+          mountPath: /usr/local/apisix/apisix/plugins
+          readOnly: true
+        - name: ssl-certs
+          mountPath: /etc/ssl
+          readOnly: true
+        - name: logs-volume
+          mountPath: /usr/local/apisix/logs
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "200m"
+            ephemeral-storage: "1Gi"
+          limits:
+            memory: "1Gi" 
+            cpu: "1000m"
+            ephemeral-storage: "2Gi"
+        livenessProbe:
+          httpGet:
+            path: /apisix/status
+            port: 9080
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /apisix/status
+            port: 9080
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        startupProbe:
+          httpGet:
+            path: /apisix/status
+            port: 9080
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 30
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: false
+          runAsNonRoot: true
+          runAsUser: 1000
+          runAsGroup: 1000
+          capabilities:
+            drop:
+            - ALL
+      volumes:
+      - name: apisix-config
+        configMap:
+          name: dhi-apisix-config
+      - name: custom-plugins
+        configMap:
+          name: dhi-apisix-plugins
+      - name: ssl-certs
+        secret:
+          secretName: dhi-apisix-ssl
+      - name: logs-volume
+        persistentVolumeClaim:
+          claimName: dhi-apisix-logs
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - dhi-apisix
+              topologyKey: kubernetes.io/hostname
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            preference:
+              matchExpressions:
+              - key: guardianshield.io/api-gateway-optimized
+                operator: In
+                values:
+                - "true"
+      tolerations:
+      - key: "guardianshield.io/api-gateway"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
+      topologySpreadConstraints:
+      - maxSkew: 1
+        topologyKey: kubernetes.io/hostname
+        whenUnsatisfiable: DoNotSchedule
+        labelSelector:
+          matchLabels:
+            app: dhi-apisix
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dhi-apisix-gateway
+  namespace: guardianshield
+  labels:
+    app: dhi-apisix
+    component: api-gateway
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: nlb
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "9091"
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 9080
+    protocol: TCP
+    name: http
+  - port: 443
+    targetPort: 9443
+    protocol: TCP
+    name: https
+  - port: 9100
+    targetPort: 9100
+    protocol: TCP
+    name: stream-tcp
+  - port: 9200
+    targetPort: 9200
+    protocol: UDP
+    name: stream-udp
+  selector:
+    app: dhi-apisix
+---
+apiVersion: v1
+kind: Service  
+metadata:
+  name: dhi-apisix-admin
+  namespace: guardianshield
+  labels:
+    app: dhi-apisix
+    component: api-gateway
+spec:
+  type: ClusterIP
+  ports:
+  - port: 9180
+    targetPort: 9180
+    protocol: TCP
+    name: admin
+  selector:
+    app: dhi-apisix
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dhi-apisix-metrics
+  namespace: guardianshield
+  labels:
+    app: dhi-apisix
+    component: api-gateway
+spec:
+  type: ClusterIP
+  ports:
+  - port: 9091
+    targetPort: 9091
+    protocol: TCP
+    name: metrics
+  selector:
+    app: dhi-apisix
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: dhi-apisix
+  namespace: guardianshield
+  labels:
+    app: dhi-apisix
+    component: api-gateway
+  annotations:
+    eks.amazonaws.com/role-arn: "arn:aws:iam::ACCOUNT:role/dhi-apisix-role"
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: dhi-apisix
+  labels:
+    app: dhi-apisix
+rules:
+- apiGroups: [""]
+  resources: ["endpoints", "nodes", "pods", "secrets", "namespaces", "services", "configmaps"]
+  verbs: ["list", "watch", "get"]
+- apiGroups: ["apps"]
+  resources: ["deployments", "replicasets"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["coordination.k8s.io"]
+  resources: ["leases"]
+  verbs: ["*"]
+- apiGroups: ["discovery.k8s.io"]
+  resources: ["endpointslices"]
+  verbs: ["list", "watch", "get"]
+- apiGroups: ["networking.k8s.io"]
+  resources: ["ingresses"]
+  verbs: ["list", "watch", "get"]
+- apiGroups: ["networking.k8s.io"]
+  resources: ["ingressclasses"]
+  verbs: ["get", "list", "watch"]
+# GuardianShield-specific resources
+- apiGroups: ["guardianshield.io"]
+  resources: ["threats", "policies", "investigations"]
+  verbs: ["get", "list", "create", "update"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: dhi-apisix
+  labels:
+    app: dhi-apisix
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: dhi-apisix
+subjects:
+- kind: ServiceAccount
+  name: dhi-apisix
+  namespace: guardianshield
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: dhi-apisix-secret
+  namespace: guardianshield
+  labels:
+    app: dhi-apisix
+type: Opaque
+data:
+  etcd-password: YXBpc2l4LXNlY3JldC1wYXNzd29yZA== # apisix-secret-password
+  admin-key: ZWRkMWM5ZjAzNDMzNWYxMzZmODdhZDg0YjYyNWM4ZjE= # edd1c9f034335f136f87ad84b625c8f1
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: dhi-apisix-ssl
+  namespace: guardianshield
+  labels:
+    app: dhi-apisix
+type: kubernetes.io/tls
+data:
+  tls.crt: LS0tLS1CRUdJTi... # Your SSL certificate
+  tls.key: LS0tLS1CRUdJTi... # Your SSL private key
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: dhi-apisix-logs
+  namespace: guardianshield
+  labels:
+    app: dhi-apisix
+    component: logs-storage
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: standard
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dhi-apisix-config
+  namespace: guardianshield
+  labels:
+    app: dhi-apisix
+data:
+  apisix.yaml: |
+    # GuardianShield DHI-APISIX Configuration
+    apisix:
+      node_listen: 9080
+      ssl_listen: 9443
+      admin_listen:
+        ip: 0.0.0.0
+        port: 9180
+      
+      ssl:
+        enable: true
+        listen:
+          - port: 9443
+            cert: /etc/ssl/tls.crt
+            key: /etc/ssl/tls.key
+            http2: true
+        fallback_sni: "api.guardianshield.io"
+        ssl_protocols: "TLSv1.2 TLSv1.3"
+        ssl_session_cache: "shared:SSL:10m"
+        ssl_session_timeout: "10m"
+      
+      router:
+        http: radixtree_host_uri
+        ssl: radixtree_sni
+      
+      dns_resolver:
+        - 1.1.1.1
+        - 8.8.8.8
+        - 127.0.0.1
+      
+      enable_server_tokens: false
+      real_ip_header: "X-Forwarded-For"
+      real_ip_from:
+        - 127.0.0.1
+        - 10.0.0.0/8
+        - 172.16.0.0/12
+        - 192.168.0.0/16
+    
+    etcd:
+      host:
+        - "http://etcd.guardianshield.svc.cluster.local:2379"
+      prefix: /apisix
+      timeout: 30
+      user: apisix
+      password: "apisix-secret-password"
+    
+    plugins:
+      - real-ip
+      - ai
+      - client-control
+      - prometheus
+      - request-id
+      - zipkin
+      - request-validation
+      - chaitin-waf
+      - multi-auth
+      - ip-restriction
+      - referer-restriction
+      - cors
+      - uri-blocker
+      - request-validation
+      - openid-connect
+      - authz-casbin
+      - authz-casdoor
+      - wolf-rbac
+      - ldap-auth
+      - hmac-auth
+      - basic-auth
+      - jwt-auth
+      - key-auth
+      - consumer-restriction
+      - authz-keycloak
+      - opa
+      - forward-auth
+      - oauth
+      - batch-requests
+      - fault-injection
+      - mocking
+      - serverless-pre-function
+      - serverless-post-function
+      - limit-req
+      - limit-conn
+      - limit-count
+      - proxy-mirror
+      - api-breaker
+      - traffic-split
+      - request-validation
+      - proxy-rewrite
+      - workflow
+      - proxy-control
+      - grpc-transcode
+      - grpc-web
+      - public-api
+      - control
+      - ai-proxy
+      - degraphql
+      - response-rewrite
+      - header-modify
+      - gzip
+      - real-ip
+      - server-info
+      - ext-plugin-pre-req
+      - ext-plugin-post-req
+      - ext-plugin-post-resp
+      - aws-lambda
+      - azure-functions
+      - openwhisk
+      - openfunction
+      - tencent-cloud-cls
+      - loggly
+      - http-logger
+      - splunk-hec-logging
+      - tcp-logger
+      - kafka-logger
+      - rocketmq-logger
+      - udp-logger
+      - file-logger
+      - clickhouse-logger
+      - syslog
+      - log-rotate
+      - error-log-logger
+      - sls-logger
+      - google-cloud-logging
+      - datadog
+      - loki-logger
+      - elasticsearch-logger
+      - skywalking-logger
+      - skywalking
+      - zipkin
+      - jaeger
+      - opentelemetry
+      - node-status
+      - dubbo-proxy
+      - mqtt-proxy
+      - degraphql
+      - cas-auth
+      - gm
+      - csrf
+      - body-transformer
+      - jwe-decrypt
+      - brotli
+      - inspect
+      - example-plugin
+      - echo
+      - ocsp-stapling
+      - inspect
+      - proxy-cache
+      - ua-restriction
+      - casdoor
+      - workflow
+      - cas-auth
+      # GuardianShield custom plugins
+      - guardianshield-threat-intel
+      - guardianshield-web3-security
+      - guardianshield-malware-scan
+    
+    plugin_metadata:
+      prometheus:
+        export_uri: /apisix/prometheus/metrics
+        metric_prefix: apisix_
+        enable_export_server: true
+        export_addr:
+          ip: "0.0.0.0"
+          port: 9091
+    
+    deployment:
+      role: traditional
+      role_traditional:
+        config_provider: etcd
+      admin:
+        enable_admin_cors: true
+        admin_key_required: true
+        admin_key:
+          - name: "admin"
+            key: "edd1c9f034335f136f87ad84b625c8f1"
+            role: admin
+        allow_admin:
+          - 127.0.0.1/24
+          - 10.0.0.0/8
+          - 172.16.0.0/12
+          - 192.168.0.0/16
+    
+    nginx_config:
+      error_log_level: "error"
+      worker_processes: "auto"
+      worker_rlimit_nofile: 20480
+      event:
+        worker_connections: 10620
+        use: epoll
+      http:
+        enable_access_log: false
+        keepalive_timeout: 60s
+        client_header_timeout: 60s
+        client_body_timeout: 60s
+        client_max_body_size: 100m
+        send_timeout: 10s
+        underscores_in_headers: "on"
+        real_ip_header: "X-Forwarded-For"
+        real_ip_recursive: "on"
+        real_ip_from:
+          - 127.0.0.1
+          - 10.0.0.0/8
+          - 172.16.0.0/12
+          - 192.168.0.0/16
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dhi-apisix-plugins
+  namespace: guardianshield
+  labels:
+    app: dhi-apisix
+data:
+  guardianshield-threat-intel.lua: |
+    -- Custom Threat Intelligence Plugin (truncated for ConfigMap size)
+    -- Full plugin code would be mounted as a volume or built into custom image
+    local core = require("apisix.core")
+    local plugin_name = "guardianshield-threat-intel"
+    local _M = {
+        version = 1.0,
+        priority = 8000,
+        name = plugin_name,
+    }
+    function _M.access(conf, ctx)
+        -- Threat intelligence logic
+        return
+    end
+    return _M
+  
+  guardianshield-web3-security.lua: |
+    -- Custom Web3 Security Plugin (truncated for ConfigMap size) 
+    local core = require("apisix.core")
+    local plugin_name = "guardianshield-web3-security"
+    local _M = {
+        version = 1.0,
+        priority = 7900,
+        name = plugin_name,
+    }
+    function _M.access(conf, ctx)
+        -- Web3 security logic
+        return
+    end
+    return _M
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: dhi-apisix-admin
+  namespace: guardianshield
+  labels:
+    app: dhi-apisix
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/whitelist-source-range: "10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - apisix-admin.guardianshield.io
+    secretName: dhi-apisix-admin-tls
+  rules:
+  - host: apisix-admin.guardianshield.io
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: dhi-apisix-admin
+            port:
+              number: 9180
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: dhi-apisix
+  namespace: guardianshield
+  labels:
+    app: dhi-apisix
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: dhi-apisix
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: dhi-apisix
+  namespace: guardianshield
+  labels:
+    app: dhi-apisix
+spec:
+  podSelector:
+    matchLabels:
+      app: dhi-apisix
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - namespaceSelector: {}
+    ports:
+    - protocol: TCP
+      port: 9080
+    - protocol: TCP
+      port: 9443
+    - protocol: TCP
+      port: 9100
+    - protocol: UDP
+      port: 9200
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: guardianshield
+    ports:
+    - protocol: TCP
+      port: 9180  # Admin API (internal only)
+    - protocol: TCP
+      port: 9091  # Metrics
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          name: guardianshield
+    ports:
+    - protocol: TCP
+      port: 2379  # etcd
+    - protocol: TCP
+      port: 6379  # Redis
+    - protocol: TCP
+      port: 8080  # Backend services
+  - to: []
+    ports:
+    - protocol: TCP
+      port: 443   # HTTPS
+    - protocol: TCP
+      port: 80    # HTTP
+    - protocol: TCP
+      port: 53    # DNS
+    - protocol: UDP
+      port: 53    # DNS
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: dhi-apisix
+  namespace: guardianshield
+  labels:
+    app: dhi-apisix
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: dhi-apisix
+  minReplicas: 3
+  maxReplicas: 20
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+      - type: Percent
+        value: 25
+        periodSeconds: 60
+    scaleUp:
+      stabilizationWindowSeconds: 60
+      policies:
+      - type: Percent
+        value: 100
+        periodSeconds: 30

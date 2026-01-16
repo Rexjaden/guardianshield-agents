@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GuardianShield - Enterprise AI Security Platform</title>
+    <meta name="description" content="GuardianShield - Professional AI-powered security platform with autonomous threat detection">
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.0/dist/ethers.umd.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #ffffff;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        /* Professional Header */
+        .header {
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 2px solid rgba(0, 212, 170, 0.3);
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #00d4aa;
+        }
+        
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #00d4aa 0%, #667eea 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 8px 25px rgba(0, 212, 170, 0.3);
+        }
+        
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 40px;
+        }
+        
+        .nav-menu a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-menu a:hover {
+            color: #00d4aa;
+        }
+        
+        .connect-wallet-btn {
+            background: linear-gradient(135deg, #00d4aa 0%, #667eea 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 212, 170, 0.3);
+        }
+        
+        .connect-wallet-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 212, 170, 0.5);
+        }
+        
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            background: 
+                linear-gradient(135deg, rgba(30, 60, 114, 0.9) 0%, rgba(42, 82, 152, 0.9) 100%),
+                url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse"><path d="M 50 0 L 0 0 0 50" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
+            padding: 120px 0 80px;
+        }
+        
+        .hero-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+        
+        .hero-content h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #00d4aa 0%, #ffffff 50%, #667eea 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero-content p {
+            font-size: 1.3rem;
+            margin-bottom: 30px;
+            color: #b8c6db;
+            line-height: 1.8;
+        }
+        
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #00d4aa;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #b8c6db;
+            margin-top: 5px;
+        }
+        
+        /* Services Section */
+        .services {
+            padding: 100px 0;
+            background: rgba(0, 0, 0, 0.3);
+        }
+        
+        .services-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .section-header h2 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #ffffff;
+        }
+        
+        .section-header p {
+            font-size: 1.2rem;
+            color: #b8c6db;
+        }
+        
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+        }
+        
+        .service-card {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            border-radius: 20px;
+            padding: 40px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.4s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .service-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(0, 212, 170, 0.2);
+        }
+        
+        .service-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #00d4aa 0%, #667eea 100%);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 25px rgba(0, 212, 170, 0.3);
+        }
+        
+        .service-card h3 {
+            font-size: 1.6rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #ffffff;
+        }
+        
+        .service-card p {
+            color: #b8c6db;
+            line-height: 1.7;
+        }
+        
+        /* AI Army Section */
+        .ai-army {
+            padding: 100px 0;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.5) 0%, rgba(30, 60, 114, 0.3) 100%);
+        }
+        
+        .ai-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+        
+        .ai-agent {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .ai-agent:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 212, 170, 0.2);
+        }
+        
+        .agent-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #00d4aa 0%, #667eea 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin: 0 auto 20px;
+            box-shadow: 0 8px 25px rgba(0, 212, 170, 0.3);
+        }
+        
+        .agent-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+        
+        .agent-specialty {
+            color: #00d4aa;
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+        
+        .agent-description {
+            color: #b8c6db;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        
+        /* Roadmap Section */
+        .roadmap {
+            padding: 100px 0;
+            background: rgba(0, 0, 0, 0.2);
+        }
+        
+        .roadmap-timeline {
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .roadmap-timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(180deg, #00d4aa 0%, #667eea 100%);
+            transform: translateX(-50%);
+        }
+        
+        .roadmap-item {
+            display: flex;
+            margin: 40px 0;
+            position: relative;
+        }
+        
+        .roadmap-item:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+        
+        .roadmap-content {
+            flex: 1;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            margin: 0 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .roadmap-date {
+            color: #00d4aa;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+        
+        .roadmap-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+        
+        .roadmap-description {
+            color: #b8c6db;
+            line-height: 1.6;
+        }
+        
+        /* DMER Section */
+        .dmer-section {
+            padding: 100px 0;
+            background: linear-gradient(135deg, rgba(0, 212, 170, 0.1) 0%, rgba(102, 126, 234, 0.1) 100%);
+        }
+        
+        .dmer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+        
+        .dmer-content h2 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #ffffff;
+        }
+        
+        .dmer-content p {
+            font-size: 1.2rem;
+            color: #b8c6db;
+            margin-bottom: 30px;
+            line-height: 1.8;
+        }
+        
+        .dmer-access {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 40px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .access-button {
+            background: linear-gradient(135deg, #00d4aa 0%, #667eea 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 1.1rem;
+            width: 100%;
+            margin: 10px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(0, 212, 170, 0.3);
+        }
+        
+        .access-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 212, 170, 0.5);
+        }
+        
+        /* Contract Integration */
+        .contracts {
+            padding: 100px 0;
+            background: rgba(0, 0, 0, 0.4);
+        }
+        
+        .contracts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
+        }
+        
+        .contract-card {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            border-radius: 20px;
+            padding: 40px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+        }
+        
+        .token-info {
+            margin-bottom: 30px;
+        }
+        
+        .token-price {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #00d4aa;
+            margin-bottom: 10px;
+        }
+        
+        .token-description {
+            color: #b8c6db;
+            margin-bottom: 20px;
+        }
+        
+        .purchase-input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            color: white;
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+        
+        .purchase-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .purchase-button {
+            background: linear-gradient(135deg, #00d4aa 0%, #667eea 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(0, 212, 170, 0.3);
+        }
+        
+        .purchase-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 212, 170, 0.5);
+        }
+        
+        .purchase-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* Performance Graph */
+        .performance-graph {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 40px;
+            margin: 40px 0;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .graph-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .graph-header h3 {
+            font-size: 1.8rem;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+        
+        .metric-bars {
+            display: grid;
+            gap: 20px;
+        }
+        
+        .metric-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .metric-label {
+            min-width: 160px;
+            color: #b8c6db;
+            font-weight: 500;
+        }
+        
+        .metric-bar {
+            flex: 1;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .metric-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00d4aa 0%, #667eea 100%);
+            border-radius: 10px;
+            transition: width 2s ease;
+            box-shadow: 0 0 10px rgba(0, 212, 170, 0.5);
+        }
+        
+        .metric-value {
+            min-width: 50px;
+            text-align: right;
+            color: #00d4aa;
+            font-weight: 600;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero-container {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+            
+            .nav-menu {
+                display: none;
+            }
+            
+            .dmer-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .roadmap-timeline::before {
+                left: 20px;
+            }
+            
+            .roadmap-item {
+                margin-left: 40px;
+            }
+            
+            .roadmap-item:nth-child(even) {
+                flex-direction: row;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Professional Header -->
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo">
+                <div class="logo-icon">🛡️</div>
+                <span>GuardianShield</span>
+            </div>
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#ai-army">AI Army</a></li>
+                    <li><a href="#roadmap">Roadmap</a></li>
+                    <li><a href="#dmer">DMER</a></li>
+                    <li><a href="#tokens">Tokens</a></li>
+                </ul>
+            </nav>
+            <button class="connect-wallet-btn" id="connectWallet">Connect Wallet</button>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1>GuardianShield</h1>
+                <p>Enterprise AI Security Platform with Autonomous Threat Detection and Response</p>
+                <p>Deploy an army of intelligent agents that continuously learn, adapt, and protect your infrastructure 24/7.</p>
+                
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">50+</div>
+                        <div class="stat-label">AI Agents</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">99.9%</div>
+                        <div class="stat-label">Threat Detection</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">24/7</div>
+                        <div class="stat-label">Monitoring</div>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="performance-graph">
+                    <div class="graph-header">
+                        <h3>AI Performance Metrics</h3>
+                        <p style="color: #b8c6db;">Real-time security capabilities</p>
+                    </div>
+                    <div class="metric-bars">
+                        <div class="metric-item">
+                            <div class="metric-label">Threat Detection</div>
+                            <div class="metric-bar">
+                                <div class="metric-fill" style="width: 98%"></div>
+                            </div>
+                            <div class="metric-value">98%</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-label">Response Time</div>
+                            <div class="metric-bar">
+                                <div class="metric-fill" style="width: 95%"></div>
+                            </div>
+                            <div class="metric-value">95%</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-label">Learning Rate</div>
+                            <div class="metric-bar">
+                                <div class="metric-fill" style="width: 92%"></div>
+                            </div>
+                            <div class="metric-value">92%</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-label">Adaptation Speed</div>
+                            <div class="metric-bar">
+                                <div class="metric-fill" style="width: 89%"></div>
+                            </div>
+                            <div class="metric-value">89%</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-label">Autonomous Actions</div>
+                            <div class="metric-bar">
+                                <div class="metric-fill" style="width: 96%"></div>
+                            </div>
+                            <div class="metric-value">96%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services" id="services">
+        <div class="services-container">
+            <div class="section-header">
+                <h2>Our Security Services</h2>
+                <p>Comprehensive AI-powered security solutions for enterprise environments</p>
+            </div>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">🤖</div>
+                    <h3>Autonomous Agent Network</h3>
+                    <p>Deploy intelligent agents that continuously monitor, learn, and adapt to emerging threats without human intervention.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🔍</div>
+                    <h3>Advanced Threat Detection</h3>
+                    <p>Machine learning-powered pattern recognition that identifies zero-day attacks and sophisticated threat vectors.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">⚡</div>
+                    <h3>Real-time Response</h3>
+                    <p>Instant threat mitigation and automated incident response with millisecond reaction times.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">📊</div>
+                    <h3>Behavioral Analytics</h3>
+                    <p>Deep behavioral analysis to detect insider threats and anomalous user activities across your network.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🌐</div>
+                    <h3>Multi-Chain Security</h3>
+                    <p>Comprehensive blockchain and Web3 security monitoring across multiple networks and protocols.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🔒</div>
+                    <h3>Decentralized Intelligence</h3>
+                    <p>DMER-powered threat intelligence sharing across a decentralized network of security professionals.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Army Section -->
+    <section class="ai-army" id="ai-army">
+        <div class="services-container">
+            <div class="section-header">
+                <h2>Our AI Agent Army</h2>
+                <p>Meet the specialized artificial intelligence agents protecting your infrastructure</p>
+            </div>
+            <div class="ai-grid">
+                <div class="ai-agent">
+                    <div class="agent-avatar">🛡️</div>
+                    <div class="agent-name">Guardian Prime</div>
+                    <div class="agent-specialty">System Defense Orchestrator</div>
+                    <div class="agent-description">Master coordinator that manages all security operations and agent communications across your infrastructure.</div>
+                </div>
+                <div class="ai-agent">
+                    <div class="agent-avatar">🔍</div>
+                    <div class="agent-name">ThreatHunter</div>
+                    <div class="agent-specialty">Advanced Threat Detection</div>
+                    <div class="agent-description">Specialized in identifying sophisticated attack patterns and zero-day exploits through behavioral analysis.</div>
+                </div>
+                <div class="ai-agent">
+                    <div class="agent-avatar">🌐</div>
+                    <div class="agent-name">NetworkGuard</div>
+                    <div class="agent-specialty">Network Traffic Analysis</div>
+                    <div class="agent-description">Monitors network communications, identifies anomalies, and blocks malicious traffic in real-time.</div>
+                </div>
+                <div class="ai-agent">
+                    <div class="agent-avatar">📊</div>
+                    <div class="agent-name">DataSentinel</div>
+                    <div class="agent-specialty">Data Protection & Privacy</div>
+                    <div class="agent-description">Ensures data integrity, prevents exfiltration, and maintains compliance with privacy regulations.</div>
+                </div>
+                <div class="ai-agent">
+                    <div class="agent-avatar">⚡</div>
+                    <div class="agent-name">ResponseBot</div>
+                    <div class="agent-specialty">Incident Response</div>
+                    <div class="agent-description">Executes automated response procedures and coordinates with security teams during incidents.</div>
+                </div>
+                <div class="ai-agent">
+                    <div class="agent-avatar">🔮</div>
+                    <div class="agent-name">Oracle</div>
+                    <div class="agent-specialty">Predictive Analysis</div>
+                    <div class="agent-description">Uses machine learning to predict future attack vectors and recommend proactive security measures.</div>
+                </div>
+                <div class="ai-agent">
+                    <div class="agent-avatar">🌊</div>
+                    <div class="agent-name">DeepScan</div>
+                    <div class="agent-specialty">Deep Learning Analysis</div>
+                    <div class="agent-description">Advanced neural networks for complex pattern recognition and sophisticated threat intelligence.</div>
+                </div>
+                <div class="ai-agent">
+                    <div class="agent-avatar">🚨</div>
+                    <div class="agent-name">AlertMaster</div>
+                    <div class="agent-specialty">Intelligent Alerting</div>
+                    <div class="agent-description">Manages alert prioritization, reduces false positives, and ensures critical threats get immediate attention.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Roadmap Section -->
+    <section class="roadmap" id="roadmap">
+        <div class="services-container">
+            <div class="section-header">
+                <h2>Development Roadmap</h2>
+                <p>Our journey to revolutionize enterprise security through AI</p>
+            </div>
+            <div class="roadmap-timeline">
+                <div class="roadmap-item">
+                    <div class="roadmap-content">
+                        <div class="roadmap-date">Q4 2025 - COMPLETED</div>
+                        <div class="roadmap-title">Foundation & Core AI Development</div>
+                        <div class="roadmap-description">Deployed core autonomous agent framework with basic threat detection capabilities and established the foundation for agent-to-agent communication.</div>
+                    </div>
+                </div>
+                <div class="roadmap-item">
+                    <div class="roadmap-content">
+                        <div class="roadmap-date">Q1 2026 - IN PROGRESS</div>
+                        <div class="roadmap-title">Advanced Learning & DMER Integration</div>
+                        <div class="roadmap-description">Enhanced machine learning capabilities, implemented DMER threat registry, and launched token economics for ecosystem governance.</div>
+                    </div>
+                </div>
+                <div class="roadmap-item">
+                    <div class="roadmap-content">
+                        <div class="roadmap-date">Q2 2026</div>
+                        <div class="roadmap-title">Multi-Chain Security & Enterprise Rollout</div>
+                        <div class="roadmap-description">Full blockchain security coverage, enterprise partnerships, and deployment of specialized industry-specific agents.</div>
+                    </div>
+                </div>
+                <div class="roadmap-item">
+                    <div class="roadmap-content">
+                        <div class="roadmap-date">Q3 2026</div>
+                        <div class="roadmap-title">Global Network & AI Evolution</div>
+                        <div class="roadmap-description">Worldwide agent network deployment, advanced AI evolution protocols, and autonomous security ecosystem governance.</div>
+                    </div>
+                </div>
+                <div class="roadmap-item">
+                    <div class="roadmap-content">
+                        <div class="roadmap-date">Q4 2026</div>
+                        <div class="roadmap-title">Next-Gen AI & Quantum Readiness</div>
+                        <div class="roadmap-description">Deploy next-generation AI algorithms, quantum-resistant security measures, and establish the future of autonomous security.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DMER Section -->
+    <section class="dmer-section" id="dmer">
+        <div class="dmer-container">
+            <div class="dmer-content">
+                <h2>DMER Intelligence Registry</h2>
+                <p>Access the Decentralized Malware & Exploitation Registry - our comprehensive threat intelligence database powered by blockchain technology and community contributions.</p>
+                <p>Real-time threat indicators, attack patterns, and security intelligence shared across the global security community.</p>
+            </div>
+            <div class="dmer-access">
+                <h3 style="color: #ffffff; margin-bottom: 20px;">Access DMER Registry</h3>
+                <button class="access-button" onclick="openDMER('threats')">
+                    <i class="fas fa-shield-alt"></i> View Active Threats
+                </button>
+                <button class="access-button" onclick="openDMER('analytics')">
+                    <i class="fas fa-chart-line"></i> Threat Analytics
+                </button>
+                <button class="access-button" onclick="openDMER('submissions')">
+                    <i class="fas fa-upload"></i> Submit Intelligence
+                </button>
+                <button class="access-button" onclick="openDMER('api')">
+                    <i class="fas fa-code"></i> API Access
+                </button>
+                <div style="margin-top: 20px; padding: 15px; background: rgba(0, 212, 170, 0.1); border-radius: 8px; border: 1px solid rgba(0, 212, 170, 0.3);">
+                    <small style="color: #00d4aa;">
+                        <i class="fas fa-info-circle"></i> 
+                        DMER contains <strong id="threatCount">15,847</strong> verified threat indicators
+                    </small>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Token Contracts Section -->
+    <section class="contracts" id="tokens">
+        <div class="services-container">
+            <div class="section-header">
+                <h2>GuardianShield Token Ecosystem</h2>
+                <p>Participate in the decentralized security economy through our dual-token system</p>
+            </div>
+            <div class="contracts-grid">
+                <!-- GUARD Token -->
+                <div class="contract-card">
+                    <h3 style="color: #00d4aa; margin-bottom: 20px;">GUARD Token</h3>
+                    <div class="token-info">
+                        <div class="token-price">$0.005 USD</div>
+                        <div class="token-description">Utility token for accessing GuardianShield services, governance voting, and agent deployment rewards.</div>
+                    </div>
+                    <input type="number" class="purchase-input" id="guardUsdAmount" placeholder="USD Amount (min $0.005)" step="0.005" min="0.005">
+                    <input type="text" class="purchase-input" id="guardTokenAmount" placeholder="GUARD Tokens" readonly>
+                    <button class="purchase-button" id="buyGuard" disabled>Buy GUARD Tokens</button>
+                    <div style="margin-top: 15px; font-size: 0.9rem; color: #b8c6db;">
+                        Contract: <span id="guardContract" style="color: #00d4aa;">Loading...</span>
+                    </div>
+                </div>
+                
+                <!-- SHIELD Token -->
+                <div class="contract-card">
+                    <h3 style="color: #D4AF37; margin-bottom: 20px;">SHIELD Protection NFT</h3>
+                    <div class="token-info">
+                        <div class="token-price">$0.025 USD</div>
+                        <div class="token-description">NFT-based protection system providing enhanced security features and premium agent access.</div>
+                    </div>
+                    <input type="number" class="purchase-input" id="shieldUsdAmount" placeholder="USD Amount (min $0.025)" step="0.025" min="0.025">
+                    <input type="number" class="purchase-input" id="shieldSerial" placeholder="Shield Serial Number" min="1">
+                    <input type="number" class="purchase-input" id="protectionLevel" placeholder="Protection Level (1-100%)" min="1" max="100">
+                    <button class="purchase-button" id="mintShield" disabled>Mint SHIELD Protection</button>
+                    <div style="margin-top: 15px; font-size: 0.9rem; color: #b8c6db;">
+                        Contract: <span id="shieldContract" style="color: #D4AF37;">Loading...</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Wallet Status -->
+            <div id="walletStatus" style="text-align: center; margin-top: 40px; padding: 20px; background: rgba(255, 107, 107, 0.1); border-radius: 15px; border: 1px solid rgba(255, 107, 107, 0.3);">
+                <span id="walletText" style="color: #ff6b6b;">Connect your wallet to participate in token sales</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer style="background: rgba(0, 0, 0, 0.8); padding: 60px 0 30px; margin-top: 100px;">
+        <div class="services-container">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; margin-bottom: 40px;">
+                <div>
+                    <div class="logo" style="margin-bottom: 20px;">
+                        <div class="logo-icon" style="width: 40px; height: 40px; font-size: 20px;">🛡️</div>
+                        <span style="font-size: 1.5rem;">GuardianShield</span>
+                    </div>
+                    <p style="color: #b8c6db;">Enterprise AI security platform protecting the future of digital infrastructure.</p>
+                </div>
+                <div>
+                    <h4 style="color: #ffffff; margin-bottom: 15px;">Platform</h4>
+                    <ul style="list-style: none;">
+                        <li><a href="#services" style="color: #b8c6db; text-decoration: none; margin-bottom: 8px; display: block;">Services</a></li>
+                        <li><a href="#ai-army" style="color: #b8c6db; text-decoration: none; margin-bottom: 8px; display: block;">AI Agents</a></li>
+                        <li><a href="#dmer" style="color: #b8c6db; text-decoration: none; margin-bottom: 8px; display: block;">DMER Registry</a></li>
+                        <li><a href="#tokens" style="color: #b8c6db; text-decoration: none; margin-bottom: 8px; display: block;">Tokens</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="color: #ffffff; margin-bottom: 15px;">Resources</h4>
+                    <ul style="list-style: none;">
+                        <li><a href="./GuardianShield_Whitepaper.md" style="color: #b8c6db; text-decoration: none; margin-bottom: 8px; display: block;">Whitepaper</a></li>
+                        <li><a href="./GuardianShield_Technical_Specifications.md" style="color: #b8c6db; text-decoration: none; margin-bottom: 8px; display: block;">Technical Specs</a></li>
+                        <li><a href="https://github.com/Rexjaden/guardianshield-agents" style="color: #b8c6db; text-decoration: none; margin-bottom: 8px; display: block;">GitHub</a></li>
+                        <li><a href="#roadmap" style="color: #b8c6db; text-decoration: none; margin-bottom: 8px; display: block;">Roadmap</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div style="text-align: center; padding-top: 30px; border-top: 1px solid rgba(255, 255, 255, 0.1); color: #b8c6db;">
+                <p>&copy; 2026 GuardianShield. Enterprise AI Security Platform. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Smart Contract Configuration
+        const CONTRACTS = {
+            GUARDIAN_TOKEN: '0x742d35Cc60A68F9D63C4768FcDf9a22dF9C0e59b', // Update with actual deployed address
+            TOKEN_SALE: '0x...',     // Update with actual deployed address
+            DMER_REGISTRY: '0x...'   // Update with actual deployed address
+        };
+
+        // Web3 Integration
+        let web3;
+        let userAccount;
+        let contracts = {};
+
+        // Initialize Web3 Connection
+        async function initWeb3() {
+            if (typeof window.ethereum !== 'undefined') {
+                web3 = new Web3(window.ethereum);
+                return true;
+            } else {
+                alert('Please install MetaMask or another Web3 wallet to participate in token sales.');
+                return false;
+            }
+        }
+
+        // Connect Wallet
+        async function connectWallet() {
+            try {
+                const accounts = await window.ethereum.request({ 
+                    method: 'eth_requestAccounts' 
+                });
+                
+                if (accounts.length > 0) {
+                    userAccount = accounts[0];
+                    updateWalletStatus(true);
+                    await initializeContracts();
+                    console.log('Wallet connected:', userAccount);
+                }
+            } catch (error) {
+                console.error('Wallet connection failed:', error);
+                alert('Failed to connect wallet. Please try again.');
+            }
+        }
+
+        // Initialize Smart Contracts
+        async function initializeContracts() {
+            // Update contract addresses in UI
+            document.getElementById('guardContract').textContent = CONTRACTS.GUARDIAN_TOKEN;
+            document.getElementById('shieldContract').textContent = CONTRACTS.GUARDIAN_TOKEN;
+            
+            // Enable purchase buttons
+            document.getElementById('buyGuard').disabled = false;
+            document.getElementById('mintShield').disabled = false;
+        }
+
+        // Update Wallet Status Display
+        function updateWalletStatus(connected) {
+            const statusDiv = document.getElementById('walletStatus');
+            const textSpan = document.getElementById('walletText');
+            const connectBtn = document.getElementById('connectWallet');
+            
+            if (connected) {
+                statusDiv.style.background = 'rgba(0, 212, 170, 0.1)';
+                statusDiv.style.borderColor = 'rgba(0, 212, 170, 0.3)';
+                textSpan.style.color = '#00d4aa';
+                textSpan.textContent = `Connected: ${userAccount.substring(0, 8)}...${userAccount.substring(userAccount.length - 6)}`;
+                connectBtn.textContent = 'Wallet Connected ✓';
+                connectBtn.style.background = 'rgba(0, 212, 170, 0.2)';
+                connectBtn.disabled = true;
+            }
+        }
+
+        // Update Token Amounts Based on USD Input
+        function updateTokenAmounts() {
+            // GUARD Token Calculation
+            const guardUsd = parseFloat(document.getElementById('guardUsdAmount').value || 0);
+            if (guardUsd >= 0.005) {
+                const guardTokens = Math.floor(guardUsd / 0.005);
+                document.getElementById('guardTokenAmount').value = `${guardTokens.toLocaleString()} GUARD`;
+            } else {
+                document.getElementById('guardTokenAmount').value = '';
+            }
+
+            // SHIELD Token Calculation
+            const shieldUsd = parseFloat(document.getElementById('shieldUsdAmount').value || 0);
+            if (shieldUsd >= 0.025) {
+                const shieldTokens = Math.floor(shieldUsd / 0.025);
+                // For SHIELD, we could show how many protections they can mint
+                // document.getElementById('shieldTokenAmount').textContent = `${shieldTokens} SHIELD protections`;
+            }
+        }
+
+        // DMER Access Functions
+        function openDMER(section) {
+            const urls = {
+                threats: '/dmer_animated_interface.html#threats',
+                analytics: '/dmer_animated_interface.html#analytics', 
+                submissions: '/dmer_animated_interface.html#submit',
+                api: '/dmer_animated_interface.html#api'
+            };
+            
+            if (urls[section]) {
+                window.open(urls[section], '_blank');
+            }
+        }
+
+        // Token Purchase Functions
+        async function buyGuardTokens() {
+            const usdAmount = document.getElementById('guardUsdAmount').value;
+            if (!usdAmount || parseFloat(usdAmount) < 0.005) {
+                alert('Minimum purchase amount is $0.005');
+                return;
+            }
+            
+            // Here you would implement the actual token purchase logic
+            alert(`Token purchase functionality will be implemented with deployed contracts.\nRequested: $${usdAmount} worth of GUARD tokens`);
+        }
+
+        async function mintShieldProtection() {
+            const usdAmount = document.getElementById('shieldUsdAmount').value;
+            const serialNumber = document.getElementById('shieldSerial').value;
+            const protectionLevel = document.getElementById('protectionLevel').value;
+            
+            if (!usdAmount || parseFloat(usdAmount) < 0.025) {
+                alert('Minimum SHIELD cost is $0.025');
+                return;
+            }
+            
+            if (!serialNumber || !protectionLevel) {
+                alert('Please enter serial number and protection level');
+                return;
+            }
+            
+            // Here you would implement the actual SHIELD minting logic
+            alert(`SHIELD minting functionality will be implemented with deployed contracts.\nSerial: ${serialNumber}, Protection: ${protectionLevel}%, Cost: $${usdAmount}`);
+        }
+
+        // Initialize Page
+        document.addEventListener('DOMContentLoaded', async () => {
+            await initWeb3();
+            
+            // Event Listeners
+            document.getElementById('connectWallet').addEventListener('click', connectWallet);
+            document.getElementById('guardUsdAmount').addEventListener('input', updateTokenAmounts);
+            document.getElementById('shieldUsdAmount').addEventListener('input', updateTokenAmounts);
+            document.getElementById('buyGuard').addEventListener('click', buyGuardTokens);
+            document.getElementById('mintShield').addEventListener('click', mintShieldProtection);
+            
+            // Animate performance metrics on scroll
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -100px 0px'
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const metrics = entry.target.querySelectorAll('.metric-fill');
+                        metrics.forEach((metric, index) => {
+                            setTimeout(() => {
+                                metric.style.width = metric.style.width;
+                            }, index * 200);
+                        });
+                    }
+                });
+            }, observerOptions);
+            
+            const performanceGraph = document.querySelector('.performance-graph');
+            if (performanceGraph) {
+                observer.observe(performanceGraph);
+            }
+        });
+    </script>
+</body>
+</html>

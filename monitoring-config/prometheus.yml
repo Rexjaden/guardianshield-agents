@@ -1,0 +1,103 @@
+# GuardianShield ERC-8055 Prometheus Configuration with AlertManager
+# Enhanced monitoring for Shield Token ecosystem
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'guardianshield-erc8055'
+    environment: 'production'
+
+# AlertManager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          - guardianshield-alertmanager:9093
+
+# Load alert rules
+rule_files:
+  - "erc8055-alerts.yml"
+  - "website-alerts.yml"
+
+# Scrape configurations for ERC-8055 ecosystem
+scrape_configs:
+  # Main GuardianShield application
+  - job_name: 'guardianshield-main'
+    static_configs:
+      - targets: ['guardianshield-main:8000']
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+    scrape_timeout: 5s
+    
+  # ERC-8055 Shield Token specific metrics
+  - job_name: 'erc8055-shield-token'
+    static_configs:
+      - targets: ['guardianshield-main:8000']
+    metrics_path: '/api/shield-token/metrics'
+    scrape_interval: 15s
+    params:
+      token_type: ['shield']
+      standard: ['erc8055']
+    
+  # Guard Token (ERC-20) metrics  
+  - job_name: 'guard-token-erc20'
+    static_configs:
+      - targets: ['guardianshield-main:8000']
+    metrics_path: '/api/guard-token/metrics'
+    scrape_interval: 30s
+    params:
+      token_type: ['guard']
+      standard: ['erc20']
+
+  # Website performance monitoring
+  - job_name: 'guardianshield-website'
+    static_configs:
+      - targets: ['guardianshield-enhanced-web:80']
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+    
+  # API Gateway monitoring
+  - job_name: 'api-gateway'
+    static_configs:
+      - targets: ['api-gateway:8080']
+    metrics_path: '/stats/prometheus'
+    scrape_interval: 15s
+    
+  # Database monitoring
+  - job_name: 'postgresql'
+    static_configs:
+      - targets: ['guardianshield-db:5432']
+    scrape_interval: 30s
+    
+  # Redis cache monitoring
+  - job_name: 'redis-cache'
+    static_configs:
+      - targets: ['guardianshield-redis:6379', 'website-cache:6379']
+    scrape_interval: 30s
+    
+  # Cilium service mesh metrics
+  - job_name: 'cilium-mesh'
+    static_configs:
+      - targets: ['cilium-operator:9963']
+    scrape_interval: 30s
+    metrics_path: '/metrics'
+    
+  # Container metrics (cAdvisor)
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['localhost:8080']
+    scrape_interval: 30s
+    metrics_path: '/metrics'
+    
+  # Node exporter (system metrics)
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['localhost:9100']
+    scrape_interval: 30s
+    
+  # AlertManager self-monitoring
+  - job_name: 'alertmanager'
+    static_configs:
+      - targets: ['guardianshield-alertmanager:9093']
+    scrape_interval: 30s

@@ -1,0 +1,260 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: guardianshield
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: guardianshield-project
+    app.kubernetes.io/component: argocd
+    guardianshield.io/compliance-required: "true"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  description: "GuardianShield Enterprise Project - ERC-8055 Ecosystem with Compliance"
+  
+  # Source repositories allowed for this project
+  sourceRepos:
+    - 'https://github.com/Rexjaden/guardianshield-agents'
+    - 'https://github.com/Rexjaden/shieldtokenerc8055'
+    - 'https://charts.guardianshield.io/*'
+    - 'https://prometheus-community.github.io/helm-charts'
+    - 'https://grafana.github.io/helm-charts'
+  
+  # Destination clusters and namespaces
+  destinations:
+    # Production cluster destinations
+    - namespace: 'guardianshield-*'
+      server: https://kubernetes.default.svc
+    - namespace: argocd
+      server: https://kubernetes.default.svc
+    - namespace: monitoring
+      server: https://kubernetes.default.svc
+    - namespace: compliance
+      server: https://kubernetes.default.svc
+  
+  # Cluster resource whitelist (what can be deployed)
+  clusterResourceWhitelist:
+    - group: ''
+      kind: Namespace
+    - group: rbac.authorization.k8s.io
+      kind: ClusterRole
+    - group: rbac.authorization.k8s.io
+      kind: ClusterRoleBinding
+    - group: apiextensions.k8s.io
+      kind: CustomResourceDefinition
+    - group: admissionregistration.k8s.io
+      kind: ValidatingAdmissionWebhook
+    - group: admissionregistration.k8s.io
+      kind: MutatingAdmissionWebhook
+    - group: networking.k8s.io
+      kind: NetworkPolicy
+    - group: policy
+      kind: PodSecurityPolicy
+  
+  # Namespace resource whitelist
+  namespaceResourceWhitelist:
+    - group: ''
+      kind: ConfigMap
+    - group: ''
+      kind: Secret
+    - group: ''
+      kind: Service
+    - group: ''
+      kind: ServiceAccount
+    - group: ''
+      kind: PersistentVolumeClaim
+    - group: apps
+      kind: Deployment
+    - group: apps
+      kind: StatefulSet
+    - group: apps
+      kind: DaemonSet
+    - group: batch
+      kind: Job
+    - group: batch
+      kind: CronJob
+    - group: networking.k8s.io
+      kind: Ingress
+    - group: autoscaling
+      kind: HorizontalPodAutoscaler
+    - group: monitoring.coreos.com
+      kind: ServiceMonitor
+    - group: monitoring.coreos.com
+      kind: PrometheusRule
+  
+  # Roles for different teams
+  roles:
+    # ERC-8055 Development Team
+    - name: erc8055-developers
+      description: "ERC-8055 Shield Token developers"
+      policies:
+        - p, proj:guardianshield:erc8055-developers, applications, get, guardianshield/erc8055-*, allow
+        - p, proj:guardianshield:erc8055-developers, applications, sync, guardianshield/erc8055-*, allow
+        - p, proj:guardianshield:erc8055-developers, applications, action/*, guardianshield/erc8055-*, allow
+        - p, proj:guardianshield:erc8055-developers, logs, get, guardianshield/erc8055-*, allow
+      groups:
+        - guardianshield:erc8055-team
+    
+    # Blockchain Infrastructure Team
+    - name: blockchain-operators
+      description: "Blockchain infrastructure operators"
+      policies:
+        - p, proj:guardianshield:blockchain-operators, applications, get, guardianshield/blockchain-*, allow
+        - p, proj:guardianshield:blockchain-operators, applications, sync, guardianshield/blockchain-*, allow
+        - p, proj:guardianshield:blockchain-operators, applications, action/*, guardianshield/blockchain-*, allow
+        - p, proj:guardianshield:blockchain-operators, logs, get, guardianshield/blockchain-*, allow
+      groups:
+        - guardianshield:blockchain-ops
+    
+    # Site Reliability Engineers
+    - name: sre-team
+      description: "Site Reliability Engineers with full access"
+      policies:
+        - p, proj:guardianshield:sre-team, applications, *, guardianshield/*, allow
+        - p, proj:guardianshield:sre-team, logs, get, guardianshield/*, allow
+        - p, proj:guardianshield:sre-team, exec, create, guardianshield/*, allow
+      groups:
+        - guardianshield:sre
+        - guardianshield:platform-engineering
+    
+    # Compliance Officers (read-only)
+    - name: compliance-officers
+      description: "Compliance and audit officers"
+      policies:
+        - p, proj:guardianshield:compliance-officers, applications, get, guardianshield/*, allow
+        - p, proj:guardianshield:compliance-officers, logs, get, guardianshield/*, allow
+      groups:
+        - guardianshield:compliance
+        - guardianshield:audit
+  
+  # Sync windows for maintenance
+  syncWindows:
+    # No ERC-8055 deployments during market hours (UTC)
+    - kind: deny
+      schedule: '0 13-21 * * MON-FRI'  # 1 PM to 9 PM UTC (market hours)
+      duration: 8h
+      applications:
+        - 'erc8055-*'
+      manualSync: false
+    
+    # Allow emergency deployments
+    - kind: allow
+      schedule: '* * * * *'
+      duration: 24h
+      applications:
+        - 'monitoring-*'
+        - 'security-*'
+      manualSync: true
+  
+  # Signature keys for signed commits (if using)
+  signatureKeys:
+    - keyID: 'ABCD1234EFGH5678'
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: guardianshield-monitoring-stack
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: guardianshield-monitoring
+    guardianshield.io/component: monitoring
+    guardianshield.io/compliance-level: high
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: guardianshield
+  
+  source:
+    repoURL: https://github.com/Rexjaden/guardianshield-agents
+    path: charts/dhi-alertmanager-chart
+    targetRevision: main
+    helm:
+      valueFiles:
+        - values.yaml
+      parameters:
+        - name: global.environment
+          value: production
+        - name: global.clusterName
+          value: guardianshield-mainnet
+        - name: alertmanager.replicaCount
+          value: "3"
+        - name: alertmanager.resources.requests.memory
+          value: 512Mi
+        - name: alertmanager.resources.limits.memory
+          value: 2Gi
+  
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: guardianshield-monitoring
+  
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: false
+    syncOptions:
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
+  
+  revisionHistoryLimit: 10
+  
+  # Health checks for monitoring components
+  ignoreDifferences:
+    - group: apps
+      kind: Deployment
+      jsonPointers:
+        - /spec/replicas
+        - /spec/template/spec/containers/0/image
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: guardianshield-compliance-framework
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: guardianshield-compliance
+    guardianshield.io/component: compliance
+    guardianshield.io/compliance-level: critical
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: guardianshield
+  
+  source:
+    repoURL: https://github.com/Rexjaden/guardianshield-agents
+    path: compliance/
+    targetRevision: main
+  
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: guardianshield-compliance
+  
+  syncPolicy:
+    automated:
+      prune: false  # Never auto-prune compliance configs
+      selfHeal: true
+      allowEmpty: false
+    syncOptions:
+      - CreateNamespace=true
+      - ApplyOutOfSyncOnly=true
+    retry:
+      limit: 3
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 5m
+  
+  # Compliance requires manual review
+  syncPolicy:
+    syncOptions:
+      - ServerSideApply=true
+      - RespectIgnoreDifferences=true

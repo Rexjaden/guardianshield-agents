@@ -1,0 +1,171 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: guardianshield-compliance-framework
+  namespace: argocd
+  labels:
+    component: compliance
+    tier: production
+    team: security
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+    notifications.argoproj.io/subscribe.on-deployed.email: compliance@guardianshield.io
+spec:
+  project: guardianshield-ecosystem
+  
+  source:
+    repoURL: https://github.com/Rexjaden/guardianshield-agents
+    targetRevision: main
+    path: compliance/k8s
+    helm:
+      valueFiles:
+        - values-compliance.yaml
+      parameters:
+        - name: policies.podSecurityStandards
+          value: "restricted"
+        - name: policies.networkPolicies
+          value: "enabled"
+        - name: audit.enabled
+          value: "true"
+        - name: audit.retention
+          value: "7y"  # 7 years for regulatory compliance
+        - name: rbac.strictMode
+          value: "true"
+        - name: compliance.standards[0]
+          value: "SOC2"
+        - name: compliance.standards[1]
+          value: "ISO27001"
+        - name: compliance.standards[2]
+          value: "PCI-DSS"
+  
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: guardianshield-compliance
+  
+  syncPolicy:
+    automated:
+      prune: false  # Never auto-delete compliance policies
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 30s
+        factor: 1
+        maxDuration: 5m
+  
+  info:
+    - name: 'Compliance Standards'
+      value: 'SOC2, ISO27001, PCI-DSS'
+    - name: 'Audit Retention'
+      value: '7 years'
+    - name: 'Security Posture'
+      value: 'Restricted Pod Security Standards'
+    - name: 'Network Isolation'
+      value: 'Enabled with deny-all default'
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: guardianshield-security-policies
+  namespace: argocd
+  labels:
+    component: security
+    tier: production
+    team: security
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  project: guardianshield-ecosystem
+  
+  source:
+    repoURL: https://github.com/Rexjaden/guardianshield-agents
+    targetRevision: main
+    path: security/k8s
+    helm:
+      valueFiles:
+        - values-security.yaml
+      parameters:
+        - name: falco.enabled
+          value: "true"
+        - name: falco.rules.erc8055
+          value: "enabled"
+        - name: opa.gatekeeper.enabled
+          value: "true"
+        - name: opa.policies.blockchainSecurity
+          value: "enforced"
+        - name: vault.enabled
+          value: "true"
+        - name: vault.seal.awsKms
+          value: "true"
+        - name: certManager.enabled
+          value: "true"
+        - name: certManager.clusterIssuer
+          value: "letsencrypt-prod"
+  
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: guardianshield-security
+  
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: guardianshield-disaster-recovery
+  namespace: argocd
+  labels:
+    component: dr
+    tier: production
+    team: infrastructure
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+spec:
+  project: guardianshield-ecosystem
+  
+  source:
+    repoURL: https://github.com/Rexjaden/guardianshield-agents
+    targetRevision: main
+    path: disaster-recovery/k8s
+    helm:
+      valueFiles:
+        - values-dr.yaml
+      parameters:
+        - name: backup.enabled
+          value: "true"
+        - name: backup.schedule
+          value: "0 2 * * *"  # Daily at 2 AM
+        - name: backup.retention.daily
+          value: "30"
+        - name: backup.retention.monthly
+          value: "12"
+        - name: backup.retention.yearly
+          value: "7"
+        - name: replication.enabled
+          value: "true"
+        - name: replication.crossRegion
+          value: "true"
+        - name: rto.target
+          value: "4h"  # Recovery Time Objective
+        - name: rpo.target
+          value: "1h"  # Recovery Point Objective
+  
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: guardianshield-dr
+  
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

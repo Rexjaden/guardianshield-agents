@@ -1,0 +1,121 @@
+version: '3.8'
+
+services:
+  # SHIELD Token Azure Service Operator with 3D Graphics
+  shield-azure-3d-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.shield-azure-3d
+    ports:
+      - "8080:8080"
+      - "9090:9090"  # Graphics API port
+    environment:
+      - AZURE_TENANT_ID=${AZURE_TENANT_ID}
+      - AZURE_CLIENT_ID=${AZURE_CLIENT_ID}
+      - AZURE_CLIENT_SECRET=${AZURE_CLIENT_SECRET}
+      - SHIELD_TOKEN_CONTRACT=${SHIELD_TOKEN_CONTRACT}
+      - GRAPHICS_ENGINE=advanced_4d
+      - RENDER_QUALITY=ultra_high
+      - GPU_ACCELERATION=true
+    volumes:
+      - ./shield_assets:/app/assets
+      - ./azure_config:/app/azure
+      - /dev/dri:/dev/dri  # GPU access for hardware acceleration
+    privileged: true  # For GPU access
+    networks:
+      - shield-network
+    depends_on:
+      - redis
+      - postgres
+
+  # High-Performance 3D Graphics Engine
+  graphics-engine:
+    build:
+      context: .
+      dockerfile: Dockerfile.graphics
+    ports:
+      - "7777:7777"  # 3D API port
+      - "8888:8888"  # WebGL server
+    environment:
+      - GPU_MEMORY=8GB
+      - RENDER_THREADS=16
+      - ANIMATION_FPS=120
+      - TEXTURE_RESOLUTION=8K
+      - RAYTRACING=enabled
+    volumes:
+      - ./3d_models:/app/models
+      - ./textures:/app/textures
+      - ./shaders:/app/shaders
+    devices:
+      - /dev/nvidia0:/dev/nvidia0  # NVIDIA GPU access
+      - /dev/nvidiactl:/dev/nvidiactl
+      - /dev/nvidia-uvm:/dev/nvidia-uvm
+    networks:
+      - shield-network
+
+  # Azure Container Registry Integration
+  acr-sync:
+    image: mcr.microsoft.com/azure-cli:latest
+    environment:
+      - AZURE_TENANT_ID=${AZURE_TENANT_ID}
+      - AZURE_CLIENT_ID=${AZURE_CLIENT_ID}
+      - AZURE_CLIENT_SECRET=${AZURE_CLIENT_SECRET}
+      - ACR_REGISTRY=${ACR_REGISTRY}
+    volumes:
+      - ./azure_config:/azure
+    command: |
+      sh -c "
+        az login --service-principal -u $$AZURE_CLIENT_ID -p $$AZURE_CLIENT_SECRET --tenant $$AZURE_TENANT_ID &&
+        az acr login --name $$ACR_REGISTRY &&
+        echo 'Azure Container Registry connected successfully'
+      "
+    networks:
+      - shield-network
+
+  # Redis for caching 3D assets
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - shield-network
+
+  # PostgreSQL for storing 3D model metadata
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB=shield_3d_db
+      - POSTGRES_USER=shield_user
+      - POSTGRES_PASSWORD=shield_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - shield-network
+
+  # NGINX reverse proxy for web interface
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./ssl:/etc/nginx/ssl
+      - ./www:/var/www/html
+    depends_on:
+      - shield-azure-3d-service
+      - graphics-engine
+    networks:
+      - shield-network
+
+networks:
+  shield-network:
+    driver: bridge
+
+volumes:
+  redis_data:
+  postgres_data:

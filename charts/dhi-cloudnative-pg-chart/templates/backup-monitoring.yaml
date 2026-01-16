@@ -1,0 +1,274 @@
+# Backup Monitoring and Management
+{{- if .Values.barmanCloud.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: backup-validation
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app.kubernetes.io/name: backup-validation
+    app.kubernetes.io/component: backup
+    guardianshield.io/backup-type: validation
+spec:
+  schedule: "0 6 * * *"  # Daily backup validation at 6 AM
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: backup-validator
+          containers:
+            - name: backup-validator
+              image: {{ .Values.barmanCloud.image.repository }}:{{ .Values.barmanCloud.image.tag }}
+              imagePullPolicy: {{ .Values.barmanCloud.image.pullPolicy }}
+              env:
+                - name: AWS_ACCESS_KEY_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: s3-backup-credentials
+                      key: ACCESS_KEY_ID
+                - name: AWS_SECRET_ACCESS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: s3-backup-credentials
+                      key: SECRET_ACCESS_KEY
+                - name: AWS_DEFAULT_REGION
+                  value: {{ .Values.barmanCloud.storage.region }}
+                - name: BACKUP_BUCKET
+                  value: {{ .Values.barmanCloud.storage.bucket }}
+              command:
+                - /bin/bash
+                - -c
+                - |
+                  echo "Starting backup validation for GuardianShield clusters..."
+                  
+                  # Validate ERC-8055 tokens backup
+                  echo "Validating ERC-8055 tokens cluster backup..."
+                  barman-cloud-check-backup s3://{{ .Values.barmanCloud.storage.bucket }}/erc8055-tokens
+                  
+                  # Validate blockchain data backup
+                  echo "Validating blockchain data cluster backup..."
+                  barman-cloud-check-backup s3://{{ .Values.barmanCloud.storage.bucket }}/blockchain-data
+                  
+                  # Validate analytics backup
+                  echo "Validating analytics cluster backup..."
+                  barman-cloud-check-backup s3://{{ .Values.barmanCloud.storage.bucket }}/analytics
+                  
+                  echo "Backup validation completed successfully"
+              resources:
+                requests:
+                  memory: "128Mi"
+                  cpu: "100m"
+                limits:
+                  memory: "512Mi"
+                  cpu: "500m"
+          restartPolicy: OnFailure
+
+---
+# Backup metrics for Prometheus
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backup-monitoring-queries
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app.kubernetes.io/name: backup-monitoring
+    app.kubernetes.io/component: monitoring
+data:
+  backup-queries.yaml: |
+    backup_status:
+      query: |
+        SELECT 
+          cluster_name,
+          backup_type,
+          backup_status,
+          backup_size_bytes,
+          backup_duration_seconds,
+          backup_timestamp
+        FROM backup_status_view
+      metrics:
+        - backup_size_bytes:
+            usage: "GAUGE"
+            description: "Size of backup in bytes"
+            labels: ["cluster_name", "backup_type"]
+        - backup_duration_seconds:
+            usage: "GAUGE"
+            description: "Duration of backup operation in seconds"
+            labels: ["cluster_name", "backup_type"]
+        - backup_timestamp:
+            usage: "GAUGE"
+            description: "Timestamp of last backup"
+            labels: ["cluster_name", "backup_type"]
+    
+    backup_retention_compliance:
+      query: |
+        SELECT 
+          cluster_name,
+          COUNT(*) as backup_count,
+          EXTRACT(DAYS FROM (NOW() - MIN(backup_timestamp))) as oldest_backup_days
+        FROM backup_history 
+        WHERE backup_status = 'completed'
+        GROUP BY cluster_name
+      metrics:
+        - backup_count:
+            usage: "GAUGE"
+            description: "Number of available backups"
+            labels: ["cluster_name"]
+        - oldest_backup_days:
+            usage: "GAUGE"
+            description: "Age of oldest backup in days"
+            labels: ["cluster_name"]
+
+---
+# Disaster Recovery Testing Job
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: disaster-recovery-test
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app.kubernetes.io/name: disaster-recovery-test
+    app.kubernetes.io/component: backup
+    guardianshield.io/test-type: disaster-recovery
+spec:
+  schedule: "0 2 * * 0"  # Weekly DR test on Sunday at 2 AM
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: disaster-recovery-tester
+          containers:
+            - name: dr-tester
+              image: {{ .Values.barmanCloud.image.repository }}:{{ .Values.barmanCloud.image.tag }}
+              imagePullPolicy: {{ .Values.barmanCloud.image.pullPolicy }}
+              env:
+                - name: AWS_ACCESS_KEY_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: s3-backup-credentials
+                      key: ACCESS_KEY_ID
+                - name: AWS_SECRET_ACCESS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: s3-backup-credentials
+                      key: SECRET_ACCESS_KEY
+                - name: AWS_DEFAULT_REGION
+                  value: {{ .Values.barmanCloud.storage.region }}
+              command:
+                - /bin/bash
+                - -c
+                - |
+                  echo "Starting disaster recovery test..."
+                  
+                  # Create test namespace
+                  kubectl create namespace guardianshield-dr-test || true
+                  
+                  # Test ERC-8055 tokens recovery
+                  echo "Testing ERC-8055 tokens disaster recovery..."
+                  cat <<EOF | kubectl apply -f -
+                  apiVersion: postgresql.cnpg.io/v1
+                  kind: Cluster
+                  metadata:
+                    name: erc8055-tokens-dr-test
+                    namespace: guardianshield-dr-test
+                  spec:
+                    instances: 1
+                    storage:
+                      size: 100Gi
+                      storageClass: {{ .Values.global.storageClass }}
+                    bootstrap:
+                      recovery:
+                        backup:
+                          name: "latest"
+                        source: "erc8055-tokens-cluster"
+                    externalClusters:
+                      - name: "erc8055-tokens-cluster"
+                        barmanObjectStore:
+                          destinationPath: "s3://{{ .Values.barmanCloud.storage.bucket }}/erc8055-tokens"
+                          endpointURL: "https://s3.amazonaws.com"
+                          s3Credentials:
+                            accessKeyId:
+                              name: s3-backup-credentials
+                              key: ACCESS_KEY_ID
+                            secretAccessKey:
+                              name: s3-backup-credentials
+                              key: SECRET_ACCESS_KEY
+                  EOF
+                  
+                  # Wait for cluster to be ready
+                  kubectl wait --for=condition=ready cluster/erc8055-tokens-dr-test -n guardianshield-dr-test --timeout=600s
+                  
+                  # Verify data integrity
+                  echo "Verifying data integrity..."
+                  kubectl exec -n guardianshield-dr-test erc8055-tokens-dr-test-1 -- psql -U postgres -d erc8055_tokens -c "SELECT COUNT(*) FROM shield_tokens;"
+                  
+                  # Cleanup test resources
+                  echo "Cleaning up test resources..."
+                  kubectl delete namespace guardianshield-dr-test
+                  
+                  echo "Disaster recovery test completed successfully"
+              resources:
+                requests:
+                  memory: "256Mi"
+                  cpu: "200m"
+                limits:
+                  memory: "1Gi"
+                  cpu: "1000m"
+          restartPolicy: OnFailure
+
+---
+# Backup Compliance Report Generator
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: backup-compliance-report
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app.kubernetes.io/name: backup-compliance-report
+    app.kubernetes.io/component: compliance
+    compliance.guardianshield.io/type: backup-audit
+spec:
+  schedule: "0 1 1 * *"  # Monthly compliance report on 1st day at 1 AM
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: compliance-reporter
+          containers:
+            - name: compliance-reporter
+              image: guardianshield/compliance-reporter:latest
+              env:
+                - name: REPORT_TYPE
+                  value: "backup-compliance"
+                - name: COMPLIANCE_STANDARDS
+                  value: "SOX,PCI-DSS,GDPR"
+                - name: RETENTION_REQUIREMENTS
+                  value: "{{ .Values.compliance.sox.dataRetentionYears }}years"
+              command:
+                - /bin/bash
+                - -c
+                - |
+                  echo "Generating monthly backup compliance report..."
+                  
+                  # Generate compliance report
+                  python3 /opt/compliance/generate_backup_report.py \
+                    --standards "$COMPLIANCE_STANDARDS" \
+                    --retention "$RETENTION_REQUIREMENTS" \
+                    --output "/reports/backup-compliance-$(date +%Y-%m).json"
+                  
+                  echo "Backup compliance report generated successfully"
+              volumeMounts:
+                - name: compliance-reports
+                  mountPath: /reports
+              resources:
+                requests:
+                  memory: "128Mi"
+                  cpu: "100m"
+                limits:
+                  memory: "512Mi"
+                  cpu: "500m"
+          volumes:
+            - name: compliance-reports
+              persistentVolumeClaim:
+                claimName: compliance-reports-pvc
+          restartPolicy: OnFailure
+{{- end }}

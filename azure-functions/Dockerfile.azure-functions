@@ -1,0 +1,46 @@
+# GuardianShield Azure Functions Runtime
+# Integrates with existing Docker infrastructure
+
+FROM mcr.microsoft.com/azure-functions/python:4-python3.11
+
+# Set working directory
+WORKDIR /home/site/wwwroot
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    libpq-dev \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements and install Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy function code
+COPY function_app.py .
+COPY host.json .
+COPY erc8055_processor/ ./erc8055_processor/
+COPY blockchain_indexer/ ./blockchain_indexer/
+COPY fraud_detector/ ./fraud_detector/
+COPY compliance_reporter/ ./compliance_reporter/
+COPY analytics_processor/ ./analytics_processor/
+
+# Create directories for logs and temp files
+RUN mkdir -p /home/site/wwwroot/logs /tmp/azure-functions
+
+# Set permissions
+RUN chmod -R 755 /home/site/wwwroot
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost:7071/api/health || exit 1
+
+# Labels for monitoring and service mesh
+LABEL maintainer="GuardianShield Team"
+LABEL service="azure-functions"
+LABEL component="serverless-compute"
+LABEL prometheus.scrape="true"
+LABEL prometheus.port="8080"
+LABEL prometheus.path="/api/metrics"
