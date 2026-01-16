@@ -1,0 +1,132 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "vault-chart.fullname" . }}-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "vault-chart.server.labels" . | nindent 4 }}
+data:
+  extraconfig-from-values.hcl: |
+    {{- include "vault-chart.config" . | nindent 4 }}
+  
+  api-management.hcl: |
+    # GuardianShield API Management Configuration
+    
+    # Rate limiting configuration
+    {{- if .Values.apiManagement.rateLimiting.enabled }}
+    api_rate_limit {
+      enabled = true
+      rate = {{ .Values.apiManagement.rateLimiting.globalLimit }}
+      burst = {{ mul .Values.apiManagement.rateLimiting.globalLimit 2 }}
+    }
+    {{- end }}
+    
+    # CORS configuration
+    {{- if .Values.apiManagement.cors.enabled }}
+    cors {
+      enabled = true
+      allowed_origins = [
+        {{- range .Values.apiManagement.cors.allowedOrigins }}
+        "{{ . }}",
+        {{- end }}
+      ]
+      allowed_methods = [
+        {{- range .Values.apiManagement.cors.allowedMethods }}
+        "{{ . }}",
+        {{- end }}
+      ]
+      allowed_headers = [
+        {{- range .Values.apiManagement.cors.allowedHeaders }}
+        "{{ . }}",
+        {{- end }}
+      ]
+      max_age = {{ .Values.apiManagement.cors.maxAge }}
+    }
+    {{- end }}
+    
+    # JWT configuration
+    {{- if .Values.apiManagement.jwt.enabled }}
+    jwt {
+      enabled = true
+      signing_method = "{{ .Values.apiManagement.jwt.signingMethod }}"
+      issuer = "{{ .Values.apiManagement.jwt.issuer }}"
+      audience = "{{ .Values.apiManagement.jwt.audience }}"
+      access_token_ttl = "{{ .Values.apiManagement.jwt.accessTokenTTL }}"
+      refresh_token_ttl = "{{ .Values.apiManagement.jwt.refreshTokenTTL }}"
+    }
+    {{- end }}
+  
+  policies.hcl: |
+    # GuardianShield API Management Policies
+    
+    {{- if .Values.policies.apiManagement }}
+    {{- range $policyName, $policyContent := .Values.policies.apiManagement }}
+    
+    # {{ $policyName }} policy
+    path "sys/policies/acl/{{ $policyName }}-api-policy" {
+      capabilities = ["create", "update"]
+    }
+    {{- end }}
+    {{- end }}
+  
+  auth-methods.hcl: |
+    # Auth Methods Configuration
+    
+    {{- if .Values.authMethods.kubernetes.enabled }}
+    # Kubernetes auth method
+    path "auth/kubernetes" {
+      type = "kubernetes"
+      description = "Kubernetes service account authentication"
+    }
+    {{- end }}
+    
+    {{- if .Values.authMethods.jwt.enabled }}
+    # JWT auth method
+    path "auth/jwt" {
+      type = "jwt"
+      description = "JWT token authentication"
+    }
+    {{- end }}
+    
+    {{- if .Values.authMethods.userpass.enabled }}
+    # Userpass auth method
+    path "auth/userpass" {
+      type = "userpass"
+      description = "Username and password authentication"
+    }
+    {{- end }}
+  
+  secrets-engines.hcl: |
+    # Secrets Engines Configuration
+    
+    {{- if .Values.secretsEngines.kv }}
+    {{- range $engineName, $engineConfig := .Values.secretsEngines.kv }}
+    # KV secrets engine: {{ $engineName }}
+    path "{{ $engineConfig.path }}" {
+      type = "kv"
+      description = "{{ $engineConfig.description }}"
+      options = {
+        version = "{{ $engineConfig.version }}"
+      }
+      config = {
+        max_versions = {{ $engineConfig.config.maxVersions }}
+        cas_required = {{ $engineConfig.config.casRequired }}
+        delete_version_after = "{{ $engineConfig.config.deleteVersionAfter }}"
+      }
+    }
+    {{- end }}
+    {{- end }}
+    
+    {{- if .Values.secretsEngines.pki }}
+    {{- range $engineName, $engineConfig := .Values.secretsEngines.pki }}
+    # PKI secrets engine: {{ $engineName }}
+    path "{{ $engineConfig.path }}" {
+      type = "pki"
+      description = "{{ $engineConfig.description }}"
+      config = {
+        max_lease_ttl = "{{ $engineConfig.config.maxLeaseTtl }}"
+        default_lease_ttl = "{{ $engineConfig.config.defaultLeaseTtl }}"
+      }
+    }
+    {{- end }}
+    {{- end }}

@@ -15,9 +15,84 @@ env/
 Thumbs.db
 node_modules
 
+# Environment files and secrets - CRITICAL SECURITY
+.env
+.env.*
+.env.local
+.env.production
+.env.development
+.env.secure
+
 # Admin credentials (concealed for security)
 # These files contain sensitive admin authentication data
 # and should not be committed to version control
 .guardian_master_password.txt
 .guardian_secret
 .guardian_admin
+
+# GuardianShield Security Patterns
+*.pem
+*.key
+*.p12
+*.pfx
+node_modules/
+
+# Extended Security Patterns
+.env*
+!.env.example
+!.env.template
+!.env.secure
+*.log
+*.sql
+*.db
+backup/
+backups/
+tmp/
+temp/
+.secret
+.secrets/
+credentials.json
+service-account*.json
+*.keystore
+*.jks
+*.crt
+*.csr
+config/production.json
+config/prod.json
+
+# Token and Key Files
+token_*.json
+encrypted_tokens.json
+security_config.json
+*_private_key*
+*_secret_key*
+*_api_key*
+.ssh/
+*.rsa
+*.dsa
+*.ecdsa
+*.ed25519
+
+# Database and Cache
+*.sqlite
+*.sqlite3
+*.db-journal
+redis-*.rdb
+dump.rdb
+
+# Security Reports
+security_report_*.json
+vulnerability_scan_*.json
+audit_log_*.jsonl
+token_access_log.jsonl
+agent_action_log.jsonl
+code_tampering_*.json
+
+# OS and Editor Security
+.DS_Store?
+ehthumbs.db
+Thumbs.db
+*~
+.#*
+.*.swp
+.*.swo

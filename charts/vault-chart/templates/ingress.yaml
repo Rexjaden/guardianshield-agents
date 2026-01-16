@@ -1,0 +1,42 @@
+{{- if .Values.vault.server.ingress.enabled -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "vault-chart.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "vault-chart.server.labels" . | nindent 4 }}
+  {{- with .Values.vault.server.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- if .Values.vault.server.ingress.ingressClassName }}
+  ingressClassName: {{ .Values.vault.server.ingress.ingressClassName }}
+  {{- end }}
+  {{- if .Values.vault.server.ingress.tls }}
+  tls:
+    {{- range .Values.vault.server.ingress.tls }}
+    - hosts:
+        {{- range .hosts }}
+        - {{ . | quote }}
+        {{- end }}
+      secretName: {{ .secretName }}
+    {{- end }}
+  {{- end }}
+  rules:
+    {{- range .Values.vault.server.ingress.hosts }}
+    - host: {{ .host | quote }}
+      http:
+        paths:
+          {{- range .paths }}
+          - path: {{ .path | default "/" }}
+            pathType: {{ $.Values.vault.server.ingress.pathType }}
+            backend:
+              service:
+                name: {{ if $.Values.vault.server.ingress.activeService }}{{ include "vault-chart.server.serviceName" $ }}{{ else }}{{ include "vault-chart.ui.serviceName" $ }}{{ end }}
+                port:
+                  number: {{ $.Values.vault.server.service.port }}
+          {{- end }}
+    {{- end }}
+{{- end }}

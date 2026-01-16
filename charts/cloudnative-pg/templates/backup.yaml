@@ -1,0 +1,39 @@
+{{- if .Values.backup.enabled }}
+# Scheduled Backup Configuration
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: {{ .Values.cluster.name }}-scheduled-backup
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "dhi-cloudnative-pg.labels" . | nindent 4 }}
+    guardianshield.io/component: "backup"
+spec:
+  # Schedule using cron format
+  schedule: {{ .Values.backup.schedule | quote }}
+  
+  # Backup retention
+  backupOwnerReference: "self"
+  
+  # Target cluster
+  cluster:
+    name: {{ .Values.cluster.name }}
+  
+  # Suspend if needed
+  suspend: false
+
+---
+# S3 Credentials Secret for Backups
+apiVersion: v1
+kind: Secret
+metadata:
+  name: s3-credentials
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "dhi-cloudnative-pg.labels" . | nindent 4 }}
+    guardianshield.io/component: "backup-credentials"
+type: Opaque
+data:
+  ACCESS_KEY_ID: {{ .Values.backup.s3.accessKeyId | b64enc | quote }}
+  SECRET_ACCESS_KEY: {{ .Values.backup.s3.secretAccessKey | b64enc | quote }}
+{{- end }}

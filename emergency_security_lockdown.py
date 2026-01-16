@@ -90,8 +90,11 @@ def emergency_admin_access():
     print("🚨 GuardianShield Emergency Admin Access")
     print("=" * 40)
     
-    # Emergency master password
-    master_key = "GUARDIAN_SHIELD_EMERGENCY_2026"
+    # Emergency master password (loaded from environment)
+    master_key = os.getenv('GUARDIAN_EMERGENCY_KEY', '')
+    if not master_key:
+        print("❌ GUARDIAN_EMERGENCY_KEY environment variable not set")
+        return None
     
     print("Enter emergency master key:")
     user_input = getpass.getpass("Master Key: ")

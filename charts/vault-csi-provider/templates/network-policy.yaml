@@ -1,0 +1,266 @@
+{{- if .Values.security.networkPolicy.enabled }}
+# Network Policy for Vault Server
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "dhi-vault-csi-provider.fullname" . }}-vault-server
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "dhi-vault-csi-provider.labels" . | nindent 4 }}
+    guardianshield.io/component: "vault-network-policy"
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: vault
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  
+  policyTypes:
+    - Ingress
+    - Egress
+  
+  # Ingress rules for Vault server
+  ingress:
+    # Allow connections from CSI provider
+    - from:
+        - podSelector:
+            matchLabels:
+              guardianshield.io/component: "vault-csi-provider"
+      ports:
+        - protocol: TCP
+          port: 8200
+        - protocol: TCP
+          port: 8201
+    
+    # Allow connections from within namespace
+    {{- range .Values.security.networkPolicy.ingress }}
+    - from:
+        {{- toYaml .from | nindent 8 }}
+      ports:
+        {{- toYaml .ports | nindent 8 }}
+    {{- end }}
+    
+    # Allow inter-cluster communication for HA
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: vault
+      ports:
+        - protocol: TCP
+          port: 8200
+        - protocol: TCP
+          port: 8201
+    
+    # Allow monitoring
+    {{- if .Values.monitoring.enabled }}
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: "monitoring"
+      ports:
+        - protocol: TCP
+          port: 8200
+    {{- end }}
+    
+    # Allow ingress controller
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: "ingress-nginx"
+      ports:
+        - protocol: TCP
+          port: 8200
+  
+  # Egress rules for Vault server
+  egress:
+    # Allow DNS resolution
+    - to: []
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+    
+    # Allow HTTPS for external integrations
+    - to: []
+      ports:
+        - protocol: TCP
+          port: 443
+    
+    # Allow Kubernetes API access
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              name: "kube-system"
+      ports:
+        - protocol: TCP
+          port: 443
+    
+    # Allow inter-cluster communication
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: vault
+      ports:
+        - protocol: TCP
+          port: 8200
+        - protocol: TCP
+          port: 8201
+    
+    # Allow database connections
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              name: "{{ .Release.Namespace }}"
+        - podSelector:
+            matchLabels:
+              guardianshield.io/component: "database"
+      ports:
+        - protocol: TCP
+          port: 5432
+
+---
+# Network Policy for CSI Provider DaemonSet
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "dhi-vault-csi-provider.fullname" . }}-csi-provider
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "dhi-vault-csi-provider.labels" . | nindent 4 }}
+    guardianshield.io/component: "csi-provider-network-policy"
+spec:
+  podSelector:
+    matchLabels:
+      guardianshield.io/component: "vault-csi-provider"
+  
+  policyTypes:
+    - Ingress
+    - Egress
+  
+  # Ingress rules for CSI provider
+  ingress:
+    # Allow kubelet connections
+    - from:
+        - ipBlock:
+            cidr: 10.0.0.0/8
+      ports:
+        - protocol: TCP
+          port: 8080  # Health check port
+    
+    # Allow monitoring
+    {{- if .Values.monitoring.enabled }}
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: "monitoring"
+      ports:
+        - protocol: TCP
+          port: 8080
+    {{- end }}
+  
+  # Egress rules for CSI provider
+  egress:
+    # Allow DNS resolution
+    - to: []
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+    
+    # Allow Vault server connections
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: vault
+      ports:
+        - protocol: TCP
+          port: 8200
+    
+    # Allow Kubernetes API access
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              name: "kube-system"
+      ports:
+        - protocol: TCP
+          port: 443
+
+---
+# Network Policy for API Management Services
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "dhi-vault-csi-provider.fullname" . }}-api-management
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "dhi-vault-csi-provider.labels" . | nindent 4 }}
+    guardianshield.io/component: "api-management-network-policy"
+spec:
+  podSelector:
+    matchLabels:
+      guardianshield.io/api-management: "true"
+  
+  policyTypes:
+    - Ingress
+    - Egress
+  
+  # Ingress rules for API management
+  ingress:
+    # Allow connections from web services
+    - from:
+        - podSelector:
+            matchLabels:
+              guardianshield.io/component: "web-server"
+      ports:
+        - protocol: TCP
+          port: 8080
+    
+    # Allow connections from API clients within namespace
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: "{{ .Release.Namespace }}"
+      ports:
+        - protocol: TCP
+          port: 8080
+        - protocol: TCP
+          port: 8443
+  
+  # Egress rules for API management
+  egress:
+    # Allow DNS resolution
+    - to: []
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+    
+    # Allow Vault access for secret retrieval
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: vault
+      ports:
+        - protocol: TCP
+          port: 8200
+    
+    # Allow database connections
+    - to:
+        - podSelector:
+            matchLabels:
+              guardianshield.io/component: "database"
+      ports:
+        - protocol: TCP
+          port: 5432
+    
+    # Allow Redis connections
+    - to:
+        - podSelector:
+            matchLabels:
+              guardianshield.io/component: "redis"
+      ports:
+        - protocol: TCP
+          port: 6379
+{{- end }}

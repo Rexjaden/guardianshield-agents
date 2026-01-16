@@ -1,0 +1,44 @@
+apiVersion: v2
+name: dhi-vault-csi-provider
+description: HashiCorp Vault CSI Provider for GuardianShield API Management and Secrets
+type: application
+version: 1.0.0
+appVersion: "1.4.1"
+
+maintainers:
+  - name: GuardianShield Team
+    email: security@guardianshield.io
+
+dependencies:
+  - name: vault
+    version: "0.27.0"
+    repository: "https://helm.releases.hashicorp.com"
+    condition: vault.enabled
+  - name: vault-secrets-operator
+    version: "0.4.0"
+    repository: "https://helm.releases.hashicorp.com"
+    condition: vaultSecretsOperator.enabled
+
+keywords:
+  - vault
+  - csi
+  - secrets
+  - api-management
+  - security
+  - authentication
+  - authorization
+  - kubernetes
+  - hashicorp
+  - web3
+  - threat-intelligence
+
+home: https://github.com/guardianshield-agents
+sources:
+  - https://github.com/guardianshield-agents
+  - https://github.com/hashicorp/vault
+  - https://github.com/hashicorp/vault-csi-provider
+
+annotations:
+  category: Security
+  licenses: Apache-2.0
+  capabilities.gardener.cloud/vault-csi-provider: "true"

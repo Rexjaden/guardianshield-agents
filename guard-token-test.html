@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guard Token (GD) Design Test</title>
+    <style>
+        :root {
+            --primary-cyan: #00ffcc;
+            --secondary-cyan: #06b6d4;
+            --dark-cyan: #0891b2;
+            --bg-dark: #0f172a;
+            --bg-darker: #020617;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --accent-gold: #f4d03f;
+            --accent-silver: #e5e7eb;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--bg-darker) 0%, var(--bg-dark) 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(0, 255, 204, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(6, 182, 212, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(8, 145, 178, 0.1) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            33% { transform: translateY(-20px) rotate(1deg); }
+            66% { transform: translateY(-10px) rotate(-1deg); }
+        }
+
+        /* Guard Token Container */
+        .guard-token-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .guard-token {
+            width: 80px;
+            height: 80px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: gentle-pulse 4s ease-in-out infinite;
+        }
+
+        .guard-token:hover {
+            transform: scale(1.1) rotate(5deg);
+            filter: brightness(1.2) drop-shadow(0 0 25px rgba(0, 255, 204, 0.6));
+        }
+
+        @keyframes gentle-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        /* Main Content Styling */
+        .main-content {
+            padding: 100px 20px 50px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .hero-section {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-cyan), var(--secondary-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            text-shadow: 0 0 30px rgba(0, 255, 204, 0.3);
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+        }
+
+        .hero-description {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Token Info Panel */
+        .token-info {
+            background: linear-gradient(135deg, rgba(0, 255, 204, 0.1), rgba(6, 182, 212, 0.1));
+            border: 2px solid rgba(0, 255, 204, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 40px 0;
+            backdrop-filter: blur(10px);
+        }
+
+        .token-title {
+            font-size: 2rem;
+            color: var(--primary-cyan);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .token-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .detail-card {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(0, 255, 204, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .detail-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .detail-value {
+            font-size: 1.4rem;
+            color: var(--primary-cyan);
+            font-weight: 600;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .guard-token-container {
+                top: 15px;
+                right: 15px;
+            }
+            
+            .guard-token {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .token-info {
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <!-- Guard Token in Top Right -->
+        <div class="guard-token-container">
+            <div class="guard-token" id="guardToken" title="Guard Token (GD) - ERC-20">
+                <!-- Stunning Original Guard Token Design -->
+                <svg width="80" height="80" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 0 15px rgba(0, 255, 204, 0.4));">
+                    <defs>
+                        <!-- Premium Silver Gradient -->
+                        <radialGradient id="silverCoin" cx="0.3" cy="0.3">
+                            <stop offset="0%" stop-color="#ffffff" />
+                            <stop offset="20%" stop-color="#f8fafc" />
+                            <stop offset="50%" stop-color="#e2e8f0" />
+                            <stop offset="80%" stop-color="#cbd5e1" />
+                            <stop offset="100%" stop-color="#94a3b8" />
+                        </radialGradient>
+                        
+                        <!-- Cyan Energy Ring -->
+                        <radialGradient id="energyRing" cx="0.5" cy="0.5">
+                            <stop offset="0%" stop-color="transparent" />
+                            <stop offset="70%" stop-color="transparent" />
+                            <stop offset="85%" stop-color="#00ffcc" stop-opacity="0.8" />
+                            <stop offset="95%" stop-color="#06b6d4" stop-opacity="0.6" />
+                            <stop offset="100%" stop-color="#0891b2" stop-opacity="0.3" />
+                        </radialGradient>
+
+                        <!-- Digital Circuit Pattern -->
+                        <pattern id="digitalCircuit" x="0" y="0" width="15" height="15" patternUnits="userSpaceOnUse">
+                            <rect width="15" height="15" fill="none"/>
+                            <path d="M 0 7.5 L 3 7.5 M 12 7.5 L 15 7.5" stroke="#00ffcc" stroke-width="0.4" opacity="0.4"/>
+                            <path d="M 7.5 0 L 7.5 3 M 7.5 12 L 7.5 15" stroke="#00ffcc" stroke-width="0.4" opacity="0.4"/>
+                            <circle cx="7.5" cy="7.5" r="1" fill="#00ffcc" opacity="0.6"/>
+                        </pattern>
+
+                        <!-- Coin Glow Filter -->
+                        <filter id="coinGlow" x="-50%" y="-50%" width="200%" height="200%">
+                            <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                            <feMerge> 
+                                <feMergeNode in="coloredBlur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
+
+                        <!-- Metallic Bevel Effect -->
+                        <filter id="metallicBevel" x="-20%" y="-20%" width="140%" height="140%">
+                            <feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
+                            <feSpecularLighting result="specOut" in="blur" specularConstant="2" specularExponent="30" lighting-color="white">
+                                <fePointLight x="-30" y="-30" z="150"/>
+                            </feSpecularLighting>
+                            <feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut2"/>
+                            <feComposite in="SourceGraphic" in2="specOut2" operator="arithmetic" k1="0" k2="1" k3="1" k4="0"/>
+                        </filter>
+
+                        <!-- Outer Ring Gradient -->
+                        <linearGradient id="outerRing" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0%" stop-color="#64748b" />
+                            <stop offset="50%" stop-color="#475569" />
+                            <stop offset="100%" stop-color="#334155" />
+                        </linearGradient>
+                    </defs>
+
+                    <!-- Outer Ring -->
+                    <circle cx="100" cy="100" r="95" 
+                            fill="none" 
+                            stroke="url(#outerRing)" 
+                            stroke-width="8"/>
+
+                    <!-- Main Coin Body -->
+                    <circle cx="100" cy="100" r="85" 
+                            fill="url(#silverCoin)" 
+                            stroke="#64748b" 
+                            stroke-width="2"
+                            filter="url(#metallicBevel)"/>
+
+                    <!-- Energy Ring Overlay -->
+                    <circle cx="100" cy="100" r="85" 
+                            fill="url(#energyRing)" 
+                            filter="url(#coinGlow)"/>
+
+                    <!-- Circuit Pattern Overlay -->
+                    <circle cx="100" cy="100" r="75" 
+                            fill="url(#digitalCircuit)" 
+                            opacity="0.3"/>
+
+                    <!-- Inner Energy Core -->
+                    <circle cx="100" cy="100" r="60" 
+                            fill="none" 
+                            stroke="#00ffcc" 
+                            stroke-width="2" 
+                            opacity="0.6"/>
+
+                    <!-- Central "GD" Typography -->
+                    <text x="100" y="115" 
+                          text-anchor="middle" 
+                          font-family="Arial Black, sans-serif" 
+                          font-size="36" 
+                          font-weight="900" 
+                          fill="#1e293b" 
+                          style="text-shadow: 0 0 10px rgba(0, 255, 204, 0.8);">GD</text>
+
+                    <!-- Top and Bottom Accent Lines -->
+                    <g stroke="#00ffcc" stroke-width="2" opacity="0.7">
+                        <path d="M 70 100 L 130 100" filter="url(#coinGlow)"/>
+                        <path d="M 75 85 L 125 85" stroke-width="1" opacity="0.5"/>
+                        <path d="M 75 115 L 125 115" stroke-width="1" opacity="0.5"/>
+                    </g>
+
+                    <!-- Corner Energy Nodes -->
+                    <g fill="#00ffcc" opacity="0.8">
+                        <circle cx="100" cy="40" r="3" filter="url(#coinGlow)"/>
+                        <circle cx="100" cy="160" r="3" filter="url(#coinGlow)"/>
+                        <circle cx="40" cy="100" r="2.5" opacity="0.6"/>
+                        <circle cx="160" cy="100" r="2.5" opacity="0.6"/>
+                    </g>
+
+                    <!-- Rotating Energy Orbit -->
+                    <g stroke="#00ffcc" stroke-width="1.5" fill="none" opacity="0.4">
+                        <circle cx="100" cy="100" r="70">
+                            <animateTransform 
+                                attributeName="transform" 
+                                attributeType="XML" 
+                                type="rotate" 
+                                from="0 100 100" 
+                                to="360 100 100" 
+                                dur="15s" 
+                                repeatCount="indefinite"/>
+                        </circle>
+                        <!-- Orbiting Particle -->
+                        <circle cx="170" cy="100" r="2" fill="#00ffcc" opacity="0.9">
+                            <animateTransform 
+                                attributeName="transform" 
+                                attributeType="XML" 
+                                type="rotate" 
+                                from="0 100 100" 
+                                to="360 100 100" 
+                                dur="15s" 
+                                repeatCount="indefinite"/>
+                        </circle>
+                    </g>
+
+                    <!-- Subtle Breathing Animation -->
+                    <circle cx="100" cy="100" r="50" 
+                            fill="none" 
+                            stroke="#00ffcc" 
+                            stroke-width="0.5" 
+                            opacity="0.3">
+                        <animate attributeName="r" 
+                                values="45;55;45" 
+                                dur="6s" 
+                                repeatCount="indefinite"/>
+                        <animate attributeName="opacity" 
+                                values="0.3;0.1;0.3" 
+                                dur="6s" 
+                                repeatCount="indefinite"/>
+                    </circle>
+                </svg>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+        <section class="hero-section">
+            <h1 class="hero-title">Guard Token (GD)</h1>
+            <h2 class="hero-subtitle">ERC-20 Utility & Governance Token</h2>
+            <p class="hero-description">
+                The foundational currency of the GuardianShield ecosystem. Guard Token powers 
+                governance, staking rewards, and platform utility functions within our 
+                decentralized Web3 security infrastructure.
+            </p>
+        </section>
+
+        <!-- Token Information Panel -->
+        <section class="token-info">
+            <h3 class="token-title">Guard Token Specifications</h3>
+            <div class="token-details">
+                <div class="detail-card">
+                    <div class="detail-label">Token Standard</div>
+                    <div class="detail-value">ERC-20</div>
+                </div>
+                <div class="detail-card">
+                    <div class="detail-label">Symbol</div>
+                    <div class="detail-value">GD</div>
+                </div>
+                <div class="detail-card">
+                    <div class="detail-label">Function</div>
+                    <div class="detail-value">Utility & Governance</div>
+                </div>
+                <div class="detail-card">
+                    <div class="detail-label">Network</div>
+                    <div class="detail-value">Multi-Chain</div>
+                </div>
+                <div class="detail-card">
+                    <div class="detail-label">Use Cases</div>
+                    <div class="detail-value">Staking, Voting, Fees</div>
+                </div>
+                <div class="detail-card">
+                    <div class="detail-label">Status</div>
+                    <div class="detail-value">Ready for Deploy</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="hero-description" style="text-align: center; margin-top: 60px;">
+            <p style="font-size: 1.1rem; color: var(--text-secondary); line-height: 1.8;">
+                <strong style="color: var(--primary-cyan);">Guard Token (GD)</strong> serves as the backbone currency 
+                for all ecosystem operations, while <strong style="color: var(--accent-gold);">Shield Token (SI)</strong> 
+                provides premium security features and NFT-like functionality through our custom ERC-8055 standard.
+            </p>
+        </section>
+    </main>
+
+    <script>
+        // Guard Token hover effects
+        const guardToken = document.getElementById('guardToken');
+        
+        guardToken.addEventListener('click', () => {
+            guardToken.style.transform = 'scale(1.3) rotate(360deg)';
+            setTimeout(() => {
+                guardToken.style.transform = '';
+            }, 800);
+        });
+
+        // Subtle parallax effect
+        document.addEventListener('mousemove', (e) => {
+            const mouseX = e.clientX / window.innerWidth;
+            const mouseY = e.clientY / window.innerHeight;
+            
+            const bgElement = document.querySelector('body::before');
+            document.body.style.setProperty('--mouse-x', mouseX);
+            document.body.style.setProperty('--mouse-y', mouseY);
+        });
+    </script>
+</body>
+</html>

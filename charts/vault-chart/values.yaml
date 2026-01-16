@@ -1,0 +1,726 @@
+# HashiCorp Vault Chart Configuration for GuardianShield
+# Pure Vault deployment with advanced API management capabilities
+
+global:
+  # GuardianShield branding
+  projectName: "GuardianShield"
+  environment: "production"
+  
+  # Global TLS configuration
+  tlsDisable: false
+  
+  # Global image registry
+  imageRegistry: ""
+  imagePullSecrets: []
+
+# Vault Server Configuration
+vault:
+  enabled: true
+  
+  # Vault image configuration
+  image:
+    repository: "hashicorp/vault"
+    tag: "1.15.4"
+    pullPolicy: "IfNotPresent"
+  
+  # Server configuration
+  server:
+    # Enable development mode (disable for production)
+    dev:
+      enabled: false
+      devRootToken: ""
+    
+    # Production server configuration
+    image:
+      repository: "hashicorp/vault"
+      tag: "1.15.4"
+      pullPolicy: "IfNotPresent"
+    
+    # Update strategy
+    updateStrategy:
+      type: "OnDelete"
+    
+    # Log level and format
+    logLevel: "info"
+    logFormat: "standard"
+    
+    # Resources
+    resources:
+      requests:
+        memory: "1Gi"
+        cpu: "500m"
+      limits:
+        memory: "2Gi"
+        cpu: "1000m"
+    
+    # Readiness probe
+    readinessProbe:
+      enabled: true
+      path: "/v1/sys/health?standbyok=true&sealedcode=204&uninitcode=204"
+      failureThreshold: 2
+      initialDelaySeconds: 5
+      periodSeconds: 3
+      successThreshold: 1
+      timeoutSeconds: 5
+    
+    # Liveness probe
+    livenessProbe:
+      enabled: true
+      path: "/v1/sys/health?standbyok=true"
+      failureThreshold: 2
+      initialDelaySeconds: 60
+      periodSeconds: 5
+      successThreshold: 1
+      timeoutSeconds: 3
+    
+    # Extra environment variables
+    extraEnvironmentVars:
+      VAULT_CACHE_SIZE: "32768"
+      VAULT_LOG_LEVEL: "info"
+      VAULT_API_ADDR: "https://$(POD_IP):8200"
+      VAULT_CLUSTER_ADDR: "https://$(POD_IP):8201"
+    
+    # Extra volumes
+    extraVolumes:
+      - type: "secret"
+        name: "vault-tls"
+        path: "/vault/tls"
+    
+    # Affinity
+    affinity: |
+      podAntiAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchLabels:
+                app.kubernetes.io/name: {{ template "vault.name" . }}
+                app.kubernetes.io/instance: "{{ .Release.Name }}"
+                component: server
+            topologyKey: kubernetes.io/hostname
+    
+    # Tolerations
+    tolerations: []
+    
+    # Node selector
+    nodeSelector: {}
+    
+    # Network policy
+    networkPolicy:
+      enabled: true
+      egress: []
+      ingress:
+        - from:
+            - namespaceSelector: {}
+          ports:
+            - port: 8200
+              protocol: TCP
+            - port: 8201
+              protocol: TCP
+    
+    # Priority class
+    priorityClassName: ""
+    
+    # Extra labels
+    extraLabels:
+      guardianshield.io/component: "vault-server"
+      guardianshield.io/api-management: "true"
+    
+    # Annotations
+    annotations:
+      vault.hashicorp.com/agent-inject: "false"
+    
+    # Service configuration
+    service:
+      enabled: true
+      type: "ClusterIP"
+      clusterIP: ""
+      port: 8200
+      targetPort: 8200
+      annotations: {}
+      publishNotReadyAddresses: true
+    
+    # Data storage
+    dataStorage:
+      enabled: true
+      size: "50Gi"
+      mountPath: "/vault/data"
+      storageClass: "fast-ssd"
+      accessMode: "ReadWriteOnce"
+      annotations: {}
+      labels: {}
+    
+    # Audit storage
+    auditStorage:
+      enabled: true
+      size: "20Gi"
+      mountPath: "/vault/audit"
+      storageClass: "fast-ssd"
+      accessMode: "ReadWriteOnce"
+      annotations: {}
+      labels: {}
+    
+    # High Availability Configuration
+    ha:
+      enabled: true
+      replicas: 3
+      
+      # API port for cluster communication
+      apiAddr: null
+      clusterAddr: null
+      
+      # Raft configuration
+      raft:
+        enabled: true
+        setNodeId: true
+        
+        config: |
+          ui = true
+          
+          listener "tcp" {
+            tls_disable = 0
+            address = "[::]:8200"
+            cluster_address = "[::]:8201"
+            tls_cert_file = "/vault/tls/tls.crt"
+            tls_key_file = "/vault/tls/tls.key"
+            tls_client_ca_file = "/vault/tls/ca.crt"
+            tls_disable_client_certs = true
+          }
+          
+          storage "raft" {
+            path = "/vault/data"
+            
+            retry_join {
+              leader_api_addr = "https://{{ include "vault.fullname" . }}-0.{{ include "vault.fullname" . }}-internal:8200"
+              leader_ca_cert_file = "/vault/tls/ca.crt"
+              leader_client_cert_file = "/vault/tls/tls.crt"
+              leader_client_key_file = "/vault/tls/tls.key"
+            }
+            
+            retry_join {
+              leader_api_addr = "https://{{ include "vault.fullname" . }}-1.{{ include "vault.fullname" . }}-internal:8200"
+              leader_ca_cert_file = "/vault/tls/ca.crt"
+              leader_client_cert_file = "/vault/tls/tls.crt"
+              leader_client_key_file = "/vault/tls/tls.key"
+            }
+            
+            retry_join {
+              leader_api_addr = "https://{{ include "vault.fullname" . }}-2.{{ include "vault.fullname" . }}-internal:8200"
+              leader_ca_cert_file = "/vault/tls/ca.crt"
+              leader_client_cert_file = "/vault/tls/tls.crt"
+              leader_client_key_file = "/vault/tls/tls.key"
+            }
+          }
+          
+          # API Management Specific Configuration
+          api_addr = "https://{{ include "vault.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local:8200"
+          cluster_addr = "https://$(HOSTNAME).{{ include "vault.fullname" . }}-internal:8201"
+          
+          # Service registration
+          service_registration "kubernetes" {}
+          
+          # Plugin directory
+          plugin_directory = "/vault/plugins"
+          
+          # Telemetry
+          telemetry {
+            prometheus_retention_time = "30s"
+            disable_hostname = true
+            unauthenticated_metrics_access = false
+          }
+          
+          # GuardianShield API rate limiting
+          max_request_size = 33554432
+          max_request_duration = "90s"
+          
+          # Seal configuration for auto-unseal (optional)
+          # seal "transit" {
+          #   address = "https://vault.example.com:8200"
+          #   key_name = "autounseal"
+          #   mount_path = "transit/"
+          # }
+    
+    # Ingress configuration
+    ingress:
+      enabled: true
+      annotations:
+        kubernetes.io/ingress.class: "nginx"
+        cert-manager.io/cluster-issuer: "letsencrypt-prod"
+        nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+        nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+        nginx.ingress.kubernetes.io/proxy-connect-timeout: "10s"
+        nginx.ingress.kubernetes.io/proxy-send-timeout: "600s"
+        nginx.ingress.kubernetes.io/proxy-read-timeout: "600s"
+      ingressClassName: "nginx"
+      pathType: Prefix
+      activeService: true
+      hosts:
+        - host: vault-api.guardianshield.io
+          paths: []
+      tls:
+        - secretName: vault-api-tls
+          hosts:
+            - vault-api.guardianshield.io
+    
+    # Route configuration
+    route:
+      enabled: false
+      host: ""
+      tls:
+        termination: passthrough
+    
+    # Auth delegator for Kubernetes auth
+    authDelegator:
+      enabled: true
+    
+    # Extra init containers
+    extraInitContainers: null
+    
+    # Extra containers
+    extraContainers: null
+    
+    # Share process namespace
+    shareProcessNamespace: false
+    
+    # Extra args
+    extraArgs: []
+    
+    # Startup probe
+    startupProbe:
+      enabled: false
+      path: "/v1/sys/health?standbyok=true&sealedcode=204&uninitcode=204"
+      failureThreshold: 12
+      initialDelaySeconds: 5
+      periodSeconds: 5
+      successThreshold: 1
+      timeoutSeconds: 5
+  
+  # Injector Configuration
+  injector:
+    enabled: true
+    
+    # Injector image
+    image:
+      repository: "hashicorp/vault-k8s"
+      tag: "1.4.0"
+      pullPolicy: "IfNotPresent"
+    
+    # Agent injector
+    agentImage:
+      repository: "hashicorp/vault"
+      tag: "1.15.4"
+    
+    # Resources
+    resources:
+      requests:
+        memory: "256Mi"
+        cpu: "250m"
+      limits:
+        memory: "512Mi"
+        cpu: "500m"
+    
+    # Replicas
+    replicas: 1
+    
+    # Port
+    port: 8080
+    
+    # Webhook configuration
+    webhook:
+      failurePolicy: "Fail"
+      matchPolicy: "Exact"
+      timeoutSeconds: 30
+      objectSelector: {}
+      annotations: {}
+    
+    # Failure policy
+    failurePolicy: "Ignore"
+    
+    # Webhook annotations
+    webhookAnnotations: {}
+    
+    # Certs configuration
+    certs:
+      secretName: null
+      caBundle: ""
+      certName: "tls.crt"
+      keyName: "tls.key"
+    
+    # Security context
+    securityContext:
+      pod: {}
+      container: {}
+    
+    # Agent defaults
+    agentDefaults:
+      cpuLimit: "500m"
+      cpuRequest: "250m"
+      memLimit: "128Mi"
+      memRequest: "64Mi"
+      template: "map"
+    
+    # Priority class
+    priorityClassName: ""
+    
+    # Annotations
+    annotations: {}
+    
+    # Extra labels
+    extraLabels:
+      guardianshield.io/component: "vault-injector"
+    
+    # Host network
+    hostNetwork: false
+    
+    # Service configuration
+    service:
+      annotations: {}
+    
+    # Pod disruption budget
+    podDisruptionBudget:
+      maxUnavailable: null
+    
+    # Strategy
+    strategy: {}
+    
+    # External vault address
+    externalVaultAddr: ""
+
+# UI Configuration
+ui:
+  enabled: true
+  publishNotReadyAddresses: true
+  activeVaultPodOnly: false
+  serviceType: "ClusterIP"
+  serviceNodePort: null
+  externalPort: 8200
+  targetPort: 8200
+  annotations: {}
+
+# CSI Provider (disabled - using separate chart)
+csi:
+  enabled: false
+
+# Server-side request forgery protection
+serverTelemetry:
+  serviceMonitor:
+    enabled: true
+    selectors: {}
+    interval: 30s
+    scrapeTimeout: 10s
+
+# API Management Extensions
+apiManagement:
+  enabled: true
+  
+  # API versioning
+  versioning:
+    enabled: true
+    defaultVersion: "v1"
+    supportedVersions: ["v1", "v2"]
+    headerName: "X-API-Version"
+  
+  # Rate limiting
+  rateLimiting:
+    enabled: true
+    globalLimit: 10000  # requests per hour
+    
+    # Per-client limits
+    clientLimits:
+      default: 1000
+      premium: 5000
+      enterprise: 20000
+  
+  # API key management
+  apiKeys:
+    enabled: true
+    
+    # Key formats
+    keyPrefix: "gvault_"
+    keyLength: 32
+    
+    # Expiration settings
+    defaultExpiration: "30d"
+    maxExpiration: "365d"
+    
+    # Storage backend
+    storage: "vault"  # or "database", "redis"
+  
+  # OAuth2 configuration
+  oauth2:
+    enabled: true
+    
+    # Endpoints
+    authorizationEndpoint: "/oauth2/authorize"
+    tokenEndpoint: "/oauth2/token"
+    introspectionEndpoint: "/oauth2/introspect"
+    revocationEndpoint: "/oauth2/revoke"
+    
+    # Token settings
+    accessTokenTTL: "1h"
+    refreshTokenTTL: "168h"  # 7 days
+    
+    # Grant types
+    supportedGrantTypes:
+      - "authorization_code"
+      - "client_credentials"
+      - "refresh_token"
+    
+    # Response types
+    supportedResponseTypes:
+      - "code"
+      - "token"
+  
+  # JWT configuration
+  jwt:
+    enabled: true
+    
+    # Signing
+    signingMethod: "RS256"  # or "HS256", "ES256"
+    keyRotationInterval: "24h"
+    
+    # Claims
+    issuer: "https://vault-api.guardianshield.io"
+    audience: "guardianshield-api"
+    
+    # Token settings
+    accessTokenTTL: "1h"
+    refreshTokenTTL: "168h"
+  
+  # CORS configuration
+  cors:
+    enabled: true
+    allowedOrigins:
+      - "https://admin.guardianshield.io"
+      - "https://app.guardianshield.io"
+    allowedMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+    allowedHeaders: ["Authorization", "Content-Type", "X-API-Key"]
+    maxAge: "86400"
+  
+  # API documentation
+  documentation:
+    enabled: true
+    swaggerUI: true
+    endpoint: "/api/docs"
+  
+  # Metrics and monitoring
+  metrics:
+    enabled: true
+    prometheusEndpoint: "/metrics"
+    detailedMetrics: true
+
+# Vault Policies for API Management
+policies:
+  # API management policies
+  apiManagement:
+    # Admin policy
+    admin: |
+      # Full API management access
+      path "guardianshield/api/*" {
+        capabilities = ["create", "read", "update", "delete", "list"]
+      }
+      
+      path "guardianshield/oauth2/*" {
+        capabilities = ["create", "read", "update", "delete", "list"]
+      }
+      
+      path "auth/token/*" {
+        capabilities = ["create", "read", "update", "delete", "list"]
+      }
+      
+      path "sys/policies/acl/*" {
+        capabilities = ["create", "read", "update", "delete", "list"]
+      }
+    
+    # Developer policy
+    developer: |
+      # Limited API access
+      path "guardianshield/api/read-only/*" {
+        capabilities = ["read", "list"]
+      }
+      
+      path "guardianshield/api/keys/+/metadata" {
+        capabilities = ["read"]
+      }
+      
+      path "auth/token/create" {
+        capabilities = ["create"]
+      }
+    
+    # Client policy
+    client: |
+      # Client application access
+      path "guardianshield/api/client/*" {
+        capabilities = ["read"]
+      }
+      
+      path "auth/token/lookup-self" {
+        capabilities = ["read"]
+      }
+      
+      path "auth/token/renew-self" {
+        capabilities = ["update"]
+      }
+
+# Auth Methods Configuration
+authMethods:
+  kubernetes:
+    enabled: true
+    config:
+      kubernetesHost: "https://kubernetes.default.svc.cluster.local"
+      kubernetesCACert: ""
+      tokenReviewerJWT: ""
+    
+    roles:
+      guardianshield-api:
+        boundServiceAccountNames: ["guardianshield-api"]
+        boundServiceAccountNamespaces: ["guardianshield"]
+        policies: ["guardianshield-api-policy"]
+        ttl: "1h"
+        maxTTL: "24h"
+  
+  jwt:
+    enabled: true
+    config:
+      jwksURL: "https://vault-api.guardianshield.io/.well-known/jwks.json"
+      boundIssuer: "https://vault-api.guardianshield.io"
+      defaultRole: "api-client"
+    
+    roles:
+      api-client:
+        boundAudiences: ["guardianshield-api"]
+        userClaim: "sub"
+        roleType: "jwt"
+        policies: ["client-api-policy"]
+        ttl: "1h"
+        maxTTL: "8h"
+  
+  userpass:
+    enabled: true
+    users:
+      admin:
+        password: ""  # Set during deployment
+        policies: ["admin-api-policy"]
+
+# Secrets Engines Configuration
+secretsEngines:
+  kv:
+    # API secrets
+    guardianshield-api:
+      version: 2
+      path: "guardianshield/api"
+      description: "GuardianShield API secrets"
+      config:
+        maxVersions: 10
+        casRequired: false
+        deleteVersionAfter: "0s"
+    
+    # OAuth2 secrets
+    oauth2:
+      version: 2
+      path: "guardianshield/oauth2"
+      description: "OAuth2 client secrets"
+      config:
+        maxVersions: 5
+        casRequired: true
+  
+  database:
+    enabled: false  # Configure separately
+  
+  pki:
+    # Certificate authority for API certificates
+    guardianshield-ca:
+      path: "pki/guardianshield"
+      description: "GuardianShield internal CA"
+      config:
+        maxLeaseTtl: "8760h"  # 1 year
+        defaultLeaseTtl: "720h"  # 30 days
+      
+      # Root CA configuration
+      rootCA:
+        commonName: "GuardianShield Internal CA"
+        ttl: "87600h"  # 10 years
+      
+      # Roles
+      roles:
+        api-server:
+          allowedDomains:
+            - "vault-api.guardianshield.io"
+            - "*.guardianshield.svc.cluster.local"
+          allowSubdomains: true
+          maxTTL: "720h"
+          generateLease: true
+
+# Monitoring Configuration
+monitoring:
+  serviceMonitor:
+    enabled: true
+    labels:
+      app: "guardianshield-vault"
+      release: "prometheus"
+    interval: "30s"
+    scrapeTimeout: "10s"
+  
+  prometheusRule:
+    enabled: true
+    rules:
+      - alert: VaultSealed
+        expr: vault_core_unsealed == 0
+        for: 0m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Vault instance is sealed"
+          description: "Vault instance {{ $labels.instance }} is sealed"
+      
+      - alert: VaultHighAPILoad
+        expr: rate(vault_core_handle_request_count[5m]) > 100
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High API request rate"
+          description: "Vault instance {{ $labels.instance }} is receiving high API load"
+
+# RBAC Configuration
+rbac:
+  create: true
+  pspEnable: false
+
+# Service Account
+serviceAccount:
+  create: true
+  name: ""
+  annotations:
+    eks.amazonaws.com/role-arn: ""
+  extraLabels:
+    guardianshield.io/component: "vault-service-account"
+
+# Pod Security Policy
+podSecurityPolicy:
+  enable: false
+
+# Tests
+tests:
+  enabled: true
+
+# External Dependencies
+externalDependencies:
+  redis:
+    enabled: true
+    host: "redis.guardianshield.svc.cluster.local"
+    port: 6379
+    database: 0
+  
+  postgresql:
+    enabled: true
+    host: "guardianshield-postgres-rw.guardianshield.svc.cluster.local"
+    port: 5432
+    database: "vault_api"
+
+# Additional Configuration
+extraLabels: {}
+extraAnnotations: {}
+
+# Development settings
+development:
+  enabled: false
+  devRootToken: "root"

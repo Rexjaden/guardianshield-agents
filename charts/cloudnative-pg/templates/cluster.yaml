@@ -1,0 +1,186 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: {{ .Values.cluster.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ include "dhi-cloudnative-pg.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    guardianshield.io/component: "database"
+    guardianshield.io/environment: {{ .Values.global.environment }}
+spec:
+  description: {{ .Values.cluster.description }}
+  
+  # PostgreSQL Configuration
+  instances: {{ .Values.cluster.instances }}
+  primaryUpdateStrategy: {{ .Values.cluster.primaryUpdateStrategy }}
+  
+  # PostgreSQL Image and Version
+  imageName: "postgres:15.5"
+  
+  # PostgreSQL Parameters
+  postgresql:
+    parameters:
+      {{- range $key, $value := .Values.cluster.postgresql.parameters }}
+      {{ $key }}: {{ $value | quote }}
+      {{- end }}
+    
+    # Enable synchronous replication for data safety
+    syncReplicaElectionConstraint:
+      enabled: true
+  
+  # Bootstrap configuration
+  bootstrap:
+    initdb:
+      database: {{ .Values.initdb.database }}
+      owner: {{ .Values.initdb.owner }}
+      secret:
+        name: {{ .Values.initdb.secret }}
+      
+      # Custom SQL initialization
+      postInitSQL:
+        {{- .Values.customSQL | nindent 8 }}
+  
+  # Storage configuration
+  storage:
+    size: {{ .Values.storage.size }}
+    {{- if .Values.storage.storageClass }}
+    storageClass: {{ .Values.storage.storageClass }}
+    {{- end }}
+    resizeInUseVolumes: true
+  
+  {{- if .Values.storage.walStorage }}
+  # WAL storage (separate for performance)
+  walStorage:
+    size: {{ .Values.storage.walStorage.size }}
+    {{- if .Values.storage.walStorage.storageClass }}
+    storageClass: {{ .Values.storage.walStorage.storageClass }}
+    {{- end }}
+    resizeInUseVolumes: true
+  {{- end }}
+  
+  # Resource limits
+  resources:
+    {{- toYaml .Values.resources | nindent 4 }}
+  
+  # Affinity and scheduling
+  {{- if .Values.cluster.affinity }}
+  affinity:
+    {{- if .Values.cluster.affinity.enablePodAntiAffinity }}
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchLabels:
+              postgresql: {{ .Values.cluster.name }}
+          topologyKey: {{ .Values.cluster.affinity.topologyKey }}
+    {{- end }}
+  {{- end }}
+  
+  {{- if .Values.cluster.nodeSelector }}
+  nodeSelector:
+    {{- toYaml .Values.cluster.nodeSelector | nindent 4 }}
+  {{- end }}
+  
+  {{- if .Values.cluster.tolerations }}
+  tolerations:
+    {{- toYaml .Values.cluster.tolerations | nindent 4 }}
+  {{- end }}
+  
+  # Security context
+  securityContext:
+    {{- toYaml .Values.security.securityContext | nindent 4 }}
+  
+  # Monitoring configuration
+  {{- if .Values.monitoring.enabled }}
+  monitoring:
+    enabled: true
+    podMonitorEnabled: true
+    podMonitorMetricRelabelings:
+      - sourceLabels: [__name__]
+        regex: 'pg_up'
+        targetLabel: 'guardianshield_component'
+        replacement: 'postgresql'
+  {{- end }}
+  
+  # Backup configuration
+  {{- if .Values.backup.enabled }}
+  backup:
+    retentionPolicy: {{ .Values.backup.retentionPolicy }}
+    barmanObjectStore:
+      {{- if .Values.backup.s3 }}
+      destinationPath: "s3://{{ .Values.backup.s3.bucket }}{{ .Values.backup.s3.path }}"
+      s3Credentials:
+        accessKeyId:
+          name: "s3-credentials"
+          key: "ACCESS_KEY_ID"
+        secretAccessKey:
+          name: "s3-credentials"
+          key: "SECRET_ACCESS_KEY"
+      wal:
+        maxParallel: 8
+        retention: "7d"
+      data:
+        maxParallel: 8
+        retention: {{ .Values.backup.retentionPolicy }}
+      {{- end }}
+  {{- end }}
+  
+  # Additional PostgreSQL configuration
+  {{- if .Values.configMaps }}
+  configMaps:
+    {{- range .Values.configMaps }}
+    - name: {{ .name }}
+      {{- if .data }}
+      data:
+        {{- range $key, $value := .data }}
+        {{ $key }}: |
+          {{- $value | nindent 10 }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
+  {{- end }}
+
+---
+{{- if .Values.pooler.enabled }}
+# PgBouncer Pooler Configuration
+apiVersion: postgresql.cnpg.io/v1
+kind: Pooler
+metadata:
+  name: {{ .Values.cluster.name }}-pooler
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ include "dhi-cloudnative-pg.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    guardianshield.io/component: "connection-pool"
+spec:
+  cluster:
+    name: {{ .Values.cluster.name }}
+  
+  instances: {{ .Values.pooler.instances }}
+  type: rw
+  
+  # PgBouncer configuration
+  pgbouncer:
+    {{- range $key, $value := .Values.pooler.pgbouncer }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+  
+  # Template for pooler pods
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "dhi-cloudnative-pg.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        guardianshield.io/component: "connection-pool"
+    
+    spec:
+      containers:
+        - name: pgbouncer
+          resources:
+            {{- toYaml .Values.pooler.resources | nindent 12 }}
+      
+      securityContext:
+        {{- toYaml .Values.security.podSecurityContext | nindent 8 }}
+{{- end }}

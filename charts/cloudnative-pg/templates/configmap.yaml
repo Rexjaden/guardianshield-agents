@@ -1,0 +1,259 @@
+# Database Connection Secret
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ include "dhi-cloudnative-pg.secretName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "dhi-cloudnative-pg.labels" . | nindent 4 }}
+    guardianshield.io/component: "database-credentials"
+type: Opaque
+data:
+  # PostgreSQL credentials (base64 encoded)
+  username: {{ .Values.initdb.owner | b64enc | quote }}
+  password: {{ randAlphaNum 32 | b64enc | quote }}
+  database: {{ .Values.initdb.database | b64enc | quote }}
+
+---
+# Database Users Secret (for additional database users)
+{{- if .Values.initdb.databases }}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.cluster.name }}-database-users
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "dhi-cloudnative-pg.labels" . | nindent 4 }}
+    guardianshield.io/component: "database-users"
+type: Opaque
+data:
+  {{- range .Values.initdb.databases }}
+  {{- if .owner }}
+  {{ .owner }}-username: {{ .owner | b64enc | quote }}
+  {{ .owner }}-password: {{ randAlphaNum 32 | b64enc | quote }}
+  {{- end }}
+  {{- end }}
+{{- end }}
+
+---
+# Service Account for PostgreSQL
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ .Values.cluster.name }}-postgres
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "dhi-cloudnative-pg.labels" . | nindent 4 }}
+    guardianshield.io/component: "database-service-account"
+automountServiceAccountToken: false
+
+---
+{{- if .Values.monitoring.enabled }}
+# Service Monitor for Prometheus
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ .Values.cluster.name }}-postgres-metrics
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "dhi-cloudnative-pg.labels" . | nindent 4 }}
+    {{- include "dhi-cloudnative-pg.monitoringLabels" . | nindent 4 }}
+    guardianshield.io/component: "database-monitoring"
+spec:
+  selector:
+    matchLabels:
+      postgresql: {{ .Values.cluster.name }}
+  
+  endpoints:
+    - port: metrics
+      interval: {{ .Values.monitoring.prometheus.serviceMonitor.interval }}
+      scrapeTimeout: {{ .Values.monitoring.prometheus.serviceMonitor.scrapeTimeout }}
+      path: /metrics
+      
+      # Metric relabeling
+      metricRelabelings:
+        - sourceLabels: [__name__]
+          regex: 'pg_(up|stat_database_.*|locks_.*|stat_bgwriter_.*)'
+          action: keep
+        - targetLabel: guardianshield_component
+          replacement: postgresql
+        - targetLabel: guardianshield_cluster
+          replacement: {{ .Values.cluster.name }}
+
+{{- if .Values.pooler.enabled }}
+---
+# Service Monitor for PgBouncer Pooler
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ .Values.cluster.name }}-pooler-metrics
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "dhi-cloudnative-pg.labels" . | nindent 4 }}
+    {{- include "dhi-cloudnative-pg.monitoringLabels" . | nindent 4 }}
+    guardianshield.io/component: "pooler-monitoring"
+spec:
+  selector:
+    matchLabels:
+      cnpg.io/poolerName: {{ .Values.cluster.name }}-pooler
+  
+  endpoints:
+    - port: metrics
+      interval: {{ .Values.monitoring.prometheus.serviceMonitor.interval }}
+      scrapeTimeout: {{ .Values.monitoring.prometheus.serviceMonitor.scrapeTimeout }}
+      path: /metrics
+      
+      # Metric relabeling for pooler
+      metricRelabelings:
+        - sourceLabels: [__name__]
+          regex: 'pgbouncer_(pools_.*|stats_.*|clients_.*)'
+          action: keep
+        - targetLabel: guardianshield_component
+          replacement: pgbouncer
+        - targetLabel: guardianshield_cluster
+          replacement: {{ .Values.cluster.name }}
+{{- end }}
+{{- end }}
+
+---
+# ConfigMap for PostgreSQL Configuration
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.cluster.name }}-postgres-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "dhi-cloudnative-pg.labels" . | nindent 4 }}
+    guardianshield.io/component: "database-configuration"
+data:
+  # Custom PostgreSQL configuration
+  custom-postgresql.conf: |
+    # GuardianShield Custom PostgreSQL Configuration
+    
+    # Shared preload libraries for extensions
+    shared_preload_libraries = 'pg_stat_statements,auto_explain,pg_prewarm'
+    
+    # Query performance monitoring
+    pg_stat_statements.max = 1000
+    pg_stat_statements.track = all
+    pg_stat_statements.track_utility = on
+    pg_stat_statements.save = on
+    
+    # Automatic query plan logging for slow queries
+    auto_explain.log_min_duration = 5000
+    auto_explain.log_analyze = on
+    auto_explain.log_buffers = on
+    auto_explain.log_timing = on
+    auto_explain.log_triggers = on
+    auto_explain.log_verbose = on
+    auto_explain.log_nested_statements = on
+    
+    # Buffer cache prewarming
+    pg_prewarm.autoprewarm = on
+    pg_prewarm.autoprewarm_interval = 300
+    
+    # Additional security settings
+    ssl_ciphers = 'HIGH:MEDIUM:+3DES:!aNULL'
+    ssl_prefer_server_ciphers = on
+    ssl_ecdh_curve = 'prime256v1:secp384r1'
+    ssl_dh_params_file = ''
+    
+    # Connection and authentication
+    tcp_keepalives_idle = 600
+    tcp_keepalives_interval = 30
+    tcp_keepalives_count = 3
+    
+    # Memory settings optimized for threat intelligence workloads
+    temp_buffers = 32MB
+    max_prepared_transactions = 100
+    
+    # Vacuum and analyze settings
+    vacuum_cost_delay = 10ms
+    vacuum_cost_page_hit = 1
+    vacuum_cost_page_miss = 10
+    vacuum_cost_page_dirty = 20
+    vacuum_cost_limit = 2000
+    
+    # Full text search optimization
+    default_text_search_config = 'pg_catalog.english'
+    
+  # Database initialization script
+  init-guardianshield.sql: |
+    -- GuardianShield Database Initialization
+    
+    -- Enable required extensions
+    CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+    CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+    CREATE EXTENSION IF NOT EXISTS "pg_trgm";
+    CREATE EXTENSION IF NOT EXISTS "btree_gin";
+    CREATE EXTENSION IF NOT EXISTS "btree_gist";
+    CREATE EXTENSION IF NOT EXISTS "hstore";
+    CREATE EXTENSION IF NOT EXISTS "pg_stat_statements";
+    
+    -- Create application-specific roles
+    DO $$
+    BEGIN
+        -- Threat Intelligence roles
+        IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'threat_reader') THEN
+            CREATE ROLE threat_reader;
+        END IF;
+        
+        IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'threat_writer') THEN
+            CREATE ROLE threat_writer;
+        END IF;
+        
+        -- Analytics roles
+        IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'analytics_reader') THEN
+            CREATE ROLE analytics_reader;
+        END IF;
+        
+        IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'analytics_writer') THEN
+            CREATE ROLE analytics_writer;
+        END IF;
+        
+        -- Agent roles
+        IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'agent_reader') THEN
+            CREATE ROLE agent_reader;
+        END IF;
+        
+        IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'agent_writer') THEN
+            CREATE ROLE agent_writer;
+        END IF;
+    END
+    $$;
+    
+    -- Grant basic permissions
+    GRANT CONNECT ON DATABASE guardianshield TO threat_reader, threat_writer;
+    GRANT CONNECT ON DATABASE guardianshield TO analytics_reader, analytics_writer;
+    GRANT CONNECT ON DATABASE guardianshield TO agent_reader, agent_writer;
+    
+    -- Create optimized indexes for common query patterns
+    
+    -- Text search optimization
+    CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_threat_indicators_text_search 
+        ON threat_intel.indicators USING GIN(to_tsvector('english', value));
+    
+    -- Composite indexes for analytics
+    CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_analytics_events_composite
+        ON analytics.events(event_type, timestamp DESC, agent_id);
+    
+    -- Partial indexes for active threats
+    CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_indicators_active
+        ON threat_intel.indicators(type, confidence DESC)
+        WHERE confidence > 0.7;
+    
+    -- Set up row level security policies
+    ALTER TABLE threat_intel.indicators ENABLE ROW LEVEL SECURITY;
+    ALTER TABLE analytics.events ENABLE ROW LEVEL SECURITY;
+    
+    -- Create policies for threat intelligence
+    CREATE POLICY threat_read_policy ON threat_intel.indicators
+        FOR SELECT TO threat_reader, threat_writer
+        USING (true);
+    
+    CREATE POLICY threat_write_policy ON threat_intel.indicators
+        FOR ALL TO threat_writer
+        USING (true);
+    
+    -- Vacuum and analyze for optimal query planning
+    VACUUM ANALYZE;

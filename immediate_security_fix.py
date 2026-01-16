@@ -124,7 +124,10 @@ import hashlib
 import os
 from datetime import datetime
 
-MASTER_KEY = "GUARDIAN_SHIELD_MASTER_2026"
+MASTER_KEY = os.getenv('GUARDIAN_MASTER_KEY', '')
+if not MASTER_KEY:
+    print("❌ GUARDIAN_MASTER_KEY environment variable not set")
+    exit(1)
 
 def master_access():
     print("🔐 GuardianShield Master Access")

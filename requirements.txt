@@ -28,6 +28,7 @@ beautifulsoup4>=4.12.0
 
 # Security and encryption (enhances self-improvement safety)
 cryptography>=41.0.0
+pyjwt>=2.8.0
 python-dotenv>=1.0.0
 pycryptodome>=3.18.0
 

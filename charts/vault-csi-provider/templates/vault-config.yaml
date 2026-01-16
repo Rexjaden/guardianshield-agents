@@ -1,0 +1,312 @@
+# Vault Configuration ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "dhi-vault-csi-provider.fullname" . }}-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "dhi-vault-csi-provider.labels" . | nindent 4 }}
+    guardianshield.io/component: "vault-config"
+data:
+  # Vault server configuration
+  vault-config.hcl: |
+    # GuardianShield Vault Configuration
+    
+    ui = true
+    
+    # API listener
+    listener "tcp" {
+      address = "[::]:8200"
+      cluster_address = "[::]:8201"
+      
+      {{- if not .Values.global.tlsDisable }}
+      tls_cert_file = "/vault/userconfig/vault-server-tls/tls.crt"
+      tls_key_file = "/vault/userconfig/vault-server-tls/tls.key"
+      tls_client_ca_file = "/vault/userconfig/vault-server-tls/ca.crt"
+      tls_disable = false
+      {{- else }}
+      tls_disable = true
+      {{- end }}
+    }
+    
+    # Storage configuration
+    {{- if .Values.vault.server.ha.raft.enabled }}
+    storage "raft" {
+      path = "/vault/data"
+      node_id = "{{ "{{" }} env "HOSTNAME" {{ "}}" }}"
+      
+      {{- range $i := until (.Values.vault.server.ha.replicas | int) }}
+      retry_join {
+        leader_api_addr = "{{ include "dhi-vault-csi-provider.vaultAddress" $ }}"
+        {{- if not $.Values.global.tlsDisable }}
+        leader_ca_cert_file = "/vault/userconfig/vault-server-tls/ca.crt"
+        leader_client_cert_file = "/vault/userconfig/vault-server-tls/tls.crt"
+        leader_client_key_file = "/vault/userconfig/vault-server-tls/tls.key"
+        {{- end }}
+      }
+      {{- end }}
+    }
+    {{- end }}
+    
+    # Seal configuration
+    {{- if .Values.vault.server.seal }}
+    {{ .Values.vault.server.seal | nindent 4 }}
+    {{- end }}
+    
+    # Service registration
+    service_registration "kubernetes" {}
+    
+    # Telemetry
+    telemetry {
+      prometheus_retention_time = "30s"
+      disable_hostname = true
+    }
+    
+    # GuardianShield specific configuration
+    plugin_directory = "/vault/plugins"
+    
+    # API rate limiting
+    api_addr = "{{ include "dhi-vault-csi-provider.vaultAddress" . }}"
+    cluster_addr = "https://{{ "{{" }} env "HOSTNAME" {{ "}}" }}.{{ include "dhi-vault-csi-provider.fullname" . }}-internal.{{ .Release.Namespace }}.svc.cluster.local:8201"
+    
+    # Default lease settings
+    default_lease_ttl = "1h"
+    max_lease_ttl = "24h"
+  
+  # GuardianShield policies
+  guardianshield-policies.hcl: |
+    # GuardianShield API Management Policies
+    
+    # Threat Intelligence API Policy
+    path "guardianshield/threat-intel/*" {
+      capabilities = ["create", "read", "update", "delete", "list"]
+    }
+    
+    path "guardianshield/threat-intel/indicators/*" {
+      capabilities = ["create", "read", "update", "delete", "list"]
+      allowed_parameters = {
+        "type" = ["ip", "domain", "hash", "url"]
+        "confidence" = []
+        "source" = []
+      }
+    }
+    
+    # User Management API Policy
+    path "guardianshield/user-mgmt/*" {
+      capabilities = ["create", "read", "update", "delete"]
+    }
+    
+    path "guardianshield/user-mgmt/users/*" {
+      capabilities = ["create", "read", "update", "delete"]
+      denied_parameters = {
+        "password" = []
+      }
+    }
+    
+    # Blockchain API Policy
+    path "guardianshield/blockchain/*" {
+      capabilities = ["read", "list"]
+    }
+    
+    path "guardianshield/blockchain/transactions/*" {
+      capabilities = ["read", "list"]
+      required_parameters = ["chain_id"]
+    }
+    
+    # Analytics API Policy
+    path "guardianshield/analytics/*" {
+      capabilities = ["create", "read", "list"]
+    }
+    
+    path "guardianshield/analytics/events/*" {
+      capabilities = ["create", "read", "list"]
+      allowed_parameters = {
+        "event_type" = []
+        "severity" = ["low", "medium", "high", "critical"]
+      }
+    }
+    
+    # API Key Management Policy
+    path "guardianshield/api/keys/*" {
+      capabilities = ["create", "read", "update", "delete", "list"]
+    }
+    
+    # JWT Token Policy
+    path "guardianshield/api/tokens/*" {
+      capabilities = ["create", "read"]
+    }
+    
+    # Read-only policy for monitoring
+    path "sys/health" {
+      capabilities = ["read"]
+    }
+    
+    path "sys/metrics" {
+      capabilities = ["read"]
+    }
+  
+  # API management scripts
+  api-init.sh: |
+    #!/bin/bash
+    set -e
+    
+    echo "Initializing GuardianShield API management..."
+    
+    # Wait for Vault to be ready
+    until vault status > /dev/null 2>&1; do
+      echo "Waiting for Vault to be ready..."
+      sleep 5
+    done
+    
+    # Enable KV v2 secrets engines
+    vault secrets enable -path=guardianshield kv-v2 || true
+    vault secrets enable -path=guardianshield/api kv-v2 || true
+    vault secrets enable -path=guardianshield/threat-intel kv-v2 || true
+    vault secrets enable -path=guardianshield/blockchain kv-v2 || true
+    vault secrets enable -path=guardianshield/analytics kv-v2 || true
+    
+    # Enable auth methods
+    vault auth enable jwt || true
+    vault auth enable kubernetes || true
+    
+    # Configure Kubernetes auth
+    vault write auth/kubernetes/config \
+      kubernetes_host="https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_SERVICE_PORT" \
+      kubernetes_ca_cert=@/var/run/secrets/kubernetes.io/serviceaccount/ca.crt \
+      token_reviewer_jwt=@/var/run/secrets/kubernetes.io/serviceaccount/token
+    
+    # Create GuardianShield policies
+    vault policy write guardianshield-threat-intel-policy - <<EOF
+    path "guardianshield/threat-intel/*" {
+      capabilities = ["create", "read", "update", "delete", "list"]
+    }
+    EOF
+    
+    vault policy write guardianshield-user-mgmt-policy - <<EOF
+    path "guardianshield/user-mgmt/*" {
+      capabilities = ["create", "read", "update", "delete"]
+    }
+    EOF
+    
+    vault policy write guardianshield-blockchain-policy - <<EOF
+    path "guardianshield/blockchain/*" {
+      capabilities = ["read", "list"]
+    }
+    EOF
+    
+    vault policy write guardianshield-analytics-policy - <<EOF
+    path "guardianshield/analytics/*" {
+      capabilities = ["create", "read", "list"]
+    }
+    EOF
+    
+    vault policy write guardianshield-api-policy - <<EOF
+    path "guardianshield/api/*" {
+      capabilities = ["create", "read", "update", "delete", "list"]
+    }
+    EOF
+    
+    # Create Kubernetes auth roles
+    vault write auth/kubernetes/role/guardianshield-admin \
+      bound_service_account_names=guardianshield-vault \
+      bound_service_account_namespaces={{ .Release.Namespace }} \
+      policies=guardianshield-threat-intel-policy,guardianshield-user-mgmt-policy,guardianshield-blockchain-policy,guardianshield-analytics-policy,guardianshield-api-policy \
+      ttl=1h \
+      max_ttl=24h
+    
+    vault write auth/kubernetes/role/guardianshield-developer \
+      bound_service_account_names=guardianshield-developer \
+      bound_service_account_namespaces={{ .Release.Namespace }} \
+      policies=guardianshield-threat-intel-policy,guardianshield-blockchain-policy,guardianshield-analytics-policy \
+      ttl=1h \
+      max_ttl=8h
+    
+    vault write auth/kubernetes/role/guardianshield-readonly \
+      bound_service_account_names=guardianshield-readonly \
+      bound_service_account_namespaces={{ .Release.Namespace }} \
+      policies=guardianshield-readonly-policy \
+      ttl=30m \
+      max_ttl=2h
+    
+    {{- if .Values.apiManagement.enabled }}
+    # Initialize API keys
+    vault kv put guardianshield/api/keys \
+      api_key="$(openssl rand -hex 32)" \
+      api_secret="$(openssl rand -hex 32)" \
+      jwt_secret="$(openssl rand -hex 64)"
+    
+    # Configure JWT auth
+    vault write auth/jwt/config \
+      jwks_url="{{ include "dhi-vault-csi-provider.vaultAddress" . }}/v1/guardianshield/jwks" \
+      default_role="guardianshield-api"
+    
+    vault write auth/jwt/role/guardianshield-api \
+      bound_audiences="{{ .Values.apiManagement.jwt.audience }}" \
+      bound_issuer="{{ .Values.apiManagement.jwt.issuer }}" \
+      user_claim="sub" \
+      role_type="jwt" \
+      policies="guardianshield-api-policy" \
+      ttl={{ .Values.apiManagement.jwt.expiration }}s
+    {{- end }}
+    
+    echo "GuardianShield API management initialization completed"
+
+---
+# Secret for Vault TLS certificates
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ include "dhi-vault-csi-provider.fullname" . }}-tls
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "dhi-vault-csi-provider.labels" . | nindent 4 }}
+    guardianshield.io/component: "vault-tls"
+type: kubernetes.io/tls
+data:
+  # Self-signed certificate for internal communication
+  # In production, replace with proper certificates from cert-manager
+  tls.crt: {{ include "dhi-vault-csi-provider.generateCert" . | b64enc }}
+  tls.key: {{ include "dhi-vault-csi-provider.generateKey" . | b64enc }}
+  ca.crt: {{ include "dhi-vault-csi-provider.generateCA" . | b64enc }}
+
+---
+# ServiceMonitor for Prometheus monitoring
+{{- if .Values.monitoring.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "dhi-vault-csi-provider.fullname" . }}-metrics
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "dhi-vault-csi-provider.labels" . | nindent 4 }}
+    {{- include "dhi-vault-csi-provider.monitoringLabels" . | nindent 4 }}
+    guardianshield.io/component: "vault-monitoring"
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: vault
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  
+  endpoints:
+    - port: http-metrics
+      interval: {{ .Values.monitoring.prometheus.serviceMonitor.interval }}
+      scrapeTimeout: {{ .Values.monitoring.prometheus.serviceMonitor.scrapeTimeout }}
+      path: /v1/sys/metrics
+      params:
+        format: ['prometheus']
+      
+      # Authentication for metrics endpoint
+      bearerTokenSecret:
+        name: vault-metrics-token
+        key: token
+      
+      # Metric relabeling
+      metricRelabelings:
+        - sourceLabels: [__name__]
+          regex: 'vault_(core|runtime|secret|auth)_.*'
+          action: keep
+        - targetLabel: guardianshield_component
+          replacement: vault
+        - targetLabel: guardianshield_cluster
+          replacement: {{ include "dhi-vault-csi-provider.fullname" . }}
+{{- end }}

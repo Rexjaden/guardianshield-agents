@@ -1,0 +1,303 @@
+{{- if .Values.vault.server.ha.enabled }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "vault-chart.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "vault-chart.server.labels" . | nindent 4 }}
+  {{- with .Values.vault.server.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  serviceName: {{ include "vault-chart.server.headlessServiceName" . }}
+  podManagementPolicy: Parallel
+  replicas: {{ .Values.vault.server.ha.replicas }}
+  updateStrategy:
+    type: {{ .Values.vault.server.updateStrategy.type }}
+  selector:
+    matchLabels:
+      {{- include "vault-chart.server.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "vault-chart.server.labels" . | nindent 8 }}
+      {{- with .Values.vault.server.annotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "vault-chart.serviceAccountName" . }}
+      {{- with .Values.vault.server.priorityClassName }}
+      priorityClassName: {{ . }}
+      {{- end }}
+      {{- with .Values.vault.server.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.vault.server.affinity }}
+      affinity:
+        {{- tpl . $ | nindent 8 }}
+      {{- end }}
+      {{- with .Values.vault.server.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      terminationGracePeriodSeconds: 10
+      {{- if .Values.vault.server.shareProcessNamespace }}
+      shareProcessNamespace: true
+      {{- end }}
+      securityContext:
+        runAsNonRoot: true
+        runAsGroup: 1000
+        runAsUser: 100
+        fsGroup: 1000
+      {{- if .Values.vault.server.extraInitContainers }}
+      initContainers:
+        {{- tpl .Values.vault.server.extraInitContainers . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: vault
+          image: {{ include "vault-chart.server.image" . }}
+          imagePullPolicy: {{ .Values.vault.server.image.pullPolicy }}
+          {{- if .Values.vault.server.extraArgs }}
+          args:
+            {{- range .Values.vault.server.extraArgs }}
+            - {{ . }}
+            {{- end }}
+          {{- end }}
+          command:
+            - "/bin/sh"
+            - "-ec"
+          args:
+            - |
+              cp /vault/config/extraconfig-from-values.hcl /tmp/storageconfig.hcl;
+              [ -n "${HOST_IP}" ] && sed -Ei "s|HOST_IP|${HOST_IP?}|g" /tmp/storageconfig.hcl;
+              [ -n "${POD_IP}" ] && sed -Ei "s|POD_IP|${POD_IP?}|g" /tmp/storageconfig.hcl;
+              [ -n "${HOSTNAME}" ] && sed -Ei "s|HOSTNAME|${HOSTNAME?}|g" /tmp/storageconfig.hcl;
+              [ -n "${API_ADDR}" ] && sed -Ei "s|API_ADDR|${API_ADDR?}|g" /tmp/storageconfig.hcl;
+              [ -n "${TRANSIT_ADDR}" ] && sed -Ei "s|TRANSIT_ADDR|${TRANSIT_ADDR?}|g" /tmp/storageconfig.hcl;
+              [ -n "${RAFT_ADDR}" ] && sed -Ei "s|RAFT_ADDR|${RAFT_ADDR?}|g" /tmp/storageconfig.hcl;
+              /usr/local/bin/docker-entrypoint.sh vault server -config=/tmp/storageconfig.hcl
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 100
+            runAsGroup: 1000
+            capabilities:
+              drop:
+                - ALL
+          env:
+            - name: HOST_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: HOSTNAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            {{- if .Values.vault.server.ha.apiAddr }}
+            - name: API_ADDR
+              value: {{ .Values.vault.server.ha.apiAddr }}
+            {{- else }}
+            - name: API_ADDR
+              value: "https://$(POD_IP):8200"
+            {{- end }}
+            {{- if .Values.vault.server.ha.clusterAddr }}
+            - name: CLUSTER_ADDR
+              value: {{ .Values.vault.server.ha.clusterAddr }}
+            {{- else }}
+            - name: CLUSTER_ADDR
+              value: "https://$(POD_IP):8201"
+            {{- end }}
+            - name: HOME
+              value: "/home/vault"
+            {{- with .Values.vault.server.extraEnvironmentVars }}
+            {{- range $key, $value := . }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+            {{- end }}
+          volumeMounts:
+            - name: data
+              mountPath: /vault/data
+            - name: config
+              mountPath: /vault/config
+            - name: home
+              mountPath: /home/vault
+            {{- if (include "vault-chart.tls.enabled" .) }}
+            - name: vault-tls
+              mountPath: /vault/tls
+              readOnly: true
+            {{- end }}
+            {{- range .Values.vault.server.extraVolumes }}
+            - name: {{ .name }}
+              mountPath: {{ .path }}
+              {{- if .readOnly }}
+              readOnly: {{ .readOnly }}
+              {{- end }}
+            {{- end }}
+          ports:
+            - containerPort: 8200
+              name: http
+            - containerPort: 8201
+              name: https-internal
+            - containerPort: 8202
+              name: http-rep
+          {{- if .Values.vault.server.readinessProbe.enabled }}
+          readinessProbe:
+            {{- if .Values.vault.server.readinessProbe.path }}
+            httpGet:
+              path: {{ .Values.vault.server.readinessProbe.path }}
+              port: 8200
+              scheme: {{ if (include "vault-chart.tls.enabled" .) }}HTTPS{{ else }}HTTP{{ end }}
+            {{- else }}
+            exec:
+              command: ["/bin/sh", "-ec", "vault status -tls-skip-verify"]
+            {{- end }}
+            failureThreshold: {{ .Values.vault.server.readinessProbe.failureThreshold }}
+            initialDelaySeconds: {{ .Values.vault.server.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.vault.server.readinessProbe.periodSeconds }}
+            successThreshold: {{ .Values.vault.server.readinessProbe.successThreshold }}
+            timeoutSeconds: {{ .Values.vault.server.readinessProbe.timeoutSeconds }}
+          {{- end }}
+          {{- if .Values.vault.server.livenessProbe.enabled }}
+          livenessProbe:
+            {{- if .Values.vault.server.livenessProbe.path }}
+            httpGet:
+              path: {{ .Values.vault.server.livenessProbe.path }}
+              port: 8200
+              scheme: {{ if (include "vault-chart.tls.enabled" .) }}HTTPS{{ else }}HTTP{{ end }}
+            {{- else }}
+            exec:
+              command: ["/bin/sh", "-ec", "vault status -tls-skip-verify"]
+            {{- end }}
+            failureThreshold: {{ .Values.vault.server.livenessProbe.failureThreshold }}
+            initialDelaySeconds: {{ .Values.vault.server.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.vault.server.livenessProbe.periodSeconds }}
+            successThreshold: {{ .Values.vault.server.livenessProbe.successThreshold }}
+            timeoutSeconds: {{ .Values.vault.server.livenessProbe.timeoutSeconds }}
+          {{- end }}
+          {{- if .Values.vault.server.startupProbe.enabled }}
+          startupProbe:
+            {{- if .Values.vault.server.startupProbe.path }}
+            httpGet:
+              path: {{ .Values.vault.server.startupProbe.path }}
+              port: 8200
+              scheme: {{ if (include "vault-chart.tls.enabled" .) }}HTTPS{{ else }}HTTP{{ end }}
+            {{- else }}
+            exec:
+              command: ["/bin/sh", "-ec", "vault status -tls-skip-verify"]
+            {{- end }}
+            failureThreshold: {{ .Values.vault.server.startupProbe.failureThreshold }}
+            initialDelaySeconds: {{ .Values.vault.server.startupProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.vault.server.startupProbe.periodSeconds }}
+            successThreshold: {{ .Values.vault.server.startupProbe.successThreshold }}
+            timeoutSeconds: {{ .Values.vault.server.startupProbe.timeoutSeconds }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.vault.server.resources | nindent 12 }}
+        {{- if .Values.vault.server.extraContainers }}
+        {{- tpl .Values.vault.server.extraContainers . | nindent 8 }}
+        {{- end }}
+      volumes:
+        - name: config
+          configMap:
+            name: {{ include "vault-chart.fullname" . }}-config
+        - name: home
+          emptyDir: {}
+        {{- if (include "vault-chart.tls.enabled" .) }}
+        - name: vault-tls
+          secret:
+            secretName: {{ include "vault-chart.fullname" . }}-tls
+        {{- end }}
+        {{- range .Values.vault.server.extraVolumes }}
+        {{- if eq .type "secret" }}
+        - name: {{ .name }}
+          secret:
+            secretName: {{ .name }}
+        {{- else if eq .type "configMap" }}
+        - name: {{ .name }}
+          configMap:
+            name: {{ .name }}
+        {{- end }}
+        {{- end }}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+        {{- with .Values.vault.server.dataStorage.labels }}
+        labels:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        {{- with .Values.vault.server.dataStorage.annotations }}
+        annotations:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+      spec:
+        accessModes:
+          - {{ .Values.vault.server.dataStorage.accessMode }}
+        resources:
+          requests:
+            storage: {{ .Values.vault.server.dataStorage.size }}
+        {{- if .Values.vault.server.dataStorage.storageClass }}
+        storageClassName: {{ .Values.vault.server.dataStorage.storageClass }}
+        {{- end }}
+{{- else }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "vault-chart.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "vault-chart.server.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "vault-chart.server.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "vault-chart.server.labels" . | nindent 8 }}
+    spec:
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "vault-chart.serviceAccountName" . }}
+      containers:
+        - name: vault
+          image: {{ include "vault-chart.server.image" . }}
+          imagePullPolicy: {{ .Values.vault.server.image.pullPolicy }}
+          {{- if .Values.vault.server.dev.enabled }}
+          args:
+            - "vault"
+            - "server"
+            - "-dev"
+            {{- if .Values.vault.server.dev.devRootToken }}
+            - "-dev-root-token-id={{ .Values.vault.server.dev.devRootToken }}"
+            {{- end }}
+            - "-dev-listen-address=0.0.0.0:8200"
+          {{- end }}
+          ports:
+            - containerPort: 8200
+              name: http
+          env:
+            - name: VAULT_DEV_ROOT_TOKEN_ID
+              value: {{ .Values.vault.server.dev.devRootToken | default "root" }}
+            - name: VAULT_DEV_LISTEN_ADDRESS
+              value: "0.0.0.0:8200"
+          resources:
+            {{- toYaml .Values.vault.server.resources | nindent 12 }}
+{{- end }}

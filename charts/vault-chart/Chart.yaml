@@ -1,0 +1,39 @@
+apiVersion: v2
+name: dhi-vault-chart
+description: Core HashiCorp Vault Helm Chart for GuardianShield API Management
+type: application
+version: 1.0.0
+appVersion: "1.15.4"
+
+maintainers:
+  - name: GuardianShield Team
+    email: vault@guardianshield.io
+
+dependencies:
+  - name: vault
+    version: "0.27.0"
+    repository: "https://helm.releases.hashicorp.com"
+    condition: vault.enabled
+
+keywords:
+  - vault
+  - secrets
+  - api-management
+  - authentication
+  - authorization
+  - hashicorp
+  - kubernetes
+  - web3
+  - security
+  - encryption
+
+home: https://github.com/guardianshield-agents
+sources:
+  - https://github.com/guardianshield-agents
+  - https://github.com/hashicorp/vault
+  - https://github.com/hashicorp/vault-helm
+
+annotations:
+  category: Security
+  licenses: MPL-2.0
+  vault.io/version: "1.15.4"

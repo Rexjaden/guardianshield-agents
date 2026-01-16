@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GuardianShield - Shield Token Test</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-color: #00ffff;
+            --secondary-color: #ff00ff;
+            --accent-color: #0099ff;
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a2e;
+            --bg-tertiary: #16213e;
+            --text-primary: #ffffff;
+            --text-secondary: #cccccc;
+            --gold-color: #d4af37;
+            --bronze-color: #cd7f32;
+            --glow-cyan: 0 0 20px rgba(0, 255, 255, 0.5);
+            --glow-gold: 0 0 25px rgba(212, 175, 55, 0.6);
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, var(--bg-tertiary) 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* Header with Shield Token */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo-icon {
+            font-size: 2rem;
+            color: var(--primary-color);
+            filter: drop-shadow(var(--glow-cyan));
+        }
+        
+        .logo-text h1 {
+            font-size: 1.8rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .logo-text .tagline {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: -5px;
+        }
+        
+        /* Shield Token in Top Right */
+        .shield-token-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .shield-token {
+            width: 90px;
+            height: 90px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            animation: subtle-glow 3s ease-in-out infinite alternate;
+            background: transparent;
+            border: none;
+            padding: 0;
+        }
+        
+        .shield-token:hover {
+            transform: scale(1.15) rotate(8deg);
+            filter: drop-shadow(0 0 30px rgba(212, 175, 55, 0.8)) brightness(1.2);
+        }
+        
+        .shield-token img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            /* Remove border-radius to preserve the original shield shape */
+            border-radius: 0;
+            /* Preserve image quality */
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+        }
+        
+        /* Advanced Shield Token Placeholder - Matches Your Design */
+        .shield-token-placeholder {
+            width: 90px;
+            height: 90px;
+            background: 
+                radial-gradient(circle at 30% 30%, #f4d03f 0%, #d4af37 40%, #b8860b 80%, #8b7355 100%),
+                linear-gradient(45deg, #cd7f32 0%, #d4af37 50%, #f1c40f 100%);
+            /* Shield shape instead of circle */
+            clip-path: polygon(50% 0%, 80% 15%, 100% 50%, 80% 85%, 50% 100%, 20% 85%, 0% 50%, 20% 15%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: #1a1a2e;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            border: 3px solid #f4d03f;
+            box-shadow: 
+                inset 0 2px 10px rgba(244, 208, 63, 0.3),
+                0 0 20px rgba(212, 175, 55, 0.4),
+                0 0 40px rgba(212, 175, 55, 0.2);
+        }
+        
+        /* Circuit pattern overlay */
+        .shield-token-placeholder::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(90deg, transparent 48%, rgba(26, 26, 46, 0.1) 49%, rgba(26, 26, 46, 0.1) 51%, transparent 52%),
+                linear-gradient(0deg, transparent 48%, rgba(26, 26, 46, 0.1) 49%, rgba(26, 26, 46, 0.1) 51%, transparent 52%);
+            background-size: 12px 12px, 8px 8px;
+            opacity: 0.6;
+            animation: circuit-flow 3s linear infinite;
+        }
+        
+        /* Metallic shine effect */
+        .shield-token-placeholder::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.4) 50%, transparent 70%);
+            animation: metallic-shine 4s ease-in-out infinite;
+        }
+        
+        .shield-token-placeholder:hover {
+            transform: scale(1.15) rotate(8deg);
+            box-shadow: 
+                inset 0 2px 10px rgba(244, 208, 63, 0.5),
+                0 0 30px rgba(212, 175, 55, 0.8),
+                0 0 60px rgba(212, 175, 55, 0.4);
+            border-color: #f1c40f;
+        }
+        
+        @keyframes circuit-flow {
+            0% { background-position: 0 0, 0 0; }
+            100% { background-position: 12px 12px, 8px 8px; }
+        }
+        
+        @keyframes metallic-shine {
+            0% { transform: rotate(-45deg) translateX(-200%); }
+            50% { transform: rotate(-45deg) translateX(0%); }
+            100% { transform: rotate(-45deg) translateX(200%); }
+        }
+        
+        @keyframes subtle-glow {
+            0% { filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.3)); }
+            100% { filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.6)); }
+        }
+        
+        @keyframes shimmer {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Navigation Menu */
+        .nav-menu {
+            display: flex;
+            gap: 30px;
+            margin-right: 20px;
+        }
+        
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .nav-link:hover {
+            color: var(--primary-color);
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        /* Main Content */
+        .main-content {
+            padding-top: 120px;
+            text-align: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-left: 30px;
+            padding-right: 30px;
+        }
+        
+        .hero-section {
+            margin-bottom: 80px;
+        }
+        
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+        }
+        
+        .hero-description {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        /* Token Info Panel */
+        .token-info {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(205, 127, 50, 0.1));
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 60px auto;
+            max-width: 600px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .token-info h3 {
+            color: var(--gold-color);
+            font-size: 2rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .token-info p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px 20px;
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-menu {
+                gap: 20px;
+                margin-right: 0;
+            }
+            
+            .shield-token,
+            .shield-token-placeholder {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .hero-title {
+                font-size: 3rem;
+            }
+            
+            .main-content {
+                padding-top: 160px;
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header {
+                padding: 10px 15px;
+            }
+            
+            .shield-token,
+            .shield-token-placeholder {
+                width: 50px;
+                height: 50px;
+            }
+            
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .nav-menu {
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header with Shield Token -->
+    <header class="header">
+        <div class="logo-section">
+            <i class="fas fa-shield-alt logo-icon"></i>
+            <div class="logo-text">
+                <h1>GuardianShield</h1>
+                <p class="tagline">AI Security Platform</p>
+            </div>
+        </div>
+        
+        <nav class="nav-menu">
+            <a href="#features" class="nav-link">Features</a>
+            <a href="#security" class="nav-link">Security</a>
+            <a href="#tokens" class="nav-link">Tokens</a>
+            <a href="#dashboard" class="nav-link">Dashboard</a>
+        </nav>
+        
+        <!-- Shield Token in Top Right -->
+        <div class="shield-token-container">
+            <div class="shield-token" id="shieldToken" title="Shield Token (SI)">
+                <!-- Stunning Original Guardian Shield Design -->
+                <svg width="80" height="80" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 0 15px rgba(0, 255, 204, 0.4));">
+                    <defs>
+                        <!-- Premium Platinum Gradient -->
+                        <radialGradient id="platinumShield" cx="0.3" cy="0.3">
+                            <stop offset="0%" stop-color="#f8fafc" />
+                            <stop offset="30%" stop-color="#e2e8f0" />
+                            <stop offset="60%" stop-color="#cbd5e1" />
+                            <stop offset="100%" stop-color="#94a3b8" />
+                        </radialGradient>
+                        
+                        <!-- Cyan Energy Core -->
+                        <radialGradient id="energyCore" cx="0.5" cy="0.5">
+                            <stop offset="0%" stop-color="#00ffcc" stop-opacity="0.9" />
+                            <stop offset="50%" stop-color="#06b6d4" stop-opacity="0.7" />
+                            <stop offset="100%" stop-color="#0891b2" stop-opacity="0.4" />
+                        </radialGradient>
+
+                        <!-- Quantum Circuit Pattern -->
+                        <pattern id="quantumCircuit" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+                            <rect width="20" height="20" fill="none"/>
+                            <path d="M 0 10 L 5 10 M 15 10 L 20 10" stroke="#00ffcc" stroke-width="0.5" opacity="0.6"/>
+                            <path d="M 10 0 L 10 5 M 10 15 L 10 20" stroke="#00ffcc" stroke-width="0.5" opacity="0.6"/>
+                            <circle cx="10" cy="10" r="1.5" fill="#00ffcc" opacity="0.8"/>
+                        </pattern>
+
+                        <!-- Glow Filter -->
+                        <filter id="quantumGlow" x="-50%" y="-50%" width="200%" height="200%">
+                            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                            <feMerge> 
+                                <feMergeNode in="coloredBlur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
+
+                        <!-- Inner Bevel Effect -->
+                        <filter id="bevel" x="-20%" y="-20%" width="140%" height="140%">
+                            <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+                            <feSpecularLighting result="specOut" in="blur" specularConstant="1.5" specularExponent="20" lighting-color="white">
+                                <fePointLight x="-50" y="-50" z="200"/>
+                            </feSpecularLighting>
+                            <feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut2"/>
+                            <feComposite in="SourceGraphic" in2="specOut2" operator="arithmetic" k1="0" k2="1" k3="1" k4="0"/>
+                        </filter>
+                    </defs>
+
+                    <!-- Shield Base -->
+                    <path d="M100 15 L165 40 Q175 50 175 75 Q175 140 155 180 Q140 195 100 185 Q60 195 45 180 Q25 140 25 75 Q25 50 35 40 Z" 
+                          fill="url(#platinumShield)" 
+                          stroke="#64748b" 
+                          stroke-width="2"
+                          filter="url(#bevel)"/>
+
+                    <!-- Quantum Circuit Overlay -->
+                    <path d="M100 25 L155 45 Q165 55 165 75 Q165 135 150 170 Q135 180 100 175 Q65 180 50 170 Q35 135 35 75 Q35 55 45 45 Z" 
+                          fill="url(#quantumCircuit)" 
+                          opacity="0.3"/>
+
+                    <!-- Central Energy Core -->
+                    <circle cx="100" cy="100" r="35" 
+                            fill="url(#energyCore)" 
+                            filter="url(#quantumGlow)"/>
+
+                    <!-- Hexagonal Tech Frame -->
+                    <polygon points="100,70 118,80 118,100 100,110 82,100 82,80" 
+                             fill="none" 
+                             stroke="#00ffcc" 
+                             stroke-width="2.5" 
+                             opacity="0.9"/>
+
+                    <!-- Inner Hexagon -->
+                    <polygon points="100,78 112,84 112,96 100,102 88,96 88,84" 
+                             fill="none" 
+                             stroke="#f8fafc" 
+                             stroke-width="1.5" 
+                             opacity="0.7"/>
+
+                    <!-- Premium "SI" Typography -->
+                    <text x="100" y="105" 
+                          text-anchor="middle" 
+                          font-family="Arial Black, sans-serif" 
+                          font-size="24" 
+                          font-weight="900" 
+                          fill="#1e293b" 
+                          style="text-shadow: 0 0 8px rgba(0, 255, 204, 0.6);">SI</text>
+
+                    <!-- Corner Accent Diamonds -->
+                    <g opacity="0.8">
+                        <path d="M100 25 L105 20 L100 15 L95 20 Z" fill="#00ffcc" filter="url(#quantumGlow)"/>
+                        <path d="M100 185 L105 190 L100 195 L95 190 Z" fill="#00ffcc" filter="url(#quantumGlow)"/>
+                        <path d="M45 75 L50 70 L55 75 L50 80 Z" fill="#06b6d4" opacity="0.7"/>
+                        <path d="M155 75 L150 70 L145 75 L150 80 Z" fill="#06b6d4" opacity="0.7"/>
+                    </g>
+
+                    <!-- Quantum Energy Lines -->
+                    <g stroke="#00ffcc" stroke-width="1" opacity="0.5" fill="none">
+                        <path d="M100 35 Q120 50 135 75" filter="url(#quantumGlow)"/>
+                        <path d="M100 35 Q80 50 65 75" filter="url(#quantumGlow)"/>
+                        <path d="M65 125 Q80 150 100 165" filter="url(#quantumGlow)"/>
+                        <path d="M135 125 Q120 150 100 165" filter="url(#quantumGlow)"/>
+                    </g>
+
+                    <!-- Animated Pulse Ring -->
+                    <circle cx="100" cy="100" r="45" 
+                            fill="none" 
+                            stroke="#00ffcc" 
+                            stroke-width="1" 
+                            opacity="0.4">
+                        <animate attributeName="r" 
+                                values="35;50;35" 
+                                dur="3s" 
+                                repeatCount="indefinite"/>
+                        <animate attributeName="opacity" 
+                                values="0.6;0.1;0.6" 
+                                dur="3s" 
+                                repeatCount="indefinite"/>
+                    </circle>
+                </svg>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+        <section class="hero-section">
+            <h1 class="hero-title">GuardianShield</h1>
+            <h2 class="hero-subtitle">Revolutionary Shield Token (SI) - ERC-8055</h2>
+            <p class="hero-description">
+                The world's most secure NFT-style token with anti-fraud protection, individual serial numbers,
+                and automatic burn-and-remint recovery system. Each Shield Token is uniquely tracked and protected
+                by our proprietary ERC-8055 standard with treasury-based recovery mechanisms.
+            </p>
+        </section>
+        
+        <!-- Token Information -->
+        <section class="token-info">
+            <h3>
+                <i class="fas fa-coins"></i>
+                Shield Token (SI) - ERC-8055
+            </h3>
+            <p>
+                The Shield Token (SI) represents a revolutionary breakthrough in blockchain security through our 
+                custom ERC-8055 standard. Each token contains a unique serial number for precise tracking and 
+                features an advanced anti-fraud mechanism: if acquired through fraudulent means, the token is 
+                automatically burned and reminted with its original serial number, then placed in our treasury 
+                for the rightful owner to reclaim. This ensures complete protection and recovery of assets.
+            </p>
+            
+            <!-- ERC-8055 Features Grid -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-top: 30px;">
+                <div style="background: rgba(0, 255, 204, 0.08); border: 2px solid rgba(0, 255, 204, 0.3); border-radius: 15px; padding: 25px; text-align: center;">
+                    <div style="font-size: 2rem; margin-bottom: 15px;">🔢</div>
+                    <h4 style="color: var(--primary-cyan); margin-bottom: 10px;">Unique Serial Numbers</h4>
+                    <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.5;">
+                        Every Shield Token has an individual serial number for precise tracking and identification across all transactions.
+                    </p>
+                </div>
+                
+                <div style="background: rgba(0, 255, 204, 0.08); border: 2px solid rgba(0, 255, 204, 0.3); border-radius: 15px; padding: 25px; text-align: center;">
+                    <div style="font-size: 2rem; margin-bottom: 15px;">🔥</div>
+                    <h4 style="color: var(--primary-cyan); margin-bottom: 10px;">Anti-Fraud Burn</h4>
+                    <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.5;">
+                        Fraudulent tokens are automatically detected and burned, protecting the ecosystem from malicious activity.
+                    </p>
+                </div>
+                
+                <div style="background: rgba(0, 255, 204, 0.08); border: 2px solid rgba(0, 255, 204, 0.3); border-radius: 15px; padding: 25px; text-align: center;">
+                    <div style="font-size: 2rem; margin-bottom: 15px;">♻️</div>
+                    <h4 style="color: var(--primary-cyan); margin-bottom: 10px;">Auto Remint</h4>
+                    <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.5;">
+                        Burned tokens are automatically reminted with their original serial number preserved completely intact.
+                    </p>
+                </div>
+                
+                <div style="background: rgba(0, 255, 204, 0.08); border: 2px solid rgba(0, 255, 204, 0.3); border-radius: 15px; padding: 25px; text-align: center;">
+                    <div style="font-size: 2rem; margin-bottom: 15px;">🏛️</div>
+                    <h4 style="color: var(--primary-cyan); margin-bottom: 10px;">Treasury Recovery</h4>
+                    <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.5;">
+                        Recovered tokens are held in our secure treasury system for rightful owners to reclaim their assets.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Security Flow Diagram -->
+            <div style="margin-top: 40px; padding: 25px; background: linear-gradient(135deg, rgba(0, 255, 204, 0.05), rgba(6, 182, 212, 0.05)); border: 1px solid rgba(0, 255, 204, 0.2); border-radius: 20px;">
+                <h4 style="color: var(--primary-cyan); margin-bottom: 20px; text-align: center; font-size: 1.4rem;">🛡️ ERC-8055 Security Process</h4>
+                <div style="display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; gap: 20px;">
+                    <div style="text-align: center; min-width: 120px;">
+                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #ff6b6b, #ee5a52); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; color: white; font-weight: bold;">1</div>
+                        <div style="font-size: 0.9rem; color: var(--text-secondary);">Fraud<br/>Detected</div>
+                    </div>
+                    <div style="color: var(--text-secondary); font-size: 1.5rem;">→</div>
+                    <div style="text-align: center; min-width: 120px;">
+                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #ffa726, #ff9800); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; color: white; font-weight: bold;">2</div>
+                        <div style="font-size: 0.9rem; color: var(--text-secondary);">Token<br/>Burned</div>
+                    </div>
+                    <div style="color: var(--text-secondary); font-size: 1.5rem;">→</div>
+                    <div style="text-align: center; min-width: 120px;">
+                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #42a5f5, #2196f3); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; color: white; font-weight: bold;">3</div>
+                        <div style="font-size: 0.9rem; color: var(--text-secondary);">Auto<br/>Remint</div>
+                    </div>
+                    <div style="color: var(--text-secondary); font-size: 1.5rem;">→</div>
+                    <div style="text-align: center; min-width: 120px;">
+                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, var(--primary-cyan), var(--secondary-cyan)); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; color: white; font-weight: bold;">4</div>
+                        <div style="font-size: 0.9rem; color: var(--text-secondary);">Treasury<br/>Recovery</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <script>
+        // Enhanced shield token image loading
+        function loadShieldToken() {
+            const container = document.getElementById('shieldToken');
+            const placeholder = document.getElementById('tokenPlaceholder');
+            
+            // Array of possible image formats and names
+            const imageOptions = [
+                'assets/images/shield-token.png',
+                'assets/images/shield-token.jpg',
+                'assets/images/shield-token.jpeg',
+                'assets/images/shield-token.webp',
+                'assets/images/shield_token.png',
+                'assets/images/shield_token.jpg',
+                'assets/images/ShieldToken.png',
+                'assets/images/ShieldToken.jpg'
+            ];
+            
+            let imageLoaded = false;
+            
+            // Try each image option
+            function tryLoadImage(index = 0) {
+                if (index >= imageOptions.length || imageLoaded) {
+                    if (!imageLoaded) {
+                        console.log('🛡️ Shield Token: Using enhanced placeholder');
+                        console.log('To load your actual image, save it as one of these:');
+                        imageOptions.forEach(path => console.log(`  - ${path}`));
+                    }
+                    return;
+                }
+                
+                const img = new Image();
+                const imagePath = imageOptions[index];
+                
+                img.onload = function() {
+                    // Success! Replace placeholder with actual image
+                    const actualImg = document.createElement('img');
+                    actualImg.src = imagePath;
+                    actualImg.alt = 'Shield Token (SI)';
+                    actualImg.style.cssText = `
+                        width: 100%;
+                        height: 100%;
+                        object-fit: contain;
+                        border-radius: 0;
+                        image-rendering: -webkit-optimize-contrast;
+                        image-rendering: crisp-edges;
+                    `;
+                    
+                    container.innerHTML = '';
+                    container.appendChild(actualImg);
+                    imageLoaded = true;
+                    
+                    console.log(`✅ Shield Token loaded successfully from: ${imagePath}`);
+                };
+                
+                img.onerror = function() {
+                    // Try next option
+                    tryLoadImage(index + 1);
+                };
+                
+                img.src = imagePath;
+            }
+            
+            // Start trying to load images
+            tryLoadImage();
+        }
+        
+        // Enhanced click functionality
+        document.getElementById('shieldToken').addEventListener('click', function() {
+            console.log('🛡️ Shield Token activated!');
+            
+            // Dramatic metallic token animation
+            this.style.transform = 'scale(1.4) rotate(25deg)';
+            this.style.filter = 'drop-shadow(0 0 50px rgba(212, 175, 55, 1)) brightness(1.8) contrast(1.2)';
+            this.style.zIndex = '1001';
+            
+            setTimeout(() => {
+                this.style.transform = 'scale(1) rotate(0deg)';
+                this.style.filter = 'drop-shadow(0 0 20px rgba(212, 175, 55, 0.6))';
+                this.style.zIndex = '';
+            }, 600);
+        });
+        
+        // Load token when page is ready
+        document.addEventListener('DOMContentLoaded', loadShieldToken);
+        
+        // Also try loading after a short delay in case of timing issues
+        setTimeout(loadShieldToken, 1000);
+        
+        console.log('🛡️ Shield Token System Ready!');
+        console.log('📁 To load your image:');
+        console.log('   1. Right-click your shield token image');
+        console.log('   2. Save as: assets/images/shield-token.png');
+        console.log('   3. Refresh this page');
+        console.log('   OR drag the image into VS Code: assets/images/ folder');
+    </script>
+</body>
+</html>

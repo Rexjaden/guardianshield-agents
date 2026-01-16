@@ -1,0 +1,147 @@
+{{- if .Values.security.networkPolicy.enabled }}
+# Network Policy for PostgreSQL Cluster
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "dhi-cloudnative-pg.networkPolicyName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "dhi-cloudnative-pg.labels" . | nindent 4 }}
+    guardianshield.io/component: "network-security"
+spec:
+  podSelector:
+    matchLabels:
+      postgresql: {{ .Values.cluster.name }}
+  
+  policyTypes:
+    - Ingress
+    - Egress
+  
+  # Ingress rules
+  ingress:
+    {{- range .Values.security.networkPolicy.ingress }}
+    - from:
+        {{- toYaml .from | nindent 8 }}
+      ports:
+        {{- toYaml .ports | nindent 8 }}
+    {{- end }}
+    
+    # Allow connections from pooler
+    {{- if .Values.pooler.enabled }}
+    - from:
+        - podSelector:
+            matchLabels:
+              cnpg.io/poolerName: {{ .Values.cluster.name }}-pooler
+      ports:
+        - protocol: TCP
+          port: 5432
+    {{- end }}
+    
+    # Allow replication between cluster members
+    - from:
+        - podSelector:
+            matchLabels:
+              postgresql: {{ .Values.cluster.name }}
+      ports:
+        - protocol: TCP
+          port: 5432
+    
+    # Allow monitoring
+    {{- if .Values.monitoring.enabled }}
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: "monitoring"
+      ports:
+        - protocol: TCP
+          port: 9187  # PostgreSQL exporter port
+    {{- end }}
+  
+  # Egress rules
+  egress:
+    # Allow DNS resolution
+    - to: []
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+    
+    # Allow HTTPS for backups and monitoring
+    - to: []
+      ports:
+        - protocol: TCP
+          port: 443
+        - protocol: TCP
+          port: 80
+    
+    # Allow replication between cluster members
+    - to:
+        - podSelector:
+            matchLabels:
+              postgresql: {{ .Values.cluster.name }}
+      ports:
+        - protocol: TCP
+          port: 5432
+
+---
+{{- if .Values.pooler.enabled }}
+# Network Policy for PgBouncer Pooler
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ .Values.cluster.name }}-pooler-network-policy
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "dhi-cloudnative-pg.labels" . | nindent 4 }}
+    guardianshield.io/component: "pooler-network-security"
+spec:
+  podSelector:
+    matchLabels:
+      cnpg.io/poolerName: {{ .Values.cluster.name }}-pooler
+  
+  policyTypes:
+    - Ingress
+    - Egress
+  
+  # Ingress rules for pooler
+  ingress:
+    {{- range .Values.security.networkPolicy.ingress }}
+    - from:
+        {{- toYaml .from | nindent 8 }}
+      ports:
+        - protocol: TCP
+          port: 5432
+    {{- end }}
+    
+    # Allow monitoring
+    {{- if .Values.monitoring.enabled }}
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: "monitoring"
+      ports:
+        - protocol: TCP
+          port: 9127  # PgBouncer exporter port
+    {{- end }}
+  
+  # Egress rules for pooler
+  egress:
+    # Allow DNS resolution
+    - to: []
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+    
+    # Allow connections to PostgreSQL cluster
+    - to:
+        - podSelector:
+            matchLabels:
+              postgresql: {{ .Values.cluster.name }}
+      ports:
+        - protocol: TCP
+          port: 5432
+{{- end }}
+{{- end }}

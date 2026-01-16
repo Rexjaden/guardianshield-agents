@@ -1,0 +1,240 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "dhi-openresty.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "dhi-openresty.labels" . | nindent 4 }}
+    guardianshield.io/component: "web-server"
+spec:
+  replicas: {{ .Values.replicaCount }}
+  
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: {{ .Values.rollingUpdate.maxUnavailable }}
+      maxSurge: {{ .Values.rollingUpdate.maxSurge }}
+  
+  selector:
+    matchLabels:
+      {{- include "dhi-openresty.selectorLabels" . | nindent 6 }}
+  
+  template:
+    metadata:
+      annotations:
+        # Force pod restart on config changes
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+        
+        # Prometheus scraping
+        {{- if .Values.monitoring.enabled }}
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9113"
+        prometheus.io/path: "/metrics"
+        {{- end }}
+        
+      labels:
+        {{- include "dhi-openresty.selectorLabels" . | nindent 8 }}
+        guardianshield.io/component: "web-server"
+        version: {{ .Chart.AppVersion }}
+    
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      
+      serviceAccountName: {{ include "dhi-openresty.serviceAccountName" . }}
+      
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      
+      # Init container to validate configuration
+      initContainers:
+        - name: config-validator
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          command: 
+            - /bin/sh
+            - -c
+            - |
+              echo "Validating OpenResty configuration..."
+              nginx -t -c /etc/nginx/nginx.conf
+              echo "Configuration validation completed successfully"
+          
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx
+              readOnly: true
+            - name: lua-scripts
+              mountPath: /usr/local/openresty/lualib/guardianshield
+              readOnly: true
+          
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+      
+      containers:
+        # Main OpenResty container
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+            - name: https
+              containerPort: 443
+              protocol: TCP
+            {{- if .Values.monitoring.enabled }}
+            - name: metrics
+              containerPort: 9113
+              protocol: TCP
+            {{- end }}
+          
+          # Health checks
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+            failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
+          
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: http
+            initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+            failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
+          
+          # Startup probe for slower initialization
+          startupProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 30
+          
+          # Resource constraints
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          
+          # Environment variables
+          env:
+            - name: OPENRESTY_WORKER_PROCESSES
+              value: {{ .Values.nginx.workerProcesses | quote }}
+            - name: OPENRESTY_WORKER_CONNECTIONS
+              value: {{ .Values.nginx.workerConnections | quote }}
+            - name: LUA_PATH
+              value: "/usr/local/openresty/lualib/guardianshield/?.lua;;"
+            - name: REDIS_HOST
+              value: {{ .Values.redis.host | quote }}
+            - name: REDIS_PORT
+              value: {{ .Values.redis.port | quote }}
+            {{- if .Values.extraEnvVars }}
+            {{- toYaml .Values.extraEnvVars | nindent 12 }}
+            {{- end }}
+          
+          # Volume mounts
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx
+              readOnly: true
+            - name: lua-scripts
+              mountPath: /usr/local/openresty/lualib/guardianshield
+              readOnly: true
+            - name: ssl-certs
+              mountPath: /etc/ssl/certs/guardianshield
+              readOnly: true
+            - name: cache-volume
+              mountPath: /var/cache/nginx
+            - name: tmp-volume
+              mountPath: /tmp
+            - name: log-volume
+              mountPath: /var/log/nginx
+          
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+        
+        {{- if .Values.monitoring.enabled }}
+        # Nginx Prometheus Exporter sidecar
+        - name: nginx-exporter
+          image: "nginx/nginx-prometheus-exporter:{{ .Values.monitoring.exporter.tag }}"
+          imagePullPolicy: {{ .Values.monitoring.exporter.pullPolicy }}
+          
+          ports:
+            - name: metrics
+              containerPort: 9113
+              protocol: TCP
+          
+          args:
+            - -nginx.scrape-uri=http://localhost:80/nginx_status
+            - -web.listen-address=:9113
+            - -web.telemetry-path=/metrics
+          
+          resources:
+            {{- toYaml .Values.monitoring.exporter.resources | nindent 12 }}
+          
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+        {{- end }}
+      
+      # Volume definitions
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: {{ include "dhi-openresty.fullname" . }}-config
+            defaultMode: 0644
+        
+        - name: lua-scripts
+          configMap:
+            name: {{ include "dhi-openresty.fullname" . }}-lua
+            defaultMode: 0644
+        
+        - name: ssl-certs
+          secret:
+            secretName: {{ include "dhi-openresty.fullname" . }}-tls
+            defaultMode: 0600
+        
+        - name: cache-volume
+          emptyDir:
+            sizeLimit: {{ .Values.storage.cacheSize }}
+        
+        - name: tmp-volume
+          emptyDir:
+            sizeLimit: {{ .Values.storage.tmpSize }}
+        
+        - name: log-volume
+          emptyDir:
+            sizeLimit: {{ .Values.storage.logSize }}
+      
+      # Node selection and scheduling
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      
+      # DNS configuration
+      dnsPolicy: {{ .Values.dnsPolicy }}
+      {{- if .Values.dnsConfig }}
+      dnsConfig:
+        {{- toYaml .Values.dnsConfig | nindent 8 }}
+      {{- end }}
+      
+      # Termination grace period
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}

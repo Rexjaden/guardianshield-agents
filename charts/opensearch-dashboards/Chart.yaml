@@ -1,0 +1,34 @@
+apiVersion: v2
+name: dhi-opensearch-dashboards-chart
+description: OpenSearch Dashboards Helm chart for GuardianShield threat intelligence and analytics
+type: application
+version: 1.0.0
+appVersion: "2.11.1"
+
+maintainers:
+  - name: GuardianShield Team
+    email: security@guardianshield.io
+
+dependencies:
+  - name: opensearch-dashboards
+    version: "2.16.0"
+    repository: "https://opensearch-project.github.io/helm-charts/"
+    condition: opensearch-dashboards.enabled
+
+keywords:
+  - opensearch
+  - dashboards
+  - analytics
+  - threat-intelligence
+  - security
+  - web3
+  - blockchain
+
+home: https://github.com/guardianshield-agents
+sources:
+  - https://github.com/guardianshield-agents
+  - https://opensearch.org/
+
+annotations:
+  category: Analytics
+  licenses: Apache-2.0

@@ -1,0 +1,54 @@
+{{- if .Values.vault.server.service.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "vault-chart.server.serviceName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "vault-chart.server.labels" . | nindent 4 }}
+  {{- with .Values.vault.server.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  type: {{ .Values.vault.server.service.type }}
+  {{- if .Values.vault.server.service.clusterIP }}
+  clusterIP: {{ .Values.vault.server.service.clusterIP }}
+  {{- end }}
+  publishNotReadyAddresses: {{ .Values.vault.server.service.publishNotReadyAddresses }}
+  ports:
+    - name: http
+      port: {{ .Values.vault.server.service.port }}
+      targetPort: {{ .Values.vault.server.service.targetPort }}
+      protocol: TCP
+    - name: https-internal
+      port: 8201
+      targetPort: 8201
+      protocol: TCP
+  selector:
+    {{- include "vault-chart.server.selectorLabels" . | nindent 4 }}
+{{- end }}
+---
+{{- if .Values.vault.server.ha.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "vault-chart.server.headlessServiceName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "vault-chart.server.labels" . | nindent 4 }}
+  annotations:
+    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+spec:
+  clusterIP: None
+  publishNotReadyAddresses: true
+  ports:
+    - name: "http"
+      port: 8200
+      targetPort: 8200
+    - name: "https-internal"
+      port: 8201
+      targetPort: 8201
+  selector:
+    {{- include "vault-chart.server.selectorLabels" . | nindent 4 }}
+{{- end }}

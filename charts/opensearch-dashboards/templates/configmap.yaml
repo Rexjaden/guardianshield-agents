@@ -1,0 +1,79 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "dhi-opensearch-dashboards.fullname" . }}-config
+  labels:
+    {{- include "dhi-opensearch-dashboards.labels" . | nindent 4 }}
+data:
+  opensearch_dashboards.yml: |
+    # OpenSearch Dashboards Configuration for GuardianShield
+    server.name: {{ .Values.opensearch-dashboards.config.server.name | quote }}
+    server.host: {{ .Values.opensearch-dashboards.config.server.host | quote }}
+    server.port: {{ .Values.opensearch-dashboards.config.server.port }}
+    
+    # OpenSearch connection
+    opensearch.hosts: {{ .Values.opensearch-dashboards.config.opensearch.hosts | toJson }}
+    opensearch.ssl.verificationMode: {{ .Values.opensearch-dashboards.config.opensearch.ssl.verificationMode | quote }}
+    opensearch.requestHeadersWhitelist: {{ .Values.opensearch-dashboards.config.opensearch.requestHeadersWhitelist | toJson }}
+    
+    # Security settings
+    opensearch_security.multitenancy.enabled: {{ .Values.opensearch-dashboards.config.opensearch_security.multitenancy.enabled }}
+    opensearch_security.multitenancy.tenants.enable_global: {{ .Values.opensearch-dashboards.config.opensearch_security.multitenancy.tenants.enable_global }}
+    opensearch_security.multitenancy.tenants.enable_private: {{ .Values.opensearch-dashboards.config.opensearch_security.multitenancy.tenants.enable_private }}
+    opensearch_security.multitenancy.tenants.preferred: {{ .Values.opensearch-dashboards.config.opensearch_security.multitenancy.tenants.preferred | toJson }}
+    
+    # GuardianShield branding
+    opensearchDashboards.branding:
+      logo:
+        defaultUrl: {{ .Values.opensearch-dashboards.config.opensearchDashboards.branding.logo.defaultUrl | quote }}
+        darkModeUrl: {{ .Values.opensearch-dashboards.config.opensearchDashboards.branding.logo.darkModeUrl | quote }}
+      mark:
+        defaultUrl: {{ .Values.opensearch-dashboards.config.opensearchDashboards.branding.mark.defaultUrl | quote }}
+        darkModeUrl: {{ .Values.opensearch-dashboards.config.opensearchDashboards.branding.mark.darkModeUrl | quote }}
+      title: {{ .Values.opensearch-dashboards.config.opensearchDashboards.branding.title | quote }}
+      favicon: {{ .Values.opensearch-dashboards.config.opensearchDashboards.branding.favicon | quote }}
+    
+    # Performance settings
+    logging.level: {{ .Values.opensearch-dashboards.config.logging.level | quote }}
+    ops.interval: {{ .Values.opensearch-dashboards.config.ops.interval }}
+    
+    # SSL configuration
+    {{- if .Values.opensearch-dashboards.config.server.ssl.enabled }}
+    server.ssl.enabled: {{ .Values.opensearch-dashboards.config.server.ssl.enabled }}
+    server.ssl.certificate: {{ .Values.opensearch-dashboards.config.server.ssl.certificate | quote }}
+    server.ssl.key: {{ .Values.opensearch-dashboards.config.server.ssl.key | quote }}
+    {{- end }}
+
+  guardian-dashboards.yml: |
+    # GuardianShield-specific dashboard configurations
+    guardianshield:
+      threat_intelligence:
+        enabled: {{ .Values.guardianshield.analytics.threatIntel.enabled }}
+        refresh_interval: {{ .Values.guardianshield.analytics.threatIntel.refreshInterval | quote }}
+        retention_days: {{ .Values.guardianshield.analytics.threatIntel.retentionDays }}
+        {{- if .Values.guardianshield.analytics.threatIntel.alerting.enabled }}
+        alerting:
+          enabled: true
+          webhook_url: {{ .Values.guardianshield.analytics.threatIntel.alerting.webhookUrl | quote }}
+        {{- end }}
+      
+      web3_monitoring:
+        enabled: {{ .Values.guardianshield.analytics.web3.enabled }}
+        networks: {{ .Values.guardianshield.analytics.web3.networks | toJson }}
+        dmer_integration: {{ .Values.guardianshield.analytics.web3.dmerIntegration }}
+      
+      security:
+        enabled: {{ .Values.guardianshield.analytics.security.enabled }}
+        audit_logs: {{ .Values.guardianshield.analytics.security.auditLogs }}
+        compliance_reporting: {{ .Values.guardianshield.analytics.security.complianceReporting }}
+      
+      performance:
+        enabled: {{ .Values.guardianshield.analytics.performance.enabled }}
+        metrics_collection: {{ .Values.guardianshield.analytics.performance.metricsCollection }}
+        custom_dashboards: {{ .Values.guardianshield.analytics.performance.customDashboards }}
+    
+    data_retention:
+      threat_intelligence: {{ .Values.guardianshield.dataRetention.threatIntelligence | quote }}
+      security_logs: {{ .Values.guardianshield.dataRetention.securityLogs | quote }}
+      web3_transactions: {{ .Values.guardianshield.dataRetention.web3Transactions | quote }}
+      audit_logs: {{ .Values.guardianshield.dataRetention.auditLogs | quote }}

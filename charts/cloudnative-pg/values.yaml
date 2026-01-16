@@ -1,0 +1,425 @@
+# CloudNativePG Configuration for GuardianShield
+# High-Performance PostgreSQL with Automated Backups and HA
+
+global:
+  # GuardianShield branding
+  projectName: "GuardianShield"
+  environment: "production"
+  
+# CloudNativePG Operator Configuration
+cloudnative-pg:
+  enabled: true
+  
+  # Operator configuration
+  operator:
+    image:
+      repository: quay.io/cloudnative-pg/cloudnative-pg
+      tag: "1.22.0"
+    
+    # Resource limits for operator
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 250m
+        memory: 256Mi
+
+# PostgreSQL Cluster Configuration
+cluster:
+  name: "guardianshield-postgres"
+  description: "GuardianShield PostgreSQL Cluster for threat intelligence and analytics"
+  
+  # PostgreSQL version and image
+  postgresql:
+    parameters:
+      # Performance tuning
+      max_connections: "200"
+      shared_buffers: "256MB"
+      effective_cache_size: "1GB"
+      maintenance_work_mem: "64MB"
+      checkpoint_completion_target: "0.9"
+      wal_buffers: "16MB"
+      default_statistics_target: "100"
+      random_page_cost: "1.1"
+      effective_io_concurrency: "200"
+      work_mem: "4MB"
+      min_wal_size: "1GB"
+      max_wal_size: "4GB"
+      max_worker_processes: "8"
+      max_parallel_workers_per_gather: "2"
+      max_parallel_workers: "8"
+      max_parallel_maintenance_workers: "2"
+      
+      # Logging and monitoring
+      logging_collector: "on"
+      log_filename: "postgresql-%Y-%m-%d_%H%M%S.log"
+      log_truncate_on_rotation: "off"
+      log_rotation_age: "1d"
+      log_rotation_size: "1GB"
+      log_min_duration_statement: "1000"
+      log_checkpoints: "on"
+      log_connections: "on"
+      log_disconnections: "on"
+      log_lock_waits: "on"
+      log_temp_files: "10MB"
+      log_autovacuum_min_duration: "0"
+      log_error_verbosity: "default"
+      
+      # Security settings
+      ssl: "on"
+      ssl_ciphers: "HIGH:MEDIUM:+3DES:!aNULL"
+      ssl_prefer_server_ciphers: "on"
+      password_encryption: "scram-sha-256"
+      
+  # High Availability Configuration
+  instances: 3
+  primaryUpdateStrategy: "unsupervised"
+  
+  # Node affinity and anti-affinity
+  affinity:
+    enablePodAntiAffinity: true
+    topologyKey: "kubernetes.io/hostname"
+    
+  nodeSelector:
+    kubernetes.io/os: linux
+    
+  tolerations: []
+
+# Storage Configuration
+storage:
+  # Primary storage
+  size: "100Gi"
+  storageClass: "fast-ssd"
+  
+  # WAL storage (separate for performance)
+  walStorage:
+    size: "20Gi"
+    storageClass: "fast-ssd"
+
+# Backup Configuration
+backup:
+  # Enable automated backups
+  enabled: true
+  
+  # Backup schedule (daily at 2 AM)
+  schedule: "0 2 * * *"
+  
+  # Retention policy
+  retentionPolicy: "30d"
+  
+  # S3-compatible backup destination
+  s3:
+    bucket: "guardianshield-pg-backups"
+    path: "/postgres-backups"
+    region: "us-east-1"
+    
+  # Backup resources
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+
+# Monitoring Configuration
+monitoring:
+  # Enable Prometheus monitoring
+  enabled: true
+  
+  # Metrics collection
+  prometheus:
+    operator:
+      enabled: true
+    
+    serviceMonitor:
+      enabled: true
+      labels:
+        app: "guardianshield-postgres"
+        release: "prometheus"
+      
+      interval: "30s"
+      scrapeTimeout: "10s"
+
+# Database Initialization
+initdb:
+  database: "guardianshield"
+  owner: "guardianshield_admin"
+  secret: "guardianshield-postgres-credentials"
+  
+  # Additional databases
+  databases:
+    - name: "threat_intelligence"
+      owner: "threat_admin"
+    - name: "user_management"
+      owner: "user_admin"
+    - name: "analytics"
+      owner: "analytics_admin"
+    - name: "blockchain_data"
+      owner: "blockchain_admin"
+    - name: "agent_logs"
+      owner: "agent_admin"
+
+# Security Configuration
+security:
+  # Enable Pod Security Standards
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 999
+    runAsGroup: 999
+    fsGroup: 999
+    
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+    readOnlyRootFilesystem: true
+    runAsNonRoot: true
+    runAsUser: 999
+    
+  # Network policies
+  networkPolicy:
+    enabled: true
+    ingress:
+      - from:
+          - namespaceSelector:
+              matchLabels:
+                name: "guardianshield"
+        ports:
+          - protocol: TCP
+            port: 5432
+
+# Resource Configuration
+resources:
+  limits:
+    cpu: "2"
+    memory: "4Gi"
+  requests:
+    cpu: "1"
+    memory: "2Gi"
+
+# Service Configuration
+service:
+  type: "ClusterIP"
+  port: 5432
+  
+  # Load balancer for read replicas
+  loadBalancer:
+    enabled: true
+    type: "ClusterIP"
+
+# Connection Pooling with PgBouncer
+pooler:
+  enabled: true
+  instances: 3
+  
+  # PgBouncer configuration
+  pgbouncer:
+    pool_mode: "transaction"
+    max_client_conn: 100
+    default_pool_size: 25
+    max_db_connections: 50
+    max_user_connections: 30
+    server_reset_query: "DISCARD ALL"
+    server_check_query: "select 1"
+    server_check_delay: 30
+    
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+
+# Custom Extensions and Configuration
+extensions:
+  # Threat intelligence extensions
+  - "pg_trgm"      # Text similarity
+  - "btree_gin"    # GIN indexes
+  - "btree_gist"   # GiST indexes
+  - "hstore"       # Key-value pairs
+  - "uuid-ossp"    # UUID generation
+  - "pgcrypto"     # Cryptographic functions
+  - "pg_stat_statements" # Query statistics
+  - "auto_explain" # Query plan logging
+  - "pg_buffercache" # Buffer cache inspection
+  - "pg_prewarm"   # Buffer prewarming
+
+# Custom SQL initialization
+customSQL: |
+  -- GuardianShield Database Schema Initialization
+  
+  -- Create schemas for different components
+  CREATE SCHEMA IF NOT EXISTS threat_intel;
+  CREATE SCHEMA IF NOT EXISTS user_mgmt;
+  CREATE SCHEMA IF NOT EXISTS analytics;
+  CREATE SCHEMA IF NOT EXISTS blockchain;
+  CREATE SCHEMA IF NOT EXISTS agent_ops;
+  
+  -- Create roles with appropriate permissions
+  CREATE ROLE threat_reader;
+  CREATE ROLE threat_writer;
+  CREATE ROLE analytics_reader;
+  CREATE ROLE analytics_writer;
+  
+  -- Grant permissions
+  GRANT USAGE ON SCHEMA threat_intel TO threat_reader, threat_writer;
+  GRANT USAGE ON SCHEMA analytics TO analytics_reader, analytics_writer;
+  
+  -- Create threat intelligence tables
+  CREATE TABLE IF NOT EXISTS threat_intel.indicators (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    type VARCHAR(50) NOT NULL,
+    value TEXT NOT NULL,
+    confidence NUMERIC(3,2) CHECK (confidence >= 0 AND confidence <= 1),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    source VARCHAR(100),
+    tags TEXT[],
+    metadata JSONB
+  );
+  
+  -- Create indexes for performance
+  CREATE INDEX IF NOT EXISTS idx_indicators_type ON threat_intel.indicators(type);
+  CREATE INDEX IF NOT EXISTS idx_indicators_value ON threat_intel.indicators(value);
+  CREATE INDEX IF NOT EXISTS idx_indicators_created_at ON threat_intel.indicators(created_at);
+  CREATE INDEX IF NOT EXISTS idx_indicators_metadata ON threat_intel.indicators USING GIN(metadata);
+  
+  -- Create analytics tables
+  CREATE TABLE IF NOT EXISTS analytics.events (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    event_type VARCHAR(100) NOT NULL,
+    event_data JSONB NOT NULL,
+    timestamp TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    agent_id VARCHAR(100),
+    severity INTEGER DEFAULT 0
+  );
+  
+  -- Create partitioned tables for high-volume data
+  CREATE TABLE IF NOT EXISTS agent_ops.logs (
+    id UUID DEFAULT gen_random_uuid(),
+    agent_name VARCHAR(100) NOT NULL,
+    log_level VARCHAR(20) NOT NULL,
+    message TEXT NOT NULL,
+    timestamp TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    metadata JSONB
+  ) PARTITION BY RANGE (timestamp);
+  
+  -- Create monthly partitions for logs
+  CREATE TABLE IF NOT EXISTS agent_ops.logs_current PARTITION OF agent_ops.logs
+    FOR VALUES FROM (date_trunc('month', CURRENT_TIMESTAMP)) 
+    TO (date_trunc('month', CURRENT_TIMESTAMP) + INTERVAL '1 month');
+
+# Additional PostgreSQL Configuration Files
+configMaps:
+  - name: "postgresql-performance-tuning"
+    data:
+      postgresql.conf: |
+        # GuardianShield PostgreSQL Performance Configuration
+        
+        # Connection Settings
+        listen_addresses = '*'
+        port = 5432
+        max_connections = 200
+        superuser_reserved_connections = 3
+        
+        # Memory Settings
+        shared_buffers = 256MB
+        effective_cache_size = 1GB
+        work_mem = 4MB
+        maintenance_work_mem = 64MB
+        
+        # WAL Settings
+        wal_level = replica
+        max_wal_senders = 10
+        max_replication_slots = 10
+        wal_keep_size = 1GB
+        
+        # Checkpoint Settings
+        checkpoint_completion_target = 0.9
+        checkpoint_timeout = 5min
+        
+        # Archiving
+        archive_mode = on
+        archive_command = '/bin/true'  # Handled by CloudNativePG
+        
+        # Logging
+        log_destination = 'stderr'
+        log_collector = on
+        log_directory = 'log'
+        log_filename = 'postgresql-%Y-%m-%d_%H%M%S.log'
+        log_file_mode = 0600
+        log_truncate_on_rotation = off
+        log_rotation_age = 1d
+        log_rotation_size = 1GB
+        
+        # What to log
+        log_min_messages = warning
+        log_min_error_statement = error
+        log_min_duration_statement = 1000
+        log_checkpoints = on
+        log_connections = on
+        log_disconnections = on
+        log_lock_waits = on
+        log_temp_files = 10MB
+        log_autovacuum_min_duration = 0
+        log_error_verbosity = default
+        log_statement = 'none'
+        
+        # Autovacuum
+        autovacuum = on
+        autovacuum_max_workers = 3
+        autovacuum_naptime = 1min
+        autovacuum_vacuum_threshold = 50
+        autovacuum_analyze_threshold = 50
+        autovacuum_vacuum_scale_factor = 0.2
+        autovacuum_analyze_scale_factor = 0.1
+        
+        # Client Connection Defaults
+        default_text_search_config = 'pg_catalog.english'
+        timezone = 'UTC'
+        
+        # Lock Management
+        deadlock_timeout = 1s
+        
+        # Query Tuning
+        default_statistics_target = 100
+        constraint_exclusion = partition
+        cursor_tuple_fraction = 0.1
+        from_collapse_limit = 8
+        join_collapse_limit = 8
+        
+        # Planner Cost Constants
+        seq_page_cost = 1.0
+        random_page_cost = 1.1
+        cpu_tuple_cost = 0.01
+        cpu_index_tuple_cost = 0.005
+        cpu_operator_cost = 0.0025
+        effective_io_concurrency = 200
+        
+      pg_hba.conf: |
+        # GuardianShield PostgreSQL Host-Based Authentication
+        
+        # TYPE  DATABASE        USER            ADDRESS                 METHOD
+        
+        # "local" is for Unix domain socket connections only
+        local   all             all                                     peer
+        
+        # IPv4 local connections:
+        host    all             all             127.0.0.1/32            scram-sha-256
+        
+        # IPv6 local connections:
+        host    all             all             ::1/128                 scram-sha-256
+        
+        # Allow replication connections from localhost, by a user with the
+        # replication privilege.
+        local   replication     all                                     peer
+        host    replication     all             127.0.0.1/32            scram-sha-256
+        host    replication     all             ::1/128                 scram-sha-256
+        
+        # Kubernetes cluster connections
+        host    all             all             10.0.0.0/8              scram-sha-256
+        host    replication     streaming_replica 10.0.0.0/8            scram-sha-256

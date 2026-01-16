@@ -1,0 +1,181 @@
+{{- if .Values.rbac.create }}
+# Service Account for Vault CSI Provider
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "dhi-vault-csi-provider.serviceAccountName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "dhi-vault-csi-provider.labels" . | nindent 4 }}
+    guardianshield.io/component: "vault-service-account"
+  {{- with .Values.serviceAccount.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+automountServiceAccountToken: true
+
+---
+# ClusterRole for Vault CSI Provider
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "dhi-vault-csi-provider.fullname" . }}-csi-driver
+  labels:
+    {{- include "dhi-vault-csi-provider.labels" . | nindent 4 }}
+    guardianshield.io/component: "csi-cluster-role"
+rules:
+  # Secrets management
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  
+  # ConfigMaps for configuration
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["get", "list", "watch"]
+  
+  # Service accounts for authentication
+  - apiGroups: [""]
+    resources: ["serviceaccounts"]
+    verbs: ["get", "list", "watch"]
+  
+  # Pods for CSI operations
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list", "watch"]
+  
+  # Nodes for CSI driver registration
+  - apiGroups: [""]
+    resources: ["nodes"]
+    verbs: ["get", "list", "watch"]
+  
+  # Events for debugging
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["create", "patch"]
+  
+  # CSI specific resources
+  - apiGroups: ["storage.k8s.io"]
+    resources: ["volumeattachments"]
+    verbs: ["get", "list", "watch", "update", "patch"]
+  
+  # Secret provider classes
+  - apiGroups: ["secrets-store.csi.x-k8s.io"]
+    resources: ["secretproviderclasses"]
+    verbs: ["get", "list", "watch"]
+  
+  # Vault-specific resources
+  - apiGroups: [""]
+    resources: ["persistentvolumes"]
+    verbs: ["get", "list", "watch", "create", "delete"]
+  
+  - apiGroups: [""]
+    resources: ["persistentvolumeclaims"]
+    verbs: ["get", "list", "watch", "update"]
+
+---
+# ClusterRoleBinding for Vault CSI Provider
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "dhi-vault-csi-provider.fullname" . }}-csi-driver
+  labels:
+    {{- include "dhi-vault-csi-provider.labels" . | nindent 4 }}
+    guardianshield.io/component: "csi-cluster-role-binding"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "dhi-vault-csi-provider.fullname" . }}-csi-driver
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "dhi-vault-csi-provider.serviceAccountName" . }}
+    namespace: {{ .Release.Namespace }}
+
+---
+# Role for namespace-specific operations
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "dhi-vault-csi-provider.fullname" . }}-vault-operations
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "dhi-vault-csi-provider.labels" . | nindent 4 }}
+    guardianshield.io/component: "vault-operations-role"
+rules:
+  # Vault server management
+  - apiGroups: [""]
+    resources: ["pods", "pods/log", "pods/status"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  
+  # Services for Vault access
+  - apiGroups: [""]
+    resources: ["services"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+  
+  # Endpoints for service discovery
+  - apiGroups: [""]
+    resources: ["endpoints"]
+    verbs: ["get", "list", "watch"]
+  
+  # StatefulSets for Vault HA
+  - apiGroups: ["apps"]
+    resources: ["statefulsets"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+  
+  # Deployments for CSI provider
+  - apiGroups: ["apps"]
+    resources: ["deployments", "daemonsets"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+  
+  # Leases for leader election
+  - apiGroups: ["coordination.k8s.io"]
+    resources: ["leases"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  
+  # Ingress for Vault UI access
+  - apiGroups: ["networking.k8s.io"]
+    resources: ["ingresses"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+
+---
+# RoleBinding for Vault operations
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "dhi-vault-csi-provider.fullname" . }}-vault-operations
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "dhi-vault-csi-provider.labels" . | nindent 4 }}
+    guardianshield.io/component: "vault-operations-binding"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ include "dhi-vault-csi-provider.fullname" . }}-vault-operations
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "dhi-vault-csi-provider.serviceAccountName" . }}
+    namespace: {{ .Release.Namespace }}
+
+---
+# Additional service accounts for different roles
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: guardianshield-developer
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "dhi-vault-csi-provider.labels" . | nindent 4 }}
+    guardianshield.io/component: "developer-service-account"
+automountServiceAccountToken: true
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: guardianshield-readonly
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "dhi-vault-csi-provider.labels" . | nindent 4 }}
+    guardianshield.io/component: "readonly-service-account"
+automountServiceAccountToken: true
+{{- end }}

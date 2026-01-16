@@ -1,0 +1,409 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "dhi-openresty.fullname" . }}-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "dhi-openresty.labels" . | nindent 4 }}
+    guardianshield.io/component: "web-server-config"
+data:
+  nginx.conf: |
+    # GuardianShield OpenResty Configuration
+    
+    # User and worker configuration
+    user nginx;
+    worker_processes {{ .Values.nginx.workerProcesses }};
+    worker_rlimit_nofile {{ .Values.nginx.workerRlimitNofile }};
+    
+    # Error log configuration
+    error_log /var/log/nginx/error.log {{ .Values.nginx.errorLogLevel }};
+    pid /var/run/nginx.pid;
+    
+    # Events block
+    events {
+        worker_connections {{ .Values.nginx.workerConnections }};
+        use epoll;
+        multi_accept on;
+    }
+    
+    # HTTP block
+    http {
+        # Basic settings
+        include /etc/nginx/mime.types;
+        default_type application/octet-stream;
+        
+        # Performance settings
+        sendfile on;
+        tcp_nopush on;
+        tcp_nodelay on;
+        keepalive_timeout {{ .Values.nginx.keepaliveTimeout }};
+        types_hash_max_size 2048;
+        server_tokens off;
+        
+        # Buffer settings
+        client_body_buffer_size {{ .Values.nginx.clientBodyBufferSize }};
+        client_header_buffer_size {{ .Values.nginx.clientHeaderBufferSize }};
+        client_max_body_size {{ .Values.nginx.clientMaxBodySize }};
+        large_client_header_buffers {{ .Values.nginx.largeClientHeaderBuffers }};
+        
+        # Timeout settings
+        client_body_timeout {{ .Values.nginx.clientBodyTimeout }};
+        client_header_timeout {{ .Values.nginx.clientHeaderTimeout }};
+        send_timeout {{ .Values.nginx.sendTimeout }};
+        
+        # Gzip compression
+        {{- if .Values.nginx.gzip.enabled }}
+        gzip on;
+        gzip_vary on;
+        gzip_proxied any;
+        gzip_comp_level {{ .Values.nginx.gzip.level }};
+        gzip_types {{ join " " .Values.nginx.gzip.types }};
+        gzip_min_length {{ .Values.nginx.gzip.minLength }};
+        {{- end }}
+        
+        # Logging format
+        {{- include "dhi-openresty.logFormat" . | nindent 8 }}
+        
+        # Rate limiting zones
+        {{- include "dhi-openresty.rateLimiting" . | nindent 8 }}
+        
+        # Upstream servers
+        {{- include "dhi-openresty.upstreams" . | nindent 8 }}
+        
+        # Lua configuration
+        lua_package_path "{{ include "dhi-openresty.luaScriptPath" . }}/?.lua;;";
+        lua_shared_dict auth_cache {{ .Values.lua.sharedDicts.authCache }};
+        lua_shared_dict rate_limit_cache {{ .Values.lua.sharedDicts.rateLimitCache }};
+        lua_shared_dict metrics_cache {{ .Values.lua.sharedDicts.metricsCache }};
+        
+        # Lua initialization
+        init_by_lua_block {
+            -- Initialize GuardianShield modules
+            local config = require "guardianshield.config"
+            local logger = require "guardianshield.logger"
+            
+            -- Set global configuration
+            config.init({
+                redis_host = "{{ .Values.redis.host }}",
+                redis_port = {{ .Values.redis.port }},
+                jwt_secret = os.getenv("JWT_SECRET") or "{{ .Values.security.jwt.secret }}",
+                log_level = "{{ .Values.lua.logLevel }}"
+            })
+            
+            logger.info("GuardianShield OpenResty initialized")
+        }
+        
+        # Default server (catch-all for undefined hosts)
+        server {
+            listen 80 default_server;
+            listen 443 ssl default_server;
+            server_name _;
+            
+            {{- if .Values.ssl.enabled }}
+            ssl_certificate {{ include "dhi-openresty.sslCertPath" . }};
+            ssl_certificate_key {{ include "dhi-openresty.sslKeyPath" . }};
+            {{- end }}
+            
+            # Return 444 for undefined hosts
+            return 444;
+        }
+        
+        # Monitoring and health check endpoints
+        {{- include "dhi-openresty.monitoring" . | nindent 8 }}
+        
+        # Virtual hosts
+        {{- include "dhi-openresty.virtualHost" . | nindent 8 }}
+    }
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "dhi-openresty.fullname" . }}-lua
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "dhi-openresty.labels" . | nindent 4 }}
+    guardianshield.io/component: "lua-scripts"
+data:
+  config.lua: |
+    -- GuardianShield Configuration Module
+    local _M = {}
+    local config = {}
+    
+    function _M.init(opts)
+        opts = opts or {}
+        config.redis_host = opts.redis_host or "redis"
+        config.redis_port = opts.redis_port or 6379
+        config.jwt_secret = opts.jwt_secret or "default_secret"
+        config.log_level = opts.log_level or "info"
+        config.auth_timeout = opts.auth_timeout or 3600
+        config.rate_limit_window = opts.rate_limit_window or 60
+    end
+    
+    function _M.get(key)
+        return config[key]
+    end
+    
+    function _M.set(key, value)
+        config[key] = value
+    end
+    
+    return _M
+  
+  logger.lua: |
+    -- GuardianShield Logging Module
+    local cjson = require "cjson"
+    local _M = {}
+    
+    local log_levels = {
+        debug = 1,
+        info = 2,
+        warn = 3,
+        error = 4
+    }
+    
+    local function log_message(level, message, data)
+        local config = require "guardianshield.config"
+        local current_level = log_levels[config.get("log_level")] or 2
+        
+        if log_levels[level] >= current_level then
+            local log_entry = {
+                timestamp = ngx.utctime(),
+                level = level,
+                message = message,
+                request_id = ngx.var.request_id,
+                remote_addr = ngx.var.remote_addr,
+                data = data
+            }
+            
+            ngx.log(ngx.ERR, cjson.encode(log_entry))
+        end
+    end
+    
+    function _M.debug(message, data)
+        log_message("debug", message, data)
+    end
+    
+    function _M.info(message, data)
+        log_message("info", message, data)
+    end
+    
+    function _M.warn(message, data)
+        log_message("warn", message, data)
+    end
+    
+    function _M.error(message, data)
+        log_message("error", message, data)
+    end
+    
+    return _M
+  
+  auth.lua: |
+    -- GuardianShield Authentication Module
+    local jwt = require "resty.jwt"
+    local cjson = require "cjson"
+    local logger = require "guardianshield.logger"
+    local config = require "guardianshield.config"
+    local _M = {}
+    
+    function _M.validate_jwt(secret)
+        local auth_header = ngx.var.http_authorization
+        
+        if not auth_header then
+            logger.warn("Missing Authorization header")
+            ngx.status = 401
+            ngx.header["Content-Type"] = "application/json"
+            ngx.say(cjson.encode({error = "Missing authorization header"}))
+            ngx.exit(401)
+        end
+        
+        local token = auth_header:match("Bearer%s+(.+)")
+        if not token then
+            logger.warn("Invalid Authorization header format")
+            ngx.status = 401
+            ngx.header["Content-Type"] = "application/json"
+            ngx.say(cjson.encode({error = "Invalid authorization header format"}))
+            ngx.exit(401)
+        end
+        
+        -- Check cache first
+        local cache = ngx.shared.auth_cache
+        local cached_result = cache:get(token)
+        
+        if cached_result then
+            local result = cjson.decode(cached_result)
+            if result.valid then
+                ngx.var.user_id = result.user_id
+                ngx.var.user_role = result.role
+                return
+            else
+                ngx.status = 401
+                ngx.header["Content-Type"] = "application/json"
+                ngx.say(cjson.encode({error = "Invalid token"}))
+                ngx.exit(401)
+            end
+        end
+        
+        -- Validate JWT
+        local jwt_token = jwt:verify(secret or config.get("jwt_secret"), token)
+        
+        if not jwt_token.valid then
+            logger.warn("Invalid JWT token", {reason = jwt_token.reason})
+            
+            -- Cache invalid result
+            cache:set(token, cjson.encode({valid = false}), 300)
+            
+            ngx.status = 401
+            ngx.header["Content-Type"] = "application/json"
+            ngx.say(cjson.encode({error = "Invalid token"}))
+            ngx.exit(401)
+        end
+        
+        -- Extract user information
+        local payload = jwt_token.payload
+        ngx.var.user_id = payload.sub
+        ngx.var.user_role = payload.role
+        
+        -- Cache valid result
+        local cache_data = {
+            valid = true,
+            user_id = payload.sub,
+            role = payload.role
+        }
+        cache:set(token, cjson.encode(cache_data), config.get("auth_timeout"))
+        
+        logger.info("JWT validation successful", {user_id = payload.sub})
+    end
+    
+    return _M
+  
+  cors.lua: |
+    -- GuardianShield CORS Module
+    local _M = {}
+    
+    function _M.set_headers(opts)
+        opts = opts or {}
+        
+        local origin = opts.origin or "*"
+        local methods = opts.methods or "GET, POST, PUT, DELETE, OPTIONS"
+        local headers = opts.headers or "Content-Type, Authorization, X-Requested-With"
+        local max_age = opts.max_age or "86400"
+        
+        -- Handle preflight requests
+        if ngx.var.request_method == "OPTIONS" then
+            ngx.header["Access-Control-Allow-Origin"] = origin
+            ngx.header["Access-Control-Allow-Methods"] = methods
+            ngx.header["Access-Control-Allow-Headers"] = headers
+            ngx.header["Access-Control-Max-Age"] = max_age
+            ngx.header["Access-Control-Allow-Credentials"] = "true"
+            ngx.status = 204
+            ngx.exit(204)
+        end
+        
+        -- Set CORS headers for actual requests
+        ngx.header["Access-Control-Allow-Origin"] = origin
+        ngx.header["Access-Control-Allow-Credentials"] = "true"
+    end
+    
+    return _M
+  
+  rate_limit.lua: |
+    -- GuardianShield Rate Limiting Module
+    local cjson = require "cjson"
+    local logger = require "guardianshield.logger"
+    local config = require "guardianshield.config"
+    local _M = {}
+    
+    function _M.check_rate_limit(key, limit, window)
+        window = window or config.get("rate_limit_window")
+        local cache = ngx.shared.rate_limit_cache
+        
+        local current_time = ngx.time()
+        local window_start = current_time - window
+        
+        -- Clean up old entries
+        local current_count = 0
+        for i = window_start, current_time do
+            local count_key = key .. ":" .. i
+            local count = cache:get(count_key) or 0
+            current_count = current_count + count
+        end
+        
+        if current_count >= limit then
+            logger.warn("Rate limit exceeded", {
+                key = key,
+                current_count = current_count,
+                limit = limit
+            })
+            
+            ngx.status = 429
+            ngx.header["Content-Type"] = "application/json"
+            ngx.header["X-RateLimit-Limit"] = limit
+            ngx.header["X-RateLimit-Remaining"] = 0
+            ngx.header["X-RateLimit-Reset"] = current_time + window
+            ngx.say(cjson.encode({error = "Rate limit exceeded"}))
+            ngx.exit(429)
+        end
+        
+        -- Increment counter
+        local count_key = key .. ":" .. current_time
+        local current_requests = cache:incr(count_key, 1) or 1
+        if current_requests == 1 then
+            cache:expire(count_key, window)
+        end
+        
+        -- Set headers
+        ngx.header["X-RateLimit-Limit"] = limit
+        ngx.header["X-RateLimit-Remaining"] = limit - current_count - 1
+        ngx.header["X-RateLimit-Reset"] = current_time + window
+    end
+    
+    return _M
+  
+  threat_intel.lua: |
+    -- GuardianShield Threat Intelligence Module
+    local http = require "resty.http"
+    local cjson = require "cjson"
+    local logger = require "guardianshield.logger"
+    local _M = {}
+    
+    function _M.check_threat_indicators(ip_addr)
+        local httpc = http.new()
+        httpc:set_timeout(5000) -- 5 second timeout
+        
+        -- Check against threat intelligence API
+        local res, err = httpc:request_uri("http://threat-intelligence-api:8080/check", {
+            method = "POST",
+            body = cjson.encode({ip = ip_addr}),
+            headers = {
+                ["Content-Type"] = "application/json"
+            }
+        })
+        
+        if not res then
+            logger.error("Failed to check threat intelligence", {error = err})
+            return false -- Allow request if check fails
+        end
+        
+        if res.status == 200 then
+            local data = cjson.decode(res.body)
+            if data.is_threat then
+                logger.warn("Threat detected", {
+                    ip = ip_addr,
+                    threat_type = data.threat_type,
+                    confidence = data.confidence
+                })
+                
+                ngx.status = 403
+                ngx.header["Content-Type"] = "application/json"
+                ngx.say(cjson.encode({
+                    error = "Access denied - security threat detected"
+                }))
+                ngx.exit(403)
+            end
+        end
+        
+        return true
+    end
+    
+    return _M

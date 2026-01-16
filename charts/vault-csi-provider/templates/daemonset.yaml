@@ -1,0 +1,191 @@
+{{- if .Values.vault.csi.enabled }}
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ include "dhi-vault-csi-provider.fullname" . }}-csi
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "dhi-vault-csi-provider.labels" . | nindent 4 }}
+    guardianshield.io/component: "vault-csi-provider"
+spec:
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: "10%"
+  
+  selector:
+    matchLabels:
+      {{- include "dhi-vault-csi-provider.selectorLabels" . | nindent 6 }}
+      guardianshield.io/component: "vault-csi-provider"
+  
+  template:
+    metadata:
+      labels:
+        {{- include "dhi-vault-csi-provider.selectorLabels" . | nindent 8 }}
+        guardianshield.io/component: "vault-csi-provider"
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/vault-config.yaml") . | sha256sum }}
+    
+    spec:
+      serviceAccountName: {{ include "dhi-vault-csi-provider.serviceAccountName" . }}
+      
+      securityContext:
+        {{- include "dhi-vault-csi-provider.podSecurityContext" . | nindent 8 }}
+      
+      containers:
+        # Vault CSI Provider
+        - name: vault-csi-provider
+          image: "{{ .Values.vault.csi.image.repository }}:{{ .Values.vault.csi.image.tag }}"
+          imagePullPolicy: {{ .Values.vault.csi.image.pullPolicy }}
+          
+          args:
+            - --endpoint=$(CSI_ENDPOINT)
+            - --debug={{ .Values.vault.csi.debug }}
+            - --version={{ .Chart.AppVersion }}
+          
+          env:
+            - name: CSI_ENDPOINT
+              value: unix:///csi/csi.sock
+            - name: VAULT_ADDR
+              value: {{ include "dhi-vault-csi-provider.vaultAddress" . }}
+            - name: VAULT_MOUNT_PATH
+              value: "guardianshield"
+            {{- if not .Values.global.tlsDisable }}
+            - name: VAULT_CACERT
+              value: "/vault/tls/ca.crt"
+            - name: VAULT_CLIENT_CERT
+              value: "/vault/tls/tls.crt"
+            - name: VAULT_CLIENT_KEY
+              value: "/vault/tls/tls.key"
+            {{- end }}
+          
+          resources:
+            {{- toYaml .Values.vault.csi.resources | nindent 12 }}
+          
+          volumeMounts:
+            - name: plugin-dir
+              mountPath: /csi
+            - name: mountpoint-dir
+              mountPath: /var/lib/kubelet/pods
+              mountPropagation: Bidirectional
+            {{- if not .Values.global.tlsDisable }}
+            - name: vault-tls
+              mountPath: /vault/tls
+              readOnly: true
+            {{- end }}
+          
+          securityContext:
+            {{- include "dhi-vault-csi-provider.securityContext" . | nindent 12 }}
+            privileged: true
+          
+          livenessProbe:
+            httpGet:
+              path: /health/ready
+              port: 8080
+            failureThreshold: 2
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 3
+        
+        # CSI Node Driver Registrar
+        - name: node-driver-registrar
+          image: "{{ .Values.secretsStore.nodeDriverRegistrar.image.repository }}:{{ .Values.secretsStore.nodeDriverRegistrar.image.tag }}"
+          imagePullPolicy: {{ .Values.secretsStore.nodeDriverRegistrar.image.pullPolicy }}
+          
+          args:
+            - --v=2
+            - --csi-address=/csi/csi.sock
+            - --kubelet-registration-path=/var/lib/kubelet/plugins/secrets-store.csi.x-k8s.io/csi.sock
+          
+          env:
+            - name: KUBE_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
+          
+          resources:
+            {{- toYaml .Values.secretsStore.nodeDriverRegistrar.resources | nindent 12 }}
+          
+          volumeMounts:
+            - name: plugin-dir
+              mountPath: /csi
+            - name: registration-dir
+              mountPath: /registration
+          
+          securityContext:
+            {{- include "dhi-vault-csi-provider.securityContext" . | nindent 12 }}
+        
+        # Liveness Probe
+        - name: liveness-probe
+          image: "{{ .Values.secretsStore.livenessProbe.image.repository }}:{{ .Values.secretsStore.livenessProbe.image.tag }}"
+          imagePullPolicy: {{ .Values.secretsStore.livenessProbe.image.pullPolicy }}
+          
+          args:
+            - --csi-address=/csi/csi.sock
+            - --probe-timeout=3s
+            - --health-port=8080
+            - --v=2
+          
+          resources:
+            {{- toYaml .Values.secretsStore.livenessProbe.resources | nindent 12 }}
+          
+          volumeMounts:
+            - name: plugin-dir
+              mountPath: /csi
+          
+          securityContext:
+            {{- include "dhi-vault-csi-provider.securityContext" . | nindent 12 }}
+      
+      volumes:
+        - name: plugin-dir
+          hostPath:
+            path: /var/lib/kubelet/plugins/secrets-store.csi.x-k8s.io
+            type: DirectoryOrCreate
+        - name: registration-dir
+          hostPath:
+            path: /var/lib/kubelet/plugins_registry
+            type: Directory
+        - name: mountpoint-dir
+          hostPath:
+            path: /var/lib/kubelet/pods
+            type: DirectoryOrCreate
+        {{- if not .Values.global.tlsDisable }}
+        - name: vault-tls
+          secret:
+            secretName: {{ include "dhi-vault-csi-provider.fullname" . }}-tls
+            defaultMode: 0400
+        {{- end }}
+      
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      
+      hostNetwork: false
+      dnsPolicy: Default
+{{- end }}
+
+---
+# CSI Driver resource
+{{- if .Values.secretsStore.enabled }}
+apiVersion: storage.k8s.io/v1
+kind: CSIDriver
+metadata:
+  name: secrets-store.csi.x-k8s.io
+  labels:
+    {{- include "dhi-vault-csi-provider.labels" . | nindent 4 }}
+    guardianshield.io/component: "csi-driver"
+spec:
+  podInfoOnMount: true
+  attachRequired: false
+  volumeLifecycleModes:
+    - Ephemeral
+  fsGroupPolicy: File
+{{- end }}

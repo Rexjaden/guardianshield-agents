@@ -1,0 +1,420 @@
+# GuardianShield OpenResty Configuration
+# High-performance web server with Lua scripting for threat intelligence APIs
+
+openresty:
+  enabled: true
+  
+  image:
+    repository: openresty/openresty
+    tag: "1.25.3.1-0-alpine"
+    pullPolicy: IfNotPresent
+
+  replicaCount: 3
+
+  # Resource configuration optimized for GuardianShield workloads
+  resources:
+    requests:
+      cpu: 200m
+      memory: 256Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+
+  # Service configuration
+  service:
+    type: ClusterIP
+    ports:
+      http: 80
+      https: 443
+      api: 8080
+      admin: 8081
+    annotations:
+      service.beta.kubernetes.io/aws-load-balancer-type: nlb
+      service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+
+  # Ingress configuration
+  ingress:
+    enabled: true
+    className: nginx
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/rate-limit: "100"
+      nginx.ingress.kubernetes.io/rate-limit-window: "1m"
+    hosts:
+      - host: api.guardianshield.io
+        paths:
+          - path: /
+            pathType: Prefix
+            port: 8080
+      - host: admin.guardianshield.io
+        paths:
+          - path: /
+            pathType: Prefix
+            port: 8081
+      - host: web.guardianshield.io
+        paths:
+          - path: /
+            pathType: Prefix
+            port: 80
+    tls:
+      - secretName: guardianshield-web-tls
+        hosts:
+          - api.guardianshield.io
+          - admin.guardianshield.io
+          - web.guardianshield.io
+
+  # OpenResty/Nginx configuration
+  config:
+    # Main nginx.conf settings
+    nginx:
+      worker_processes: auto
+      worker_connections: 4096
+      keepalive_timeout: 65
+      client_max_body_size: 50m
+      
+      # Logging
+      access_log: "/var/log/nginx/access.log combined"
+      error_log: "/var/log/nginx/error.log warn"
+      
+      # Gzip compression
+      gzip: "on"
+      gzip_vary: "on"
+      gzip_min_length: 1000
+      gzip_comp_level: 6
+      gzip_types:
+        - text/plain
+        - text/css
+        - text/xml
+        - text/javascript
+        - application/json
+        - application/javascript
+        - application/xml+rss
+        - application/atom+xml
+        - image/svg+xml
+
+    # Lua configuration for dynamic functionality
+    lua:
+      # Threat intelligence rate limiting
+      rate_limiting: |
+        local limit_req = require "resty.limit.req"
+        local lim, err = limit_req.new("my_limit_req_store", 200, 100)
+        if not lim then
+            ngx.log(ngx.ERR, "failed to instantiate a resty.limit.req object: ", err)
+            return ngx.exit(500)
+        end
+        
+        local key = ngx.var.binary_remote_addr
+        local delay, err = lim:incoming(key, true)
+        if not delay then
+            if err == "rejected" then
+                ngx.header["X-RateLimit-Limit"] = "200"
+                ngx.header["X-RateLimit-Remaining"] = "0"
+                return ngx.exit(429)
+            end
+            ngx.log(ngx.ERR, "failed to limit req: ", err)
+            return ngx.exit(500)
+        end
+
+      # JWT token validation
+      jwt_validation: |
+        local jwt = require "resty.jwt"
+        local jwt_token = ngx.var.http_authorization
+        
+        if not jwt_token then
+            ngx.status = 401
+            ngx.say("Missing Authorization header")
+            ngx.exit(401)
+        end
+        
+        jwt_token = string.gsub(jwt_token, "Bearer ", "")
+        local jwt_obj = jwt:verify("guardianshield-secret", jwt_token)
+        
+        if not jwt_obj.valid then
+            ngx.status = 401
+            ngx.say("Invalid JWT token")
+            ngx.exit(401)
+        end
+        
+        ngx.var.user_id = jwt_obj.payload.sub
+
+      # Threat intelligence API proxy
+      threat_api_proxy: |
+        local http = require "resty.http"
+        local httpc = http.new()
+        
+        local res, err = httpc:request_uri("http://threat-intelligence-service:8080" .. ngx.var.uri, {
+            method = ngx.var.request_method,
+            headers = ngx.req.get_headers(),
+            body = ngx.req.get_body_data(),
+            keepalive_timeout = 60000,
+            keepalive_pool = 10
+        })
+        
+        if not res then
+            ngx.log(ngx.ERR, "failed to request: ", err)
+            ngx.status = 500
+            return
+        end
+        
+        ngx.status = res.status
+        for k, v in pairs(res.headers) do
+            ngx.header[k] = v
+        end
+        ngx.say(res.body)
+
+  # Virtual host configurations
+  virtualHosts:
+    # API Gateway for threat intelligence
+    api:
+      server_name: api.guardianshield.io
+      listen: 8080
+      ssl: true
+      locations:
+        - path: /api/v1/threats
+          proxy_pass: http://threat-intelligence-service:8080
+          access_by_lua_block: |
+            -- Rate limiting
+            local limit_req = require "resty.limit.req"
+            local lim, err = limit_req.new("threat_api_store", 100, 50)
+            if lim then
+                local key = ngx.var.remote_addr
+                local delay, err = lim:incoming(key, true)
+                if not delay and err == "rejected" then
+                    return ngx.exit(429)
+                end
+            end
+            
+            -- JWT validation for sensitive endpoints
+            if string.match(ngx.var.uri, "/admin/") then
+                local jwt = require "resty.jwt"
+                local auth_header = ngx.var.http_authorization
+                if auth_header then
+                    local token = string.gsub(auth_header, "Bearer ", "")
+                    local jwt_obj = jwt:verify("guardianshield-jwt-secret", token)
+                    if not jwt_obj.valid then
+                        return ngx.exit(401)
+                    end
+                else
+                    return ngx.exit(401)
+                end
+            end
+
+        - path: /api/v1/web3
+          proxy_pass: http://web3-intelligence-service:8080
+          header_filter_by_lua_block: |
+            ngx.header["X-Service"] = "web3-intelligence"
+            ngx.header["X-Rate-Limit"] = "1000/hour"
+
+        - path: /api/v1/dmer
+          proxy_pass: http://dmer-monitor-service:8080
+          access_by_lua_block: |
+            -- DMER-specific rate limiting
+            local limit_req = require "resty.limit.req"
+            local lim = limit_req.new("dmer_store", 200, 100)
+            if lim then
+                local key = ngx.var.remote_addr .. ":" .. ngx.var.uri
+                local delay, err = lim:incoming(key, true)
+                if not delay and err == "rejected" then
+                    ngx.header["X-RateLimit-Retry-After"] = "60"
+                    return ngx.exit(429)
+                end
+            end
+
+        - path: /health
+          content_by_lua_block: |
+            ngx.status = 200
+            ngx.header["Content-Type"] = "application/json"
+            ngx.say('{"status":"healthy","timestamp":"' .. os.date("!%Y-%m-%dT%H:%M:%SZ") .. '","service":"guardianshield-api"}')
+
+    # Admin interface
+    admin:
+      server_name: admin.guardianshield.io
+      listen: 8081
+      ssl: true
+      access_log: "/var/log/nginx/admin_access.log combined"
+      locations:
+        - path: /
+          proxy_pass: http://admin-console-service:5000
+          access_by_lua_block: |
+            -- Admin authentication required
+            local jwt = require "resty.jwt"
+            local auth_header = ngx.var.http_authorization
+            
+            if not auth_header then
+                ngx.status = 401
+                ngx.header["WWW-Authenticate"] = 'Bearer realm="GuardianShield Admin"'
+                ngx.say('{"error":"Authentication required"}')
+                return ngx.exit(401)
+            end
+            
+            local token = string.gsub(auth_header, "Bearer ", "")
+            local jwt_obj = jwt:verify("guardianshield-admin-secret", token)
+            
+            if not jwt_obj.valid then
+                ngx.status = 401
+                ngx.say('{"error":"Invalid authentication token"}')
+                return ngx.exit(401)
+            end
+            
+            -- Check admin role
+            if jwt_obj.payload.role ~= "admin" then
+                ngx.status = 403
+                ngx.say('{"error":"Admin access required"}')
+                return ngx.exit(403)
+            end
+
+        - path: /api/stats
+          content_by_lua_block: |
+            local cjson = require "cjson"
+            
+            -- Gather basic stats
+            local stats = {
+                timestamp = os.date("!%Y-%m-%dT%H:%M:%SZ"),
+                server = ngx.var.hostname,
+                connections = ngx.var.connections_active,
+                requests = ngx.var.request_count or 0,
+                uptime = ngx.now() - ngx.var.start_time
+            }
+            
+            ngx.status = 200
+            ngx.header["Content-Type"] = "application/json"
+            ngx.say(cjson.encode(stats))
+
+    # Public web interface
+    web:
+      server_name: web.guardianshield.io
+      listen: 80
+      ssl: true
+      locations:
+        - path: /
+          proxy_pass: http://web-frontend-service:3000
+          
+        - path: /static/
+          alias: /usr/local/openresty/nginx/html/static/
+          expires: 7d
+          add_header: "Cache-Control public"
+
+        - path: /api/public/threat-feed
+          proxy_pass: http://threat-intelligence-service:8080/api/v1/public/feed
+          access_by_lua_block: |
+            -- Public API rate limiting
+            local limit_req = require "resty.limit.req"
+            local lim = limit_req.new("public_api_store", 10, 5)
+            if lim then
+                local key = ngx.var.remote_addr
+                local delay, err = lim:incoming(key, true)
+                if not delay and err == "rejected" then
+                    ngx.header["X-RateLimit-Limit"] = "10"
+                    ngx.header["X-RateLimit-Window"] = "60s"
+                    return ngx.exit(429)
+                end
+            end
+
+  # Health checks
+  healthcheck:
+    enabled: true
+    path: /health
+    port: 8080
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+
+  # Security context
+  securityContext:
+    runAsUser: 101
+    runAsGroup: 101
+    runAsNonRoot: true
+    allowPrivilegeEscalation: false
+
+  # Auto-scaling configuration
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 70
+    targetMemoryUtilizationPercentage: 80
+
+  # Node selection
+  nodeSelector:
+    kubernetes.io/arch: amd64
+    node-type: webserver
+
+  # Pod disruption budget
+  podDisruptionBudget:
+    enabled: true
+    minAvailable: 1
+
+# GuardianShield-specific configurations
+guardianshield:
+  # Web service settings
+  webServices:
+    # API rate limiting
+    rateLimiting:
+      enabled: true
+      globalLimit: 1000  # requests per minute
+      apiKeyLimit: 10000  # requests per minute for API keys
+      adminLimit: 100  # requests per minute for admin
+    
+    # Caching
+    caching:
+      enabled: true
+      defaultTTL: 300  # 5 minutes
+      threatIntelTTL: 60  # 1 minute for threat data
+      staticTTL: 86400  # 24 hours for static content
+    
+    # SSL/TLS
+    ssl:
+      enabled: true
+      protocols: ["TLSv1.2", "TLSv1.3"]
+      ciphers: "ECDHE+AESGCM:ECDHE+CHACHA20:DHE+AESGCM:DHE+CHACHA20:!aNULL:!SHA1:!AESCCM"
+      
+    # Monitoring
+    monitoring:
+      enabled: true
+      metricsPort: 9145
+      prometheusPath: /metrics
+
+  # Load balancing
+  loadBalancing:
+    algorithm: "least_conn"
+    sessionAffinity: false
+    healthCheck:
+      enabled: true
+      interval: 10
+      timeout: 5
+      rise: 2
+      fall: 3
+
+# Monitoring and observability  
+monitoring:
+  prometheus:
+    enabled: true
+    port: 9145
+    path: /metrics
+    
+  grafana:
+    dashboards:
+      enabled: true
+      folder: "GuardianShield WebServices"
+
+# Network policies
+networkPolicy:
+  enabled: true
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: guardianshield-system
+      ports:
+        - protocol: TCP
+          port: 80
+        - protocol: TCP
+          port: 443
+        - protocol: TCP
+          port: 8080
+        - protocol: TCP
+          port: 8081
