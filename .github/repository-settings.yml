@@ -1,0 +1,54 @@
+name: Repository Security Settings
+description: Configure repository security settings for GuardianShield
+schemaVersion: 1.0.0
+
+settings:
+  # Branch Protection
+  branch_protection:
+    main:
+      required_status_checks:
+        strict: true
+        contexts:
+          - "Security Scanning & Dependency Updates"
+          - "CodeQL Analysis"
+          - "Container Security"
+      enforce_admins: true
+      required_pull_request_reviews:
+        required_approving_review_count: 2
+        dismiss_stale_reviews: true
+        require_code_owner_reviews: true
+        require_last_push_approval: true
+      restrictions:
+        users: []
+        teams: []
+      
+  # Security Features
+  security:
+    # Enable vulnerability alerts
+    vulnerability_alerts: true
+    
+    # Enable automated security updates  
+    automated_security_fixes: true
+    
+    # Enable dependency graph
+    dependency_graph: true
+    
+    # Enable secret scanning
+    secret_scanning: true
+    
+    # Enable secret scanning push protection
+    secret_scanning_push_protection: true
+    
+    # Enable private vulnerability reporting
+    private_vulnerability_reporting: true
+
+  # Repository Settings
+  repository:
+    # Prevent force pushes
+    allow_force_pushes: false
+    
+    # Prevent deletions
+    allow_deletions: false
+    
+    # Require signed commits
+    required_signatures: true
