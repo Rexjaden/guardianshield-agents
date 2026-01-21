@@ -352,8 +352,16 @@
                     document.getElementById('user-display').innerText = username;
                     showDashboard();
                 } else {
+                    // Start of change: Better error reporting
+                    let msg = 'Invalid credentials.';
+                    try {
+                        const err = await response.json();
+                        if (err.detail) msg = err.detail;
+                    } catch(e) {}
+                    
                     errorMsg.style.display = 'block';
-                    errorMsg.textContent = 'Invalid credentials or access denied.';
+                    errorMsg.textContent = msg;
+                    // End of change
                 }
             } catch (err) {
                 errorMsg.style.display = 'block';
