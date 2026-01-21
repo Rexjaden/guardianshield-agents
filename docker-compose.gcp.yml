@@ -43,6 +43,7 @@ services:
       - REDIS_URL=redis://redis-gcp:6379
     volumes:
       - ./agent_logs:/app/logs
+      - ./.guardian_authorized_users.json:/app/.guardian_authorized_users.json
     depends_on:
       - postgres-gcp
       - redis-gcp
