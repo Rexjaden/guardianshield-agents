@@ -36,7 +36,7 @@ class EcosystemIntegrator:
             },
             "admin_console": {
                 "name": "Admin Console",
-                "url": "http://localhost:8002",
+                "url": "http://localhost:8081",  # Professional website
                 "status": "unknown", 
                 "description": "System administration and monitoring"
             },

@@ -108,56 +108,80 @@
             margin: 0 auto; 
             padding: 0 20px; 
         }
-        .token-left, .token-right { 
+        .brand-section { 
+            display: flex; 
+            flex-direction: column;
+            align-items: flex-start; 
+            color: white; 
+            padding: 12px 20px;
+            background: rgba(15, 23, 42, 0.95);
+            border-radius: 16px;
+            border: 1px solid rgba(71, 85, 105, 0.4);
+            backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        .brand-section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+            border-color: rgba(96, 165, 250, 0.6);
+        }
+        .brand-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #60a5fa, #34d399, #fbbf24, #a855f7);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 4px;
+            animation: gradientShift 3s ease-in-out infinite;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .brand-subtitle {
+            font-size: 0.9rem;
+            background: linear-gradient(135deg, #94a3b8, #cbd5e1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 600;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+        }
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        .token-section {
             display: flex; 
             align-items: center; 
-            gap: 10px; 
-            color: white; 
-            font-weight: bold; 
+            gap: 15px; 
         }
         .token-emblem { 
-            width: 80px; 
-            height: 80px; 
-            border-radius: 50%; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            font-size: 32px;
-            box-shadow: 
-                0 15px 35px rgba(0, 0, 0, 0.4),
-                0 8px 25px rgba(0, 212, 170, 0.2),
-                inset 0 3px 6px rgba(255, 255, 255, 0.2),
-                inset 0 -3px 6px rgba(0, 0, 0, 0.2);
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            position: relative;
-        }
-        .token-emblem::after {
-            content: '';
-            position: absolute;
-            top: -4px;
-            left: -4px;
-            right: -4px;
-            bottom: -4px;
-            border-radius: 50%;
-            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            animation: tokenSpin 3s linear infinite;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px 12px;
+            background: rgba(15, 23, 42, 0.9);
+            border-radius: 12px;
+            border: 2px solid rgba(71, 85, 105, 0.5);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(15px);
         }
         .token-emblem:hover {
-            transform: scale(1.15) rotate(8deg);
+            transform: translateY(-2px);
+            border-color: rgba(96, 165, 250, 0.7);
+            box-shadow: 0 8px 25px rgba(96, 165, 250, 0.3);
         }
-        @keyframes tokenSpin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .token-emblem span {
+            color: white;
+            font-weight: bold;
+            font-size: 0.8rem;
+            margin-bottom: 4px;
         }
-        .token-emblem:hover {
-            transform: scale(1.1) rotate(5deg);
-            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4),
-                        0 0 30px rgba(0, 212, 170, 0.3),
-                        inset 0 2px 4px rgba(255, 255, 255, 0.2);
+        .token-icon {
+            font-size: 1.5rem;
+        }
         }
         .guard-emblem { 
             background: linear-gradient(145deg, #00d4aa 0%, #00a085 60%, #667eea 100%); 
@@ -914,13 +938,17 @@
     </style>
 </head>
 <body>
-    <!-- Header with Token Emblems and Navigation -->
+    <!-- Header with Professional Branding and Navigation -->
     <header class="header">
         <div class="header-content">
-            <!-- Guard Token (Top Left) -->
-            <div class="token-left">
-                <div class="token-emblem guard-emblem">🛡️</div>
-                <span>GUARD</span>
+            <!-- GuardianShield Brand (Top Left) -->
+            <div class="brand-section">
+                <div class="brand-title">
+                    <i class="fas fa-shield-alt"></i> GuardianShield
+                </div>
+                <div class="brand-subtitle">
+                    Advanced Quantum AI Security Platform
+                </div>
             </div>
             
             <!-- Navigation Menu (Center) -->
@@ -929,6 +957,8 @@
                     <li><a href="#home">Home</a></li>
                     <li><a href="#features">Features</a></li>
                     <li><a href="#tokenomics">Tokenomics</a></li>
+                    <li><a href="http://localhost:8081/defi_forms.html" target="_blank">💱 DeFi Legacy</a></li>
+                    <li><a href="http://localhost:8003/gpu-powered-showcase.html" target="_blank">🌌 Quantum Space</a></li>
                     <li><a href="#whitepaper">Whitepaper</a></li>
                     <li><a href="#copyright">Copyright</a></li>
                     <li><a href="#underage-warning">Age Warning</a></li>
@@ -936,10 +966,16 @@
                 </ul>
             </nav>
             
-            <!-- Shield Token (Top Right) -->
-            <div class="token-right">
-                <span>SHIELD</span>
-                <div class="token-emblem shield-emblem"></div>
+            <!-- Token Emblems (Top Right) -->
+            <div class="token-section">
+                <div class="token-emblem guard-token">
+                    <span>GUARD</span>
+                    <div class="token-icon">🛡️</div>
+                </div>
+                <div class="token-emblem shield-token">
+                    <span>SHIELD</span>
+                    <div class="token-icon">🔰</div>
+                </div>
             </div>
         </div>
     </header>

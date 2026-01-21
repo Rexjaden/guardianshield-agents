@@ -1,0 +1,105 @@
+{{- if .Values.networkPolicies.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "dhi-cert-manager.fullname" . }}-cert-manager
+  namespace: cert-manager
+  labels:
+    {{- include "dhi-cert-manager.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: cert-manager
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: {{ .Release.Namespace }}
+    - namespaceSelector:
+        matchLabels:
+          name: monitoring
+    ports:
+    - protocol: TCP
+      port: 9402  # Metrics port
+    - protocol: TCP
+      port: 6060  # Pprof port (if enabled)
+  egress:
+  - to: []  # DNS resolution
+    ports:
+    - protocol: UDP
+      port: 53
+    - protocol: TCP
+      port: 53
+  - to: []  # ACME server communication
+    ports:
+    - protocol: TCP
+      port: 443
+    - protocol: TCP
+      port: 80
+  - to:  # Kubernetes API
+    - namespaceSelector: {}
+      podSelector:
+        matchLabels:
+          component: kube-apiserver
+    ports:
+    - protocol: TCP
+      port: 6443
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "dhi-cert-manager.fullname" . }}-guardian-shield
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "dhi-cert-manager.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/part-of: guardianshield
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: {{ .Release.Namespace }}
+    - namespaceSelector:
+        matchLabels:
+          name: ingress-nginx
+    - namespaceSelector:
+        matchLabels:
+          name: istio-system
+    ports:
+    - protocol: TCP
+      port: 8080
+    - protocol: TCP
+      port: 8443
+    - protocol: TCP
+      port: 9090  # Metrics
+  egress:
+  - to: []  # DNS resolution
+    ports:
+    - protocol: UDP
+      port: 53
+    - protocol: TCP
+      port: 53
+  - to:  # External services (APIs, blockchain nodes, etc.)
+    ports:
+    - protocol: TCP
+      port: 443
+    - protocol: TCP
+      port: 80
+  - to:  # Database access
+    - namespaceSelector:
+        matchLabels:
+          name: {{ .Release.Namespace }}
+    ports:
+    - protocol: TCP
+      port: 5432  # PostgreSQL
+    - protocol: TCP
+      port: 6379  # Redis
+{{- end }}

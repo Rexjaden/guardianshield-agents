@@ -7,6 +7,7 @@ import json
 import base64
 import hashlib
 import secrets
+import time
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
@@ -108,11 +109,16 @@ class SecureKeyManager:
         key_files = []
         for filename in os.listdir(self.key_store_path):
             if filename.endswith('.key'):
-                with open(f"{self.key_store_path}/{filename}", 'r') as f:
-                    key_files.append({
-                        'filename': filename,
-                        'data': json.load(f)
-                    })
+                try:
+                    with open(f"{self.key_store_path}/{filename}", 'r') as f:
+                        content = f.read().strip()
+                        if content:  # Only process non-empty files
+                            key_files.append({
+                                'filename': filename,
+                                'data': json.loads(content)
+                            })
+                except (json.JSONDecodeError, Exception) as e:
+                    self.logger.warning(f"Skipping invalid key file {filename}: {e}")
         
         # Encrypt backup
         backup_data = json.dumps(key_files)

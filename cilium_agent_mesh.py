@@ -30,7 +30,7 @@ class CiliumAgentMesh:
                     }
                 },
                 "behavioral_analytics": {
-                    "port": 8002, 
+                    "port": 8081, 
                     "mesh_id": "analytics-svc",
                     "labels": {
                         "app": "behavioral-analytics",
@@ -250,7 +250,7 @@ class CiliumAgentMesh:
                             {
                                 "ports": [
                                     {"port": "8001", "protocol": "TCP"},
-                                    {"port": "8002", "protocol": "TCP"}, 
+                                    {"port": "8081", "protocol": "TCP"}, 
                                     {"port": "8003", "protocol": "TCP"},
                                     {"port": "8004", "protocol": "TCP"},
                                     {"port": "8005", "protocol": "TCP"},

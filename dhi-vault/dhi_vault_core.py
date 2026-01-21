@@ -12,7 +12,7 @@ from typing import Dict, List, Optional, Any, Tuple
 from dataclasses import dataclass
 from enum import Enum
 
-import aioredis
+import redis.asyncio as aioredis
 import aiojobs
 from aiohttp import web, ClientSession
 import aiofiles

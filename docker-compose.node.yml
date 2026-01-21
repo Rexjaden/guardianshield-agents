@@ -26,8 +26,9 @@ services:
     volumes:
       - ./agent_logs:/app/logs
       - ./agent_physical_forms:/app/physical_forms
-      - ./distributed_node_orchestrator.js:/app/orchestrator.js
-      - ./blockchain_node_cluster.js:/app/blockchain_cluster.js
+      - ./distributed_node_orchestrator.js:/app/distributed_node_orchestrator.js
+      - ./blockchain_node_cluster.js:/app/blockchain_node_cluster.js
+      - ./hardhat.config.js:/app/hardhat.config.js
     depends_on:
       - redis-cluster
       - postgres-agents
@@ -294,7 +295,7 @@ networks:
     driver: bridge
     ipam:
       config:
-        - subnet: 172.20.0.0/16
+        - subnet: 172.25.0.0/16
 
 volumes:
   redis-cluster-data:

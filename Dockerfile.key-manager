@@ -1,14 +1,17 @@
 # Secure Key Manager for GuardianShield Validators
 FROM alpine:3.18
 
-# Install security tools
+# Install security tools and python
 RUN apk add --no-cache \
     openssl \
     gnupg \
     pass \
     age \
     sudo \
-    curl
+    curl \
+    python3 \
+    py3-pip \
+    py3-cryptography
 
 # Create key manager user
 RUN addgroup -g 1000 keymgr && \

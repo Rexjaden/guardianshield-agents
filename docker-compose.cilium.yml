@@ -1,24 +1,50 @@
 services:
-  # Cilium Clustermesh API Server
-  cilium-clustermesh:
-    image: guardianshield/dhi-cilium-clustermesh-apiserver:latest
-    container_name: guardianshield-clustermesh
+  # Etcd for Cilium Clustermesh
+  cilium-etcd:
+    image: registry.k8s.io/etcd:3.6.4-0
+    container_name: guardianshield-etcd
+    command:
+      - etcd
+      - --name=etcd0
+      - --data-dir=/var/lib/etcd
+      - --listen-client-urls=http://0.0.0.0:2379
+      - --advertise-client-urls=http://cilium-etcd:2379
+      - --listen-peer-urls=http://0.0.0.0:2380
+      - --initial-advertise-peer-urls=http://cilium-etcd:2380
+      - --initial-cluster=etcd0=http://cilium-etcd:2380
+      - --initial-cluster-state=new
     ports:
-      - "2379:2379"   # etcd client
-      - "2380:2380"   # etcd peer
-    environment:
-      - CILIUM_CLUSTER_NAME=guardianshield-agents
-      - CILIUM_CLUSTER_ID=1
-      - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
-      - ETCD_ADVERTISE_CLIENT_URLS=http://cilium-clustermesh:2379
-      - ETCD_DATA_DIR=/var/lib/etcd
+      - "2379:2379"
+      - "2380:2380"
     volumes:
       - cilium_etcd_data:/var/lib/etcd
     networks:
       - guardianshield-mesh
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "etcdctl", "endpoint", "health"]
+      test: ["CMD", "etcdctl", "endpoint", "health", "--endpoints=http://localhost:2379"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Cilium Clustermesh API Server
+  cilium-clustermesh:
+    image: guardianshield/dhi-cilium-clustermesh-apiserver:latest
+    container_name: guardianshield-clustermesh
+    command: 
+      - clustermesh
+      - --cluster-name=guardianshield-agents
+      - --cluster-id=1
+      - --kvstore=etcd
+      - --kvstore-opt=etcd.address=http://cilium-etcd:2379
+    depends_on:
+      cilium-etcd:
+        condition: service_healthy
+    networks:
+      - guardianshield-mesh
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:9879/healthz"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -84,10 +110,10 @@ services:
         AGENT_TYPE: behavioral_analytics
     container_name: guardianshield-behavioral-analytics
     ports:
-      - "8002:8002"
+      - "8081:8081"
     environment:
       - AGENT_TYPE=behavioral_analytics
-      - AGENT_PORT=8002
+      - AGENT_PORT=8081
       - MESH_ID=analytics-svc
       - CILIUM_MESH_ENABLED=true
       - API_ENDPOINT=http://guardianshield-api:8000
@@ -344,17 +370,18 @@ services:
   external-dns:
     image: guardianshield/dhi-external-dns:latest
     container_name: guardianshield-external-dns
+    command: 
+      - --source=service
+      - --provider=cloudflare
+      - --txt-owner-id=guardianshield-cluster
+      - --txt-prefix=guardianshield-
+      - --interval=30s
+      - --log-level=info
+      - --registry=txt
+      - --domain-filter=guardianshield.io
+      - --cloudflare-proxied=true
     environment:
-      - TXT_OWNER_ID=guardianshield-cluster
-      - TXT_PREFIX=guardianshield-
-      - INTERVAL=30s
-      - LOG_LEVEL=info
-      - REGISTRY=txt
-      - PROVIDER=cloudflare
-      - SOURCE=service
-      - DOMAIN_FILTER=guardianshield.io
-      - CLOUDFLARE_PROXIED=true
-      - DRY_RUN=false
+      - CF_API_TOKEN=${CLOUDFLARE_API_TOKEN:-placeholder}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:

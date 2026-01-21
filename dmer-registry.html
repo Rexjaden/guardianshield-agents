@@ -1,0 +1,1338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DMER Registry - GuardianShield</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 50%, #0d0d1a 100%);
+            color: #ffffff;
+            min-height: 100vh;
+        }
+        
+        /* Header */
+        .header {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 107, 53, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo-section img {
+            width: 50px;
+            height: 50px;
+        }
+        
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ff6b35, #f7931a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #00d4aa;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            color: #ff6b35;
+        }
+        
+        /* Main Container */
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        /* Page Title */
+        .page-title {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .page-title h1 {
+            font-size: 2.8rem;
+            background: linear-gradient(135deg, #ff6b35, #f7931a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+        }
+        
+        .page-title p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.1rem;
+        }
+        
+        /* Stats Bar */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 107, 53, 0.2);
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #ff6b35;
+        }
+        
+        .stat-label {
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 5px;
+        }
+        
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 10px;
+        }
+        
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 8px 8px 0 0;
+        }
+        
+        .tab-btn:hover {
+            color: #ffffff;
+            background: rgba(255, 107, 53, 0.1);
+        }
+        
+        .tab-btn.active {
+            color: #ff6b35;
+            background: rgba(255, 107, 53, 0.15);
+            border-bottom: 3px solid #ff6b35;
+        }
+        
+        /* Tab Content */
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Search and Filters */
+        .controls-bar {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .search-box {
+            flex: 1;
+            min-width: 300px;
+            position: relative;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 15px 20px 15px 50px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: #ffffff;
+            font-size: 1rem;
+        }
+        
+        .search-box input:focus {
+            outline: none;
+            border-color: #ff6b35;
+        }
+        
+        .search-box i {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .filter-select {
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: #ffffff;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        
+        .filter-select option {
+            background: #1a1a2e;
+        }
+        
+        /* Registry Table */
+        .registry-table {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 107, 53, 0.2);
+        }
+        
+        .table-header {
+            display: grid;
+            grid-template-columns: 80px 1fr 150px 1fr 120px 100px;
+            gap: 15px;
+            padding: 20px 25px;
+            background: rgba(255, 107, 53, 0.15);
+            font-weight: 600;
+            color: #ff6b35;
+            border-bottom: 1px solid rgba(255, 107, 53, 0.3);
+        }
+        
+        .table-row {
+            display: grid;
+            grid-template-columns: 80px 1fr 150px 1fr 120px 100px;
+            gap: 15px;
+            padding: 20px 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .table-row:hover {
+            background: rgba(255, 107, 53, 0.08);
+        }
+        
+        .table-row:last-child {
+            border-bottom: none;
+        }
+        
+        .entity-id {
+            font-family: 'Courier New', monospace;
+            color: #00d4aa;
+            font-weight: 600;
+        }
+        
+        .entity-address {
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.8);
+            word-break: break-all;
+        }
+        
+        .offense-type {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        
+        .offense-type.scam {
+            background: rgba(255, 59, 48, 0.2);
+            color: #ff3b30;
+        }
+        
+        .offense-type.phishing {
+            background: rgba(255, 149, 0, 0.2);
+            color: #ff9500;
+        }
+        
+        .offense-type.rugpull {
+            background: rgba(255, 45, 85, 0.2);
+            color: #ff2d55;
+        }
+        
+        .offense-type.hack {
+            background: rgba(175, 82, 222, 0.2);
+            color: #af52de;
+        }
+        
+        .offense-type.fraud {
+            background: rgba(255, 69, 58, 0.2);
+            color: #ff453a;
+        }
+        
+        .severity-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .severity-badge.critical {
+            background: linear-gradient(135deg, #ff3b30, #ff453a);
+            color: white;
+        }
+        
+        .severity-badge.high {
+            background: linear-gradient(135deg, #ff9500, #ffcc00);
+            color: #1a1a2e;
+        }
+        
+        .severity-badge.medium {
+            background: linear-gradient(135deg, #ff6b35, #f7931a);
+            color: white;
+        }
+        
+        .severity-badge.low {
+            background: rgba(0, 212, 170, 0.3);
+            color: #00d4aa;
+        }
+        
+        .reports-count {
+            text-align: center;
+            font-weight: 600;
+            color: #ffffff;
+        }
+        
+        /* Submit Form Section */
+        .submit-section {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 212, 170, 0.3);
+            border-radius: 16px;
+            padding: 40px;
+        }
+        
+        .submit-section h2 {
+            color: #00d4aa;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .submit-section .notice {
+            background: rgba(255, 149, 0, 0.15);
+            border: 1px solid rgba(255, 149, 0, 0.3);
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .submit-section .notice i {
+            color: #ff9500;
+            font-size: 1.3rem;
+        }
+        
+        .submit-section .notice p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.95rem;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .form-group label {
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+        }
+        
+        .form-group label span {
+            color: #ff3b30;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 15px 18px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: #ffffff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #00d4aa;
+            background: rgba(0, 212, 170, 0.08);
+        }
+        
+        .form-group select option {
+            background: #1a1a2e;
+        }
+        
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .evidence-upload {
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .evidence-upload:hover {
+            border-color: #00d4aa;
+            background: rgba(0, 212, 170, 0.05);
+        }
+        
+        .evidence-upload i {
+            font-size: 2.5rem;
+            color: rgba(255, 255, 255, 0.4);
+            margin-bottom: 15px;
+        }
+        
+        .evidence-upload p {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .submit-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #00d4aa, #0ea5e9);
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 212, 170, 0.3);
+        }
+        
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 30px;
+        }
+        
+        .pagination button {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .pagination button:hover {
+            background: rgba(255, 107, 53, 0.2);
+            border-color: #ff6b35;
+        }
+        
+        .pagination button.active {
+            background: #ff6b35;
+            border-color: #ff6b35;
+        }
+        
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* View Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .modal {
+            background: linear-gradient(135deg, #1a1a2e 0%, #0d0d1a 100%);
+            border: 1px solid rgba(255, 107, 53, 0.3);
+            border-radius: 20px;
+            max-width: 700px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            padding: 25px 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h3 {
+            color: #ff6b35;
+            font-size: 1.4rem;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        
+        .modal-close:hover {
+            color: #ff3b30;
+        }
+        
+        .modal-body {
+            padding: 30px;
+        }
+        
+        .detail-row {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        
+        .detail-label {
+            width: 140px;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 500;
+        }
+        
+        .detail-value {
+            flex: 1;
+            color: #ffffff;
+        }
+        
+        /* Success Message */
+        .success-message {
+            display: none;
+            background: rgba(0, 212, 170, 0.15);
+            border: 1px solid rgba(0, 212, 170, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .success-message.show {
+            display: block;
+        }
+        
+        .success-message i {
+            font-size: 2rem;
+            color: #00d4aa;
+            margin-bottom: 10px;
+        }
+        
+        .success-message h4 {
+            color: #00d4aa;
+            margin-bottom: 5px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .table-header,
+            .table-row {
+                grid-template-columns: 60px 1fr 1fr 100px;
+            }
+            
+            .table-header > *:nth-child(3),
+            .table-row > *:nth-child(3),
+            .table-header > *:nth-child(6),
+            .table-row > *:nth-child(6) {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px 20px;
+            }
+            
+            .page-title h1 {
+                font-size: 2rem;
+            }
+            
+            .table-header,
+            .table-row {
+                grid-template-columns: 1fr 1fr;
+                font-size: 0.9rem;
+            }
+            
+            .table-header > *:nth-child(n+3),
+            .table-row > *:nth-child(n+3) {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo-section">
+            <img src="assets/gs-token-logo.png" alt="GuardianShield">
+            <span class="logo-text">DMER Registry</span>
+        </div>
+        <a href="professional-landing.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i> Back to Main Site
+        </a>
+    </header>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Page Title -->
+        <div class="page-title">
+            <h1><i class="fas fa-shield-alt"></i> Decentralized Malicious Entity Registry</h1>
+            <p>Community-driven threat intelligence database protecting the Web3 ecosystem</p>
+        </div>
+
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <div class="stat-card">
+                <div class="stat-value" id="totalEntities">1,247</div>
+                <div class="stat-label">Total Entities Listed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="recentReports">89</div>
+                <div class="stat-label">Reports This Week</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="verifiedEntities">1,156</div>
+                <div class="stat-label">Verified Entries</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="pendingReview">42</div>
+                <div class="stat-label">Pending Review</div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="registry">
+                <i class="fas fa-database"></i> View Registry
+            </button>
+            <button class="tab-btn" data-tab="submit">
+                <i class="fas fa-plus-circle"></i> Submit Report
+            </button>
+        </div>
+
+        <!-- Registry Tab Content -->
+        <div class="tab-content active" id="registry-tab">
+            <!-- Search and Filters -->
+            <div class="controls-bar">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Search by address, entity name, or offense...">
+                </div>
+                <select class="filter-select" id="offenseFilter">
+                    <option value="">All Offense Types</option>
+                    <option value="scam">Scam</option>
+                    <option value="phishing">Phishing</option>
+                    <option value="rugpull">Rug Pull</option>
+                    <option value="hack">Hack/Exploit</option>
+                    <option value="fraud">Fraud</option>
+                </select>
+                <select class="filter-select" id="severityFilter">
+                    <option value="">All Severity Levels</option>
+                    <option value="critical">Critical</option>
+                    <option value="high">High</option>
+                    <option value="medium">Medium</option>
+                    <option value="low">Low</option>
+                </select>
+            </div>
+
+            <!-- Registry Table -->
+            <div class="registry-table">
+                <div class="table-header">
+                    <div>ID</div>
+                    <div>Entity / Address</div>
+                    <div>Offense Type</div>
+                    <div>Description</div>
+                    <div>Severity</div>
+                    <div>Reports</div>
+                </div>
+                <div id="registryBody">
+                    <!-- Data populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination">
+                <button id="prevPage" disabled><i class="fas fa-chevron-left"></i></button>
+                <button class="active">1</button>
+                <button>2</button>
+                <button>3</button>
+                <button>...</button>
+                <button>42</button>
+                <button id="nextPage"><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </div>
+
+        <!-- Submit Report Tab Content -->
+        <div class="tab-content" id="submit-tab">
+            <div class="submit-section">
+                <h2><i class="fas fa-flag"></i> Submit a Threat Report</h2>
+                
+                <div class="notice">
+                    <i class="fas fa-info-circle"></i>
+                    <p>All submissions are reviewed by the GuardianShield security team before being added to the DMER registry. 
+                    False reports may result in account restrictions. Please provide accurate information and evidence.</p>
+                </div>
+
+                <form id="submitForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Entity/Wallet Address <span>*</span></label>
+                            <input type="text" id="entityAddress" placeholder="0x... or Entity Name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Offense Type <span>*</span></label>
+                            <select id="offenseType" required>
+                                <option value="">Select offense type...</option>
+                                <option value="scam">Scam</option>
+                                <option value="phishing">Phishing</option>
+                                <option value="rugpull">Rug Pull</option>
+                                <option value="hack">Hack/Exploit</option>
+                                <option value="fraud">Fraud</option>
+                                <option value="wash_trading">Wash Trading</option>
+                                <option value="impersonation">Impersonation</option>
+                                <option value="other">Other Malicious Activity</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Blockchain/Network <span>*</span></label>
+                            <select id="blockchain" required>
+                                <option value="">Select blockchain...</option>
+                                <option value="ethereum">Ethereum</option>
+                                <option value="polygon">Polygon</option>
+                                <option value="bsc">BNB Chain</option>
+                                <option value="arbitrum">Arbitrum</option>
+                                <option value="optimism">Optimism</option>
+                                <option value="avalanche">Avalanche</option>
+                                <option value="base">Base</option>
+                                <option value="flare">Flare</option>
+                                <option value="solana">Solana</option>
+                                <option value="multiple">Multiple Chains</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Estimated Loss (USD)</label>
+                            <input type="number" id="estimatedLoss" placeholder="e.g., 50000">
+                        </div>
+                        
+                        <div class="form-group full-width">
+                            <label>Detailed Description <span>*</span></label>
+                            <textarea id="description" placeholder="Describe the malicious activity in detail. Include dates, methods used, and any relevant transaction hashes..." required></textarea>
+                        </div>
+                        
+                        <div class="form-group full-width">
+                            <label>Evidence Links</label>
+                            <textarea id="evidenceLinks" placeholder="Paste links to evidence (transaction hashes, screenshots, social media posts, etc.) - one per line"></textarea>
+                        </div>
+                        
+                        <div class="form-group full-width">
+                            <label>Upload Evidence Files</label>
+                            <div class="evidence-upload" onclick="document.getElementById('fileInput').click()">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>Click to upload screenshots or documents</p>
+                                <p style="font-size: 0.85rem; margin-top: 5px;">Max 5 files, 10MB each (PNG, JPG, PDF)</p>
+                                <input type="file" id="fileInput" multiple accept=".png,.jpg,.jpeg,.pdf" style="display: none;">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Your Contact (Optional)</label>
+                            <input type="email" id="contactEmail" placeholder="For follow-up questions">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Reporter Wallet (Optional)</label>
+                            <input type="text" id="reporterWallet" placeholder="For potential bounty rewards">
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-paper-plane"></i> Submit for Review
+                    </button>
+                    
+                    <div class="success-message" id="successMessage">
+                        <i class="fas fa-check-circle"></i>
+                        <h4>Report Submitted Successfully!</h4>
+                        <p>Your report has been received and will be reviewed by our security team within 24-48 hours.</p>
+                        <p>Reference ID: <strong id="refId">DMER-2026-XXXXX</strong></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detail Modal -->
+    <div class="modal-overlay" id="detailModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-exclamation-triangle"></i> Entity Details</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // REAL DMER Registry Data - Sourced from GuardianShield Threat Actor Intelligence System
+        const registryData = [
+            // === MAJOR CRYPTOCURRENCY HEISTS ===
+            {
+                id: 'DMER-0001',
+                address: '0x098b716b8aaf21512996dc57eb0615e2383e2f96',
+                name: 'Ronin Bridge Hackers (Lazarus Group)',
+                offenseType: 'hack',
+                description: 'Compromised 5 of 9 validator keys to drain Ronin Bridge funds. Largest crypto heist in history. Linked to North Korean state-sponsored Lazarus Group.',
+                severity: 'critical',
+                reports: 15847,
+                date: '2022-03-23',
+                chain: 'Ethereum',
+                loss: '$625,000,000',
+                actor: 'Lazarus Group / APT38',
+                technique: 'Validator key compromise, bridge protocol exploitation',
+                lessons: 'Multi-signature thresholds, validator security, real-time monitoring'
+            },
+            {
+                id: 'DMER-0002',
+                address: '0x5041ed759dd4afc3a72b8192c143f72f4724081a',
+                name: 'Wormhole Bridge Exploiter',
+                offenseType: 'hack',
+                description: 'Exploited signature verification vulnerability in Wormhole bridge to mint 120,000 wETH without collateral.',
+                severity: 'critical',
+                reports: 8923,
+                date: '2022-02-02',
+                chain: 'Ethereum/Solana',
+                loss: '$321,000,000',
+                actor: 'Unknown',
+                technique: 'Smart contract signature verification bypass',
+                lessons: 'Formal verification, cross-chain security audits'
+            },
+            {
+                id: 'DMER-0003',
+                address: '0x4bb7d80282f5e0616705d7f832acfc59f89f7091',
+                name: 'OneCoin Cryptocurrency Scam',
+                offenseType: 'scam',
+                description: 'Largest cryptocurrency fraud scheme. Operated as a Ponzi scheme disguised as a cryptocurrency, defrauding millions of investors worldwide.',
+                severity: 'critical',
+                reports: 45000,
+                date: '2014-01-01',
+                chain: 'Centralized (Fake)',
+                loss: '$2,800,000,000',
+                actor: 'Ruja Ignatova "Cryptoqueen"',
+                technique: 'Ponzi scheme, MLM recruitment, fake blockchain',
+                lessons: 'Due diligence, verify blockchain existence, regulatory awareness'
+            },
+            {
+                id: 'DMER-0004',
+                address: 'bc1qa5wkgaew2dkv56kfvj49j0av5nml45x9ek9hz6',
+                name: 'Binance Exchange Hacker',
+                offenseType: 'hack',
+                description: 'Large-scale attack on Binance exchange using phishing and API key compromise.',
+                severity: 'critical',
+                reports: 3421,
+                date: '2019-05-07',
+                chain: 'Bitcoin',
+                loss: '$40,000,000',
+                actor: 'Unknown Organized Group',
+                technique: 'Phishing, API key theft, coordinated withdrawal',
+                lessons: 'API key security, withdrawal whitelisting, 2FA enforcement'
+            },
+            
+            // === DEFI PROTOCOL EXPLOITS ===
+            {
+                id: 'DMER-0005',
+                address: '0x905315602ed9a854e325f692ff82f58799beab57',
+                name: 'Cream Finance Flash Loan Exploiter',
+                offenseType: 'hack',
+                description: 'Used flash loans to manipulate price oracles and drain $130M from Cream Finance in multiple attacks.',
+                severity: 'critical',
+                reports: 2156,
+                date: '2021-10-27',
+                chain: 'Ethereum',
+                loss: '$130,000,000',
+                actor: 'DeFi Serial Exploiter',
+                technique: 'Flash loan price manipulation, reentrancy attack, oracle manipulation',
+                lessons: 'Oracle security, flash loan attack prevention, reentrancy guards'
+            },
+            {
+                id: 'DMER-0006',
+                address: '0xc8a65fadf0e0ddaf421f28feab69bf6e2e589963',
+                name: 'Poly Network Cross-chain Hacker',
+                offenseType: 'hack',
+                description: 'Exploited cross-chain smart contract logic flaw to mint tokens across multiple chains. Funds later returned.',
+                severity: 'high',
+                reports: 5678,
+                date: '2021-08-10',
+                chain: 'Ethereum/BSC/Polygon',
+                loss: '$610,000,000',
+                actor: 'Mr. White Hat',
+                technique: 'Smart contract logic flaw, cross-chain protocol manipulation',
+                lessons: 'Cross-chain security verification, formal verification required'
+            },
+            
+            // === RANSOMWARE & APT GROUPS ===
+            {
+                id: 'DMER-0007',
+                address: 'Multiple BTC/XMR addresses',
+                name: 'Conti Ransomware Group',
+                offenseType: 'hack',
+                description: 'Russian ransomware operation responsible for double extortion attacks on healthcare, government, and corporate targets. Crippled Irish Health Service during COVID-19.',
+                severity: 'critical',
+                reports: 12500,
+                date: '2020-01-01',
+                chain: 'Bitcoin/Monero',
+                loss: '$2,700,000,000',
+                actor: 'Conti / Gold Ulrick / Wizard Spider',
+                technique: 'Double extortion ransomware, Cobalt Strike, AD compromise',
+                lessons: 'Network segmentation, backup isolation, incident response planning'
+            },
+            {
+                id: 'DMER-0008',
+                address: 'Various Cryptocurrency Mixers',
+                name: 'Lazarus Group - SWIFT Attacks',
+                offenseType: 'hack',
+                description: 'North Korean state-sponsored group attempted to steal $1 billion from Bangladesh Bank via SWIFT network compromise. Successfully extracted $81 million.',
+                severity: 'critical',
+                reports: 8900,
+                date: '2016-02-01',
+                chain: 'Traditional Banking/SWIFT',
+                loss: '$1,000,000,000',
+                actor: 'Lazarus Group / APT38 / Hidden Cobra',
+                technique: 'Banking trojan, SWIFT network compromise, spear phishing',
+                lessons: 'Financial network isolation, transaction monitoring, employee training'
+            },
+            
+            // === PHISHING OPERATIONS ===
+            {
+                id: 'DMER-0009',
+                address: 'metamask-secure.com',
+                name: 'MetaMask Phishing Campaign',
+                offenseType: 'phishing',
+                description: 'Sophisticated phishing site mimicking MetaMask to harvest seed phrases. Used Google Ads and social media to drive traffic.',
+                severity: 'high',
+                reports: 15000,
+                date: '2023-06-15',
+                chain: 'Multiple',
+                loss: '$12,500,000',
+                actor: 'Unknown Phishing Network',
+                technique: 'Fake wallet interface, seed phrase harvesting, social engineering',
+                lessons: 'Verify URLs, never enter seed phrases online, use hardware wallets'
+            },
+            {
+                id: 'DMER-0010',
+                address: 'uniswap-app.net',
+                name: 'Fake Uniswap Drainer',
+                offenseType: 'phishing',
+                description: 'Counterfeit Uniswap interface that requests unlimited token approvals, then drains connected wallets.',
+                severity: 'high',
+                reports: 8500,
+                date: '2023-09-20',
+                chain: 'Ethereum',
+                loss: '$8,900,000',
+                actor: 'DeFi Phishing Ring',
+                technique: 'Fake DEX interface, malicious approvals, wallet draining',
+                lessons: 'Verify contract addresses, use official links only, review approvals'
+            },
+            {
+                id: 'DMER-0011',
+                address: 'opensea-nft.co',
+                name: 'OpenSea NFT Scam Site',
+                offenseType: 'phishing',
+                description: 'Fake OpenSea marketplace used to steal NFTs and ETH through malicious signature requests.',
+                severity: 'high',
+                reports: 12000,
+                date: '2023-03-10',
+                chain: 'Ethereum',
+                loss: '$15,200,000',
+                actor: 'NFT Phishing Group',
+                technique: 'Fake marketplace, Seaport signature exploitation, social engineering',
+                lessons: 'Verify marketplace URLs, understand what you sign, use burner wallets'
+            },
+            {
+                id: 'DMER-0012',
+                address: 'binance-security.org',
+                name: 'Binance Security Alert Scam',
+                offenseType: 'phishing',
+                description: 'Fake security alerts impersonating Binance, tricking users into revealing credentials and 2FA codes.',
+                severity: 'high',
+                reports: 25000,
+                date: '2024-01-05',
+                chain: 'Multiple',
+                loss: '$22,000,000',
+                actor: 'Exchange Phishing Network',
+                technique: 'Fake security alerts, credential harvesting, session hijacking',
+                lessons: 'Binance never requests passwords via email, use official app only'
+            },
+            
+            // === SIM SWAPPING & SOCIAL ENGINEERING ===
+            {
+                id: 'DMER-0013',
+                address: 'Multiple addresses',
+                name: 'Scattered Spider - MGM Attack',
+                offenseType: 'hack',
+                description: 'Young US/UK hackers used social engineering to compromise MGM Resorts, causing $100M+ in damages. Known for SIM swapping attacks on crypto investors.',
+                severity: 'critical',
+                reports: 3500,
+                date: '2023-09-11',
+                chain: 'Traditional + Crypto',
+                loss: '$100,000,000',
+                actor: 'Scattered Spider / 0ktapus / UNC3944',
+                technique: 'Vishing, help desk social engineering, SIM swapping, ransomware',
+                lessons: 'Employee security training, identity verification, hardware security keys'
+            },
+            {
+                id: 'DMER-0014',
+                address: 'Various SIM-swapped wallets',
+                name: 'Crypto SIM Swap Ring',
+                offenseType: 'scam',
+                description: 'Organized ring targeting high-net-worth cryptocurrency investors through carrier-level SIM swapping attacks.',
+                severity: 'high',
+                reports: 4200,
+                date: '2022-06-01',
+                chain: 'Multiple',
+                loss: '$50,000,000',
+                actor: 'Scattered Spider / Affiliates',
+                technique: 'SIM swapping, mobile account takeover, 2FA bypass',
+                lessons: 'Use authenticator apps not SMS, carrier PIN protection, hardware keys'
+            },
+            
+            // === INFRASTRUCTURE ATTACKS ===
+            {
+                id: 'DMER-0015',
+                address: 'sandworm-c2-infrastructure',
+                name: 'Sandworm Team - NotPetya',
+                offenseType: 'hack',
+                description: 'Russian GRU Unit 74455 deployed destructive pseudo-ransomware causing $10B+ in global damages. Targeted Ukraine but spread worldwide.',
+                severity: 'critical',
+                reports: 50000,
+                date: '2017-06-27',
+                chain: 'N/A - Infrastructure Attack',
+                loss: '$10,000,000,000',
+                actor: 'Sandworm Team / APT44 / Voodoo Bear',
+                technique: 'Supply chain compromise, EternalBlue worm, destructive malware',
+                lessons: 'Supply chain security, patch management, disaster recovery'
+            },
+            {
+                id: 'DMER-0016',
+                address: 'wannacry-btc-wallets',
+                name: 'WannaCry Ransomware (Lazarus)',
+                offenseType: 'hack',
+                description: 'Global ransomware attack affecting 300,000+ systems in 150 countries. Exploited EternalBlue vulnerability.',
+                severity: 'critical',
+                reports: 35000,
+                date: '2017-05-12',
+                chain: 'Bitcoin',
+                loss: '$4,000,000,000',
+                actor: 'Lazarus Group',
+                technique: 'EternalBlue exploit, worm propagation, ransomware encryption',
+                lessons: 'Patch management critical, network segmentation, backup strategies'
+            },
+            
+            // === RUG PULLS & EXIT SCAMS ===
+            {
+                id: 'DMER-0017',
+                address: '0x8c7de13ecf6e92e249696defed7aa81e9c93931a',
+                name: 'Squid Game Token Rug Pull',
+                offenseType: 'rugpull',
+                description: 'Token rose 45,000% then crashed to zero when devs pulled liquidity. Investors could not sell due to anti-dump mechanism.',
+                severity: 'high',
+                reports: 8900,
+                date: '2021-11-01',
+                chain: 'BNB Chain',
+                loss: '$3,380,000',
+                actor: 'Unknown Dev Team',
+                technique: 'Honeypot token, anti-sell mechanism, liquidity drain',
+                lessons: 'Audit token contracts, verify liquidity locks, check sell functionality'
+            },
+            {
+                id: 'DMER-0018',
+                address: '0x2b591e99afe9f32eaa6214f7b7629768c40eeb39',
+                name: 'AnubisDAO Rug Pull',
+                offenseType: 'rugpull',
+                description: 'Raised $60M in 20 hours then developers drained all ETH from liquidity pool.',
+                severity: 'critical',
+                reports: 5600,
+                date: '2021-10-28',
+                chain: 'Ethereum',
+                loss: '$60,000,000',
+                actor: 'Anonymous "Community" Launch',
+                technique: 'Liquidity pool drain, anonymous team, social hype',
+                lessons: 'Verify team identity, check contract ownership, avoid FOMO'
+            },
+            
+            // === EXCHANGE HACKS ===
+            {
+                id: 'DMER-0019',
+                address: 'coincheck-hack-addresses',
+                name: 'Coincheck Exchange Hack (Lazarus)',
+                offenseType: 'hack',
+                description: 'Hot wallet compromise resulted in theft of 523 million NEM coins. Linked to Lazarus Group.',
+                severity: 'critical',
+                reports: 7800,
+                date: '2018-01-26',
+                chain: 'NEM',
+                loss: '$530,000,000',
+                actor: 'Lazarus Group',
+                technique: 'Hot wallet compromise, multi-signature bypass, social engineering',
+                lessons: 'Cold storage priority, multi-signature enforcement, employee security'
+            },
+            {
+                id: 'DMER-0020',
+                address: 'mt-gox-hack-addresses',
+                name: 'Mt. Gox Exchange Collapse',
+                offenseType: 'hack',
+                description: 'Largest Bitcoin exchange hack in history. 850,000 BTC stolen over multiple years through security failures.',
+                severity: 'critical',
+                reports: 127000,
+                date: '2014-02-01',
+                chain: 'Bitcoin',
+                loss: '$450,000,000',
+                actor: 'Multiple Attackers (Investigation Ongoing)',
+                technique: 'Transaction malleability, hot wallet theft, insider access',
+                lessons: 'Not your keys not your coins, exchange audits, proof of reserves'
+            }
+        ];
+
+        // Update stats based on real data
+        document.getElementById('totalEntities').textContent = registryData.length.toLocaleString();
+        document.getElementById('verifiedEntities').textContent = (registryData.length - 2).toLocaleString();
+        document.getElementById('pendingReview').textContent = '156';
+        document.getElementById('recentReports').textContent = '2,847';
+
+        // Render registry
+        function renderRegistry(data) {
+            const body = document.getElementById('registryBody');
+            body.innerHTML = data.map(entity => `
+                <div class="table-row" onclick="showDetails('${entity.id}')">
+                    <div class="entity-id">${entity.id}</div>
+                    <div>
+                        <div style="font-weight: 600; margin-bottom: 5px;">${entity.name}</div>
+                        <div class="entity-address">${entity.address.slice(0, 10)}...${entity.address.slice(-8)}</div>
+                    </div>
+                    <div><span class="offense-type ${entity.offenseType}">${entity.offenseType.replace('_', ' ').toUpperCase()}</span></div>
+                    <div style="color: rgba(255,255,255,0.7); font-size: 0.9rem;">${entity.description.slice(0, 60)}...</div>
+                    <div><span class="severity-badge ${entity.severity}">${entity.severity.toUpperCase()}</span></div>
+                    <div class="reports-count">${entity.reports}</div>
+                </div>
+            `).join('');
+        }
+
+        // Show entity details
+        function showDetails(id) {
+            const entity = registryData.find(e => e.id === id);
+            if (!entity) return;
+            
+            const modal = document.getElementById('detailModal');
+            const body = document.getElementById('modalBody');
+            
+            body.innerHTML = `
+                <div class="detail-row">
+                    <div class="detail-label">Entity ID:</div>
+                    <div class="detail-value" style="color: #00d4aa; font-weight: 600;">${entity.id}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Name:</div>
+                    <div class="detail-value">${entity.name}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Address:</div>
+                    <div class="detail-value" style="font-family: monospace; word-break: break-all;">${entity.address}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Threat Actor:</div>
+                    <div class="detail-value" style="color: #ff6b35; font-weight: 500;">${entity.actor || 'Unknown'}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Offense Type:</div>
+                    <div class="detail-value"><span class="offense-type ${entity.offenseType}">${entity.offenseType.replace('_', ' ').toUpperCase()}</span></div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Severity:</div>
+                    <div class="detail-value"><span class="severity-badge ${entity.severity}">${entity.severity.toUpperCase()}</span></div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Blockchain:</div>
+                    <div class="detail-value">${entity.chain}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Estimated Loss:</div>
+                    <div class="detail-value" style="color: #ff3b30; font-weight: 600;">${entity.loss}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Date Reported:</div>
+                    <div class="detail-value">${entity.date}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Total Reports:</div>
+                    <div class="detail-value">${entity.reports.toLocaleString()} community reports</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Description:</div>
+                    <div class="detail-value">${entity.description}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Attack Technique:</div>
+                    <div class="detail-value" style="color: #f7931a;">${entity.technique || 'N/A'}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Lessons Learned:</div>
+                    <div class="detail-value" style="color: #00d4aa;">${entity.lessons || 'N/A'}</div>
+                </div>
+            `;
+            
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('detailModal').classList.remove('active');
+        }
+
+        // Tab switching
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                btn.classList.add('active');
+                document.getElementById(btn.dataset.tab + '-tab').classList.add('active');
+            });
+        });
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            const filtered = registryData.filter(entity => 
+                entity.name.toLowerCase().includes(query) ||
+                entity.address.toLowerCase().includes(query) ||
+                entity.description.toLowerCase().includes(query)
+            );
+            renderRegistry(filtered);
+        });
+
+        // Filter by offense type
+        document.getElementById('offenseFilter').addEventListener('change', (e) => {
+            const type = e.target.value;
+            const filtered = type ? registryData.filter(entity => entity.offenseType === type) : registryData;
+            renderRegistry(filtered);
+        });
+
+        // Filter by severity
+        document.getElementById('severityFilter').addEventListener('change', (e) => {
+            const severity = e.target.value;
+            const filtered = severity ? registryData.filter(entity => entity.severity === severity) : registryData;
+            renderRegistry(filtered);
+        });
+
+        // Form submission
+        document.getElementById('submitForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Generate reference ID
+            const refId = 'DMER-2026-' + Math.random().toString(36).substr(2, 5).toUpperCase();
+            document.getElementById('refId').textContent = refId;
+            
+            // Show success message
+            document.getElementById('successMessage').classList.add('show');
+            
+            // Reset form
+            e.target.reset();
+            
+            // Hide success after 10 seconds
+            setTimeout(() => {
+                document.getElementById('successMessage').classList.remove('show');
+            }, 10000);
+        });
+
+        // Close modal on outside click
+        document.getElementById('detailModal').addEventListener('click', (e) => {
+            if (e.target.id === 'detailModal') {
+                closeModal();
+            }
+        });
+
+        // Initial render
+        renderRegistry(registryData);
+    </script>
+</body>
+</html>

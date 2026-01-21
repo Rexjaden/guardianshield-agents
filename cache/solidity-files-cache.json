@@ -20,7 +20,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -40,7 +41,7 @@
       ]
     },
     "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\access\\Ownable.sol": {
-      "lastModificationDate": 1765850029406,
+      "lastModificationDate": 1768672846150,
       "contentHash": "d3c790edc9ccf808a17c5a6cd13614fd",
       "sourceName": "@openzeppelin/contracts/access/Ownable.sol",
       "solcConfig": {
@@ -58,7 +59,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -78,7 +80,7 @@
       ]
     },
     "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\utils\\Context.sol": {
-      "lastModificationDate": 1765850027179,
+      "lastModificationDate": 1768672827414,
       "contentHash": "67bfbc07588eb8683b3fd8f6f909563e",
       "sourceName": "@openzeppelin/contracts/utils/Context.sol",
       "solcConfig": {
@@ -96,7 +98,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -114,7 +117,7 @@
       ]
     },
     "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\proxy\\transparent\\ProxyAdmin.sol": {
-      "lastModificationDate": 1765850029452,
+      "lastModificationDate": 1768672846716,
       "contentHash": "b78862027dd9534aa67e36e8519977b8",
       "sourceName": "@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol",
       "solcConfig": {
@@ -132,7 +135,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -153,7 +157,7 @@
       ]
     },
     "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\proxy\\transparent\\TransparentUpgradeableProxy.sol": {
-      "lastModificationDate": 1765850029652,
+      "lastModificationDate": 1768672847469,
       "contentHash": "781aa52baa21c120b309c25179e2b3f8",
       "sourceName": "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol",
       "solcConfig": {
@@ -171,7 +175,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -195,7 +200,7 @@
       ]
     },
     "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\interfaces\\IERC1967.sol": {
-      "lastModificationDate": 1765850029039,
+      "lastModificationDate": 1768672842137,
       "contentHash": "3c9577899f440b0c66e880c96e9250bb",
       "sourceName": "@openzeppelin/contracts/interfaces/IERC1967.sol",
       "solcConfig": {
@@ -213,7 +218,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -231,7 +237,7 @@
       ]
     },
     "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\proxy\\ERC1967\\ERC1967Utils.sol": {
-      "lastModificationDate": 1765850028268,
+      "lastModificationDate": 1768672836609,
       "contentHash": "2741625b983eb412cfdd8aa55a7671c1",
       "sourceName": "@openzeppelin/contracts/proxy/ERC1967/ERC1967Utils.sol",
       "solcConfig": {
@@ -249,7 +255,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -272,7 +279,7 @@
       ]
     },
     "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\proxy\\ERC1967\\ERC1967Proxy.sol": {
-      "lastModificationDate": 1765850028249,
+      "lastModificationDate": 1768672836571,
       "contentHash": "07e13052976ae13746455b10ebf3cff9",
       "sourceName": "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol",
       "solcConfig": {
@@ -290,7 +297,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -311,7 +319,7 @@
       ]
     },
     "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\utils\\StorageSlot.sol": {
-      "lastModificationDate": 1765850029594,
+      "lastModificationDate": 1768672847251,
       "contentHash": "e656d64c4ce918f3d13030b91c935134",
       "sourceName": "@openzeppelin/contracts/utils/StorageSlot.sol",
       "solcConfig": {
@@ -329,7 +337,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -347,7 +356,7 @@
       ]
     },
     "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\utils\\Address.sol": {
-      "lastModificationDate": 1765850026876,
+      "lastModificationDate": 1768672825201,
       "contentHash": "2a06d82f31f75087bf90231599da4f1c",
       "sourceName": "@openzeppelin/contracts/utils/Address.sol",
       "solcConfig": {
@@ -365,7 +374,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -385,7 +395,7 @@
       ]
     },
     "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\proxy\\beacon\\IBeacon.sol": {
-      "lastModificationDate": 1765850028916,
+      "lastModificationDate": 1768672841002,
       "contentHash": "ee2e46607ed2be58bd554306d068acba",
       "sourceName": "@openzeppelin/contracts/proxy/beacon/IBeacon.sol",
       "solcConfig": {
@@ -403,7 +413,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -421,7 +432,7 @@
       ]
     },
     "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\utils\\Errors.sol": {
-      "lastModificationDate": 1765850028735,
+      "lastModificationDate": 1768672838561,
       "contentHash": "6b5eac2b85500c3012977849cfd633d8",
       "sourceName": "@openzeppelin/contracts/utils/Errors.sol",
       "solcConfig": {
@@ -439,7 +450,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -457,7 +469,7 @@
       ]
     },
     "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\proxy\\Proxy.sol": {
-      "lastModificationDate": 1765850029449,
+      "lastModificationDate": 1768672846709,
       "contentHash": "35308c2fa7be99a959494c37e8257c16",
       "sourceName": "@openzeppelin/contracts/proxy/Proxy.sol",
       "solcConfig": {
@@ -475,7 +487,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -511,7 +524,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -534,7 +548,7 @@
       ]
     },
     "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\interfaces\\draft-IERC1822.sol": {
-      "lastModificationDate": 1765850027667,
+      "lastModificationDate": 1768672828197,
       "contentHash": "9b2cafd2153b51bcfd7f4cb4cfc975aa",
       "sourceName": "@openzeppelin/contracts/interfaces/draft-IERC1822.sol",
       "solcConfig": {
@@ -552,7 +566,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -570,7 +585,7 @@
       ]
     },
     "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol": {
-      "lastModificationDate": 1765850028295,
+      "lastModificationDate": 1768672836902,
       "contentHash": "59dfce11284f2636db261df9b6a18f81",
       "sourceName": "@openzeppelin/contracts/token/ERC20/ERC20.sol",
       "solcConfig": {
@@ -588,7 +603,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -611,7 +627,7 @@
       ]
     },
     "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\IERC20.sol": {
-      "lastModificationDate": 1765850029051,
+      "lastModificationDate": 1768672842176,
       "contentHash": "9261adf6457863de3e9892f51317ec89",
       "sourceName": "@openzeppelin/contracts/token/ERC20/IERC20.sol",
       "solcConfig": {
@@ -629,7 +645,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -647,7 +664,7 @@
       ]
     },
     "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\interfaces\\draft-IERC6093.sol": {
-      "lastModificationDate": 1765850027716,
+      "lastModificationDate": 1768672828207,
       "contentHash": "5041977bbe908de2e6ed0270447f79ad",
       "sourceName": "@openzeppelin/contracts/interfaces/draft-IERC6093.sol",
       "solcConfig": {
@@ -665,7 +682,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -685,7 +703,7 @@
       ]
     },
     "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\extensions\\IERC20Metadata.sol": {
-      "lastModificationDate": 1765850029060,
+      "lastModificationDate": 1768672842211,
       "contentHash": "513778b30d2750f5d2b9b19bbcf748a5",
       "sourceName": "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol",
       "solcConfig": {
@@ -703,7 +721,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -723,7 +742,7 @@
       ]
     },
     "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\interfaces\\IERC20.sol": {
-      "lastModificationDate": 1765850029047,
+      "lastModificationDate": 1768672842159,
       "contentHash": "68620db2da7583d9a4919096ac77f577",
       "sourceName": "@openzeppelin/contracts/interfaces/IERC20.sol",
       "solcConfig": {
@@ -741,7 +760,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -759,7 +779,7 @@
       "artifacts": []
     },
     "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\interfaces\\IERC1363.sol": {
-      "lastModificationDate": 1765850028966,
+      "lastModificationDate": 1768672841952,
       "contentHash": "a7fd0f05e36b0d0a21c75340c9c639ec",
       "sourceName": "@openzeppelin/contracts/interfaces/IERC1363.sol",
       "solcConfig": {
@@ -777,7 +797,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -798,7 +819,7 @@
       ]
     },
     "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\interfaces\\IERC165.sol": {
-      "lastModificationDate": 1765850029017,
+      "lastModificationDate": 1768672842045,
       "contentHash": "947853028399b7de34bcc3704ee06e99",
       "sourceName": "@openzeppelin/contracts/interfaces/IERC165.sol",
       "solcConfig": {
@@ -816,7 +837,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -834,7 +856,7 @@
       "artifacts": []
     },
     "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\utils\\introspection\\IERC165.sol": {
-      "lastModificationDate": 1765850029026,
+      "lastModificationDate": 1768672842068,
       "contentHash": "7074c93b1ea0a122063f26ddd1db1032",
       "sourceName": "@openzeppelin/contracts/utils/introspection/IERC165.sol",
       "solcConfig": {
@@ -852,7 +874,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -870,7 +893,7 @@
       ]
     },
     "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\token\\ERC721\\IERC721.sol": {
-      "lastModificationDate": 1765850029255,
+      "lastModificationDate": 1768672843019,
       "contentHash": "f62e11dbd302e17a5621a1438f4e054c",
       "sourceName": "@openzeppelin/contracts/token/ERC721/IERC721.sol",
       "solcConfig": {
@@ -888,7 +911,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -908,7 +932,7 @@
       ]
     },
     "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\token\\ERC721\\extensions\\IERC721Metadata.sol": {
-      "lastModificationDate": 1765850029277,
+      "lastModificationDate": 1768672843119,
       "contentHash": "136c64eca25bcb8a68f43ac6605559f9",
       "sourceName": "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol",
       "solcConfig": {
@@ -926,7 +950,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -946,7 +971,7 @@
       ]
     },
     "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\token\\ERC721\\ERC721.sol": {
-      "lastModificationDate": 1765850028629,
+      "lastModificationDate": 1768672837328,
       "contentHash": "522ec023bce510c30dfbf61584f5a190",
       "sourceName": "@openzeppelin/contracts/token/ERC721/ERC721.sol",
       "solcConfig": {
@@ -964,7 +989,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -990,7 +1016,7 @@
       ]
     },
     "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\utils\\Strings.sol": {
-      "lastModificationDate": 1765850029628,
+      "lastModificationDate": 1768672847253,
       "contentHash": "d8f70caf0e0c77dc908176ed44812fb7",
       "sourceName": "@openzeppelin/contracts/utils/Strings.sol",
       "solcConfig": {
@@ -1008,7 +1034,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -1030,7 +1057,7 @@
       ]
     },
     "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\utils\\introspection\\ERC165.sol": {
-      "lastModificationDate": 1765850028184,
+      "lastModificationDate": 1768672836516,
       "contentHash": "0906d06dca25210d4696dcef6dad2909",
       "sourceName": "@openzeppelin/contracts/utils/introspection/ERC165.sol",
       "solcConfig": {
@@ -1048,7 +1075,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -1068,7 +1096,7 @@
       ]
     },
     "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\token\\ERC721\\utils\\ERC721Utils.sol": {
-      "lastModificationDate": 1765850028711,
+      "lastModificationDate": 1768672838185,
       "contentHash": "4cefad279a37c895b709bce2b901816e",
       "sourceName": "@openzeppelin/contracts/token/ERC721/utils/ERC721Utils.sol",
       "solcConfig": {
@@ -1086,7 +1114,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -1107,7 +1136,7 @@
       ]
     },
     "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\utils\\math\\Math.sol": {
-      "lastModificationDate": 1765850029334,
+      "lastModificationDate": 1768672844949,
       "contentHash": "5ec781e33d3a9ac91ffdc83d94420412",
       "sourceName": "@openzeppelin/contracts/utils/math/Math.sol",
       "solcConfig": {
@@ -1125,7 +1154,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -1146,7 +1176,7 @@
       ]
     },
     "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\utils\\math\\SafeCast.sol": {
-      "lastModificationDate": 1765850029485,
+      "lastModificationDate": 1768672846793,
       "contentHash": "2adca1150f58fc6f3d1f0a0f22ee7cca",
       "sourceName": "@openzeppelin/contracts/utils/math/SafeCast.sol",
       "solcConfig": {
@@ -1164,7 +1194,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -1182,7 +1213,7 @@
       ]
     },
     "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\utils\\math\\SignedMath.sol": {
-      "lastModificationDate": 1765850029553,
+      "lastModificationDate": 1768672847095,
       "contentHash": "ae3528afb8bdb0a7dcfba5b115ee8074",
       "sourceName": "@openzeppelin/contracts/utils/math/SignedMath.sol",
       "solcConfig": {
@@ -1200,7 +1231,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -1220,7 +1252,7 @@
       ]
     },
     "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\utils\\Panic.sol": {
-      "lastModificationDate": 1765850029442,
+      "lastModificationDate": 1768672846697,
       "contentHash": "2133dc13536b4a6a98131e431fac59e1",
       "sourceName": "@openzeppelin/contracts/utils/Panic.sol",
       "solcConfig": {
@@ -1238,7 +1270,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -1256,7 +1289,7 @@
       ]
     },
     "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\token\\ERC721\\IERC721Receiver.sol": {
-      "lastModificationDate": 1765850029282,
+      "lastModificationDate": 1768672843465,
       "contentHash": "d61660a41ce200e99816e4734f7fd202",
       "sourceName": "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol",
       "solcConfig": {
@@ -1274,7 +1307,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -1310,7 +1344,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -1331,7 +1366,7 @@
       ]
     },
     "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\utils\\SafeERC20.sol": {
-      "lastModificationDate": 1765850029526,
+      "lastModificationDate": 1768672846797,
       "contentHash": "1fb9edee1d763745a62d0b1954998792",
       "sourceName": "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
       "solcConfig": {
@@ -1349,7 +1384,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -1388,7 +1424,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -1412,7 +1449,7 @@
       ]
     },
     "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\utils\\Pausable.sol": {
-      "lastModificationDate": 1765850029445,
+      "lastModificationDate": 1768672846703,
       "contentHash": "0d47b53e10b1985efbb396f937626279",
       "sourceName": "@openzeppelin/contracts/utils/Pausable.sol",
       "solcConfig": {
@@ -1430,7 +1467,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -1450,7 +1488,7 @@
       ]
     },
     "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\utils\\ReentrancyGuard.sol": {
-      "lastModificationDate": 1765850029454,
+      "lastModificationDate": 1768672846719,
       "contentHash": "190613e556d509d9e9a0ea43dc5d891d",
       "sourceName": "@openzeppelin/contracts/utils/ReentrancyGuard.sol",
       "solcConfig": {
@@ -1468,7 +1506,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -1486,7 +1525,7 @@
       ]
     },
     "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\contracts\\GuardianTokenSale.sol": {
-      "lastModificationDate": 1766967920880,
+      "lastModificationDate": 1766969530140,
       "contentHash": "e2f12f818c1a9be3aa6050e9940ce063",
       "sourceName": "contracts/GuardianTokenSale.sol",
       "solcConfig": {
@@ -1504,7 +1543,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -1547,7 +1587,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -1586,7 +1627,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -1625,7 +1667,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -1646,7 +1689,7 @@
       ]
     },
     "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\contracts\\ChainlinkPriceOracle.sol": {
-      "lastModificationDate": 1766967904672,
+      "lastModificationDate": 1766969530140,
       "contentHash": "675f8ded2ae99f45b647b431f728b138",
       "sourceName": "contracts/ChainlinkPriceOracle.sol",
       "solcConfig": {
@@ -1664,7 +1707,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -1703,7 +1747,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -1721,7 +1766,7 @@
       ]
     },
     "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\contracts\\mocks\\ERC20Mock.sol": {
-      "lastModificationDate": 1766967851236,
+      "lastModificationDate": 1766969530140,
       "contentHash": "83118056a768bfcbc5cfcba986e73d4f",
       "sourceName": "contracts/mocks/ERC20Mock.sol",
       "solcConfig": {
@@ -1739,7 +1784,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -1759,7 +1805,7 @@
       ]
     },
     "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\interfaces\\IERC721.sol": {
-      "lastModificationDate": 1765850029251,
+      "lastModificationDate": 1768672842868,
       "contentHash": "6b9716905fb42874ed1769ae7f7458b1",
       "sourceName": "@openzeppelin/contracts/interfaces/IERC721.sol",
       "solcConfig": {
@@ -1777,7 +1823,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -1795,7 +1842,7 @@
       "artifacts": []
     },
     "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\interfaces\\IERC4906.sol": {
-      "lastModificationDate": 1765850029160,
+      "lastModificationDate": 1768672842578,
       "contentHash": "4386d2e9b1578157802062e156bd9ae1",
       "sourceName": "@openzeppelin/contracts/interfaces/IERC4906.sol",
       "solcConfig": {
@@ -1813,7 +1860,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -1834,7 +1882,7 @@
       ]
     },
     "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\token\\ERC721\\extensions\\ERC721URIStorage.sol": {
-      "lastModificationDate": 1765850028703,
+      "lastModificationDate": 1768672837803,
       "contentHash": "0b00dd0d9f2738855f17aa283bfa3ff5",
       "sourceName": "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol",
       "solcConfig": {
@@ -1852,7 +1900,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -1876,7 +1925,7 @@
       ]
     },
     "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\token\\ERC721\\extensions\\ERC721Enumerable.sol": {
-      "lastModificationDate": 1765850028666,
+      "lastModificationDate": 1768672837633,
       "contentHash": "1e4b432e9069bd6f5935e071b74d180c",
       "sourceName": "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol",
       "solcConfig": {
@@ -1894,7 +1943,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -1916,7 +1966,7 @@
       ]
     },
     "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\token\\ERC721\\extensions\\IERC721Enumerable.sol": {
-      "lastModificationDate": 1765850029268,
+      "lastModificationDate": 1768672843082,
       "contentHash": "09d80d577d5abfc679455e7b67c5b537",
       "sourceName": "@openzeppelin/contracts/token/ERC721/extensions/IERC721Enumerable.sol",
       "solcConfig": {
@@ -1934,7 +1984,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -1954,7 +2005,7 @@
       ]
     },
     "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\contracts\\GuardianShieldNFT.sol": {
-      "lastModificationDate": 1766969252931,
+      "lastModificationDate": 1766969530140,
       "contentHash": "3cbe39c67dc108ae6bb7f1ea32d39f10",
       "sourceName": "contracts/GuardianShieldNFT.sol",
       "solcConfig": {
@@ -1972,7 +2023,8 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "storageLayout"
               ],
               "": [
                 "ast"
@@ -1994,6 +2046,762 @@
       ],
       "artifacts": [
         "GuardianShieldNFT"
+      ]
+    },
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\access\\AccessControl.sol": {
+      "lastModificationDate": 1768672824133,
+      "contentHash": "d0e2c05f09a3aea7cd299bbd4a435ee2",
+      "sourceName": "@openzeppelin/contracts/access/AccessControl.sol",
+      "solcConfig": {
+        "version": "0.8.31",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IAccessControl.sol",
+        "../utils/Context.sol",
+        "../utils/introspection/ERC165.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "AccessControl"
+      ]
+    },
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\access\\IAccessControl.sol": {
+      "lastModificationDate": 1768672839949,
+      "contentHash": "def1e8f7b6cac577cf2600655bf3bdf8",
+      "sourceName": "@openzeppelin/contracts/access/IAccessControl.sol",
+      "solcConfig": {
+        "version": "0.8.31",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.8.4"
+      ],
+      "artifacts": [
+        "IAccessControl"
+      ]
+    },
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\extensions\\ERC20Burnable.sol": {
+      "lastModificationDate": 1768672836942,
+      "contentHash": "273d8d24b06f67207dd5f35c3a0c1086",
+      "sourceName": "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol",
+      "solcConfig": {
+        "version": "0.8.31",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../ERC20.sol",
+        "../../../utils/Context.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "ERC20Burnable"
+      ]
+    },
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\extensions\\ERC20Permit.sol": {
+      "lastModificationDate": 1768672837112,
+      "contentHash": "2343c0c3b51267f4f2639ec3f99cd63e",
+      "sourceName": "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
+      "solcConfig": {
+        "version": "0.8.31",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IERC20Permit.sol",
+        "../ERC20.sol",
+        "../../../utils/cryptography/ECDSA.sol",
+        "../../../utils/cryptography/EIP712.sol",
+        "../../../utils/Nonces.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "ERC20Permit"
+      ]
+    },
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\utils\\Nonces.sol": {
+      "lastModificationDate": 1768672845876,
+      "contentHash": "c32d108058718efb9061b88e83a83f79",
+      "sourceName": "@openzeppelin/contracts/utils/Nonces.sol",
+      "solcConfig": {
+        "version": "0.8.31",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "Nonces"
+      ]
+    },
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\utils\\cryptography\\EIP712.sol": {
+      "lastModificationDate": 1768672828281,
+      "contentHash": "d67dfba302ed2489324d7584625c3bde",
+      "sourceName": "@openzeppelin/contracts/utils/cryptography/EIP712.sol",
+      "solcConfig": {
+        "version": "0.8.31",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./MessageHashUtils.sol",
+        "../ShortStrings.sol",
+        "../../interfaces/IERC5267.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "EIP712"
+      ]
+    },
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\utils\\cryptography\\ECDSA.sol": {
+      "lastModificationDate": 1768672828270,
+      "contentHash": "81de029d56aa803972be03c5d277cb6c",
+      "sourceName": "@openzeppelin/contracts/utils/cryptography/ECDSA.sol",
+      "solcConfig": {
+        "version": "0.8.31",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "ECDSA"
+      ]
+    },
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\extensions\\IERC20Permit.sol": {
+      "lastModificationDate": 1768672842230,
+      "contentHash": "b01905745d47df90c7bd5dd70d498cb7",
+      "sourceName": "@openzeppelin/contracts/token/ERC20/extensions/IERC20Permit.sol",
+      "solcConfig": {
+        "version": "0.8.31",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.4.16"
+      ],
+      "artifacts": [
+        "IERC20Permit"
+      ]
+    },
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\utils\\ShortStrings.sol": {
+      "lastModificationDate": 1768672846803,
+      "contentHash": "c1be9487e5a64acf23b5d8028482e748",
+      "sourceName": "@openzeppelin/contracts/utils/ShortStrings.sol",
+      "solcConfig": {
+        "version": "0.8.31",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./StorageSlot.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "ShortStrings"
+      ]
+    },
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\interfaces\\IERC5267.sol": {
+      "lastModificationDate": 1768672842687,
+      "contentHash": "6e00d2fe4bc0d5f1add753824498bb35",
+      "sourceName": "@openzeppelin/contracts/interfaces/IERC5267.sol",
+      "solcConfig": {
+        "version": "0.8.31",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.4.16"
+      ],
+      "artifacts": [
+        "IERC5267"
+      ]
+    },
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts\\utils\\cryptography\\MessageHashUtils.sol": {
+      "lastModificationDate": 1768672845130,
+      "contentHash": "260f3968eefa3bbd30520cff5384cd93",
+      "sourceName": "@openzeppelin/contracts/utils/cryptography/MessageHashUtils.sol",
+      "solcConfig": {
+        "version": "0.8.31",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../Strings.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "MessageHashUtils"
+      ]
+    },
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\contracts\\GuardianTokenUnified.sol": {
+      "lastModificationDate": 1768549914341,
+      "contentHash": "5f242aff9017815ebae5ced85a978598",
+      "sourceName": "contracts/GuardianTokenUnified.sol",
+      "solcConfig": {
+        "version": "0.8.31",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/token/ERC20/ERC20.sol",
+        "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol",
+        "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
+        "@openzeppelin/contracts/access/Ownable.sol",
+        "@openzeppelin/contracts/utils/ReentrancyGuard.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "GuardianToken"
+      ]
+    },
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\contracts\\GuardianSecurityController.sol": {
+      "lastModificationDate": 1766969530161,
+      "contentHash": "aee63ba1211c14d536f51df78fe699b7",
+      "sourceName": "contracts/GuardianSecurityController.sol",
+      "solcConfig": {
+        "version": "0.8.31",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/access/Ownable.sol",
+        "@openzeppelin/contracts/access/AccessControl.sol",
+        "@openzeppelin/contracts/utils/ReentrancyGuard.sol",
+        "@openzeppelin/contracts/utils/Pausable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "GuardianSecurityController"
+      ]
+    },
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts-upgradeable\\proxy\\utils\\UUPSUpgradeable.sol": {
+      "lastModificationDate": 1768689902186,
+      "contentHash": "08db0b4bea3d52072346c326c5b857b7",
+      "sourceName": "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol",
+      "solcConfig": {
+        "version": "0.8.31",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/interfaces/draft-IERC1822.sol",
+        "@openzeppelin/contracts/proxy/ERC1967/ERC1967Utils.sol",
+        "./Initializable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.22"
+      ],
+      "artifacts": [
+        "UUPSUpgradeable"
+      ]
+    },
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol": {
+      "lastModificationDate": 1768689901428,
+      "contentHash": "2acae54ad209714bca07edf4bae32f72",
+      "sourceName": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol",
+      "solcConfig": {
+        "version": "0.8.31",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "Initializable"
+      ]
+    },
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts-upgradeable\\utils\\ContextUpgradeable.sol": {
+      "lastModificationDate": 1768689894831,
+      "contentHash": "c28aaa25d083a9a55bd9ec9e0b785122",
+      "sourceName": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol",
+      "solcConfig": {
+        "version": "0.8.31",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../proxy/utils/Initializable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "ContextUpgradeable"
+      ]
+    },
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts-upgradeable\\token\\ERC20\\ERC20Upgradeable.sol": {
+      "lastModificationDate": 1768689897988,
+      "contentHash": "f5cb0cb4dcb2ad0074b448995119804b",
+      "sourceName": "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol",
+      "solcConfig": {
+        "version": "0.8.31",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol",
+        "../../utils/ContextUpgradeable.sol",
+        "@openzeppelin/contracts/interfaces/draft-IERC6093.sol",
+        "../../proxy/utils/Initializable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "ERC20Upgradeable"
+      ]
+    },
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\contracts\\GuardToken.sol": {
+      "lastModificationDate": 1768690065225,
+      "contentHash": "797c03f29868bb35c65fc190a686cb76",
+      "sourceName": "contracts/GuardToken.sol",
+      "solcConfig": {
+        "version": "0.8.31",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol",
+        "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol",
+        "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol",
+        "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "AggregatorV3Interface",
+        "GuardToken"
+      ]
+    },
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol": {
+      "lastModificationDate": 1768689901595,
+      "contentHash": "77d30f3cd93f46b80b6f8f1ebc574ee4",
+      "sourceName": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol",
+      "solcConfig": {
+        "version": "0.8.31",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../utils/ContextUpgradeable.sol",
+        "../proxy/utils/Initializable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "OwnableUpgradeable"
       ]
     }
   }

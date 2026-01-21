@@ -1,0 +1,30 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: []
+
+rule_files: []
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'guardian-validators'
+    static_configs:
+      - targets:
+          - 'guardian-validator-us-east:26660'
+          - 'guardian-validator-eu-west:26660'
+          - 'guardian-validator-asia-pacific:26660'
+
+  - job_name: 'guardian-orchestrator'
+    static_configs:
+      - targets: ['gs-node-orchestrator:3003']
+
+  - job_name: 'guardian-blockchain'
+    static_configs:
+      - targets: ['gs-blockchain-cluster:4001']

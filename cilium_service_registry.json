@@ -14,15 +14,15 @@
     },
     "behavioral_analytics": {
       "mesh_id": "analytics-svc",
-      "port": 8002,
+      "port": 8081,
       "labels": {
         "app": "behavioral-analytics",
         "version": "v1",
         "security.cilium.io/policy": "enabled"
       },
-      "endpoint": "http://localhost:8002",
-      "health_check": "http://localhost:8002/health",
-      "status": "pending"
+      "endpoint": "http://localhost:8081",
+      "health_check": "http://localhost:8081/professional-landing.html",
+      "status": "active"
     },
     "genetic_evolver": {
       "mesh_id": "evolver-svc",

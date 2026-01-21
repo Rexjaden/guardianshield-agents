@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GuardianShield - Token Management & DeFi</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f172a);
+            background-attachment: fixed;
+            color: #e2e8f0;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 0;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #00d4aa, #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: #94a3b8;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            border-color: #00d4aa;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .card-header i {
+            font-size: 2rem;
+            margin-right: 15px;
+            color: #00d4aa;
+        }
+
+        .card-header h3 {
+            font-size: 1.5rem;
+            color: #f1f5f9;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #00d4aa;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid rgba(148, 163, 184, 0.3);
+            border-radius: 10px;
+            background: rgba(30, 41, 59, 0.6);
+            color: white;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #00d4aa;
+            box-shadow: 0 0 0 3px rgba(0, 212, 170, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00d4aa, #60a5fa);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #00b894, #4f96ff);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #5856eb, #7c3aed);
+            transform: translateY(-2px);
+        }
+
+        .serial-display {
+            background: linear-gradient(135deg, #1e293b, #334155);
+            border: 2px solid #00d4aa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            text-align: center;
+            font-family: monospace;
+            font-size: 1.1rem;
+            color: #00d4aa;
+        }
+
+        .token-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .info-card {
+            background: rgba(30, 41, 59, 0.6);
+            border-radius: 15px;
+            padding: 20px;
+            border-left: 4px solid #00d4aa;
+        }
+
+        .info-card h4 {
+            color: #00d4aa;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .info-card p {
+            color: #cbd5e1;
+            font-size: 1rem;
+        }
+
+        .verification-section {
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 40px;
+            border: 1px solid rgba(148, 163, 184, 0.2);
+        }
+
+        .verification-section h3 {
+            color: #00d4aa;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.5rem;
+        }
+
+        .verified-token {
+            background: rgba(0, 212, 170, 0.1);
+            border: 2px solid #00d4aa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 15px;
+        }
+
+        .verified-token h4 {
+            color: #00d4aa;
+            margin-bottom: 10px;
+        }
+
+        .verified-token div {
+            margin-bottom: 8px;
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+        }
+
+        .verified-token div:last-child {
+            border-bottom: none;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .stat-card {
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(148, 163, 184, 0.2);
+        }
+
+        .stat-card i {
+            font-size: 2rem;
+            color: #00d4aa;
+            margin-bottom: 10px;
+        }
+
+        .stat-card h3 {
+            font-size: 2rem;
+            color: #f1f5f9;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            color: #94a3b8;
+        }
+
+        @media (max-width: 768px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛡️ GuardianShield</h1>
+            <p>Token Management & DeFi Operations</p>
+        </div>
+
+        <div class="main-grid">
+            <!-- Token Minting Section -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3>Mint SHIELD Token</h3>
+                </div>
+                <form id="mintForm">
+                    <div class="form-group">
+                        <label for="walletAddress">Wallet Address:</label>
+                        <input type="text" id="walletAddress" name="walletAddress" placeholder="0x..." required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tokenAmount">Amount of Tokens:</label>
+                        <input type="number" id="tokenAmount" name="tokenAmount" min="1" max="1000" value="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="batchId">Batch ID (Optional):</label>
+                        <input type="text" id="batchId" name="batchId" placeholder="B1234">
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-plus-circle"></i> Mint Tokens
+                    </button>
+                </form>
+                
+                <div id="mintResults" style="display: none;">
+                    <div class="serial-display">
+                        <strong>Serial Numbers Generated:</strong>
+                        <div id="serialNumbers"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Token Verification Section -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-search"></i>
+                    <h3>Verify Token</h3>
+                </div>
+                <form id="verifyForm">
+                    <div class="form-group">
+                        <label for="serialNumber">Serial Number:</label>
+                        <input type="text" id="serialNumber" name="serialNumber" placeholder="GST-2026-B1234-123456-ABC" required>
+                    </div>
+                    <button type="submit" class="btn btn-secondary">
+                        <i class="fas fa-check-circle"></i> Verify Token
+                    </button>
+                </form>
+                
+                <div id="verifyResults" style="display: none;">
+                    <div class="verified-token">
+                        <h4>✅ Token Verified</h4>
+                        <div id="tokenDetails"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Wallet Token Display -->
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-wallet"></i>
+                <h3>My Tokens</h3>
+            </div>
+            <div class="form-group">
+                <label for="walletLookup">Wallet Address:</label>
+                <input type="text" id="walletLookup" placeholder="0x...">
+                <button type="button" class="btn btn-secondary" onclick="loadWalletTokens()">
+                    <i class="fas fa-eye"></i> View Tokens
+                </button>
+            </div>
+            
+            <div id="walletTokens" class="token-info-grid" style="display: none;">
+                <!-- Tokens will be dynamically loaded here -->
+            </div>
+        </div>
+
+        <!-- Token Transfer Section -->
+        <div class="verification-section">
+            <h3><i class="fas fa-exchange-alt"></i> Transfer Token</h3>
+            <form id="transferForm">
+                <div class="main-grid">
+                    <div class="form-group">
+                        <label for="transferSerial">Serial Number:</label>
+                        <input type="text" id="transferSerial" name="transferSerial" placeholder="GST-2026-B1234-123456-ABC" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newWallet">New Owner Address:</label>
+                        <input type="text" id="newWallet" name="newWallet" placeholder="0x..." required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="txHash">Transaction Hash (Optional):</label>
+                    <input type="text" id="txHash" name="txHash" placeholder="0x...">
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-paper-plane"></i> Transfer Token
+                </button>
+            </form>
+            
+            <div id="transferResults" style="display: none;"></div>
+        </div>
+
+        <!-- Statistics Section -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <i class="fas fa-coins"></i>
+                <h3 id="totalTokens">0</h3>
+                <p>Total Tokens Minted</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-layer-group"></i>
+                <h3 id="totalBatches">0</h3>
+                <p>Token Batches</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-users"></i>
+                <h3 id="uniqueHolders">0</h3>
+                <p>Unique Holders</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-calendar"></i>
+                <h3 id="todayMinted">0</h3>
+                <p>Minted Today</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Base URL for API calls - update this based on your setup
+        const API_BASE = 'http://localhost:8080';
+
+        // Mint tokens
+        document.getElementById('mintForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const walletAddress = formData.get('walletAddress');
+            const tokenAmount = parseInt(formData.get('tokenAmount'));
+            const batchId = formData.get('batchId') || null;
+            
+            try {
+                const results = [];
+                
+                // Mint multiple tokens if amount > 1
+                for (let i = 0; i < tokenAmount; i++) {
+                    const response = await fetch(`${API_BASE}/mint-token`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            wallet_address: walletAddress,
+                            batch_id: batchId,
+                            metadata: {
+                                mint_order: i + 1,
+                                total_in_request: tokenAmount
+                            }
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    if (result.success) {
+                        results.push(result.data);
+                    }
+                }
+                
+                // Display results
+                if (results.length > 0) {
+                    const serialNumbers = results.map(r => 
+                        `<div style="margin: 5px 0; padding: 10px; background: rgba(0,212,170,0.1); border-radius: 5px;">
+                            ${r.serial_number}
+                        </div>`
+                    ).join('');
+                    
+                    document.getElementById('serialNumbers').innerHTML = serialNumbers;
+                    document.getElementById('mintResults').style.display = 'block';
+                    
+                    // Reset form
+                    e.target.reset();
+                    document.getElementById('tokenAmount').value = '1';
+                    
+                    // Refresh statistics
+                    loadStatistics();
+                }
+                
+            } catch (error) {
+                alert(`Minting error: ${error.message}`);
+            }
+        });
+
+        // Verify token
+        document.getElementById('verifyForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const serialNumber = formData.get('serialNumber');
+            
+            try {
+                const response = await fetch(`${API_BASE}/verify-serial`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ serial_number: serialNumber })
+                });
+                
+                const result = await response.json();
+                
+                if (result.valid && result.token_info) {
+                    const info = result.token_info;
+                    const details = `
+                        <div><strong>Token ID:</strong> ${info.token_id}</div>
+                        <div><strong>Owner:</strong> ${info.wallet_address}</div>
+                        <div><strong>Created:</strong> ${new Date(info.creation_date).toLocaleDateString()}</div>
+                        <div><strong>Status:</strong> ${info.status}</div>
+                        <div><strong>Batch:</strong> ${info.batch_id || 'N/A'}</div>
+                    `;
+                    
+                    document.getElementById('tokenDetails').innerHTML = details;
+                    document.getElementById('verifyResults').style.display = 'block';
+                } else {
+                    alert(`Invalid token: ${result.error}`);
+                    document.getElementById('verifyResults').style.display = 'none';
+                }
+                
+            } catch (error) {
+                alert(`Verification error: ${error.message}`);
+            }
+        });
+
+        // Transfer token
+        document.getElementById('transferForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const serialNumber = formData.get('transferSerial');
+            const newWallet = formData.get('newWallet');
+            const txHash = formData.get('txHash') || null;
+            
+            try {
+                const response = await fetch(`${API_BASE}/transfer-token`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        serial_number: serialNumber,
+                        new_wallet_address: newWallet,
+                        transaction_hash: txHash
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    document.getElementById('transferResults').innerHTML = `
+                        <div class="verified-token">
+                            <h4>✅ Transfer Successful</h4>
+                            <div><strong>Serial:</strong> ${serialNumber}</div>
+                            <div><strong>New Owner:</strong> ${newWallet}</div>
+                            <div><strong>Transfer Date:</strong> ${new Date().toLocaleDateString()}</div>
+                        </div>
+                    `;
+                    document.getElementById('transferResults').style.display = 'block';
+                    e.target.reset();
+                } else {
+                    alert(`Transfer failed: ${result.error}`);
+                }
+                
+            } catch (error) {
+                alert(`Transfer error: ${error.message}`);
+            }
+        });
+
+        // Load wallet tokens
+        async function loadWalletTokens() {
+            const walletAddress = document.getElementById('walletLookup').value;
+            
+            if (!walletAddress) {
+                alert('Please enter a wallet address');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/wallet/${walletAddress}/tokens`);
+                const result = await response.json();
+                
+                const tokensDiv = document.getElementById('walletTokens');
+                
+                if (result.tokens && result.tokens.length > 0) {
+                    const tokensHTML = result.tokens.map(token => `
+                        <div class="info-card">
+                            <h4>${token.serial_number}</h4>
+                            <p><strong>Status:</strong> ${token.status}</p>
+                            <p><strong>Created:</strong> ${new Date(token.creation_date).toLocaleDateString()}</p>
+                            <p><strong>Batch:</strong> ${token.batch_id || 'N/A'}</p>
+                        </div>
+                    `).join('');
+                    
+                    tokensDiv.innerHTML = tokensHTML;
+                    tokensDiv.style.display = 'grid';
+                } else {
+                    tokensDiv.innerHTML = '<div class="info-card"><p>No tokens found for this wallet</p></div>';
+                    tokensDiv.style.display = 'block';
+                }
+                
+            } catch (error) {
+                alert(`Error loading tokens: ${error.message}`);
+            }
+        }
+
+        // Load statistics
+        async function loadStatistics() {
+            try {
+                const response = await fetch(`${API_BASE}/statistics`);
+                const stats = await response.json();
+                
+                document.getElementById('totalTokens').textContent = stats.total_tokens || 0;
+                document.getElementById('totalBatches').textContent = stats.total_batches || 0;
+                document.getElementById('uniqueHolders').textContent = stats.unique_holders || 0;
+                document.getElementById('todayMinted').textContent = stats.today_minted || 0;
+                
+            } catch (error) {
+                console.error('Error loading statistics:', error);
+            }
+        }
+
+        // Load statistics on page load
+        window.addEventListener('load', loadStatistics);
+    </script>
+</body>
+</html>

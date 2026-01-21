@@ -1,0 +1,246 @@
+# Default values for DHI Cert-Manager Chart
+# GuardianShield Automated Certificate Management
+
+global:
+  projectName: GuardianShield
+  environment: production
+  domain: guardian-shield.io
+  
+# Cert-Manager Core Configuration
+certManager:
+  enabled: true
+  installCRDs: true
+  
+  # Resource limits for production
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  
+  # Security context
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1001
+    fsGroup: 1001
+    capabilities:
+      drop:
+      - ALL
+      add:
+      - NET_BIND_SERVICE
+  
+  # Pod security standards
+  podSecurityPolicy:
+    enabled: true
+    
+  # Network policies
+  networkPolicy:
+    enabled: true
+    
+  # Service monitor for Prometheus
+  serviceMonitor:
+    enabled: true
+    labels:
+      app.kubernetes.io/name: guardianshield-cert-manager
+    
+  # Webhook configuration
+  webhook:
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 200m
+        memory: 256Mi
+    securityContext:
+      runAsNonRoot: true
+      runAsUser: 1001
+      capabilities:
+        drop:
+        - ALL
+        
+  # CA Injector configuration  
+  cainjector:
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 200m
+        memory: 256Mi
+    securityContext:
+      runAsNonRoot: true
+      runAsUser: 1001
+      capabilities:
+        drop:
+        - ALL
+
+# CSI Driver for Secret Store integration
+csiDriver:
+  enabled: true
+  
+# Istio CSR for service mesh certificates
+istioCsr:
+  enabled: false
+
+# Certificate Issuers Configuration
+issuers:
+  # Let's Encrypt Production Issuer
+  letsencryptProd:
+    enabled: true
+    email: security@guardian-shield.io
+    server: https://acme-v02.api.letsencrypt.org/directory
+    
+  # Let's Encrypt Staging Issuer  
+  letsencryptStaging:
+    enabled: true
+    email: security@guardian-shield.io
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    
+  # Self-signed issuer for internal certificates
+  selfsigned:
+    enabled: true
+    
+  # CA issuer for internal PKI
+  ca:
+    enabled: true
+
+# Certificate Templates
+certificates:
+  # Main domain certificate
+  guardianshieldDomain:
+    enabled: true
+    secretName: guardianshield-tls
+    dnsNames:
+      - guardian-shield.io
+      - www.guardian-shield.io
+      - api.guardian-shield.io
+      - admin.guardian-shield.io
+      - agents.guardian-shield.io
+      - token.guardian-shield.io
+    issuerRef:
+      name: letsencrypt-prod
+      kind: ClusterIssuer
+      
+  # Wildcard certificate for subdomains
+  guardianshieldWildcard:
+    enabled: true
+    secretName: guardianshield-wildcard-tls
+    dnsNames:
+      - "*.guardian-shield.io"
+    issuerRef:
+      name: letsencrypt-prod
+      kind: ClusterIssuer
+      
+  # Internal services certificate
+  internalServices:
+    enabled: true
+    secretName: guardianshield-internal-tls
+    dnsNames:
+      - vault.guardianshield.svc.cluster.local
+      - postgres.guardianshield.svc.cluster.local
+      - redis.guardianshield.svc.cluster.local
+      - monitoring.guardianshield.svc.cluster.local
+    issuerRef:
+      name: guardianshield-ca-issuer
+      kind: Issuer
+
+# DNS Challenge Providers
+dnsProviders:
+  # Cloudflare DNS challenge
+  cloudflare:
+    enabled: true
+    email: admin@guardian-shield.io
+    # API token stored in secret: cloudflare-api-token
+    
+  # Route53 DNS challenge  
+  route53:
+    enabled: false
+    region: us-east-1
+    # Credentials stored in secret: route53-credentials
+    
+  # Google Cloud DNS
+  googleCloudDNS:
+    enabled: false
+    project: guardianshield-project
+    # Service account stored in secret: google-cloud-dns
+
+# Certificate Monitoring
+monitoring:
+  # Certificate expiry monitoring
+  certificateMonitor:
+    enabled: true
+    thresholds:
+      warning: 30d  # Warn 30 days before expiry
+      critical: 7d   # Critical 7 days before expiry
+      
+  # Prometheus metrics
+  prometheusMetrics:
+    enabled: true
+    
+  # Grafana dashboards
+  grafanaDashboard:
+    enabled: true
+
+# Security Configuration
+security:
+  # RBAC
+  rbac:
+    create: true
+    
+  # Service Account
+  serviceAccount:
+    create: true
+    name: dhi-cert-manager
+    
+  # Pod Security Context
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 1001
+    fsGroup: 1001
+    
+  # Security Context
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+      - ALL
+    readOnlyRootFilesystem: true
+    runAsNonRoot: true
+    runAsUser: 1001
+
+# Storage Configuration
+persistence:
+  enabled: true
+  storageClass: "fast-ssd"
+  size: 10Gi
+  
+# Backup Configuration  
+backup:
+  enabled: true
+  schedule: "0 2 * * *"  # Daily at 2 AM
+  retention: "30d"
+
+# Integration with GuardianShield Services
+guardianshield:
+  # API Server integration
+  apiServer:
+    tlsSecretName: guardianshield-api-tls
+    
+  # Admin Console integration
+  adminConsole:
+    tlsSecretName: guardianshield-admin-tls
+    
+  # Agent Communication encryption
+  agentCommunication:
+    tlsSecretName: guardianshield-agents-tls
+    
+  # Database encryption
+  database:
+    tlsSecretName: guardianshield-db-tls
+    
+  # Vault integration
+  vault:
+    tlsSecretName: guardianshield-vault-tls

@@ -483,5 +483,5 @@ if __name__ == "__main__":
     
     print()
     print("📄 Full detailed report saved to: guardianshield_ecosystem_status_report.json")
-    print("🌐 Dashboard available at: http://localhost:8002 (run ecosystem_dashboard.py)")
+    print("🌐 Port 8002 is available for future dashboard services")
     print("📡 Real-time monitoring: All systems operational and autonomous")

@@ -1,0 +1,352 @@
+{
+  "deployment_manifest": {
+    "version": "2.0.0",
+    "created": "2026-01-18",
+    "owner": "Rex",
+    
+    "categories": {
+      
+      "security": {
+        "description": "Security scanning, monitoring, and protection containers",
+        "images": [
+          {
+            "name": "guardianshield-agents-security-scanner",
+            "tag": "latest",
+            "size": "12.9GB",
+            "purpose": "Deep security scanning and vulnerability detection",
+            "dockerfile": "Dockerfile.security",
+            "status": "ready"
+          },
+          {
+            "name": "guardianshield-agents-guardian-sentry",
+            "tag": "latest",
+            "size": "863MB",
+            "purpose": "Sentry node for perimeter security and attack absorption",
+            "dockerfile": "Dockerfile.sentry",
+            "status": "ready"
+          },
+          {
+            "name": "guardianshield-agents-key-manager",
+            "tag": "latest",
+            "size": "152MB",
+            "purpose": "HSM-like secure key management with PBKDF2 encryption",
+            "dockerfile": "Dockerfile.key-manager",
+            "status": "deployed"
+          },
+          {
+            "name": "guardianshield/dhi-external-dns",
+            "tag": "latest",
+            "size": "142MB",
+            "purpose": "Hardened DNS security and protection",
+            "dockerfile": "dhi-external-dns",
+            "status": "ready"
+          },
+          {
+            "name": "envoyproxy/envoy",
+            "tag": "v1.24-latest",
+            "size": "230MB",
+            "purpose": "Service mesh proxy for secure communication",
+            "status": "ready"
+          }
+        ],
+        "supporting": ["dhi-clamav", "dhi-vault"]
+      },
+      
+      "website": {
+        "description": "Web services, frontend, and API containers",
+        "images": [
+          {
+            "name": "guardianshield-agents-guardianshield-website",
+            "tag": "latest",
+            "size": "16GB",
+            "purpose": "Main GuardianShield public website",
+            "dockerfile": "Dockerfile",
+            "status": "ready"
+          },
+          {
+            "name": "guardianshield-agents-guardianshield-api",
+            "tag": "latest",
+            "size": "15.9GB",
+            "purpose": "Core API server with full agent integration",
+            "dockerfile": "Dockerfile.api",
+            "status": "ready"
+          },
+          {
+            "name": "guardianshield-agents-guardianshield-app",
+            "tag": "latest",
+            "size": "16GB",
+            "purpose": "Full application stack",
+            "dockerfile": "Dockerfile",
+            "status": "deployed"
+          },
+          {
+            "name": "nginx",
+            "tag": "alpine",
+            "size": "93.1MB",
+            "purpose": "Reverse proxy and static file serving",
+            "status": "ready"
+          },
+          {
+            "name": "guardianshield-production-guardianshield-app",
+            "tag": "latest",
+            "size": "16GB",
+            "purpose": "Production-hardened app deployment",
+            "dockerfile": "Dockerfile.api.production",
+            "status": "ready"
+          }
+        ],
+        "supporting": ["dhi-apisix", "dhi-openresty"]
+      },
+      
+      "networking": {
+        "description": "Network infrastructure, mesh, and service discovery",
+        "images": [
+          {
+            "name": "guardianshield/dhi-cilium-clustermesh-apiserver",
+            "tag": "latest",
+            "size": "153MB",
+            "purpose": "Cilium service mesh API server",
+            "status": "deployed"
+          },
+          {
+            "name": "dhi.io/cilium-clustermesh-apiserver",
+            "tag": "1.18",
+            "size": "153MB",
+            "purpose": "Alternative Cilium mesh server",
+            "status": "ready"
+          },
+          {
+            "name": "quay.io/cilium/clustermesh-apiserver",
+            "tag": "v1.18.0",
+            "size": "153MB",
+            "purpose": "Official Cilium clustermesh",
+            "status": "ready"
+          },
+          {
+            "name": "quay.io/cilium/operator-generic",
+            "tag": "v1.14.5",
+            "size": "112MB",
+            "purpose": "Cilium network operator",
+            "status": "ready"
+          },
+          {
+            "name": "guardianshield-agents-guardian-bootnode",
+            "tag": "latest",
+            "size": "863MB",
+            "purpose": "Network bootstrap and peer discovery",
+            "dockerfile": "Dockerfile.bootnode",
+            "status": "ready"
+          },
+          {
+            "name": "guardianshield-agents-guardian-observer",
+            "tag": "latest",
+            "size": "863MB",
+            "purpose": "Network monitoring and observation",
+            "dockerfile": "Dockerfile.observer",
+            "status": "ready"
+          }
+        ],
+        "supporting": ["registry.k8s.io/etcd:3.6.4-0", "registry.k8s.io/coredns/coredns:v1.12.1"]
+      },
+      
+      "blockchain_validators": {
+        "description": "Blockchain validators, nodes, and smart contract infrastructure",
+        "images": [
+          {
+            "name": "guardianshield-agents-guardian-validator",
+            "tag": "latest",
+            "size": "863MB",
+            "purpose": "Base validator image",
+            "dockerfile": "Dockerfile.validator",
+            "status": "ready"
+          },
+          {
+            "name": "guardianshield-agents-validator-us-east",
+            "tag": "latest",
+            "size": "3.38GB",
+            "purpose": "US-East regional validator",
+            "status": "deployed"
+          },
+          {
+            "name": "guardianshield-agents-validator-eu-west",
+            "tag": "latest",
+            "size": "3.38GB",
+            "purpose": "EU-West regional validator",
+            "status": "deployed"
+          },
+          {
+            "name": "guardianshield-agents-validator-asia-pacific",
+            "tag": "latest",
+            "size": "3.38GB",
+            "purpose": "Asia-Pacific regional validator",
+            "status": "deployed"
+          },
+          {
+            "name": "guardianshield-agents-guardianshield-blockchain-cluster",
+            "tag": "latest",
+            "size": "21.4GB",
+            "purpose": "Multi-chain blockchain cluster (ETH, MATIC, AVAX, ARB)",
+            "dockerfile": "Dockerfile.blockchain",
+            "status": "deployed"
+          },
+          {
+            "name": "guardianshield-agents-hardhat-node",
+            "tag": "latest",
+            "size": "1.8GB",
+            "purpose": "Smart contract development and testing",
+            "dockerfile": "Dockerfile.hardhat",
+            "status": "ready"
+          }
+        ]
+      },
+      
+      "llm_agents": {
+        "description": "LLM, AI agents, and machine learning infrastructure",
+        "images": [
+          {
+            "name": "guardianshield-agents-learning-agent",
+            "tag": "latest",
+            "size": "16GB",
+            "purpose": "Autonomous learning and self-improvement agent",
+            "dockerfile": "Dockerfile.agent",
+            "status": "ready"
+          },
+          {
+            "name": "guardianshield-agents-behavioral-agent",
+            "tag": "latest",
+            "size": "16GB",
+            "purpose": "ML-powered behavioral analytics and pattern recognition",
+            "dockerfile": "Dockerfile.agent",
+            "status": "ready"
+          },
+          {
+            "name": "guardianshield-agents-dmer-agent",
+            "tag": "latest",
+            "size": "16GB",
+            "purpose": "DMER registry monitoring and threat hunting",
+            "dockerfile": "Dockerfile.agent",
+            "status": "ready"
+          },
+          {
+            "name": "ollama/ollama",
+            "tag": "latest",
+            "size": "6.14GB",
+            "purpose": "Local LLM inference server",
+            "status": "ready"
+          },
+          {
+            "name": "guardianshield/dhi-pytorch",
+            "tag": "latest",
+            "size": "11.4GB",
+            "purpose": "Hardened PyTorch for deep learning",
+            "status": "ready"
+          },
+          {
+            "name": "pytorch/pytorch",
+            "tag": "2.9.1-cuda12.6-cudnn9-runtime",
+            "size": "11.2GB",
+            "purpose": "CUDA-enabled PyTorch for GPU acceleration",
+            "status": "ready"
+          }
+        ],
+        "models_needed": ["llama3", "codellama", "mistral"]
+      },
+      
+      "algorithm_core": {
+        "description": "Core orchestration, node management, and algorithm processing",
+        "images": [
+          {
+            "name": "guardianshield-agents-guardianshield-node-orchestrator",
+            "tag": "latest",
+            "size": "2.97GB",
+            "purpose": "Master node orchestrator with agent coordination",
+            "dockerfile": "Dockerfile.node",
+            "status": "deployed"
+          },
+          {
+            "name": "guardian-simple",
+            "tag": "latest",
+            "size": "220MB",
+            "purpose": "Lightweight guardian node",
+            "dockerfile": "Dockerfile.guardian-simple",
+            "status": "ready"
+          }
+        ]
+      },
+      
+      "monitoring_observability": {
+        "description": "Monitoring, metrics, and observability stack",
+        "images": [
+          {
+            "name": "prom/prometheus",
+            "tag": "latest",
+            "size": "515MB",
+            "purpose": "Metrics collection and alerting",
+            "status": "deployed"
+          },
+          {
+            "name": "grafana/grafana",
+            "tag": "latest",
+            "size": "994MB",
+            "purpose": "Visualization dashboards",
+            "status": "ready"
+          }
+        ]
+      },
+      
+      "databases": {
+        "description": "Data persistence layer",
+        "images": [
+          {
+            "name": "postgres",
+            "tag": "15",
+            "size": "633MB",
+            "purpose": "Primary relational database",
+            "status": "deployed"
+          },
+          {
+            "name": "postgres",
+            "tag": "15-alpine",
+            "size": "392MB",
+            "purpose": "Lightweight postgres for edge nodes",
+            "status": "ready"
+          },
+          {
+            "name": "redis",
+            "tag": "7-alpine",
+            "size": "61.2MB",
+            "purpose": "Caching and pub/sub messaging",
+            "status": "deployed"
+          }
+        ]
+      }
+    },
+    
+    "gaps_identified": {
+      "licensing": {
+        "note": "No dedicated licensing container found",
+        "recommendation": "Consider creating a license validation service container",
+        "suggested_images": ["HashiCorp Vault for license keys", "Custom license server"]
+      },
+      "additional_llm": {
+        "note": "May need more LLM models for different tasks",
+        "recommendation": "Pull additional models: llama3, codellama, mistral",
+        "command": "docker exec ollama/ollama ollama pull <model>"
+      }
+    },
+    
+    "deployment_priority": [
+      "1. security - Foundation for everything else",
+      "2. networking - Enable service communication",
+      "3. databases - Data persistence",
+      "4. algorithm_core - Central orchestration",
+      "5. llm_agents - AI capabilities",
+      "6. blockchain_validators - Already deployed",
+      "7. website - Public interface",
+      "8. monitoring_observability - Operations visibility"
+    ],
+    
+    "total_images": 38,
+    "total_size_estimate": "~200GB"
+  }
+}

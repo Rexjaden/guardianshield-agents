@@ -1,13 +1,24 @@
+
 /**
  * GuardianShield Blockchain Node Cluster
  * Multi-chain blockchain infrastructure with advanced consensus and scaling
  */
 
-const { ethers } = require('hardhat');
+const ethers = require('ethers');
 const WebSocket = require('ws');
 const EventEmitter = require('events');
 const fs = require('fs').promises;
 const crypto = require('crypto');
+
+// GuardianShield Configuration
+const GUARDIAN_SHIELD_API_KEY = 'J8QD4YPCWIRT3G1WFGHIC7YWGDBJ4VMGZ4';
+const GUARDIAN_SHIELD_WALLET = '0xF262b772c2EBf526a5cF8634CA92597583Ef38ee';
+
+// GuardianShield Contract Addresses
+const GUARDIAN_CONTRACTS = {
+    GuardianTokenSale: '0xC6A4a2591bb0a9d1f45397da616dBc27e4b7BC8d',
+    // Add more contract addresses as needed
+};
 
 class BlockchainNodeCluster extends EventEmitter {
     constructor(config = {}) {
@@ -30,8 +41,8 @@ class BlockchainNodeCluster extends EventEmitter {
             multiSigValidation: config.multiSigValidation || true,
             threatDetection: config.threatDetection || true,
             
-            // Supported chains - start with localhost for testing
-            supportedChains: config.supportedChains || ['localhost']
+            // Supported chains - connect to mainnet for live GuardianShield
+            supportedChains: config.supportedChains || ['ethereum']
         };
         
         this.nodeCluster = new Map();
@@ -136,13 +147,15 @@ class BlockchainNodeCluster extends EventEmitter {
         const configs = {
             ethereum: {
                 chainId: 1,
-                rpcUrl: 'https://ethereum-rpc.publicnode.com',
-                backupRpcUrl: 'https://rpc.ankr.com/eth',
+                rpcUrl: 'https://eth.llamarpc.com',
+                backupRpcUrl: 'https://ethereum-rpc.publicnode.com',
                 websocketUrl: 'wss://ethereum-rpc.publicnode.com',
                 explorerUrl: 'https://etherscan.io',
                 avgBlockTime: 12,
                 minStake: ethers.parseEther('32'),
-                nativeToken: 'ETH'
+                nativeToken: 'ETH',
+                validatorAccount: GUARDIAN_SHIELD_WALLET,
+                guardianApiKey: GUARDIAN_SHIELD_API_KEY  // For your contract interactions
             },
             polygon: {
                 chainId: 137,
@@ -227,6 +240,7 @@ class BlockchainNodeCluster extends EventEmitter {
             const validator = {
                 id: `validator_${chainName}_${i}`,
                 chainName,
+                address: GUARDIAN_SHIELD_WALLET, // Use your wallet address
                 nodeType: 'validator',
                 stake: 0,
                 validatedBlocks: 0,
@@ -240,6 +254,12 @@ class BlockchainNodeCluster extends EventEmitter {
                 // Security
                 publicKey: this.generateValidatorKey(),
                 signatureHistory: [],
+                
+                // GuardianShield Integration
+                guardianShieldAccount: GUARDIAN_SHIELD_WALLET,
+                apiKey: GUARDIAN_SHIELD_API_KEY,
+                guardianContracts: GUARDIAN_CONTRACTS,
+                tokenSaleContract: GUARDIAN_CONTRACTS.GuardianTokenSale,
                 
                 status: 'active',
                 lastValidation: null
@@ -265,7 +285,7 @@ class BlockchainNodeCluster extends EventEmitter {
                 const chainNode = await this.createChainNode(chainName);
                 
                 // Create validator nodes for this chain
-                const validatorNodes = await this.createValidatorNodes(chainName, 3);
+                const validatorNodes = await this.createValidatorNodes(chainName, 12);
                 chainNode.validators = validatorNodes;
                 
                 this.chainNodes.set(chainName, chainNode);
@@ -704,7 +724,8 @@ if (require.main === module) {
         maxNodes: 16,
         shardingEnabled: true,
         crossChainBridge: true,
-        quantumResistant: true
+        quantumResistant: true,
+        supportedChains: ['ethereum']  // Connect to mainnet for live GuardianShield
     });
     
     cluster.start().then(() => {

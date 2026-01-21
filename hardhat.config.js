@@ -1,5 +1,6 @@
 require("@nomicfoundation/hardhat-toolbox");
 require("@nomicfoundation/hardhat-verify");
+require("@openzeppelin/hardhat-upgrades");
 require("dotenv").config();
 
 /** @type import('hardhat/config').HardhatUserConfig */
@@ -44,12 +45,14 @@ module.exports = {
       chainId: 1337
     },
     sepolia: {
-      url: process.env.SEPOLIA_RPC_URL || "https://sepolia.infura.io/v3/YOUR_INFURA_KEY",
+      url: "https://sepolia.gateway.tenderly.co",
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
-      chainId: 11155111
+      chainId: 11155111,
+      gas: 2100000,
+      gasPrice: 8000000000
     },
     mainnet: {
-      url: process.env.MAINNET_RPC_URL || "https://mainnet.infura.io/v3/YOUR_INFURA_KEY",
+      url: "https://eth.llamarpc.com",
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
       chainId: 1,
       gasPrice: "auto"

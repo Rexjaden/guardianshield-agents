@@ -1,0 +1,16 @@
+{
+  "chain_id": "guardianshield-mainnet",
+  "region": "us-east",
+  "moniker": "GuardianShield-US-East",
+  "consensus": {
+    "algorithm": "tendermint",
+    "block_time": "5s"
+  },
+  "validator": {
+    "min_stake": "1000000000000000000"
+  },
+  "network": {
+    "p2p_port": 26656,
+    "rpc_port": 26657
+  }
+}

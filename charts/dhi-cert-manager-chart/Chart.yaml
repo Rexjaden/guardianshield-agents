@@ -1,0 +1,38 @@
+apiVersion: v2
+name: dhi-cert-manager-chart
+description: DHI Cert-Manager for GuardianShield - Automated SSL/TLS Certificate Management
+type: application
+version: 1.0.0
+appVersion: "1.14.4"
+
+keywords:
+  - certificates
+  - ssl
+  - tls
+  - security
+  - guardianshield
+  - automation
+
+maintainers:
+  - name: GuardianShield Security Team
+    email: security@guardian-shield.io
+
+dependencies:
+  - name: cert-manager
+    version: "1.14.4"
+    repository: "https://charts.jetstack.io"
+    condition: certManager.enabled
+  
+  - name: cert-manager-csi-driver
+    version: "0.7.1"
+    repository: "https://charts.jetstack.io"
+    condition: certManager.csiDriver.enabled
+    
+  - name: cert-manager-istio-csr
+    version: "0.8.1" 
+    repository: "https://charts.jetstack.io"
+    condition: certManager.istioCsr.enabled
+
+annotations:
+  category: Security
+  licenses: Apache-2.0

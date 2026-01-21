@@ -154,6 +154,7 @@ services:
     environment:
       - KMS_MODE=secure
       - ENCRYPTION_KEY_PATH=/keys/master.key
+      - MASTER_PASSWORD=${MASTER_PASSWORD:-GuardianShield_Secure_2026!}
     volumes:
       - ./secure-keys:/keys:ro
       - key_manager_data:/kms/data
@@ -167,32 +168,11 @@ services:
 
 volumes:
   validator_us_east_data:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: /opt/guardian/validator-data/us-east
   validator_eu_west_data:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: /opt/guardian/validator-data/eu-west
   validator_asia_pacific_data:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: /opt/guardian/validator-data/asia-pacific
   validator_monitor_data:
   key_manager_data:
 
 networks:
   validator-private-network:
     driver: bridge
-    driver_opts:
-      com.docker.network.bridge.name: guardian-validators
-    ipam:
-      config:
-        - subnet: 172.20.0.0/16
-          gateway: 172.20.0.1

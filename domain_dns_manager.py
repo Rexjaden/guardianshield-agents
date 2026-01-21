@@ -90,7 +90,7 @@ class GuardianShieldDNS:
             },
             "behavioral-analytics": {
                 "subdomain": "analytics",
-                "port": 8002,
+                "port": 8081,  # Professional website service
                 "labels": [
                     "external-dns.alpha.kubernetes.io/hostname=analytics.guardianshield.io",
                     "external-dns.alpha.kubernetes.io/ttl=300"
@@ -223,7 +223,8 @@ server {{
     }}
     
     location /analytics {{
-        proxy_pass http://localhost:8002;
+        # Redirect to new professional website on 8081
+        proxy_pass http://localhost:8081;
         proxy_set_header Host $host;
     }}
     

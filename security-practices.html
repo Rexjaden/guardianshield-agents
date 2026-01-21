@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Practices - GuardianShield</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f172a);
+            color: #e2e8f0;
+            line-height: 1.6;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 16px;
+            padding: 40px;
+            border: 1px solid rgba(71, 85, 105, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(71, 85, 105, 0.3);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #60a5fa, #34d399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .last-updated {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        h2 {
+            color: #60a5fa;
+            font-size: 1.5rem;
+            margin: 30px 0 15px 0;
+            font-weight: 600;
+        }
+
+        h3 {
+            color: #34d399;
+            font-size: 1.2rem;
+            margin: 20px 0 10px 0;
+            font-weight: 600;
+        }
+
+        p, li {
+            margin-bottom: 12px;
+            color: #cbd5e1;
+        }
+
+        ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .back-button:hover {
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            transform: translateY(-2px);
+        }
+
+        strong {
+            color: #f1f5f9;
+        }
+
+        .effective-date {
+            font-weight: 600;
+            color: #fbbf24;
+        }
+
+        .security-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .security-card {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 8px;
+            padding: 20px;
+            border-left: 3px solid #10b981;
+        }
+
+        .security-title {
+            color: #10b981;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+
+        .security-level {
+            background: rgba(16, 185, 129, 0.2);
+            color: #a7f3d0;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .note {
+            background: rgba(59, 130, 246, 0.1);
+            border-left: 4px solid #3b82f6;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .security-framework {
+            background: rgba(16, 185, 129, 0.05);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="professional-landing.html" class="back-button">
+            ← Back to Home
+        </a>
+
+        <div class="header">
+            <h1>Security Practices Statement</h1>
+            <p class="last-updated">Last Updated: <span class="effective-date">January 2026</span></p>
+        </div>
+
+        <p>GuardianShield is engineered with a security-first architecture designed to protect your data, assets, and privacy. This statement outlines our comprehensive security practices and commitments.</p>
+
+        <div class="security-framework">
+            <h2 style="margin-top: 0;">🛡️ Security-First Architecture</h2>
+            <p>Every component of GuardianShield is designed with security as the primary consideration, implementing defense-in-depth strategies across all layers of our platform.</p>
+        </div>
+
+        <div class="security-grid">
+            <div class="security-card">
+                <div class="security-level">MILITARY-GRADE</div>
+                <div class="security-title">Data Encryption</div>
+                <p>All sensitive data is encrypted using AES-256 encryption at rest and TLS 1.3 in transit with perfect forward secrecy.</p>
+            </div>
+
+            <div class="security-card">
+                <div class="security-level">ENTERPRISE</div>
+                <div class="security-title">Zero-Trust Access</div>
+                <p>Comprehensive zero-trust security model with multi-factor authentication and continuous identity verification.</p>
+            </div>
+
+            <div class="security-card">
+                <div class="security-level">ADVANCED</div>
+                <div class="security-title">Threat Monitoring</div>
+                <p>24/7 continuous monitoring with AI-powered threat detection and automated incident response capabilities.</p>
+            </div>
+
+            <div class="security-card">
+                <div class="security-level">CERTIFIED</div>
+                <div class="security-title">Smart Contract Audits</div>
+                <p>All smart contracts undergo rigorous internal and external security audits before deployment.</p>
+            </div>
+
+            <div class="security-card">
+                <div class="security-level">PROACTIVE</div>
+                <div class="security-title">Incident Response</div>
+                <p>Comprehensive incident response protocols with dedicated security team and automated escalation procedures.</p>
+            </div>
+
+            <div class="security-card">
+                <div class="security-level">CONTINUOUS</div>
+                <div class="security-title">System Hardening</div>
+                <p>Regular security assessments, penetration testing, and system hardening following industry best practices.</p>
+            </div>
+        </div>
+
+        <h2>Core Security Practices</h2>
+
+        <h3>Data Protection</h3>
+        <ul>
+            <li><strong>Encryption:</strong> End-to-end encryption for all sensitive data transmission and storage</li>
+            <li><strong>Data Minimization:</strong> Collection of only necessary data with regular purging of obsolete information</li>
+            <li><strong>Access Controls:</strong> Role-based access control with principle of least privilege</li>
+            <li><strong>Data Segregation:</strong> Logical and physical separation of different data types and user segments</li>
+        </ul>
+
+        <h3>Infrastructure Security</h3>
+        <ul>
+            <li><strong>Network Segmentation:</strong> Isolated network segments with controlled inter-segment communication</li>
+            <li><strong>Firewall Protection:</strong> Advanced firewall systems with intrusion detection and prevention</li>
+            <li><strong>Container Security:</strong> Secure containerization with image scanning and runtime protection</li>
+            <li><strong>Cloud Security:</strong> Multi-cloud deployment with security-hardened configurations</li>
+        </ul>
+
+        <h3>Application Security</h3>
+        <ul>
+            <li><strong>Secure Development:</strong> Security-first development lifecycle with code review and testing</li>
+            <li><strong>Vulnerability Management:</strong> Regular security assessments and prompt patch deployment</li>
+            <li><strong>API Security:</strong> Rate limiting, input validation, and authentication for all APIs</li>
+            <li><strong>Session Management:</strong> Secure session handling with automatic timeout and invalidation</li>
+        </ul>
+
+        <h2>Blockchain & Smart Contract Security</h2>
+        <ul>
+            <li><strong>Multi-Signature Wallets:</strong> Critical operations require multiple signature approvals</li>
+            <li><strong>Formal Verification:</strong> Mathematical verification of smart contract logic and security properties</li>
+            <li><strong>Upgrade Mechanisms:</strong> Secure upgrade patterns with timelock and community governance</li>
+            <li><strong>Oracle Security:</strong> Decentralized oracles with price feed validation and manipulation protection</li>
+        </ul>
+
+        <h2>Monitoring & Incident Response</h2>
+
+        <h3>Continuous Monitoring</h3>
+        <ul>
+            <li>Real-time security event monitoring and alerting</li>
+            <li>Behavioral analytics for anomaly detection</li>
+            <li>Automated threat intelligence integration</li>
+            <li>Performance and availability monitoring</li>
+        </ul>
+
+        <h3>Incident Response Protocol</h3>
+        <ul>
+            <li><strong>Immediate Response:</strong> 24/7 security operations center with rapid response capabilities</li>
+            <li><strong>Communication:</strong> Clear communication channels for security incidents</li>
+            <li><strong>Recovery:</strong> Tested disaster recovery and business continuity procedures</li>
+            <li><strong>Forensics:</strong> Detailed incident analysis and lessons learned integration</li>
+        </ul>
+
+        <div class="note">
+            <p><strong>Responsible Disclosure:</strong> We maintain a responsible disclosure program for security researchers. Report security vulnerabilities to security@guardian-shield.io with detailed information.</p>
+        </div>
+
+        <h2>Compliance & Standards</h2>
+        <p>GuardianShield adheres to industry security standards and frameworks:</p>
+        <ul>
+            <li><strong>ISO 27001:</strong> Information Security Management System standards</li>
+            <li><strong>SOC 2 Type II:</strong> Service organization control framework compliance</li>
+            <li><strong>GDPR:</strong> European Union data protection regulation compliance</li>
+            <li><strong>CCPA:</strong> California Consumer Privacy Act compliance</li>
+            <li><strong>NIST Framework:</strong> Cybersecurity framework implementation</li>
+        </ul>
+
+        <div class="note">
+            <p><strong>Security Disclaimer:</strong> While we implement industry-leading security practices, no system can guarantee absolute security. We continuously evolve our security posture to address emerging threats and maintain the highest protection standards.</p>
+        </div>
+
+        <h2>User Security Recommendations</h2>
+        <ul>
+            <li>Use strong, unique passwords and enable two-factor authentication</li>
+            <li>Keep software and browser extensions updated</li>
+            <li>Verify website URLs and avoid phishing attempts</li>
+            <li>Secure your devices and private keys</li>
+            <li>Report suspicious activities immediately</li>
+        </ul>
+
+        <p style="text-align: center; margin-top: 40px; color: #94a3b8; font-size: 0.9rem;">
+            © 2026 GuardianShield. All rights reserved.<br>
+            Committed to protecting your security and privacy.
+        </p>
+    </div>
+</body>
+</html>

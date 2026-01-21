@@ -4,13 +4,13 @@
 # Core dependencies
 aiohttp==3.9.1
 aiohttp-cors==0.7.0
-aioredis==2.0.1
+redis>=5.0.0
 aiojobs==1.2.1
 aiofiles==23.2.1
 
 # Vault and security
 hvac==2.1.0
-cryptography==41.0.8
+cryptography>=41.0.0
 pyjwt[crypto]==2.8.0
 fernet==1.0.1
 

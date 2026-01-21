@@ -1,0 +1,123 @@
+{{- if .Values.certificates.guardianShieldMain.enabled }}
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ include "dhi-cert-manager.fullname" . }}-main-tls
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "dhi-cert-manager.labels" . | nindent 4 }}
+    {{- include "dhi-cert-manager.monitoringLabels" . | nindent 4 }}
+    certificate-type: wildcard-main
+  annotations:
+    cert-manager.io/revision-history-limit: "5"
+    guardian-shield.io/certificate-purpose: "main-application"
+spec:
+  secretName: guardian-shield-main-tls
+  duration: {{ .Values.certificates.duration }}
+  renewBefore: {{ .Values.certificates.renewBefore }}
+  usages:
+  - digital signature
+  - key encipherment
+  - server auth
+  issuerRef:
+    {{- if .Values.letsEncrypt.production.enabled }}
+    name: {{ include "dhi-cert-manager.fullname" . }}-letsencrypt-prod
+    {{- else }}
+    name: {{ include "dhi-cert-manager.fullname" . }}-letsencrypt-staging
+    {{- end }}
+    kind: ClusterIssuer
+  dnsNames:
+  - {{ .Values.global.domain }}
+  - www.{{ .Values.global.domain }}
+  - api.{{ .Values.global.domain }}
+  - admin.{{ .Values.global.domain }}
+  - agents.{{ .Values.global.domain }}
+  - *.{{ .Values.global.domain }}
+  privateKey:
+    algorithm: {{ .Values.certificates.privateKey.algorithm }}
+    size: {{ .Values.certificates.privateKey.size }}
+    rotationPolicy: Always
+---
+{{- end }}
+
+{{- if .Values.certificates.guardianShieldToken.enabled }}
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ include "dhi-cert-manager.fullname" . }}-token-tls
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "dhi-cert-manager.labels" . | nindent 4 }}
+    {{- include "dhi-cert-manager.monitoringLabels" . | nindent 4 }}
+    certificate-type: token-service
+  annotations:
+    cert-manager.io/revision-history-limit: "5"
+    guardian-shield.io/certificate-purpose: "token-service"
+spec:
+  secretName: guardian-shield-token-tls
+  duration: {{ .Values.certificates.duration }}
+  renewBefore: {{ .Values.certificates.renewBefore }}
+  usages:
+  - digital signature
+  - key encipherment
+  - server auth
+  - client auth
+  issuerRef:
+    {{- if .Values.letsEncrypt.production.enabled }}
+    name: {{ include "dhi-cert-manager.fullname" . }}-letsencrypt-prod
+    {{- else }}
+    name: {{ include "dhi-cert-manager.fullname" . }}-letsencrypt-staging
+    {{- end }}
+    kind: ClusterIssuer
+  dnsNames:
+  - token.{{ .Values.global.domain }}
+  - token-api.{{ .Values.global.domain }}
+  - staking.{{ .Values.global.domain }}
+  privateKey:
+    algorithm: {{ .Values.certificates.privateKey.algorithm }}
+    size: {{ .Values.certificates.privateKey.size }}
+    rotationPolicy: Always
+---
+{{- end }}
+
+{{- if .Values.certificates.guardianShieldInternal.enabled }}
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ include "dhi-cert-manager.fullname" . }}-internal-tls
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "dhi-cert-manager.labels" . | nindent 4 }}
+    {{- include "dhi-cert-manager.monitoringLabels" . | nindent 4 }}
+    certificate-type: internal-services
+  annotations:
+    cert-manager.io/revision-history-limit: "3"
+    guardian-shield.io/certificate-purpose: "internal-communication"
+spec:
+  secretName: guardian-shield-internal-tls
+  duration: 24h
+  renewBefore: 8h
+  usages:
+  - digital signature
+  - key encipherment
+  - server auth
+  - client auth
+  issuerRef:
+    name: {{ include "dhi-cert-manager.fullname" . }}-selfsigned
+    kind: ClusterIssuer
+  dnsNames:
+  - agent-orchestrator.{{ .Release.Namespace }}.svc.cluster.local
+  - api-server.{{ .Release.Namespace }}.svc.cluster.local
+  - analytics-dashboard.{{ .Release.Namespace }}.svc.cluster.local
+  - admin-console.{{ .Release.Namespace }}.svc.cluster.local
+  - blockchain-indexer.{{ .Release.Namespace }}.svc.cluster.local
+  - data-ingestion.{{ .Release.Namespace }}.svc.cluster.local
+  - threat-intelligence.{{ .Release.Namespace }}.svc.cluster.local
+  - localhost
+  - 127.0.0.1
+  privateKey:
+    algorithm: {{ .Values.certificates.privateKey.algorithm }}
+    size: {{ .Values.certificates.privateKey.size }}
+    rotationPolicy: Always
+---
+{{- end }}

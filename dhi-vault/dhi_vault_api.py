@@ -9,7 +9,6 @@ from typing import Dict, Any, Optional
 from dataclasses import asdict
 
 from aiohttp import web, ClientSession
-from aiohttp.web_middlewares import cors_handler
 from aiohttp_cors import setup as cors_setup, ResourceOptions
 import aiofiles
 from marshmallow import Schema, fields, ValidationError

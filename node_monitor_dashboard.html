@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GuardianShield Node Monitor</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            border: 1px solid rgba(0,255,136,0.3);
+        }
+        .header h1 {
+            font-size: 2em;
+            background: linear-gradient(90deg, #00ff88, #00d4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .header .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+        .header .status-indicator.online { background: #00ff88; }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; box-shadow: 0 0 10px currentColor; }
+            50% { opacity: 0.5; box-shadow: 0 0 20px currentColor; }
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            border-color: rgba(0,255,136,0.5);
+            transform: translateY(-2px);
+        }
+        .card h3 {
+            color: #00ff88;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .card h3 .icon { font-size: 1.2em; }
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .stat-row:last-child { border-bottom: none; }
+        .stat-label { color: #888; }
+        .stat-value { font-weight: bold; color: #fff; }
+        .stat-value.healthy { color: #00ff88; }
+        .stat-value.warning { color: #ffaa00; }
+        .stat-value.error { color: #ff4444; }
+        .node-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .node-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin: 5px 0;
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+        }
+        .node-status {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .node-status.active { background: #00ff88; }
+        .node-status.syncing { background: #ffaa00; animation: pulse 1s infinite; }
+        .node-status.error { background: #ff4444; }
+        .blockchain-card {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            margin: 8px 0;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+        }
+        .chain-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: bold;
+        }
+        .chain-icon.ethereum { background: #627eea; }
+        .chain-icon.polygon { background: #8247e5; }
+        .chain-icon.avalanche { background: #e84142; }
+        .chain-icon.arbitrum { background: #28a0f0; }
+        .chain-info { flex: 1; }
+        .chain-name { font-weight: bold; margin-bottom: 3px; }
+        .chain-block { font-size: 0.85em; color: #888; }
+        .last-update {
+            text-align: center;
+            color: #666;
+            font-size: 0.85em;
+            margin-top: 20px;
+        }
+        .wallet-display {
+            font-family: monospace;
+            font-size: 0.9em;
+            background: rgba(0,255,136,0.1);
+            padding: 10px;
+            border-radius: 8px;
+            word-break: break-all;
+        }
+        .log-container {
+            background: #000;
+            border-radius: 10px;
+            padding: 15px;
+            max-height: 150px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 0.85em;
+        }
+        .log-entry {
+            padding: 3px 0;
+            border-bottom: 1px solid #222;
+        }
+        .log-entry .time { color: #666; }
+        .log-entry .msg { color: #0f0; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🛡️ GuardianShield Node Monitor</h1>
+        <p style="margin-top: 10px;">
+            <span class="status-indicator online"></span>
+            <span id="system-status">Connecting...</span>
+        </p>
+    </div>
+
+    <div class="grid">
+        <!-- System Overview -->
+        <div class="card">
+            <h3><span class="icon">📊</span> System Overview</h3>
+            <div class="stat-row">
+                <span class="stat-label">Status</span>
+                <span class="stat-value" id="overall-status">Loading...</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Uptime</span>
+                <span class="stat-value" id="uptime">--</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Worker Nodes</span>
+                <span class="stat-value" id="workers">--</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Active Agents</span>
+                <span class="stat-value" id="agents">--</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Memory Usage</span>
+                <span class="stat-value" id="memory">--</span>
+            </div>
+        </div>
+
+        <!-- Wallet Info -->
+        <div class="card">
+            <h3><span class="icon">💰</span> Validator Wallet</h3>
+            <div class="wallet-display">
+                0xF262b772c2EBf526a5cF8634CA92597583Ef38ee
+            </div>
+            <div class="stat-row" style="margin-top: 15px;">
+                <span class="stat-label">API Key</span>
+                <span class="stat-value">J8QD...VMGZ4</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Network</span>
+                <span class="stat-value healthy">Multi-Chain</span>
+            </div>
+        </div>
+
+        <!-- Blockchain Nodes -->
+        <div class="card">
+            <h3><span class="icon">⛓️</span> Blockchain Connections</h3>
+            <div id="blockchain-list">
+                <div class="blockchain-card">
+                    <div class="chain-icon ethereum">ETH</div>
+                    <div class="chain-info">
+                        <div class="chain-name">Ethereum Mainnet</div>
+                        <div class="chain-block" id="eth-block">Block: Loading...</div>
+                    </div>
+                </div>
+                <div class="blockchain-card">
+                    <div class="chain-icon polygon">POL</div>
+                    <div class="chain-info">
+                        <div class="chain-name">Polygon</div>
+                        <div class="chain-block" id="poly-block">Block: Loading...</div>
+                    </div>
+                </div>
+                <div class="blockchain-card">
+                    <div class="chain-icon avalanche">AVAX</div>
+                    <div class="chain-info">
+                        <div class="chain-name">Avalanche</div>
+                        <div class="chain-block" id="avax-block">Block: Loading...</div>
+                    </div>
+                </div>
+                <div class="blockchain-card">
+                    <div class="chain-icon arbitrum">ARB</div>
+                    <div class="chain-info">
+                        <div class="chain-name">Arbitrum</div>
+                        <div class="chain-block" id="arb-block">Block: Loading...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Validators -->
+        <div class="card">
+            <h3><span class="icon">⚔️</span> Validators</h3>
+            <div class="node-list" id="validator-list">
+                <div class="node-item">
+                    <span class="node-status active"></span>
+                    <div>
+                        <div style="font-weight: bold;">US-East Validator</div>
+                        <div style="font-size: 0.85em; color: #888;">Port 26657 • guardian_validator_001</div>
+                    </div>
+                </div>
+                <div class="node-item">
+                    <span class="node-status active"></span>
+                    <div>
+                        <div style="font-weight: bold;">EU-West Validator</div>
+                        <div style="font-size: 0.85em; color: #888;">Port 26658 • guardian_validator_002</div>
+                    </div>
+                </div>
+                <div class="node-item">
+                    <span class="node-status active"></span>
+                    <div>
+                        <div style="font-weight: bold;">Asia-Pacific Validator</div>
+                        <div style="font-size: 0.85em; color: #888;">Port 26659 • guardian_validator_003</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Agents -->
+        <div class="card">
+            <h3><span class="icon">🤖</span> AI Agents</h3>
+            <div class="node-list" id="agent-list">
+                <div class="node-item">
+                    <span class="node-status active"></span>
+                    <div>
+                        <div style="font-weight: bold; color: #FF6B35;">Prometheus</div>
+                        <div style="font-size: 0.85em; color: #888;">Google Cloud Expert</div>
+                    </div>
+                </div>
+                <div class="node-item">
+                    <span class="node-status active"></span>
+                    <div>
+                        <div style="font-weight: bold; color: #4F7942;">Silva</div>
+                        <div style="font-size: 0.85em; color: #888;">Blockchain Security</div>
+                    </div>
+                </div>
+                <div class="node-item">
+                    <span class="node-status active"></span>
+                    <div>
+                        <div style="font-weight: bold; color: #4169E1;">Turlo</div>
+                        <div style="font-size: 0.85em; color: #888;">Web2/Web3 Security</div>
+                    </div>
+                </div>
+                <div class="node-item">
+                    <span class="node-status active"></span>
+                    <div>
+                        <div style="font-weight: bold; color: #8A2BE2;">Lirto</div>
+                        <div style="font-size: 0.85em; color: #888;">DeFi Mastery</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Live Log -->
+        <div class="card">
+            <h3><span class="icon">📜</span> Activity Log</h3>
+            <div class="log-container" id="log-container">
+                <div class="log-entry"><span class="time">[--:--:--]</span> <span class="msg">Initializing monitor...</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="last-update">
+        Last updated: <span id="last-update">Never</span> • Auto-refresh: 5 seconds
+    </div>
+
+    <script>
+        // When served from /dashboard, use relative paths. Otherwise use localhost
+        const API_BASE = window.location.port === '3003' ? '/api' : 'http://localhost:3003/api';
+        let connectionStatus = 'connecting';
+        let updateCount = 0;
+        
+        function formatUptime(ms) {
+            const seconds = Math.floor(ms / 1000);
+            const minutes = Math.floor(seconds / 60);
+            const hours = Math.floor(minutes / 60);
+            const days = Math.floor(hours / 24);
+            
+            if (days > 0) return `${days}d ${hours % 24}h ${minutes % 60}m`;
+            if (hours > 0) return `${hours}h ${minutes % 60}m`;
+            return `${minutes}m ${seconds % 60}s`;
+        }
+        
+        function formatBytes(bytes) {
+            const mb = bytes / (1024 * 1024);
+            return `${mb.toFixed(1)} MB`;
+        }
+        
+        function addLog(message) {
+            const container = document.getElementById('log-container');
+            const time = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.innerHTML = `<span class="time">[${time}]</span> <span class="msg">${message}</span>`;
+            container.insertBefore(entry, container.firstChild);
+            
+            // Keep only last 20 entries
+            while (container.children.length > 20) {
+                container.removeChild(container.lastChild);
+            }
+        }
+        
+        async function fetchSystemStatus() {
+            try {
+                const response = await fetch(`${API_BASE}/system/health`);
+                const data = await response.json();
+                
+                document.getElementById('system-status').textContent = 'System Operational';
+                document.getElementById('overall-status').textContent = data.status;
+                document.getElementById('overall-status').className = 'stat-value healthy';
+                document.getElementById('uptime').textContent = formatUptime(data.uptime);
+                document.getElementById('workers').textContent = data.nodes?.workers || 0;
+                document.getElementById('agents').textContent = data.nodes?.agents || 0;
+                document.getElementById('memory').textContent = formatBytes(data.memory?.heapUsed || 0);
+                
+                addLog(`System health check: ${data.status}`);
+            } catch (error) {
+                document.getElementById('system-status').textContent = 'Connection Error';
+                document.getElementById('overall-status').textContent = 'Offline';
+                document.getElementById('overall-status').className = 'stat-value error';
+                addLog(`Error: ${error.message}`);
+            }
+        }
+        
+        async function fetchBlockchainStatus() {
+            try {
+                const response = await fetch(`${API_BASE}/blockchain`);
+                const chains = await response.json();
+                
+                chains.forEach(chain => {
+                    let elemId;
+                    switch(chain.name) {
+                        case 'ethereum': elemId = 'eth-block'; break;
+                        case 'polygon': elemId = 'poly-block'; break;
+                        case 'avalanche': elemId = 'avax-block'; break;
+                        case 'arbitrum': elemId = 'arb-block'; break;
+                    }
+                    if (elemId) {
+                        const blockText = chain.blockHeight > 0 
+                            ? `Block: ${chain.blockHeight.toLocaleString()}`
+                            : `Status: ${chain.syncStatus}`;
+                        document.getElementById(elemId).textContent = blockText;
+                    }
+                });
+            } catch (error) {
+                console.error('Blockchain fetch error:', error);
+            }
+        }
+        
+        async function updateAll() {
+            await fetchSystemStatus();
+            await fetchBlockchainStatus();
+            document.getElementById('last-update').textContent = new Date().toLocaleTimeString();
+        }
+        
+        // Initial load
+        updateAll();
+        addLog('Monitor initialized');
+        addLog('Connected to GuardianShield Node Orchestrator');
+        
+        // Auto-refresh every 5 seconds
+        setInterval(updateAll, 5000);
+    </script>
+</body>
+</html>

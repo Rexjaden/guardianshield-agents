@@ -22,8 +22,8 @@ spec:
     - ports:
       - port: '8001'
         protocol: TCP
-      - port: '8002'
-        protocol: TCP
+      - port: '8081'
+        protocol: TCP  # Cilium mesh now on 8081
       - port: '8003'
         protocol: TCP
       - port: '8004'

@@ -1,0 +1,42 @@
+.:53 {
+    errors
+    health {
+        lameduck 5s
+    }
+    ready
+    
+    # GuardianShield internal DNS
+    hosts {
+        # Core services
+        host.docker.internal guardianshield.local api.guardianshield.local
+        host.docker.internal grafana.guardianshield.local
+        host.docker.internal prometheus.guardianshield.local
+        host.docker.internal vault.guardianshield.local
+        host.docker.internal etcd.guardianshield.local
+        
+        fallthrough
+    }
+    
+    # Forward external queries to upstream DNS
+    forward . 8.8.8.8 8.8.4.4 1.1.1.1 {
+        max_concurrent 1000
+    }
+    
+    cache 30
+    loop
+    reload
+    loadbalance
+    
+    prometheus :9153
+    
+    log . {
+        class error
+    }
+}
+
+# Docker container resolution
+guardianshield-network:53 {
+    errors
+    cache 30
+    forward . 127.0.0.11
+}

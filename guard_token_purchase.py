@@ -33,13 +33,46 @@ def emergency_check():
 
 
 
-# LIVE CONTRACT CONFIGURATION
+# LIVE CONTRACT CONFIGURATION - INTEGRATED WITH SMART CONTRACTS
 LIVE_CONTRACTS = {
     "GuardianTokenSale": "0xC6A4a2591bb0a9d1f45397da616dBc27e4b7BC8d",
-    "network": "ethereum",
-    "chainId": 1,
-    "rpcUrl": "https://eth-mainnet.alchemyapi.io/v2/YOUR-API-KEY"
+    "GuardianToken": "0x0000000000000000000000000000000000000000",  # To be deployed
+    "GuardianShieldToken": "0x0000000000000000000000000000000000000000",  # To be deployed
+    "network": "sepolia",  # Using testnet for safety
+    "chainId": 11155111,  # Sepolia chain ID
+    "rpcUrl": "https://sepolia.infura.io/v3/YOUR-API-KEY"
 }
+
+# Smart Contract Integration Flag
+SMART_CONTRACT_INTEGRATION = True
+
+# Web3 Integration
+try:
+    from web3 import Web3
+    from eth_account import Account
+    WEB3_AVAILABLE = True
+    
+    # Initialize Web3 connection
+    w3 = Web3(Web3.HTTPProvider(LIVE_CONTRACTS["rpcUrl"]))
+    if w3.is_connected():
+        print("✅ Connected to Ethereum network")
+    else:
+        print("❌ Failed to connect to Ethereum network")
+        WEB3_AVAILABLE = False
+        
+except ImportError:
+    WEB3_AVAILABLE = False
+    print("⚠️ Web3 not available - install with: pip install web3")
+
+# Contract ABI for token sale
+GUARDIAN_TOKEN_SALE_ABI = [
+    {
+        "inputs": [{"name": "recipient", "type": "address"}, {"name": "amount", "type": "uint256"}],
+        "name": "purchaseTokens",
+        "outputs": [{"name": "", "type": "bool"}],
+        "type": "function"
+    }
+]
 
 # Payment Methods
 class PaymentMethod(str, Enum):

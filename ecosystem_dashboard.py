@@ -859,8 +859,8 @@ async def startup_event():
 
 if __name__ == "__main__":
     print("🚀 Starting GuardianShield Ecosystem Dashboard...")
-    print("📊 Dashboard will be available at: http://localhost:8002")
-    print("🔗 API documentation at: http://localhost:8002/docs")
+    print("📊 Dashboard service has been removed from port 8002")
+    print("🔗 Port 8002 is now available for future services")
     
     uvicorn.run(
         app,

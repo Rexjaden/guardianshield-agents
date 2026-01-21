@@ -1,0 +1,107 @@
+version: '3.8'
+
+services:
+  defi-forms:
+    build:
+      context: .
+      dockerfile: Dockerfile.defi
+    ports:
+      - "8080:8080"
+    environment:
+      - ENVIRONMENT=production
+      - DEBUG=false
+      - DATABASE_URL=postgresql://guardian:secure_password@postgres:5432/guardian_defi
+      - REDIS_URL=redis://redis:6379/0
+      - JWT_SECRET=your_jwt_secret_here
+      - GUARDIAN_API_URL=http://api-server:8000
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - guardian-network
+    volumes:
+      - ./logs:/app/logs
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/tmp
+
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: guardian_defi
+      POSTGRES_USER: guardian
+      POSTGRES_PASSWORD: secure_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - guardian-network
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/tmp
+
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes --requirepass secure_redis_password
+    volumes:
+      - redis_data:/data
+    networks:
+      - guardian-network
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/tmp
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl-certs:/etc/ssl/certs:ro
+    depends_on:
+      - defi-forms
+    networks:
+      - guardian-network
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/tmp
+      - /var/cache/nginx
+      - /var/run
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  guardian-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

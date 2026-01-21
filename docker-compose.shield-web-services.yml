@@ -3,7 +3,7 @@ version: '3.8'
 services:
   # SHIELD Token Caddy Web Server - Modern HTTP/2 with automatic HTTPS
   shield-caddy:
-    image: shieldtoken/dhi-caddy
+    image: caddy:latest
     ports:
       - "80:80"
       - "443:443"
@@ -22,7 +22,9 @@ services:
 
   # SHIELD Token OpenResty - High-performance NGINX + Lua
   shield-openresty:
-    image: shieldtoken/dhi-openresty
+    build:
+      context: .
+      dockerfile: Dockerfile.shield-openresty
     ports:
       - "8080:80"
       - "8443:443"
@@ -67,27 +69,27 @@ services:
       - shield-web-network
 
   # Apigee Microgateway - Enterprise API Management
-  shield-apigee-gateway:
-    image: shieldtoken/dhi-apigee-microgateway
-    ports:
-      - "8443:8443"  # Secure API Gateway
-      - "9443:9443"  # Admin interface
-    volumes:
-      - ./apigee-config:/opt/apigee/config
-      - ./apigee-logs:/opt/apigee/logs
-      - ./ssl:/opt/apigee/ssl
-    environment:
-      - APIGEE_ORG=${APIGEE_ORG:-shieldtoken-org}
-      - APIGEE_ENV=${APIGEE_ENV:-production}
-      - APIGEE_KEY=${APIGEE_KEY}
-      - APIGEE_SECRET=${APIGEE_SECRET}
-      - TOKEN_API_ENABLED=true
-      - WEB3_ANALYTICS_ENABLED=true
-    depends_on:
-      - redis
-      - shield-3d-api
-    networks:
-      - shield-web-network
+  # shield-apigee-gateway:
+  #   image: shieldtoken/dhi-apigee-microgateway
+  #   ports:
+  #     - "8443:8443"  # Secure API Gateway
+  #     - "9443:9443"  # Admin interface
+  #   volumes:
+  #     - ./apigee-config:/opt/apigee/config
+  #     - ./apigee-logs:/opt/apigee/logs
+  #     - ./ssl:/opt/apigee/ssl
+  #   environment:
+  #     - APIGEE_ORG=${APIGEE_ORG:-shieldtoken-org}
+  #     - APIGEE_ENV=${APIGEE_ENV:-production}
+  #     - APIGEE_KEY=${APIGEE_KEY}
+  #     - APIGEE_SECRET=${APIGEE_SECRET}
+  #     - TOKEN_API_ENABLED=true
+  #     - WEB3_ANALYTICS_ENABLED=true
+  #   depends_on:
+  #     - redis
+  #     - shield-3d-api
+  #   networks:
+  #     - shield-web-network
 
   # Load balancer for high availability
   haproxy:
@@ -100,7 +102,7 @@ services:
     depends_on:
       - shield-caddy
       - shield-openresty
-      - shield-apigee-gateway
+      # - shield-apigee-gateway
     networks:
       - shield-web-network
 

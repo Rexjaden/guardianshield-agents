@@ -1,0 +1,46 @@
+{
+  "chain_id": "guardianshield-mainnet",
+  "consensus": {
+    "algorithm": "tendermint",
+    "block_time": "5s",
+    "timeout_propose": "3s",
+    "timeout_prevote": "1s",
+    "timeout_precommit": "1s",
+    "timeout_commit": "5s"
+  },
+  "validator": {
+    "min_stake": "1000000000000000000",
+    "max_validators": 100,
+    "unbonding_period": "1209600s"
+  },
+  "network": {
+    "p2p_port": 26656,
+    "rpc_port": 26657,
+    "grpc_port": 9090,
+    "max_peers": 50,
+    "persistent_peers_max_dial_period": "0s"
+  },
+  "security": {
+    "double_sign_check_height": 10,
+    "priv_validator_laddr": "",
+    "cors_allowed_origins": ["*"],
+    "cors_allowed_methods": ["HEAD", "GET", "POST"],
+    "cors_allowed_headers": ["Origin", "Accept", "Content-Type", "X-Requested-With", "X-Server-Time"]
+  },
+  "mempool": {
+    "size": 5000,
+    "max_txs_bytes": 1073741824,
+    "cache_size": 10000,
+    "keep_invalid_txs_in_cache": false,
+    "max_tx_bytes": 1048576
+  },
+  "state_sync": {
+    "enable": true,
+    "rpc_servers": "",
+    "trust_height": 0,
+    "trust_period": "168h0m0s",
+    "discovery_time": "15s",
+    "chunk_request_timeout": "10s",
+    "chunk_fetchers": "4"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "owner": "Rexjaden",
+  "repo": "guardianshield-agents",
+  "protected_branches": [
+    "main",
+    "master",
+    "production"
+  ],
+  "required_reviews": 2,
+  "dismiss_stale_reviews": true,
+  "require_code_owner_reviews": true,
+  "required_status_checks": [],
+  "enforce_admins": true,
+  "allow_force_pushes": false,
+  "allow_deletions": false,
+  "restrict_pushes": true,
+  "restrictions": {
+    "users": [],
+    "teams": [],
+    "apps": []
+  },
+  "secret_scanning": true,
+  "dependency_scanning": true,
+  "code_scanning": true,
+  "private_vulnerability_reporting": true
+}

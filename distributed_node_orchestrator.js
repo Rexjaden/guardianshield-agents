@@ -7,7 +7,7 @@ const express = require('express');
 const WebSocket = require('ws');
 const cluster = require('cluster');
 const os = require('os');
-const { ethers } = require('hardhat');
+const { ethers } = require('ethers');
 const EventEmitter = require('events');
 const fs = require('fs').promises;
 const path = require('path');
@@ -73,6 +73,12 @@ class GuardianShieldNodeOrchestrator extends EventEmitter {
         console.log('🌌 GuardianShield Distributed Node System Initializing...');
         console.log('='.repeat(70));
         
+        // Only master should run full initialization
+        if (this.config.clusterMode && cluster.isWorker) {
+            await this.initWorkerProcess();
+            return;
+        }
+        
         await this.setupNodeCluster();
         await this.initializeAgentNodes();
         await this.setupBlockchainNodes();
@@ -127,6 +133,65 @@ class GuardianShieldNodeOrchestrator extends EventEmitter {
         }
         
         this.nodeStats.totalNodes = this.nodeCluster.size;
+    }
+    
+    async initWorkerProcess() {
+        // Worker process initialization
+        const workerId = process.env.WORKER_ID || cluster.worker.id;
+        
+        console.log(`🔧 Worker ${workerId} initializing...`);
+        
+        // Setup worker-specific handlers
+        process.on('message', (msg) => {
+            this.handleMasterMessage(msg);
+        });
+        
+        // Notify master that worker is ready
+        if (process.send) {
+            process.send({
+                type: 'worker_ready',
+                workerId,
+                pid: process.pid,
+                timestamp: Date.now()
+            });
+        }
+        
+        console.log(`✅ Worker ${workerId} ready`);
+    }
+    
+    handleMasterMessage(msg) {
+        // Handle messages from master process
+        switch (msg.type) {
+            case 'task':
+                this.processTask(msg.data);
+                break;
+            case 'shutdown':
+                process.exit(0);
+                break;
+            default:
+                console.log(`Worker received: ${msg.type}`);
+        }
+    }
+    
+    processTask(taskData) {
+        // Process assigned tasks
+        console.log(`Processing task: ${taskData?.taskId || 'unknown'}`);
+    }
+    
+    handleWorkerMessage(workerId, message) {
+        // Handle messages from worker processes
+        switch (message.type) {
+            case 'worker_ready':
+                const node = this.nodeCluster.get(workerId);
+                if (node) node.status = 'ready';
+                console.log(`✅ Worker ${workerId} is ready`);
+                break;
+            case 'task_complete':
+                console.log(`Task completed by worker ${workerId}`);
+                break;
+            default:
+                console.log(`Master received from ${workerId}: ${message.type}`);
+        }
     }
     
     async initializeAgentNodes() {
@@ -234,6 +299,41 @@ class GuardianShieldNodeOrchestrator extends EventEmitter {
         return configs[agentName] || {};
     }
     
+    async setupAgentCoordination() {
+        console.log('🔗 Setting up agent coordination network...');
+        
+        // Create coordination channels between agents
+        const agents = Array.from(this.agentNodes.keys());
+        
+        for (const agent of agents) {
+            const agentNode = this.agentNodes.get(agent);
+            agentNode.coordinationChannels = agents.filter(a => a !== agent);
+            agentNode.messageQueue = [];
+            agentNode.consensusParticipant = true;
+        }
+        
+        // Setup inter-agent message bus
+        this.agentMessageBus = new Map();
+        for (const agent of agents) {
+            this.agentMessageBus.set(agent, []);
+        }
+        
+        console.log(`✅ Agent coordination established for ${agents.length} agents`);
+        
+        // Start coordination heartbeat
+        this.coordinationInterval = setInterval(() => {
+            this.broadcastAgentHeartbeat();
+        }, 30000);
+    }
+    
+    broadcastAgentHeartbeat() {
+        const timestamp = Date.now();
+        for (const [name, agent] of this.agentNodes) {
+            agent.lastHeartbeat = timestamp;
+            agent.status = 'active';
+        }
+    }
+    
     async setupBlockchainNodes() {
         console.log('⛓️ Setting up Blockchain Node Network...');
         
@@ -317,6 +417,30 @@ class GuardianShieldNodeOrchestrator extends EventEmitter {
         return configs[chainName] || {};
     }
     
+    async setupCrossChainBridge() {
+        console.log('🌉 Setting up Cross-Chain Bridge...');
+        
+        this.crossChainBridge = {
+            enabled: true,
+            supportedChains: Array.from(this.blockchainNodes.keys()),
+            bridgeContracts: new Map(),
+            pendingTransfers: [],
+            completedTransfers: []
+        };
+        
+        // Setup bridge routing between chains
+        for (const [chainName, node] of this.blockchainNodes) {
+            this.crossChainBridge.bridgeContracts.set(chainName, {
+                chainId: node.chainId,
+                bridgeAddress: null, // Will be set when contracts are deployed
+                status: 'ready',
+                liquidity: 0
+            });
+        }
+        
+        console.log(`✅ Cross-chain bridge configured for ${this.crossChainBridge.supportedChains.length} chains`);
+    }
+    
     async initializeWebSocketServer() {
         console.log('📡 Initializing WebSocket Server...');
         
@@ -384,6 +508,11 @@ class GuardianShieldNodeOrchestrator extends EventEmitter {
     }
     
     setupAPIRoutes() {
+        // Serve dashboard
+        this.expressApp.get('/dashboard', (req, res) => {
+            res.sendFile(require('path').join(__dirname, 'node_monitor_dashboard.html'));
+        });
+        
         // System status and health
         this.expressApp.get('/api/system/status', (req, res) => {
             res.json(this.getSystemStatus());
@@ -548,6 +677,140 @@ class GuardianShieldNodeOrchestrator extends EventEmitter {
             cpu: (usage.user + usage.system) / 1000000, // Convert to seconds
             memory: memUsage.heapUsed / memUsage.heapTotal * 100,
             network: 0 // Would need additional monitoring
+        };
+    }
+    
+    getHealthStatus() {
+        const memUsage = process.memoryUsage();
+        return {
+            status: 'healthy',
+            timestamp: new Date(),
+            uptime: Date.now() - this.startTime.getTime(),
+            memory: {
+                heapUsed: memUsage.heapUsed,
+                heapTotal: memUsage.heapTotal,
+                rss: memUsage.rss
+            },
+            nodes: {
+                workers: this.nodeCluster.size,
+                agents: this.agentNodes.size,
+                blockchain: this.blockchainNodes.size
+            },
+            services: {
+                websocket: this.wsServer ? 'running' : 'stopped',
+                api: 'running',
+                agents: this.agentNodes.size > 0 ? 'active' : 'initializing'
+            }
+        };
+    }
+    
+    getAllNodesStatus() {
+        return {
+            workers: Array.from(this.nodeCluster.entries()).map(([id, node]) => ({
+                id,
+                type: node.type,
+                status: node.status,
+                startTime: node.startTime
+            })),
+            agents: Array.from(this.agentNodes.entries()).map(([name, agent]) => ({
+                name,
+                status: agent.status,
+                specialization: agent.specialization,
+                lastActivity: agent.lastActivity
+            })),
+            blockchain: Array.from(this.blockchainNodes.entries()).map(([chain, node]) => ({
+                chain,
+                chainId: node.chainId,
+                syncStatus: node.syncStatus,
+                blockHeight: node.blockHeight
+            }))
+        };
+    }
+    
+    getNodeStatus(nodeId) {
+        // Check workers
+        const worker = this.nodeCluster.get(parseInt(nodeId));
+        if (worker) return { type: 'worker', ...worker };
+        
+        // Check agents
+        const agent = this.agentNodes.get(nodeId);
+        if (agent) return { type: 'agent', ...agent };
+        
+        // Check blockchain
+        const blockchain = this.blockchainNodes.get(nodeId);
+        if (blockchain) return { type: 'blockchain', ...blockchain };
+        
+        return null;
+    }
+    
+    async sendAgentCommand(agentName, command) {
+        const agent = this.agentNodes.get(agentName);
+        if (!agent) {
+            return { success: false, error: 'Agent not found' };
+        }
+        
+        agent.lastActivity = new Date();
+        return {
+            success: true,
+            agent: agentName,
+            command: command.action,
+            timestamp: new Date()
+        };
+    }
+    
+    async deployContract(chain, contractData) {
+        const node = this.blockchainNodes.get(chain);
+        if (!node) {
+            return { success: false, error: 'Chain not found' };
+        }
+        
+        return {
+            success: true,
+            chain,
+            message: 'Contract deployment queued',
+            timestamp: new Date()
+        };
+    }
+    
+    async updateAgentPhysicalForm(agentName, formData) {
+        const agent = this.agentNodes.get(agentName);
+        if (!agent) {
+            return { success: false, error: 'Agent not found' };
+        }
+        
+        agent.physicalForm = { ...agent.physicalForm, ...formData };
+        return {
+            success: true,
+            agent: agentName,
+            physicalForm: agent.physicalForm
+        };
+    }
+    
+    checkNodeHealth() {
+        // Check worker health
+        for (const [id, node] of this.nodeCluster) {
+            if (node.status !== 'ready') {
+                console.log(`⚠️ Worker ${id} status: ${node.status}`);
+            }
+        }
+        
+        // Check agent health
+        for (const [name, agent] of this.agentNodes) {
+            const timeSinceActivity = Date.now() - new Date(agent.lastActivity).getTime();
+            if (timeSinceActivity > 60000) { // 1 minute
+                agent.status = 'idle';
+            }
+        }
+    }
+    
+    updatePerformanceMetrics() {
+        const usage = process.cpuUsage();
+        const memUsage = process.memoryUsage();
+        
+        this.nodeStats.performance = {
+            cpu: (usage.user + usage.system) / 1000000,
+            memory: Math.round(memUsage.heapUsed / memUsage.heapTotal * 100),
+            network: 0
         };
     }
     

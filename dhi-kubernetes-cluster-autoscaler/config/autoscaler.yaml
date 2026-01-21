@@ -1,0 +1,40 @@
+# DHI Kubernetes Cluster Autoscaler Configuration
+# GuardianShield Mining Node Scaling
+
+# Node scaling limits
+min_nodes: 3
+max_nodes: 50
+initial_nodes: 5
+
+# Scaling thresholds (percentage of active nodes)
+scale_up_threshold: 0.8    # Scale up when utilization > 80%
+scale_down_threshold: 0.3  # Scale down when utilization < 30%
+cooldown_period: 60        # Seconds between scaling operations
+
+# Monitoring interval
+check_interval: 10         # Seconds between health checks
+
+# Blockchain configuration
+chain_id: guardianshield-mainnet
+orchestrator_url: http://gs-node-orchestrator:3003
+validator_ports:
+  - 26657
+  - 26658
+  - 26659
+
+# Regional distribution for mining nodes
+regions:
+  - us-east
+  - eu-west
+  - asia-pacific
+
+# Resource limits per mining node
+node_memory_limit: 512m
+node_cpu_limit: 0.5
+
+# API configuration
+api_port: 8080
+metrics_enabled: true
+
+# Wallet configuration (for mining rewards)
+wallet_address: "0xF262b772c2EBf526a5cF8634CA92597583Ef38ee"

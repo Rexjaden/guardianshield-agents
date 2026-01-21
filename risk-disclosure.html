@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risk Disclosure - GuardianShield</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f172a);
+            color: #e2e8f0;
+            line-height: 1.6;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 16px;
+            padding: 40px;
+            border: 1px solid rgba(71, 85, 105, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(71, 85, 105, 0.3);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #60a5fa, #34d399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .last-updated {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        h2 {
+            color: #60a5fa;
+            font-size: 1.5rem;
+            margin: 30px 0 15px 0;
+            font-weight: 600;
+        }
+
+        p, li {
+            margin-bottom: 12px;
+            color: #cbd5e1;
+        }
+
+        ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .back-button:hover {
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            transform: translateY(-2px);
+        }
+
+        strong {
+            color: #f1f5f9;
+        }
+
+        .effective-date {
+            font-weight: 600;
+            color: #fbbf24;
+        }
+
+        .risk-warning {
+            background: rgba(239, 68, 68, 0.1);
+            border-left: 4px solid #ef4444;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .risk-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .risk-card {
+            background: rgba(71, 85, 105, 0.1);
+            border: 1px solid rgba(71, 85, 105, 0.3);
+            border-radius: 8px;
+            padding: 20px;
+            border-left: 3px solid #ef4444;
+        }
+
+        .risk-title {
+            color: #ef4444;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+
+        .risk-level {
+            background: rgba(239, 68, 68, 0.2);
+            color: #fecaca;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="professional-landing.html" class="back-button">
+            ← Back to Home
+        </a>
+
+        <div class="header">
+            <h1>Risk Disclosure Statement</h1>
+            <p class="last-updated">Last Updated: <span class="effective-date">January 2026</span></p>
+        </div>
+
+        <div class="risk-warning">
+            <h2 style="color: #ef4444; margin-top: 0;">⚠️ CRITICAL RISK WARNING</h2>
+            <p><strong>Using GuardianShield involves inherent risks that could result in financial loss, security breaches, or service disruptions. You assume full responsibility for your use of the Services.</strong></p>
+        </div>
+
+        <p>This Risk Disclosure Statement outlines the key risks associated with using GuardianShield's platform, tokens, and services. Please read carefully and ensure you understand these risks before proceeding.</p>
+
+        <div class="risk-grid">
+            <div class="risk-card">
+                <div class="risk-level">HIGH RISK</div>
+                <div class="risk-title">Cybersecurity Threats</div>
+                <p>Despite advanced security measures, cyber attacks, hacking attempts, and security breaches remain possible. No system is 100% secure.</p>
+            </div>
+
+            <div class="risk-card">
+                <div class="risk-level">CRITICAL RISK</div>
+                <div class="risk-title">Smart Contract Vulnerabilities</div>
+                <p>Smart contracts may contain bugs, vulnerabilities, or exploits that could result in loss of funds or service disruption.</p>
+            </div>
+
+            <div class="risk-card">
+                <div class="risk-level">MEDIUM RISK</div>
+                <div class="risk-title">Blockchain Network Congestion</div>
+                <p>Network congestion can cause delays, failed transactions, and high gas fees, affecting platform functionality.</p>
+            </div>
+
+            <div class="risk-card">
+                <div class="risk-level">HIGH RISK</div>
+                <div class="risk-title">Token Volatility</div>
+                <p>SHIELD and GUARD token values may fluctuate dramatically, potentially resulting in significant financial losses.</p>
+            </div>
+
+            <div class="risk-card">
+                <div class="risk-level">MEDIUM RISK</div>
+                <div class="risk-title">Third-Party System Failures</div>
+                <p>Dependencies on external services, APIs, and infrastructure providers may cause service interruptions or data loss.</p>
+            </div>
+
+            <div class="risk-card">
+                <div class="risk-level">HIGH RISK</div>
+                <div class="risk-title">Regulatory Changes</div>
+                <p>Evolving cryptocurrency and DeFi regulations may affect platform availability and token usability.</p>
+            </div>
+        </div>
+
+        <h2>Additional Risk Factors</h2>
+        <ul>
+            <li><strong>Technology Risk:</strong> Platform updates, bugs, or technical failures may cause service disruptions</li>
+            <li><strong>Liquidity Risk:</strong> Tokens may lack sufficient market liquidity for trading</li>
+            <li><strong>Operational Risk:</strong> Human error, system failures, or process breakdowns may affect services</li>
+            <li><strong>Counterparty Risk:</strong> Third-party service providers may fail to meet obligations</li>
+            <li><strong>Market Risk:</strong> General cryptocurrency market conditions may negatively impact token values</li>
+            <li><strong>Legal Risk:</strong> Legal or regulatory actions may affect platform operations</li>
+        </ul>
+
+        <h2>User Responsibilities</h2>
+        <ul>
+            <li>Conduct thorough research before participating in any services</li>
+            <li>Only invest amounts you can afford to lose entirely</li>
+            <li>Maintain security of private keys, passwords, and account access</li>
+            <li>Stay informed about platform updates and risk factors</li>
+            <li>Comply with applicable laws and regulations in your jurisdiction</li>
+        </ul>
+
+        <div class="risk-warning">
+            <p><strong>No Guarantees:</strong> GuardianShield makes no guarantees regarding platform availability, token value preservation, investment returns, or protection against all security threats. Past performance does not indicate future results.</p>
+        </div>
+
+        <h2>Emergency Procedures</h2>
+        <p>In case of security incidents or platform issues:</p>
+        <ul>
+            <li>Immediately secure your account and wallet</li>
+            <li>Report incidents to security@guardian-shield.io</li>
+            <li>Follow official communications for guidance</li>
+            <li>Do not share sensitive information with unauthorized parties</li>
+        </ul>
+
+        <p style="text-align: center; margin-top: 40px; color: #94a3b8; font-size: 0.9rem;">
+            © 2026 GuardianShield. All rights reserved.<br>
+            This risk disclosure does not constitute investment advice.
+        </p>
+    </div>
+</body>
+</html>

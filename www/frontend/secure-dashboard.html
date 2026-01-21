@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GuardianShield - Secure Admin Dashboard</title>
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+    <link rel="stylesheet" href="/static/css/components.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .security-header {
+            background: linear-gradient(90deg, #16a34a, #059669);
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 10000;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .app-container {
+            margin-top: 40px;
+        }
+
+        .user-info {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-left: auto;
+        }
+
+        .user-avatar {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(45deg, #4f46e5, #7c3aed);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .logout-button {
+            background: linear-gradient(90deg, #dc2626, #ef4444);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .logout-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(220, 38, 38, 0.3);
+        }
+
+        .admin-badge {
+            background: linear-gradient(90deg, #f59e0b, #f97316);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .restricted-access-removed {
+            opacity: 1 !important;
+            pointer-events: auto !important;
+        }
+
+        .restricted-access-removed .fa-lock {
+            display: none;
+        }
+
+        .nav-item.restricted {
+            opacity: 1;
+            pointer-events: auto;
+        }
+    </style>
+</head>
+<body>
+    <!-- Security Status Header -->
+    <div class="security-header">
+        <i class="fas fa-shield-check"></i>
+        <span id="securityStatus">Authenticated Session Active - Admin Access Granted</span>
+    </div>
+
+    <div class="app-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-shield-alt"></i>
+                    <h2>GuardianShield</h2>
+                </div>
+                <button class="sidebar-toggle" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            
+            <ul class="nav-menu">
+                <li class="nav-item active">
+                    <a href="#" onclick="showSection('dashboard')" class="nav-link">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item restricted-access-removed">
+                    <a href="#" onclick="showSection('agents')" class="nav-link">
+                        <i class="fas fa-robot"></i>
+                        <span>Agent Control</span>
+                        <i class="fas fa-check-circle" style="margin-left: auto; color: #16a34a;"></i>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" onclick="showSection('threats')" class="nav-link">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span>Threat Monitor</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" onclick="showSection('analytics')" class="nav-link">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Analytics</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" onclick="showSection('training')" class="nav-link">
+                        <i class="fas fa-brain"></i>
+                        <span>AI Training</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" onclick="showSection('logs')" class="nav-link">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Security Logs</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" onclick="showSection('settings')" class="nav-link">
+                        <i class="fas fa-cog"></i>
+                        <span>System Config</span>
+                    </a>
+                </li>
+            </ul>
+            
+            <div class="sidebar-footer">
+                <div class="system-status">
+                    <div class="status-indicator online"></div>
+                    <span>System Secured</span>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="top-header">
+                <div class="header-left">
+                    <h1 id="page-title">Secure Admin Dashboard</h1>
+                    <div class="breadcrumb">
+                        <span>Admin</span> / <span id="breadcrumb-current">Dashboard</span>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="user-info">
+                        <div class="user-avatar" id="userAvatar"></div>
+                        <div>
+                            <div id="currentUser" style="font-weight: 600; font-size: 13px;"></div>
+                            <div class="admin-badge" id="userRole"></div>
+                        </div>
+                        <button class="logout-button" onclick="secureLogout()">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <div class="content-area">
+                <section id="dashboard-section" class="content-section active">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-shield-check"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-title">System Status</div>
+                                <div class="stat-value">Secured</div>
+                                <div class="stat-change positive">
+                                    <i class="fas fa-arrow-up"></i>
+                                    All agents active
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-title">Active Agents</div>
+                                <div class="stat-value" id="activeAgentsCount">3</div>
+                                <div class="stat-change positive">
+                                    <i class="fas fa-brain"></i>
+                                    Continuously learning
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-title">Threats Blocked</div>
+                                <div class="stat-value" id="threatsBlocked">247</div>
+                                <div class="stat-change positive">
+                                    <i class="fas fa-arrow-up"></i>
+                                    +12 today
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-title">Detection Accuracy</div>
+                                <div class="stat-value">97.8%</div>
+                                <div class="stat-change positive">
+                                    <i class="fas fa-arrow-up"></i>
+                                    +2.1% this week
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-grid">
+                        <!-- Real-time Training Monitor -->
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-brain"></i> AI Training Monitor</h3>
+                                <button class="btn btn-primary" onclick="showSection('training')">
+                                    <i class="fas fa-cog"></i> Manage
+                                </button>
+                            </div>
+                            <div class="card-content">
+                                <div id="trainingStatus" class="training-status">
+                                    <div class="status-item">
+                                        <span class="status-label">Learning Agent:</span>
+                                        <span class="status-value online">Active</span>
+                                    </div>
+                                    <div class="status-item">
+                                        <span class="status-label">Behavioral Agent:</span>
+                                        <span class="status-value online">Active</span>
+                                    </div>
+                                    <div class="status-item">
+                                        <span class="status-label">External Agent:</span>
+                                        <span class="status-value online">Active</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Admin Actions -->
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-history"></i> Admin Activity Log</h3>
+                            </div>
+                            <div class="card-content">
+                                <div id="adminActivityLog" class="activity-log">
+                                    <!-- Activity items will be populated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Other sections will be loaded dynamically -->
+                <section id="agents-section" class="content-section">
+                    <h2>Agent Control Panel</h2>
+                    <p>Full agent management and configuration tools...</p>
+                </section>
+
+                <section id="threats-section" class="content-section">
+                    <h2>Threat Monitoring</h2>
+                    <p>Real-time threat detection and response...</p>
+                </section>
+
+                <section id="training-section" class="content-section">
+                    <h2>AI Training System</h2>
+                    <p>Continuous learning and model optimization...</p>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Authentication & Security Scripts -->
+    <script src="/static/js/dashboard.js"></script>
+    <script src="/static/js/websocket.js"></script>
+    <script>
+        class SecureAdminDashboard {
+            constructor() {
+                this.token = localStorage.getItem('guardian_token');
+                this.currentUser = null;
+                this.initializeAuth();
+            }
+
+            async initializeAuth() {
+                if (!this.token) {
+                    this.redirectToLogin();
+                    return;
+                }
+
+                try {
+                    // Verify token and get user info
+                    const response = await fetch('/api/auth/me', {
+                        headers: {
+                            'Authorization': `Bearer ${this.token}`
+                        }
+                    });
+
+                    if (response.ok) {
+                        this.currentUser = await response.json();
+                        this.setupUserInterface();
+                        this.initializeWebSocket();
+                        this.loadDashboardData();
+                    } else {
+                        this.redirectToLogin();
+                    }
+                } catch (error) {
+                    console.error('Authentication error:', error);
+                    this.redirectToLogin();
+                }
+            }
+
+            setupUserInterface() {
+                // Update user display
+                document.getElementById('currentUser').textContent = this.currentUser.username;
+                document.getElementById('userRole').textContent = this.currentUser.role.toUpperCase();
+                
+                // Set user avatar initials
+                const initials = this.currentUser.username.substring(0, 2).toUpperCase();
+                document.getElementById('userAvatar').textContent = initials;
+
+                // Update security status
+                const statusText = `Authenticated as ${this.currentUser.username} (${this.currentUser.role})`;
+                document.getElementById('securityStatus').textContent = statusText;
+            }
+
+            initializeWebSocket() {
+            // Initialize WebSocket with authentication
+            const wsProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsHost = location.hostname === 'localhost' ? 'localhost:8000' : location.host;
+            this.ws = new WebSocket(`${wsProtocol}//${wsHost}/ws?token=${this.token}`);                this.ws.onmessage = (event) => {
+                    const data = JSON.parse(event.data);
+                    this.handleWebSocketMessage(data);
+                };
+
+                this.ws.onerror = (error) => {
+                    console.error('WebSocket error:', error);
+                };
+            }
+
+            handleWebSocketMessage(data) {
+                switch (data.type) {
+                    case 'training_event':
+                        this.updateTrainingStatus(data);
+                        break;
+                    case 'system_event':
+                        this.logAdminActivity(data);
+                        break;
+                    case 'threat_detected':
+                        this.updateThreatCount();
+                        break;
+                }
+            }
+
+            async loadDashboardData() {
+                try {
+                    // Load training status
+                    const trainingResponse = await this.authenticatedFetch('/api/training/status');
+                    if (trainingResponse.ok) {
+                        const trainingData = await trainingResponse.json();
+                        this.updateTrainingDisplay(trainingData);
+                    }
+
+                    // Load recent threats
+                    const threatsResponse = await this.authenticatedFetch('/api/threats/recent?limit=5');
+                    if (threatsResponse.ok) {
+                        const threatsData = await threatsResponse.json();
+                        this.updateThreatsCount(threatsData.total || 0);
+                    }
+                } catch (error) {
+                    console.error('Error loading dashboard data:', error);
+                }
+            }
+
+            async authenticatedFetch(url, options = {}) {
+                // Use relative URLs so they work with any domain
+                const apiUrl = url.startsWith('/') ? url : `/${url}`;
+                return fetch(apiUrl, {
+                    ...options,
+                    headers: {
+                        ...options.headers,
+                        'Authorization': `Bearer ${this.token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+            }
+
+            updateTrainingDisplay(data) {
+                const activeCount = data.active_agents || 0;
+                document.getElementById('activeAgentsCount').textContent = activeCount;
+            }
+
+            updateThreatsCount(count) {
+                document.getElementById('threatsBlocked').textContent = count;
+            }
+
+            logAdminActivity(data) {
+                const logContainer = document.getElementById('adminActivityLog');
+                const activityItem = document.createElement('div');
+                activityItem.className = 'activity-item';
+                activityItem.innerHTML = `
+                    <div class="activity-time">${new Date(data.timestamp).toLocaleTimeString()}</div>
+                    <div class="activity-description">
+                        <strong>${data.user}</strong> ${data.action}
+                    </div>
+                `;
+                logContainer.insertBefore(activityItem, logContainer.firstChild);
+                
+                // Keep only the last 10 items
+                while (logContainer.children.length > 10) {
+                    logContainer.removeChild(logContainer.lastChild);
+                }
+            }
+
+            redirectToLogin() {
+                localStorage.removeItem('guardian_token');
+                localStorage.removeItem('guardian_user');
+                window.location.href = '/admin';
+            }
+        }
+
+        // Global logout function
+        function secureLogout() {
+            if (confirm('Are you sure you want to log out?')) {
+                localStorage.removeItem('guardian_token');
+                localStorage.removeItem('guardian_user');
+                window.location.href = '/admin';
+            }
+        }
+
+        // Initialize secure dashboard
+        document.addEventListener('DOMContentLoaded', () => {
+            new SecureAdminDashboard();
+        });
+
+        // Security: Auto-logout on token expiration
+        setInterval(() => {
+            const token = localStorage.getItem('guardian_token');
+            if (!token) {
+                window.location.href = '/admin';
+            }
+        }, 60000); // Check every minute
+    </script>
+</body>
+</html>

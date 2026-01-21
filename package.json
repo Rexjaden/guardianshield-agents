@@ -29,6 +29,8 @@
   },
   "dependencies": {
     "@chainlink/contracts": "^1.5.0",
+    "@openzeppelin/contracts-upgradeable": "^5.4.0",
+    "@openzeppelin/hardhat-upgrades": "^3.9.1",
     "cors": "^2.8.5",
     "dotenv": "^16.6.1",
     "express": "^4.22.1",

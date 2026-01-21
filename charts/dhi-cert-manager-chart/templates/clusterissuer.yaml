@@ -1,0 +1,51 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: {{ include "dhi-cert-manager.fullname" . }}-letsencrypt-prod
+  labels:
+    {{- include "dhi-cert-manager.labels" . | nindent 4 }}
+    environment: production
+  annotations:
+    cert-manager.io/priority: "100"
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: {{ .Values.letsEncrypt.production.email }}
+    privateKeySecretRef:
+      name: letsencrypt-prod-account-key
+    solvers:
+    {{- include "dhi-cert-manager.dnsChallengeSolver" . | nindent 4 }}
+    enableDurationFeature: true
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: {{ include "dhi-cert-manager.fullname" . }}-letsencrypt-staging
+  labels:
+    {{- include "dhi-cert-manager.labels" . | nindent 4 }}
+    environment: staging
+  annotations:
+    cert-manager.io/priority: "50"
+spec:
+  acme:
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    email: {{ .Values.letsEncrypt.staging.email }}
+    privateKeySecretRef:
+      name: letsencrypt-staging-account-key
+    solvers:
+    {{- include "dhi-cert-manager.dnsChallengeSolver" . | nindent 4 }}
+    enableDurationFeature: true
+{{- if .Values.certificates.selfSigned.enabled }}
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: {{ include "dhi-cert-manager.fullname" . }}-selfsigned
+  labels:
+    {{- include "dhi-cert-manager.labels" . | nindent 4 }}
+    environment: development
+  annotations:
+    cert-manager.io/priority: "10"
+spec:
+  selfSigned: {}
+{{- end }}
