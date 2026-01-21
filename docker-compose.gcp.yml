@@ -25,6 +25,9 @@ services:
       dockerfile: Dockerfile.shield-openresty
     ports:
       - "8080:80"
+    volumes:
+      # Mount the static files so Cloud Shell (port 8080) can see them
+      - ./www:/var/www/html
     restart: always
     networks:
       - shield-cloud-network
