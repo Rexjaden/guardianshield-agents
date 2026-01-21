@@ -43,11 +43,11 @@
     
     # Route to 3D API backend for WebSocket and graphics
     @api path /api/*
-    reverse_proxy @api shield-3d-api:9000
+    reverse_proxy @api guardianshield-api-gcp:8000
     
     # WebSocket proxy for real-time 3D graphics
     @ws path /ws*
-    reverse_proxy @ws shield-3d-api:9000 {
+    reverse_proxy @ws guardianshield-api-gcp:8000 {
         header_up Upgrade {>Upgrade}
         header_up Connection {>Connection}
         header_up Host {host}

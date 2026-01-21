@@ -1,0 +1,293 @@
+{
+  "timestamp": "2026-01-21T06:33:46.832693",
+  "files_cleaned": [
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\asn1crypto\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\attr\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\cbor2\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\cryptography\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\cryptography\\hazmat\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\cryptography\\hazmat\\bindings\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\fido2\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\fido2\\attestation\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\fido2\\client\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\fido2\\ctap2\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\fido2\\hid\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\jwt\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\OpenSSL\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pip\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pip\\_internal\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pip\\_internal\\cli\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pip\\_internal\\commands\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pip\\_internal\\distributions\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pip\\_internal\\index\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pip\\_internal\\locations\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pip\\_internal\\metadata\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pip\\_internal\\metadata\\importlib\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pip\\_internal\\models\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pip\\_internal\\network\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pip\\_internal\\operations\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pip\\_internal\\operations\\build\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pip\\_internal\\operations\\install\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pip\\_internal\\req\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pip\\_internal\\resolution\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pip\\_internal\\resolution\\resolvelib\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pip\\_internal\\utils\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pip\\_internal\\vcs\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pip\\_vendor\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pip\\_vendor\\cachecontrol\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pip\\_vendor\\cachecontrol\\caches\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pip\\_vendor\\certifi\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pip\\_vendor\\dependency_groups\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pip\\_vendor\\distlib\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pip\\_vendor\\idna\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pip\\_vendor\\msgpack\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pip\\_vendor\\packaging\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pip\\_vendor\\platformdirs\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pip\\_vendor\\pygments\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pip\\_vendor\\pygments\\filters\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pip\\_vendor\\pygments\\lexers\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pip\\_vendor\\pygments\\styles\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pip\\_vendor\\pyproject_hooks\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pip\\_vendor\\pyproject_hooks\\_in_process\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pip\\_vendor\\requests\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pip\\_vendor\\resolvelib\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pip\\_vendor\\resolvelib\\resolvers\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pip\\_vendor\\rich\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pip\\_vendor\\truststore\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pip\\_vendor\\urllib3\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pip\\_vendor\\urllib3\\contrib\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pip\\_vendor\\urllib3\\packages\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pip\\_vendor\\urllib3\\util\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pydantic\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pydantic\\deprecated\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pydantic\\experimental\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pydantic\\plugin\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pydantic\\v1\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pydantic\\_internal\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pydantic_core\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\starlette\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\starlette\\middleware\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\uvicorn\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\uvicorn\\lifespan\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\uvicorn\\loops\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\uvicorn\\middleware\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\uvicorn\\protocols\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\uvicorn\\protocols\\http\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\uvicorn\\protocols\\websockets\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\uvicorn\\supervisors\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\webauthn\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\webauthn\\authentication\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\webauthn\\helpers\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\webauthn\\helpers\\asn1\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\webauthn\\helpers\\tpm\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\webauthn\\registration\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\webauthn\\registration\\formats\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\win32\\lib\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\_distutils_hack\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\agents\\__pycache__",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\_cbor2.cp311-win_amd64.pyd",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\.venv\\Lib\\site-packages\\pydantic_core\\_pydantic_core.cp311-win_amd64.pyd",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\Dockerfile.backup",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\contracts\\GuardianShieldOracle.sol.backup",
+    "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\node_modules\\fp-ts\\rules\\.DS_Store"
+  ],
+  "space_freed": 10010655,
+  "databases_optimized": [
+    {
+      "database": "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\agent_education_validation.db",
+      "size_before": 12288,
+      "size_after": 12288,
+      "space_saved": 0
+    },
+    {
+      "database": "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\agent_forms.db",
+      "size_before": 12288,
+      "size_after": 12288,
+      "space_saved": 0
+    },
+    {
+      "database": "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\agent_memory.db",
+      "size_before": 12288,
+      "size_after": 12288,
+      "space_saved": 0
+    },
+    {
+      "database": "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\analytics.db",
+      "size_before": 12288,
+      "size_after": 12288,
+      "space_saved": 0
+    },
+    {
+      "database": "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\behavioral_analysis.db",
+      "size_before": 12288,
+      "size_after": 12288,
+      "space_saved": 0
+    },
+    {
+      "database": "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\community_portal.db",
+      "size_before": 12288,
+      "size_after": 12288,
+      "space_saved": 0
+    },
+    {
+      "database": "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\criminal_intelligence.db",
+      "size_before": 12288,
+      "size_after": 12288,
+      "space_saved": 0
+    },
+    {
+      "database": "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\dmer_registry.db",
+      "size_before": 12288,
+      "size_after": 12288,
+      "space_saved": 0
+    },
+    {
+      "database": "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\external_threats.db",
+      "size_before": 12288,
+      "size_after": 12288,
+      "space_saved": 0
+    },
+    {
+      "database": "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\flare_network.db",
+      "size_before": 12288,
+      "size_after": 12288,
+      "space_saved": 0
+    },
+    {
+      "database": "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\genetic_evolution.db",
+      "size_before": 12288,
+      "size_after": 12288,
+      "space_saved": 0
+    },
+    {
+      "database": "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\graphics_engine.db",
+      "size_before": 12288,
+      "size_after": 12288,
+      "space_saved": 0
+    },
+    {
+      "database": "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\guardian_audit.db",
+      "size_before": 12288,
+      "size_after": 12288,
+      "space_saved": 0
+    },
+    {
+      "database": "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\guard_purchases.db",
+      "size_before": 12288,
+      "size_after": 12288,
+      "space_saved": 0
+    },
+    {
+      "database": "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\learning_history.db",
+      "size_before": 12288,
+      "size_after": 12288,
+      "space_saved": 0
+    },
+    {
+      "database": "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\multichain_hub.db",
+      "size_before": 12288,
+      "size_after": 12288,
+      "space_saved": 0
+    },
+    {
+      "database": "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\multichain_security.db",
+      "size_before": 12288,
+      "size_after": 12288,
+      "space_saved": 0
+    },
+    {
+      "database": "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\nft_builder.db",
+      "size_before": 12288,
+      "size_after": 12288,
+      "space_saved": 0
+    },
+    {
+      "database": "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\pattern_recognition.db",
+      "size_before": 12288,
+      "size_after": 12288,
+      "space_saved": 0
+    },
+    {
+      "database": "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\payment_gateway.db",
+      "size_before": 12288,
+      "size_after": 12288,
+      "space_saved": 0
+    },
+    {
+      "database": "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\remaining_agents_education.db",
+      "size_before": 12288,
+      "size_after": 12288,
+      "space_saved": 0
+    },
+    {
+      "database": "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\revenue_tracking.db",
+      "size_before": 12288,
+      "size_after": 12288,
+      "space_saved": 0
+    },
+    {
+      "database": "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\security_orchestration.db",
+      "size_before": 12288,
+      "size_after": 12288,
+      "space_saved": 0
+    },
+    {
+      "database": "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\shield_serial_numbers.db",
+      "size_before": 28672,
+      "size_after": 28672,
+      "space_saved": 0
+    },
+    {
+      "database": "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\staking.db",
+      "size_before": 12288,
+      "size_after": 12288,
+      "space_saved": 0
+    },
+    {
+      "database": "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\threat_intelligence.db",
+      "size_before": 12288,
+      "size_after": 12288,
+      "space_saved": 0
+    },
+    {
+      "database": "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\tokenomics.db",
+      "size_before": 12288,
+      "size_after": 12288,
+      "space_saved": 0
+    },
+    {
+      "database": "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\treasury_management.db",
+      "size_before": 12288,
+      "size_after": 12288,
+      "space_saved": 0
+    },
+    {
+      "database": "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\web3_intelligence.db",
+      "size_before": 12288,
+      "size_after": 12288,
+      "space_saved": 0
+    }
+  ],
+  "logs_archived": [
+    {
+      "original": "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\memory_optimization.log",
+      "archived_to": "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\archives\\memory_optimization_20260113.gz",
+      "size_freed": 1596
+    },
+    {
+      "original": "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\agent_action_log.jsonl",
+      "archived_to": "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\archives\\agent_action_log_20260113.gz",
+      "size_freed": 3542665
+    },
+    {
+      "original": "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\agent_evolution_log.jsonl",
+      "archived_to": "C:\\Users\\rexxr\\Documents\\GitHub\\guardianshield-agents\\archives\\agent_evolution_log_20260113.gz",
+      "size_freed": 579773
+    }
+  ],
+  "errors": []
+}

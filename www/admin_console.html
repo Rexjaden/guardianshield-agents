@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GuardianShield Admin Console</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00f2ff;
+            --secondary: #0088ff;
+            --danger: #ff4444;
+            --success: #00ff88;
+            --dark: #0a0f1c;
+            --panel: #151f32;
+            --text: #e0e6ed;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--dark);
+            color: var(--text);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Login Screen */
+        #login-screen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: radial-gradient(circle at center, #1a2a40 0%, #0a0f1c 100%);
+        }
+
+        .login-box {
+            background: var(--panel);
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            border: 1px solid rgba(0, 242, 255, 0.2);
+        }
+
+        .login-logo {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #8899a6;
+            font-size: 0.9rem;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 0.8rem;
+            background: #0a0f1c;
+            border: 1px solid #2c3e50;
+            border-radius: 6px;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(0, 242, 255, 0.2);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(90deg, var(--secondary), var(--primary));
+            border: none;
+            border-radius: 6px;
+            color: black;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Dashboard */
+        #dashboard {
+            display: none; /* Hidden by default */
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        header {
+            background: var(--panel);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #2c3e50;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .header-actions button {
+            background: transparent;
+            border: 1px solid var(--danger);
+            color: var(--danger);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        aside {
+            background: #0d1424;
+            border-right: 1px solid #2c3e50;
+            padding: 1rem;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.8rem;
+            color: #8899a6;
+            cursor: pointer;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(0, 242, 255, 0.1);
+            color: var(--primary);
+        }
+
+        .content-panel {
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .grid-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--panel);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid #2c3e50;
+        }
+
+        .stat-card h3 {
+            color: #8899a6;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .stat-card.success .value { color: var(--success); }
+        .stat-card.warning .value { color: #ffbb33; }
+        .stat-card.danger .value { color: var(--danger); }
+
+        .log-console {
+            background: #000;
+            border: 1px solid #333;
+            border-radius: 6px;
+            padding: 1rem;
+            height: 400px;
+            overflow-y: auto;
+            font-family: 'Consolas', monospace;
+            font-size: 0.9rem;
+            color: #00ff00;
+        }
+
+        .log-entry {
+            margin-bottom: 0.5rem;
+            border-bottom: 1px solid #111;
+            padding-bottom: 0.25rem;
+        }
+        
+        .log-time { color: #888; margin-right: 10px; }
+        .log-info { color: #00ccff; }
+        .log-warn { color: #ffcc00; }
+        .log-error { color: #ff3333; }
+
+        .error-msg {
+            color: var(--danger);
+            margin-top: 1rem;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LOGIN SCREEN -->
+    <div id="login-screen">
+        <div class="login-box">
+            <div class="login-logo">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <h2>GuardianShield Console</h2>
+            <p style="color:#8899a6; margin-bottom: 1.5rem;">Secure Admin Access</p>
+            
+            <form id="login-form">
+                <div class="input-group">
+                    <label>Username</label>
+                    <input type="text" id="username" placeholder="Enter username" required>
+                </div>
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" id="password" placeholder="Enter password" required>
+                </div>
+                <button type="submit" class="btn-login">LOGIN</button>
+                <div class="error-msg" id="login-error">Invalid credentials</div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MAIN DASHBOARD -->
+    <div id="dashboard" style="display: none;">
+        <header>
+            <div class="logo-area">
+                <i class="fas fa-shield-alt" style="color: var(--primary);"></i>
+                GuardianShield Admin
+            </div>
+            <div class="header-actions">
+                <span id="user-display" style="margin-right: 1rem; color: #8899a6;">Admin</span>
+                <button onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <aside>
+                <div class="nav-item active">
+                    <i class="fas fa-tachometer-alt"></i> Overview
+                </div>
+                <div class="nav-item">
+                    <i class="fas fa-robot"></i> Agents
+                </div>
+                <div class="nav-item">
+                    <i class="fas fa-shield-virus"></i> Security
+                </div>
+                <div class="nav-item">
+                    <i class="fas fa-database"></i> Logs
+                </div>
+            </aside>
+
+            <div class="content-panel">
+                <div class="grid-stats">
+                    <div class="stat-card success">
+                        <h3>System Status</h3>
+                        <div class="value">ONLINE</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Active Agents</h3>
+                        <div class="value" id="active-agents">5</div>
+                    </div>
+                    <div class="stat-card warning">
+                        <h3>Security Events (24h)</h3>
+                        <div class="value" id="security-events">12</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Uptime</h3>
+                        <div class="value">4d 12h</div>
+                    </div>
+                </div>
+
+                <h3 style="margin-bottom: 1rem;">Live System Logs</h3>
+                <div class="log-console" id="console-logs">
+                    <div class="log-entry"><span class="log-time">10:42:01</span> <span class="log-info">[INFO]</span> System initialized successfully.</div>
+                    <div class="log-entry"><span class="log-time">10:42:05</span> <span class="log-info">[INFO]</span> Connecting to Guardian API...</div>
+                    <div class="log-entry"><span class="log-time">10:42:06</span> <span class="log-info">[INFO]</span> Agents reporting healthy status.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = '/api';
+
+        // Check Login Status
+        function checkAuth() {
+            const token = localStorage.getItem('guardian_token');
+            if (token) {
+                showDashboard();
+            }
+        }
+
+        // Show Dashboard
+        function showDashboard() {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'flex';
+            fetchStats();
+            setInterval(fetchStats, 30000); // Specific refresh every 30s
+        }
+
+        // Login Handler
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorMsg = document.getElementById('login-error');
+
+            try {
+                const response = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    localStorage.setItem('guardian_token', data.access_token);
+                    document.getElementById('user-display').innerText = username;
+                    showDashboard();
+                } else {
+                    errorMsg.style.display = 'block';
+                    errorMsg.textContent = 'Invalid credentials or access denied.';
+                }
+            } catch (err) {
+                errorMsg.style.display = 'block';
+                errorMsg.textContent = 'Connection error. Check API server.';
+                console.error(err);
+            }
+        });
+
+        // Logout
+        function logout() {
+            localStorage.removeItem('guardian_token');
+            location.reload();
+        }
+
+        // Mock/Real Data Fetcher
+        async function fetchStats() {
+            const token = localStorage.getItem('guardian_token');
+            if (!token) return;
+
+            try {
+                // Try to get real status
+                const response = await fetch(`${API_URL}/security/status`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('security-events').innerText = data.blocked_ips.length || 0;
+                    
+                    // Add log
+                    addLog(`[INFO] Security Status: Active. Blocked IPs: ${data.blocked_ips.length}`, 'info');
+                }
+            } catch (e) {
+                console.log("Running in demo mode or API offline");
+            }
+        }
+
+        function addLog(msg, type='info') {
+            const consoleDiv = document.getElementById('console-logs');
+            const time = new Date().toLocaleTimeString();
+            const div = document.createElement('div');
+            div.className = 'log-entry';
+            div.innerHTML = `<span class="log-time">${time}</span> <span class="log-${type}">[${type.toUpperCase()}]</span> ${msg}`;
+            consoleDiv.prepend(div);
+        }
+
+        // Initialize
+        checkAuth();
+    </script>
+</body>
+</html>
