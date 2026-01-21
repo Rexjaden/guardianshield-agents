@@ -19,18 +19,27 @@ class AdminAuth:
     def __init__(self):
         self.active_sessions: Dict[str, Dict] = {}
         self.failed_attempts: Dict[str, List[float]] = {}
-        self.admin_keys = {
-            "GUARDIAN_ADMIN_2025": {
+        
+        # Load keys from environment variables only - NO HARDCODED DEFAULTS
+        import os
+        master_key = os.getenv("GUARDIAN_MASTER_KEY")
+        monitor_key = os.getenv("GUARDIAN_MONITOR_KEY")
+        
+        self.admin_keys = {}
+        
+        if master_key:
+            self.admin_keys[master_key] = {
                 "level": "full",
                 "permissions": ["agent_control", "3d_visualization", "monitoring", "evolution", "console"],
                 "expires": None
-            },
-            "gs_admin_secure": {
+            }
+            
+        if monitor_key:
+            self.admin_keys[monitor_key] = {
                 "level": "monitoring",
                 "permissions": ["monitoring", "3d_visualization"],
                 "expires": None
             }
-        }
         
         # Security settings
         self.max_failed_attempts = 3

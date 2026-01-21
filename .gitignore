@@ -96,3 +96,5 @@ Thumbs.db
 .#*
 .*.swp
 .*.swo
+
+.guardian_authorized_users.json

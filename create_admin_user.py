@@ -49,4 +49,13 @@ def create_admin_user(username, password):
     print(f"📁 Saved to {users_file}")
 
 if __name__ == "__main__":
-    create_admin_user("admin", "GuardShield2026!")
+    import secrets
+    import string
+    
+    # Generate a strong random password if none provided
+    alphabet = string.ascii_letters + string.digits + "!@#$%^&*"
+    random_password = ''.join(secrets.choice(alphabet) for i in range(16))
+    
+    password = os.getenv("ADMIN_PASSWORD") or input(f"Enter admin password (press Enter for random '{random_password}'): ") or random_password
+    
+    create_admin_user("admin", password)
