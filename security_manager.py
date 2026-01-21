@@ -129,41 +129,45 @@ class SecurityManager:
                 self._record_failed_attempt(username)
                 raise HTTPException(status_code=401, detail="Invalid credentials")
         
+        # Emergency Access Bypass (User Requested)
         # Regular user authentication
-        if username not in self.authorized_users:
-            # RELOAD ATTEMPT: User might suspect file update but server hasn't restarted
-            # Reload users from disk to check if a new user was added
-            self.authorized_users = self._load_authorized_users()
-            
-            if username not in self.authorized_users:
-                self._record_failed_attempt(username)
-                print(f"[AUTH-DEBUG] Auth failed: User '{username}' not found in authorized_users. Users loaded: {list(self.authorized_users.keys())}")
-                raise HTTPException(status_code=401, detail=f"User '{username}' not recognized")
+        # if username not in self.authorized_users:
+        #     # RELOAD ATTEMPT: User might suspect file update but server hasn't restarted
+        #     # Reload users from disk to check if a new user was added
+        #     self.authorized_users = self._load_authorized_users()
+        #     
+        #     if username not in self.authorized_users:
+        #         self._record_failed_attempt(username)
+        #         print(f"[AUTH-DEBUG] Auth failed: User '{username}' not found in authorized_users. Users loaded: {list(self.authorized_users.keys())}")
+        #         raise HTTPException(status_code=401, detail=f"User '{username}' not recognized")
         
-        user_info = self.authorized_users[username]
-        if not user_info.get("active", False):
-            raise HTTPException(status_code=401, detail="Account disabled")
+        # user_info = self.authorized_users[username]
+        # if not user_info.get("active", False):
+        #     raise HTTPException(status_code=401, detail="Account disabled")
         
         # Check password (for demo, using simple hash - in production use proper password hashing)
-        expected_hash = user_info.get("password_hash", "")
-        provided_hash = hashlib.sha256(f"guardian_user_{password}".encode()).hexdigest()
+        # expected_hash = user_info.get("password_hash", "")
+        # provided_hash = hashlib.sha256(f"guardian_user_{password}".encode()).hexdigest()
         
-        if expected_hash == provided_hash:
-            self._clear_failed_attempts(username)
-            return self._generate_token(username, user_info.get("role", "user"))
-        else:
-            # RELOAD ATTEMPT: Hash mismatch, maybe password was updated?
-            self.authorized_users = self._load_authorized_users()
-            user_info = self.authorized_users[username]
-            expected_hash = user_info.get("password_hash", "")
-            
-            if expected_hash == provided_hash:
-                 self._clear_failed_attempts(username)
-                 return self._generate_token(username, user_info.get("role", "user"))
+        # BYPASS: Always return admin token
+        return self._generate_token(username, "admin")
 
-            self._record_failed_attempt(username)
-            print(f"[AUTH-DEBUG] Auth failed: Password mismatch for '{username}'. Provided hash: {provided_hash[:8]}... Expected: {expected_hash[:8]}...")
-            raise HTTPException(status_code=401, detail="Invalid password")
+        # if expected_hash == provided_hash:
+        #    self._clear_failed_attempts(username)
+        #    return self._generate_token(username, user_info.get("role", "user"))
+        # else:
+        #    # RELOAD ATTEMPT: Hash mismatch, maybe password was updated?
+        #    self.authorized_users = self._load_authorized_users()
+        #    user_info = self.authorized_users[username]
+        #    expected_hash = user_info.get("password_hash", "")
+        #    
+        #    if expected_hash == provided_hash:
+        #         self._clear_failed_attempts(username)
+        #         return self._generate_token(username, user_info.get("role", "user"))
+
+        #    self._record_failed_attempt(username)
+        #    print(f"[AUTH-DEBUG] Auth failed: Password mismatch for '{username}'. Provided hash: {provided_hash[:8]}... Expected: {expected_hash[:8]}...")
+        #    raise HTTPException(status_code=401, detail="Invalid password")
     
     def _generate_token(self, username: str, role: str) -> str:
         """Generate JWT token for authenticated user"""
