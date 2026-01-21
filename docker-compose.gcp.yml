@@ -15,6 +15,8 @@ services:
     environment:
       - SHIELD_TOKEN_DOMAIN=${SHIELD_TOKEN_DOMAIN:-guardian-shield.io}
     restart: always
+    networks:
+      - shield-cloud-network
 
   # OpenResty (Backend Logic)
   shield-openresty-gcp:
@@ -24,19 +26,119 @@ services:
     ports:
       - "8080:80"
     restart: always
+    networks:
+      - shield-cloud-network
 
   # API Server (Core Logic)
   guardianshield-api-gcp:
     build:
       context: .
       dockerfile: Dockerfile.api
+    ports:
+      - "8000:8000"
     environment:
       - ENVIRONMENT=production
       - GOOGLE_CLOUD_PROJECT=true
+      - DATABASE_URL=postgresql://postgres:password@postgres-gcp:5432/guardianshield
+      - REDIS_URL=redis://redis-gcp:6379
+    volumes:
+      - ./agent_logs:/app/logs
+    depends_on:
+      - postgres-gcp
+      - redis-gcp
     restart: always
+    networks:
+      - shield-cloud-network
+
+  # Learning Agent
+  learning-agent-gcp:
+    build:
+      context: .
+      dockerfile: Dockerfile.agent
+    environment:
+      - AGENT_TYPE=learning
+      - API_SERVER_URL=http://guardianshield-api-gcp:8000
+    volumes:
+      - ./agent_evolution_log.jsonl:/app/evolution_log.jsonl
+      - ./agent_decision_log.jsonl:/app/decision_log.jsonl
+    depends_on:
+      - guardianshield-api-gcp
+    restart: always
+    networks:
+      - shield-cloud-network
+
+  # Behavioral Analytics Agent
+  behavioral-agent-gcp:
+    build:
+      context: .
+      dockerfile: Dockerfile.agent
+    environment:
+      - AGENT_TYPE=behavioral
+      - API_SERVER_URL=http://guardianshield-api-gcp:8000
+    depends_on:
+      - guardianshield-api-gcp
+    restart: always
+    networks:
+      - shield-cloud-network
+
+  # DMER Monitor Agent
+  dmer-agent-gcp:
+    build:
+      context: .
+      dockerfile: Dockerfile.agent
+    environment:
+      - AGENT_TYPE=dmer
+      - API_SERVER_URL=http://guardianshield-api-gcp:8000
+      - WEB3_PROVIDER_URL=${WEB3_PROVIDER_URL}
+    depends_on:
+      - guardianshield-api-gcp
+    restart: always
+    networks:
+      - shield-cloud-network
+
+  # Postgres Database
+  postgres-gcp:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB=guardianshield
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - postgres_data_gcp:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: always
+    networks:
+      - shield-cloud-network
 
   # Redis (Caching)
   redis-gcp:
     image: redis:7-alpine
     command: redis-server --appendonly yes
+    volumes:
+      - redis_data_gcp:/data
     restart: always
+    networks:
+      - shield-cloud-network
+
+  # Security Scanner
+  security-scanner-gcp:
+    build:
+      context: .
+      dockerfile: Dockerfile.security
+    environment:
+      - SCAN_TARGET=guardianshield-api-gcp:8000
+    depends_on:
+      - guardianshield-api-gcp
+    restart: always
+    networks:
+      - shield-cloud-network
+
+volumes:
+  caddy_data:
+  caddy_config:
+  postgres_data_gcp:
+  redis_data_gcp:
+
+networks:
+  shield-cloud-network:
+    driver: bridge
