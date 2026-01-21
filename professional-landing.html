@@ -12,6 +12,37 @@
     <script src="https://unpkg.com/@walletconnect/web3-provider@1.8.0/dist/umd/index.min.js"></script>
     <script src="https://unpkg.com/@coinbase/wallet-sdk@3.7.1/dist/index.js"></script>
     <script src="frontend/js/token-sale.js"></script>
+    
+    <!-- Admin Console Access -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const adminDiv = document.createElement("div");
+            adminDiv.style.cssText = "position: fixed; bottom: 20px; right: 20px; z-index: 9999;";
+            adminDiv.innerHTML = `
+                <a href="admin_console.html" style="
+                    background: rgba(10, 15, 28, 0.9);
+                    color: #00f2ff;
+                    padding: 12px 18px;
+                    border-radius: 8px;
+                    text-decoration: none;
+                    font-size: 13px;
+                    font-family: 'Segoe UI', sans-serif;
+                    font-weight: bold;
+                    border: 1px solid rgba(0, 242, 255, 0.4);
+                    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+                    backdrop-filter: blur(5px);
+                    transition: all 0.3s;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                " onmouseover="this.style.background='rgba(0, 242, 255, 0.15)'; this.style.boxShadow='0 0 15px rgba(0, 242, 255, 0.4)';" onmouseout="this.style.background='rgba(10, 15, 28, 0.9)'; this.style.boxShadow='0 4px 15px rgba(0, 0, 0, 0.5)';">
+                    <i class="fas fa-shield-alt"></i> ADMIN CONSOLE
+                </a>
+            `;
+            document.body.appendChild(adminDiv);
+        });
+    </script>
+    
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         .hidden { display: none !important; }
