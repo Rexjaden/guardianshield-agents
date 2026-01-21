@@ -236,17 +236,23 @@
             <div class="login-logo">
                 <i class="fas fa-shield-alt"></i>
             </div>
+            <!-- BYPASS ACTIVE INDICATOR -->
+            <div style="background: rgba(46, 204, 113, 0.2); color: #2ecc71; padding: 10px; border-radius: 4px; margin-bottom: 20px; font-size: 0.9em; border: 1px solid #2ecc71;">
+                <i class="fas fa-unlock"></i> <strong>EMERGENCY OVERRIDE ACTIVE</strong><br>
+                Authentication checks disabled.
+            </div>
+
             <h2>GuardianShield Console</h2>
             <p style="color:#8899a6; margin-bottom: 1.5rem;">Secure Admin Access</p>
             
             <form id="login-form">
                 <div class="input-group">
                     <label>Username</label>
-                    <input type="text" id="username" placeholder="Enter username" required>
+                    <input type="text" id="username" value="admin" required>
                 </div>
                 <div class="input-group">
                     <label>Password</label>
-                    <input type="password" id="password" placeholder="Enter password" required>
+                    <input type="password" id="password" value="override_active" placeholder="Enter anything..." required>
                 </div>
                 <button type="submit" class="btn-login">LOGIN</button>
                 <div class="error-msg" id="login-error">Invalid credentials</div>
