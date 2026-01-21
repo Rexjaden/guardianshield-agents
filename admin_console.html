@@ -321,6 +321,7 @@
 
     <script>
         const API_URL = '/api';
+        let isDemoMode = false;
 
         // Check Login Status
         function checkAuth() {
@@ -330,13 +331,22 @@
             }
         }
 
+        function startDemoMode() {
+            isDemoMode = true;
+            document.getElementById('user-display').innerText = 'Demo Admin';
+            showDashboard();
+            addLog("System starting in DEMO / OFFLINE mode...", "warn");
+            addLog("Connected to simulated neural core.", "info");
+        }
+
         // Show Dashboard
         function showDashboard() {
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('dashboard').style.display = 'flex';
             fetchStats();
-            setInterval(fetchStats, 30000); // Specific refresh every 30s
+            setInterval(fetchStats, 3000); // 3s refresh for faster demo feel
         }
+
 
         // Login Handler
         document.getElementById('login-form').addEventListener('submit', async (e) => {
@@ -384,6 +394,24 @@
 
         // Mock/Real Data Fetcher
         async function fetchStats() {
+            if (isDemoMode) {
+                // Simulate activity for Demo Mode
+                document.getElementById('security-events').innerText = Math.floor(Math.random() * 50) + 120;
+                
+                // Randomly add logs
+                if (Math.random() > 0.7) {
+                    const actions = [
+                        "Analyzing behavioral pattern #8821...",
+                        "Blocked suspicious IP from 192.168.x.x",
+                        "Neural network weight updated (delta: 0.002)",
+                        "DMER Registry sync complete.",
+                        "Interceptor active on port 8080."
+                    ];
+                    addLog(actions[Math.floor(Math.random() * actions.length)], Math.random() > 0.9 ? 'warn' : 'info');
+                }
+                return;
+            }
+
             const token = localStorage.getItem('guardian_token');
             if (!token) return;
 
@@ -398,7 +426,7 @@
                     document.getElementById('security-events').innerText = data.blocked_ips.length || 0;
                     
                     // Add log
-                    addLog(`[INFO] Security Status: Active. Blocked IPs: ${data.blocked_ips.length}`, 'info');
+                   // addLog(`[INFO] Security Status: Active. Blocked IPs: ${data.blocked_ips.length}`, 'info');
                 }
             } catch (e) {
                 console.log("Running in demo mode or API offline");
