@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  # Caddy Web Server (The Front Door)
+  shield-caddy-gcp:
+    image: caddy:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - ./www:/srv
+      - ./caddy_data:/data
+      - ./caddy_config:/config
+    environment:
+      - SHIELD_TOKEN_DOMAIN=${SHIELD_TOKEN_DOMAIN:-guardian-shield.io}
+    restart: always
+
+  # OpenResty (Backend Logic)
+  shield-openresty-gcp:
+    build:
+      context: .
+      dockerfile: Dockerfile.shield-openresty
+    ports:
+      - "8080:80"
+    restart: always
+
+  # API Server (Core Logic)
+  guardianshield-api-gcp:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    environment:
+      - ENVIRONMENT=production
+      - GOOGLE_CLOUD_PROJECT=true
+    restart: always
+
+  # Redis (Caching)
+  redis-gcp:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes
+    restart: always
