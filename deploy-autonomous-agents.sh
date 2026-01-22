@@ -150,16 +150,46 @@ if __name__ == "__main__":
     swarm.start()
 EOF
 
-# 5. Run the Swarm
-echo "⚡ Starting Agents in Background..."
-nohup python3 autonomous_swarm.py > agent_activity.log 2>&1 &
-PID=$!
+# 5. Create Dockerfile
+echo "🐳 Creating Agent Dockerfile..."
+cat << 'EOF' > Dockerfile.agents
+FROM python:3.9-slim
+
+WORKDIR /app
+RUN pip install requests schedule || true
+
+COPY autonomous_swarm.py .
+
+CMD ["python3", "autonomous_swarm.py"]
+EOF
+
+# 6. Build with Docker Buildx
+echo "🏗️  Setting up Docker Buildx..."
+# Initialize buildx if not exists
+if ! docker buildx inspect guardian-builder > /dev/null 2>&1; then
+    docker buildx create --use --name guardian-builder
+else
+    docker buildx use guardian-builder
+fi
+
+echo "🚀 Building Agent Swarm Image (Buildx Accelerated)..."
+docker buildx build --load -t guardianshield-agents-lite -f Dockerfile.agents .
+
+# 7. Run the Swarm
+echo "⚡ Starting Agents Container..."
+CONTAINER_NAME="guardian-agent-swarm"
+docker rm -f $CONTAINER_NAME 2>/dev/null || true
+
+docker run -d \
+    --name $CONTAINER_NAME \
+    --restart unless-stopped \
+    guardianshield-agents-lite
 
 echo ""
 echo "✅ AGENTS DEPLOYED SUCCESSFULLY!"
 echo "---------------------------------------------------"
-echo "🆔 Process ID: $PID"
-echo "📜 View Live Activity: tail -f $(pwd)/agent_activity.log"
+echo "🆔 Container: $CONTAINER_NAME"
+echo "📜 View Logs: docker logs -f $CONTAINER_NAME"
 echo "---------------------------------------------------"
 EOF
 chmod +x deploy-autonomous-agents.sh

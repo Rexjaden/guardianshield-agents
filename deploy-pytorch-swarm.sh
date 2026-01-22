@@ -122,9 +122,17 @@ RUN echo '#!/bin/bash\npython3 pytorch_llm_server.py & python3 advanced_dl_orche
 CMD ["./entrypoint.sh"]
 EOF
 
-# 7. Build and Run
-echo "🏗️ Building Deep Learning Container..."
-docker build -f Dockerfile.pytorch -t guardianshield-pytorch .
+# 7. Build and Run with Buildx
+echo "🏗️  Setting up Docker Buildx..."
+if ! docker buildx inspect guardian-builder > /dev/null 2>&1; then
+    docker buildx create --use --name guardian-builder
+else
+    docker buildx use guardian-builder
+fi
+
+echo "🚀 Building Deep Learning Container (Buildx Accelerated)..."
+# --load brings the buildx image back to the local docker daemon
+docker buildx build --load -t guardianshield-pytorch -f Dockerfile.pytorch .
 
 echo "🚀 Launching PyTorch Swarm..."
 CONTAINER_NAME="guardian-pytorch-core"
