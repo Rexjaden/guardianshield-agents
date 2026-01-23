@@ -1,0 +1,698 @@
+#!/bin/bash
+# 🛡️ GuardianShield Quantum Space Deployer
+# Copy and Paste this ENTIRE text into your Cloud Shell
+
+echo "🌌 Deploying GuardianShield Quantum Space..."
+
+# Deploy HTML
+cat << 'HTML_EOF' > gpu-powered-showcase.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GuardianShield - GPU-Powered Agent Showcase</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: radial-gradient(ellipse at center, #0f1419 0%, #000000 100%);
+            color: #ffffff;
+            font-family: 'Consolas', 'Monaco', monospace;
+            overflow: hidden;
+            cursor: none;
+        }
+
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+        }
+
+        #hud-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .hud-panel {
+            position: absolute;
+            background: linear-gradient(135deg, rgba(0, 212, 170, 0.15), rgba(102, 126, 234, 0.15));
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(0, 212, 170, 0.4);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0, 212, 170, 0.3);
+        }
+
+        .hud-top-left {
+            top: 20px;
+            left: 20px;
+            width: 300px;
+        }
+
+        .hud-top-right {
+            top: 20px;
+            right: 20px;
+            width: 280px;
+        }
+
+        .hud-bottom-left {
+            bottom: 20px;
+            left: 20px;
+            width: 250px;
+        }
+
+        .hud-bottom-right {
+            bottom: 20px;
+            right: 20px;
+            width: 320px;
+        }
+
+        .hud-center {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            text-align: center;
+        }
+
+        .agent-title {
+            font-size: 1.4rem;
+            color: #00d4aa;
+            text-shadow: 0 0 10px rgba(0, 212, 170, 0.8);
+            margin-bottom: 10px;
+        }
+
+        .agent-status {
+            color: #67e8f9;
+            font-size: 0.9rem;
+            margin: 5px 0;
+        }
+
+        .metric-bar {
+            background: rgba(0, 0, 0, 0.5);
+            height: 8px;
+            border-radius: 4px;
+            margin: 8px 0;
+            overflow: hidden;
+            border: 1px solid rgba(0, 212, 170, 0.3);
+        }
+
+        .metric-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00d4aa, #667eea);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 10px rgba(0, 212, 170, 0.6);
+        }
+
+        .scan-line {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00d4aa, transparent);
+            animation: scanline 3s linear infinite;
+        }
+
+        @keyframes scanline {
+            0% { top: -2px; }
+            100% { top: 100%; }
+        }
+
+        .gpu-stats {
+            font-size: 0.8rem;
+            color: #a0a0a0;
+            margin-top: 15px;
+        }
+
+        .gpu-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #00ff00;
+            border-radius: 50%;
+            margin-right: 5px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .custom-cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #00d4aa;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1000;
+            mix-blend-mode: difference;
+            transition: all 0.1s ease;
+        }
+
+        .agent-selector {
+            position: absolute;
+            top: 50%;
+            left: 20px;
+            transform: translateY(-50%);
+            z-index: 15;
+            pointer-events: auto;
+        }
+
+        .agent-button {
+            display: block;
+            background: linear-gradient(135deg, rgba(0, 212, 170, 0.2), rgba(102, 126, 234, 0.2));
+            color: #00d4aa;
+            border: 1px solid rgba(0, 212, 170, 0.5);
+            padding: 12px 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            font-family: inherit;
+            width: 180px;
+        }
+
+        .agent-button:hover {
+            background: linear-gradient(135deg, rgba(0, 212, 170, 0.4), rgba(102, 126, 234, 0.4));
+            transform: translateX(10px);
+            box-shadow: 0 5px 20px rgba(0, 212, 170, 0.4);
+        }
+
+        .agent-button.active {
+            background: linear-gradient(135deg, #00d4aa, #667eea);
+            color: #000;
+            transform: translateX(15px);
+        }
+    </style>
+</head>
+<body>
+    <div id="canvas-container"></div>
+    <div class="custom-cursor" id="cursor"></div>
+    
+    <div id="hud-overlay">
+        <!-- Top Left HUD -->
+        <div class="hud-panel hud-top-left">
+            <!-- Navigation Button -->
+            <div style="margin-bottom: 15px;">
+                <button style="background: rgba(0, 212, 170, 0.2); border: 1px solid #00d4aa; color: #00d4aa; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-family: inherit; font-size: 0.9rem; transition: all 0.3s ease; width: 100%;" 
+                        onclick="window.location.href='http://localhost:8081/professional-landing.html'"
+                        onmouseover="this.style.background='rgba(0, 212, 170, 0.4)'"
+                        onmouseout="this.style.background='rgba(0, 212, 170, 0.2)'">
+                    <i class="fas fa-home"></i> Return to Home
+                </button>
+            </div>
+            
+            <div class="agent-title" id="agent-name">Guardian Sentinel</div>
+            <div class="agent-status">Status: <span style="color: #00ff00;">ACTIVE</span></div>
+            <div class="agent-status">Threat Level: <span style="color: #ffaa00;">MEDIUM</span></div>
+            <div class="agent-status">Response Time: <span style="color: #00d4aa;">0.003ms</span></div>
+            
+            <div style="margin: 15px 0;">
+                <div>Threat Detection: <span style="color: #00d4aa;">98%</span></div>
+                <div class="metric-bar">
+                    <div class="metric-fill" style="width: 98%"></div>
+                </div>
+            </div>
+            
+            <div>
+                <div>Neural Activity: <span style="color: #67e8f9;">94%</span></div>
+                <div class="metric-bar">
+                    <div class="metric-fill" style="width: 94%"></div>
+                </div>
+            </div>
+            
+            <div class="scan-line"></div>
+        </div>
+
+        <!-- Top Right HUD -->
+        <div class="hud-panel hud-top-right">
+            <div class="agent-title">System Performance</div>
+            <div class="agent-status">Quantum Cores: <span style="color: #00d4aa;">8/8 Online</span></div>
+            <div class="agent-status">Memory Usage: <span style="color: #67e8f9;">67%</span></div>
+            <div class="agent-status">Network Load: <span style="color: #ffaa00;">Medium</span></div>
+            
+            <div class="gpu-stats">
+                <div><span class="gpu-indicator"></span>GPU Acceleration: ENABLED</div>
+                <div><span class="gpu-indicator"></span>Ray Tracing: ACTIVE</div>
+                <div><span class="gpu-indicator"></span>DLSS: ON</div>
+                <div><span class="gpu-indicator"></span>FPS: <span id="fps-counter">120</span></div>
+            </div>
+        </div>
+
+        <!-- Bottom Left HUD -->
+        <div class="hud-panel hud-bottom-left">
+            <div class="agent-title">Active Protocols</div>
+            <div class="agent-status">• Deep Scan Protocol</div>
+            <div class="agent-status">• Threat Mitigation</div>
+            <div class="agent-status">• Network Monitoring</div>
+            <div class="agent-status">• Behavioral Analysis</div>
+            <div class="agent-status">• Quantum Encryption</div>
+        </div>
+
+        <!-- Bottom Right HUD -->
+        <div class="hud-panel hud-bottom-right">
+            <div class="agent-title">Dimensional Matrix</div>
+            <div class="agent-status">Reality Layer: <span style="color: #00d4aa;">PRIMARY</span></div>
+            <div class="agent-status">Consciousness: <span style="color: #67e8f9;">ENHANCED</span></div>
+            <div class="agent-status">Temporal Sync: <span style="color: #00ff00;">LOCKED</span></div>
+            <div class="agent-status">Portal Status: <span style="color: #ffaa00;">STANDBY</span></div>
+            
+            <div style="margin-top: 15px;">
+                <div>Matrix Stability: <span style="color: #00d4aa;">96%</span></div>
+                <div class="metric-bar">
+                    <div class="metric-fill" style="width: 96%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Agent Selector -->
+    <div class="agent-selector">
+        <button class="agent-button active" onclick="selectAgent('guardian-sentinel')">Guardian Sentinel</button>
+        <button class="agent-button" onclick="selectAgent('threat-hunter')">Threat Hunter</button>
+        <button class="agent-button" onclick="selectAgent('network-guardian')">Network Guardian</button>
+        <button class="agent-button" onclick="selectAgent('data-sentinel')">Data Sentinel</button>
+        <button class="agent-button" onclick="selectAgent('response-bot')">Response Bot</button>
+        <button class="agent-button" onclick="selectAgent('oracle')">Oracle</button>
+        <button class="agent-button" onclick="selectAgent('deep-scan')">Deep Scan</button>
+    </div>
+
+    <script>
+        // Three.js Scene Setup
+        let scene, camera, renderer, composer;
+        let agentModel, particleSystem, holographicRing;
+        let animationFrameId;
+        let mouseX = 0, mouseY = 0;
+
+        // Agent configurations with high-detail models
+        const agents = {
+            'guardian-sentinel': {
+                name: 'Guardian Sentinel',
+                color: 0x00d4aa,
+                specialty: 'System Defense Orchestrator',
+                model: 'guardian_sentinel',
+                animation: 'defensive_stance'
+            },
+            'threat-hunter': {
+                name: 'Threat Hunter',
+                color: 0xff4444,
+                specialty: 'Advanced Threat Detection',
+                model: 'threat_hunter',
+                animation: 'scanning_mode'
+            },
+            'network-guardian': {
+                name: 'Network Guardian',
+                color: 0x4444ff,
+                specialty: 'Network Traffic Analysis',
+                model: 'network_guardian',
+                animation: 'monitoring_stance'
+            },
+            'data-sentinel': {
+                name: 'Data Sentinel',
+                color: 0xffaa00,
+                specialty: 'Data Protection & Privacy',
+                model: 'data_sentinel',
+                animation: 'protective_mode'
+            },
+            'response-bot': {
+                name: 'Response Bot',
+                color: 0xff8800,
+                specialty: 'Incident Response',
+                model: 'response_bot',
+                animation: 'alert_stance'
+            },
+            'oracle': {
+                name: 'Oracle',
+                color: 0x8844ff,
+                specialty: 'Predictive Analysis',
+                model: 'oracle',
+                animation: 'wisdom_pose'
+            },
+            'deep-scan': {
+                name: 'Deep Scan',
+                color: 0x00ffff,
+                specialty: 'Deep Learning Analysis',
+                model: 'deep_scan',
+                animation: 'analysis_mode'
+            }
+        };
+
+        let currentAgent = 'guardian-sentinel';
+
+        // Initialize the 3D scene
+        function init() {
+            // Scene setup
+            scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x000000, 0.0008);
+
+            // Camera setup for dramatic angle
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
+            camera.position.set(0, 5, 10);
+
+            // Renderer with maximum quality settings
+            renderer = new THREE.WebGLRenderer({ 
+                antialias: true, 
+                alpha: true,
+                powerPreference: "high-performance" 
+            });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1.2;
+            
+            document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+            // Controls for interaction
+            const controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.maxDistance = 50;
+            controls.minDistance = 2;
+
+            // Create lighting setup
+            setupLighting();
+
+            // Create agent model
+            createAgentModel();
+
+            // Create particle systems
+            createParticleSystem();
+
+            // Create holographic elements
+            createHolographicElements();
+
+            // Start animation loop
+            animate();
+
+            // Setup mouse tracking for custom cursor
+            setupCursor();
+
+            // Setup FPS counter
+            setupFPSCounter();
+        }
+
+        function setupLighting() {
+            // Ambient light
+            const ambientLight = new THREE.AmbientLight(0x404040, 0.3);
+            scene.add(ambientLight);
+
+            // Key light (main illumination)
+            const keyLight = new THREE.DirectionalLight(0x00d4aa, 1.2);
+            keyLight.position.set(-10, 10, 5);
+            keyLight.castShadow = true;
+            keyLight.shadow.mapSize.width = 2048;
+            keyLight.shadow.mapSize.height = 2048;
+            scene.add(keyLight);
+
+            // Fill light (softer secondary light)
+            const fillLight = new THREE.DirectionalLight(0x667eea, 0.8);
+            fillLight.position.set(10, 5, -5);
+            scene.add(fillLight);
+
+            // Rim light (edge highlighting)
+            const rimLight = new THREE.DirectionalLight(0xffffff, 0.5);
+            rimLight.position.set(0, -10, -10);
+            scene.add(rimLight);
+
+            // Point lights for dynamic effects
+            const pointLight1 = new THREE.PointLight(0x00d4aa, 1, 100);
+            pointLight1.position.set(0, 10, 0);
+            scene.add(pointLight1);
+
+            const pointLight2 = new THREE.PointLight(0x667eea, 0.8, 100);
+            pointLight2.position.set(-5, 0, 5);
+            scene.add(pointLight2);
+        }
+
+        function createAgentModel() {
+            // Create a sophisticated geometric agent representation
+            const geometry = new THREE.ConeGeometry(2, 4, 8);
+            
+            // Advanced material with multiple effects
+            const material = new THREE.MeshPhysicalMaterial({
+                color: agents[currentAgent].color,
+                metalness: 0.8,
+                roughness: 0.2,
+                clearcoat: 1.0,
+                clearcoatRoughness: 0.1,
+                transmission: 0.1,
+                thickness: 0.5,
+                envMapIntensity: 1.5,
+                emissive: new THREE.Color(agents[currentAgent].color).multiplyScalar(0.1)
+            });
+
+            agentModel = new THREE.Mesh(geometry, material);
+            agentModel.position.y = 2;
+            agentModel.castShadow = true;
+            agentModel.receiveShadow = true;
+            scene.add(agentModel);
+
+            // Add wireframe overlay
+            const wireframeGeometry = geometry.clone();
+            const wireframeMaterial = new THREE.MeshBasicMaterial({
+                color: agents[currentAgent].color,
+                wireframe: true,
+                opacity: 0.3,
+                transparent: true
+            });
+            const wireframeMesh = new THREE.Mesh(wireframeGeometry, wireframeMaterial);
+            wireframeMesh.scale.multiplyScalar(1.02);
+            agentModel.add(wireframeMesh);
+        }
+
+        function createParticleSystem() {
+            const particleCount = 2000;
+            const positions = new Float32Array(particleCount * 3);
+            const velocities = new Float32Array(particleCount * 3);
+            const colors = new Float32Array(particleCount * 3);
+
+            for (let i = 0; i < particleCount; i++) {
+                // Random positions in a sphere
+                const radius = Math.random() * 20 + 5;
+                const theta = Math.random() * Math.PI * 2;
+                const phi = Math.random() * Math.PI;
+
+                positions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
+                positions[i * 3 + 1] = radius * Math.cos(phi);
+                positions[i * 3 + 2] = radius * Math.sin(phi) * Math.sin(theta);
+
+                // Random velocities
+                velocities[i * 3] = (Math.random() - 0.5) * 0.02;
+                velocities[i * 3 + 1] = (Math.random() - 0.5) * 0.02;
+                velocities[i * 3 + 2] = (Math.random() - 0.5) * 0.02;
+
+                // Colors based on current agent
+                const color = new THREE.Color(agents[currentAgent].color);
+                colors[i * 3] = color.r;
+                colors[i * 3 + 1] = color.g;
+                colors[i * 3 + 2] = color.b;
+            }
+
+            const particleGeometry = new THREE.BufferGeometry();
+            particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            particleGeometry.setAttribute('velocity', new THREE.BufferAttribute(velocities, 3));
+            particleGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+            const particleMaterial = new THREE.PointsMaterial({
+                size: 0.1,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.8,
+                blending: THREE.AdditiveBlending
+            });
+
+            particleSystem = new THREE.Points(particleGeometry, particleMaterial);
+            scene.add(particleSystem);
+        }
+
+        function createHolographicElements() {
+            // Holographic rings
+            const ringGeometry = new THREE.RingGeometry(3, 3.2, 32);
+            const ringMaterial = new THREE.MeshBasicMaterial({
+                color: agents[currentAgent].color,
+                transparent: true,
+                opacity: 0.3,
+                side: THREE.DoubleSide
+            });
+
+            for (let i = 0; i < 3; i++) {
+                const ring = new THREE.Mesh(ringGeometry, ringMaterial.clone());
+                ring.position.y = i * 2 - 2;
+                ring.rotation.x = Math.PI / 2;
+                scene.add(ring);
+            }
+
+            // Data streams
+            for (let i = 0; i < 12; i++) {
+                const streamGeometry = new THREE.CylinderGeometry(0.05, 0.05, 15, 8);
+                const streamMaterial = new THREE.MeshBasicMaterial({
+                    color: agents[currentAgent].color,
+                    transparent: true,
+                    opacity: 0.6
+                });
+                
+                const stream = new THREE.Mesh(streamGeometry, streamMaterial);
+                const angle = (i / 12) * Math.PI * 2;
+                stream.position.set(Math.cos(angle) * 8, 0, Math.sin(angle) * 8);
+                stream.rotation.z = Math.PI / 2;
+                scene.add(stream);
+            }
+        }
+
+        function animate() {
+            animationFrameId = requestAnimationFrame(animate);
+
+            const time = Date.now() * 0.001;
+
+            // Animate agent model
+            if (agentModel) {
+                agentModel.rotation.y += 0.01;
+                agentModel.position.y = 2 + Math.sin(time * 2) * 0.3;
+            }
+
+            // Animate particles
+            if (particleSystem) {
+                const positions = particleSystem.geometry.attributes.position.array;
+                const velocities = particleSystem.geometry.attributes.velocity.array;
+
+                for (let i = 0; i < positions.length; i += 3) {
+                    positions[i] += velocities[i];
+                    positions[i + 1] += velocities[i + 1];
+                    positions[i + 2] += velocities[i + 2];
+
+                    // Boundary check and reset
+                    const distance = Math.sqrt(
+                        positions[i] ** 2 + 
+                        positions[i + 1] ** 2 + 
+                        positions[i + 2] ** 2
+                    );
+                    
+                    if (distance > 25) {
+                        positions[i] *= 0.1;
+                        positions[i + 1] *= 0.1;
+                        positions[i + 2] *= 0.1;
+                    }
+                }
+
+                particleSystem.geometry.attributes.position.needsUpdate = true;
+                particleSystem.rotation.y += 0.002;
+            }
+
+            // Camera movement
+            camera.position.x += (mouseX * 0.01 - camera.position.x) * 0.02;
+            camera.position.y += (-mouseY * 0.01 - camera.position.y) * 0.02;
+            camera.lookAt(scene.position);
+
+            renderer.render(scene, camera);
+        }
+
+        function selectAgent(agentId) {
+            currentAgent = agentId;
+            const agent = agents[agentId];
+            
+            // Update HUD
+            document.getElementById('agent-name').textContent = agent.name;
+            
+            // Update visual elements
+            updateAgentVisuals();
+            
+            // Update button states
+            document.querySelectorAll('.agent-button').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        function updateAgentVisuals() {
+            const agent = agents[currentAgent];
+            const color = new THREE.Color(agent.color);
+
+            // Update agent model
+            if (agentModel) {
+                agentModel.material.color = color;
+                agentModel.material.emissive = color.clone().multiplyScalar(0.1);
+            }
+
+            // Update particles
+            if (particleSystem) {
+                const colors = particleSystem.geometry.attributes.color.array;
+                for (let i = 0; i < colors.length; i += 3) {
+                    colors[i] = color.r;
+                    colors[i + 1] = color.g;
+                    colors[i + 2] = color.b;
+                }
+                particleSystem.geometry.attributes.color.needsUpdate = true;
+            }
+        }
+
+        function setupCursor() {
+            const cursor = document.getElementById('cursor');
+            
+            document.addEventListener('mousemove', (e) => {
+                mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+                mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+                
+                cursor.style.left = e.clientX + 'px';
+                cursor.style.top = e.clientY + 'px';
+            });
+        }
+
+        function setupFPSCounter() {
+            let fps = 0;
+            let lastTime = Date.now();
+            let frameCount = 0;
+
+            function updateFPS() {
+                frameCount++;
+                const currentTime = Date.now();
+                
+                if (currentTime - lastTime >= 1000) {
+                    fps = Math.round((frameCount * 1000) / (currentTime - lastTime));
+                    document.getElementById('fps-counter').textContent = fps;
+                    frameCount = 0;
+                    lastTime = currentTime;
+                }
+                
+                requestAnimationFrame(updateFPS);
+            }
+            
+            updateFPS();
+        }
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Initialize the application
+        init();
+    </script>
+</body>
+</html>
+HTML_EOF
+
+echo "✅ Quantum Space Deployed!"
+echo "   - gpu-powered-showcase.html"
+echo "👉 Access it at: http://localhost:8080/gpu-powered-showcase.html"
