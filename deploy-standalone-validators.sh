@@ -149,9 +149,20 @@ docker build -t guardianshield-standalone-validator .
 
 # 7. Launch the Validator Container
 CONTAINER_NAME="guardian-validator-standalone"
+
+# Check if already running
+if [ "$(docker ps -q -f name=$CONTAINER_NAME)" ]; then
+    echo "✅ Validator ($CONTAINER_NAME) is ALREADY ACTIVE."
+    echo "   Skipping rebuild. To force restart, run: docker rm -f $CONTAINER_NAME"
+    echo "---------------------------------------------------"
+    echo "📜 recent logs:"
+    docker logs --tail 10 $CONTAINER_NAME
+    exit 0
+fi
+
 echo "🚀 Launching Container: $CONTAINER_NAME"
 
-# Remove old container if exists
+# Remove old container if exists (stopped/exited)
 docker rm -f $CONTAINER_NAME 2>/dev/null || true
 
 # Generate a random private key for this session
