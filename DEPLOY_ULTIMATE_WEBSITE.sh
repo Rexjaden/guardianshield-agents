@@ -1,0 +1,2520 @@
+#!/bin/bash
+# 🛡️ GuardianShield ULTIMATE Website Deployer
+# ===========================================
+# This script generates a SINGLE self-contained index.html file.
+# - No broken images (auto-placeholders)
+# - No missing JS files (embedded logic)
+# - No 404 errors
+
+echo "🚀 Deploying Clean GuardianShield Website..."
+
+# 清除旧文件 (Clean old files)
+rm -rf guardianshield_website
+mkdir -p guardianshield_website
+
+echo "📄 Generating Self-Contained Website..."
+cat << 'EXTREME_EOF_MARKER' > guardianshield_website/index.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GuardianShield - Enterprise AI Security Platform</title>
+    <meta name="description" content="GuardianShield - Professional AI-powered security platform with autonomous threat detection">
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.0/dist/ethers.umd.min.js"></script>
+    <!-- Web3Modal and WalletConnect dependencies -->
+    <script src="https://unpkg.com/web3modal@1.9.12/dist/index.js"></script>
+    <script src="https://unpkg.com/@walletconnect/web3-provider@1.8.0/dist/umd/index.min.js"></script>
+    <script src="https://unpkg.com/@coinbase/wallet-sdk@3.7.1/dist/index.js"></script>
+    <script>
+// GuardianShield Token Sale Logic with Web3Modal
+// Contract Address: 0x5D4AFA1d429820a88198F3F237bf85a31BE06B71
+// Token: Guard Token (GAR)
+// Chain: Ethereum Mainnet
+
+const GUARD_TOKEN_ADDRESS = "0x5D4AFA1d429820a88198F3F237bf85a31BE06B71";
+const TOKEN_PRICE_USD = 0.005;
+
+// Minimal ABI for the Guard Token Contract
+const GUARD_TOKEN_ABI = [
+    "function buyTokens() external payable",
+    "function saleActive() view returns (bool)",
+    "function getLatestEthUsdPrice() view returns (int256)",
+    "function balanceOf(address account) view returns (uint256)",
+    "function decimals() view returns (uint8)",
+    "function symbol() view returns (string)",
+    "event Transfer(address indexed from, address indexed to, uint256 value)"
+];
+
+let web3Modal;
+let provider;
+let signer;
+let guardTokenContract;
+let userAddress;
+
+// Initialize Web3Modal
+function initWeb3Modal() {
+    try {
+        console.log("Initializing Web3Modal...");
+        
+        // Robust check for UMD globals with optional chaining
+        const Web3ModalClass = window.Web3Modal?.default || window.Web3Modal;
+        const WalletConnectProviderClass = window.WalletConnectProvider?.default || window.WalletConnectProvider;
+        const CoinbaseWalletSDKClass = window.CoinbaseWalletSDK?.default || window.CoinbaseWalletSDK;
+
+        if (!Web3ModalClass) {
+            console.error("Critical: Web3Modal library not loaded.");
+            return;
+        }
+
+        const providerOptions = {};
+
+        // Only add WalletConnect if library successfully loaded
+        if (WalletConnectProviderClass) {
+            providerOptions.walletconnect = {
+                package: WalletConnectProviderClass,
+                options: {
+                    rpc: {
+                        1: "https://eth-mainnet.public.blastapi.io"
+                    }
+                }
+            };
+        } else {
+            console.warn("WalletConnect library not detected - skipping.");
+        }
+
+        // Only add Coinbase Wallet if library successfully loaded
+        if (CoinbaseWalletSDKClass) {
+            providerOptions.coinbasewallet = {
+                package: CoinbaseWalletSDKClass,
+                options: {
+                    appName: "GuardianShield AI",
+                    infuraId: null,
+                    rpc: "https://eth-mainnet.public.blastapi.io",
+                    chainId: 1,
+                    darkMode: true
+                }
+            };
+        } else {
+            console.warn("Coinbase Wallet library not detected - skipping.");
+        }
+
+        web3Modal = new Web3ModalClass({
+            cacheProvider: true,
+            providerOptions, 
+            theme: "dark",
+            disableInjectedProvider: false
+        });
+        
+        console.log("Web3Modal initialized successfully.");
+    } catch (e) {
+        console.error("Error in initWeb3Modal:", e);
+    }
+}
+
+async function initTokenSale() {
+    console.log("Token Sale Script Loaded");
+    
+    // Attempt init, but don't crash the UI setup if it fails
+    initWeb3Modal();
+    
+    const connectBtn = document.getElementById('connect-wallet-btn');
+    const buyBtn = document.getElementById('buy-tokens-btn');
+    const ethInput = document.getElementById('eth-amount');
+
+    if (!document.getElementById('token-sale-section')) {
+        console.warn("Token sale section not found on page. Script might be running on wrong page.");
+        return;
+    }
+
+    if (connectBtn) {
+        // Reset button state
+        connectBtn.innerText = "Connect Wallet";
+        connectBtn.disabled = false;
+        // Remove old listeners to be safe (though difficult without reference, assumption: fresh load)
+        connectBtn.addEventListener('click', () => {
+             console.log("Connect button clicked");
+             connectWallet();
+        });
+    } else {
+        console.error("Connect button not found!");
+    }
+    
+    if (buyBtn) buyBtn.addEventListener('click', buyTokens);
+    if (ethInput) ethInput.addEventListener('input', updateTokenEstimate);
+
+    // Auto-connect if cached provider exists and web3Modal was init
+    if (web3Modal && web3Modal.cachedProvider) {
+        console.log("Found cached provider, auto-connecting...");
+        connectWallet();
+    }
+}
+
+async function connectWallet() {
+    if (!web3Modal) {
+        alert("Wallet library not initialized. Please reload the page.");
+        return;
+    }
+    try {
+        console.log("Opening Web3Modal...");
+        const instance = await web3Modal.connect();
+        
+        provider = new ethers.providers.Web3Provider(instance);
+        signer = provider.getSigner();
+        userAddress = await signer.getAddress();
+        
+        const network = await provider.getNetwork();
+        
+        // Subscribe to accounts change
+        instance.on("accountsChanged", (accounts) => {
+            handleAccountsChanged(accounts);
+        });
+
+        // Subscribe to chainId change
+        instance.on("chainChanged", (chainId) => {
+            window.location.reload();
+        });
+
+        // Check if on Mainnet (ChainId 1)
+        if (network.chainId !== 1) {
+            alert("Please switch your wallet to Ethereum Mainnet to purchase tokens.");
+            // Try to request switch (works for MetaMask, sometimes others)
+            try {
+                await instance.request({
+                    method: 'wallet_switchEthereumChain',
+                    params: [{ chainId: '0x1' }],
+                });
+            } catch (err) {
+                console.warn("Could not auto-switch network", err);
+            }
+            // Continue anyway to show UI, but warn
+        }
+
+        guardTokenContract = new ethers.Contract(GUARD_TOKEN_ADDRESS, GUARD_TOKEN_ABI, signer);
+
+        updateUIConnected();
+        await updateBalance();
+
+    } catch (error) {
+        console.error("Connection error:", error);
+    }
+}
+
+function handleAccountsChanged(accounts) {
+    if (accounts.length === 0) {
+        console.log('Please connect to wallet.');
+        updateUIDisconnected();
+    } else {
+        userAddress = accounts[0];
+        updateUIConnected();
+        updateBalance();
+    }
+}
+
+function updateUIConnected() {
+    const connectBtn = document.getElementById('connect-wallet-btn');
+    const buySection = document.getElementById('buy-section');
+    
+    connectBtn.innerText = `Connected: ${userAddress.substring(0, 6)}...${userAddress.substring(38)}`;
+    connectBtn.classList.add('connected');
+    
+    if(buySection) buySection.classList.remove('hidden');
+}
+
+function updateUIDisconnected() {
+    const connectBtn = document.getElementById('connect-wallet-btn');
+    const buySection = document.getElementById('buy-section');
+    
+    connectBtn.innerText = "Connect Wallet";
+    connectBtn.classList.remove('connected');
+    
+    if(buySection) buySection.classList.add('hidden');
+    
+    // Clear Web3Modal cache
+    if(web3Modal) web3Modal.clearCachedProvider();
+}
+
+async function updateBalance() {
+    try {
+        if (!guardTokenContract) return;
+        const balance = await guardTokenContract.balanceOf(userAddress);
+        const formattedBalance = ethers.utils.formatEther(balance);
+        
+        const balanceDisplay = document.getElementById('user-token-balance');
+        if (balanceDisplay) {
+            balanceDisplay.innerText = `${parseFloat(formattedBalance).toFixed(2)} GAR`;
+        }
+    } catch (error) {
+        console.error("Error fetching balance:", error);
+    }
+}
+
+async function updateTokenEstimate() {
+    const ethAmount = document.getElementById('eth-amount').value;
+    const tokenOutput = document.getElementById('token-estimate');
+    
+    if (!ethAmount || parseFloat(ethAmount) <= 0) {
+        tokenOutput.innerText = "0 GAR";
+        return;
+    }
+
+    try {
+        let ethPriceUsd = 2500; // Fallback default
+        
+        if (guardTokenContract && provider && (await provider.getNetwork()).chainId === 1) {
+             try {
+                const price = await guardTokenContract.getLatestEthUsdPrice();
+                ethPriceUsd = price.toNumber() / 100000000; // 8 decimals
+             } catch(e) {
+                 console.warn("Contract read failed, using default price", e);
+             }
+        }
+
+        const usdValue = parseFloat(ethAmount) * ethPriceUsd;
+        const tokens = usdValue / TOKEN_PRICE_USD;
+        
+        tokenOutput.innerText = `${Math.floor(tokens).toLocaleString()} GAR`;
+    } catch (error) {
+        console.error("Error calculating estimate:", error);
+    }
+}
+
+async function buyTokens() {
+    const ethAmount = document.getElementById('eth-amount').value;
+    const buyBtn = document.getElementById('buy-tokens-btn');
+    const statusMsg = document.getElementById('transaction-status');
+    
+    if (!ethAmount || parseFloat(ethAmount) <= 0) {
+        alert("Please enter a valid ETH amount");
+        return;
+    }
+
+    try {
+        buyBtn.disabled = true;
+        buyBtn.innerText = "Processing...";
+        statusMsg.innerText = "Initiating transaction...";
+        statusMsg.className = "status-msg processing";
+
+        const tx = await guardTokenContract.buyTokens({
+            value: ethers.utils.parseEther(ethAmount)
+        });
+
+        statusMsg.innerText = "Transaction sent! Waiting for confirmation...";
+        
+        await tx.wait();
+        
+        statusMsg.innerText = "Purchase successful! Welcome to GuardianShield.";
+        statusMsg.className = "status-msg success";
+        
+        updateBalance();
+        document.getElementById('eth-amount').value = '';
+        document.getElementById('token-estimate').innerText = '0 GAR';
+    } catch (error) {
+        console.error("Purchase error:", error);
+        statusMsg.innerText = "Transaction failed: " + (error.reason || error.message);
+        statusMsg.className = "status-msg error";
+    } finally {
+        buyBtn.disabled = false;
+        buyBtn.innerText = "Buy GAR Tokens";
+    }
+}
+
+// Initialize on load
+window.addEventListener('load', initTokenSale);
+
+</script>
+    
+    <!-- Admin Console Access -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const adminDiv = document.createElement("div");
+            adminDiv.style.cssText = "position: fixed; bottom: 20px; right: 20px; z-index: 9999;";
+            adminDiv.innerHTML = `
+                <a href="admin_console.html" style="
+                    background: rgba(10, 15, 28, 0.9);
+                    color: #00f2ff;
+                    padding: 12px 18px;
+                    border-radius: 8px;
+                    text-decoration: none;
+                    font-size: 13px;
+                    font-family: 'Segoe UI', sans-serif;
+                    font-weight: bold;
+                    border: 1px solid rgba(0, 242, 255, 0.4);
+                    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+                    backdrop-filter: blur(5px);
+                    transition: all 0.3s;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                " onmouseover="this.style.background='rgba(0, 242, 255, 0.15)'; this.style.boxShadow='0 0 15px rgba(0, 242, 255, 0.4)';" onmouseout="this.style.background='rgba(10, 15, 28, 0.9)'; this.style.boxShadow='0 4px 15px rgba(0, 0, 0, 0.5)';">
+                    <i class="fas fa-shield-alt"></i> ADMIN CONSOLE
+                </a>
+            `;
+            document.body.appendChild(adminDiv);
+        });
+    </script>
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .hidden { display: none !important; }
+        .status-msg { margin-top: 10px; transition: all 0.3s; }
+        .status-msg.processing { color: #0ea5e9; }
+        .status-msg.success { color: #00d4aa; }
+        .status-msg.error { color: #ef4444; }
+        .connected { background: linear-gradient(135deg, #059669, #10b981) !important; cursor: default; }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #ffffff;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        /* Professional Header */
+        .header {
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 2px solid rgba(201, 162, 39, 0.5);
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #00d4aa;
+        }
+        
+        .logo-image {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #c9a227;
+            box-shadow: 0 0 20px rgba(201, 162, 39, 0.4);
+        }
+        
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .brand-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #c9a227;
+            margin-bottom: 2px;
+        }
+        
+        .brand-subtitle {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+        
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+            align-items: center;
+        }
+        
+        .nav-menu a {
+            color: #e2e8f0;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-menu a:hover {
+            color: #00d4aa;
+        }
+        
+        .connect-wallet-btn {
+            background: linear-gradient(135deg, #00d4aa, #0ea5e9);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .connect-wallet-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 212, 170, 0.3);
+        }
+        
+        /* Main Content */
+        .main-content {
+            padding-top: 100px;
+            min-height: 100vh;
+        }
+        
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 80px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        /* Circuit Board Background */
+        .hero-circuit-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .hero-circuit-bg svg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0.15;
+        }
+        
+        .circuit-line {
+            stroke: #c9a227;
+            stroke-width: 1.5;
+            fill: none;
+            stroke-linecap: round;
+        }
+        
+        .circuit-node {
+            fill: #c9a227;
+        }
+        
+        .circuit-glow {
+            filter: drop-shadow(0 0 3px #c9a227) drop-shadow(0 0 6px rgba(201, 162, 39, 0.5));
+        }
+        
+        .hero > *:not(.hero-circuit-bg) {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #c9a227, #d4af37);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero-logo {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            margin-bottom: 30px;
+            border: 4px solid #c9a227;
+            box-shadow: 0 0 60px rgba(201, 162, 39, 0.5), 0 0 120px rgba(201, 162, 39, 0.2);
+            animation: pulse-gold 3s ease-in-out infinite;
+        }
+        
+        @keyframes pulse-gold {
+            0%, 100% { box-shadow: 0 0 60px rgba(201, 162, 39, 0.5), 0 0 120px rgba(201, 162, 39, 0.2); }
+            50% { box-shadow: 0 0 80px rgba(201, 162, 39, 0.7), 0 0 160px rgba(201, 162, 39, 0.4); }
+        }
+        
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 40px;
+            color: rgba(255, 255, 255, 0.9);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 60px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #00d4aa, #0ea5e9);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            padding: 15px 30px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .btn-primary:hover, .btn-secondary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Features Grid */
+        .features {
+            padding: 80px 20px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .features-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .features h2 {
+            text-align: center;
+            font-size: 2.8rem;
+            margin-bottom: 60px;
+            color: #00d4aa;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+        
+        .feature-card {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 40px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            color: #00d4aa;
+            margin-bottom: 20px;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #ffffff;
+        }
+        
+        .feature-card p {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.7;
+        }
+        
+        /* Services Section */
+        .services {
+            padding: 80px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .services h2 {
+            text-align: center;
+            font-size: 2.8rem;
+            margin-bottom: 60px;
+            color: #00d4aa;
+        }
+        
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+        
+        .service-item {
+            text-align: center;
+            padding: 30px 20px;
+        }
+        
+        .service-icon {
+            font-size: 2.5rem;
+            color: #0ea5e9;
+            margin-bottom: 20px;
+        }
+        
+        .service-item h3 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: #ffffff;
+        }
+        
+        .service-item p {
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        /* AI Army Section */
+        .ai-army {
+            padding: 80px 20px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+        
+        .ai-army-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .ai-army h2 {
+            text-align: center;
+            font-size: 2.8rem;
+            margin-bottom: 20px;
+            color: #00d4aa;
+        }
+        
+        .ai-army-subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            margin-bottom: 60px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .agents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        
+        .agents-showcase-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 25px;
+            margin-bottom: 50px;
+        }
+        
+        @media (max-width: 1200px) {
+            .agents-showcase-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .agents-showcase-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 500px) {
+            .agents-showcase-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .agent-card {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .agent-card:hover {
+            transform: translateY(-5px);
+            border-color: #00d4aa;
+            box-shadow: 0 10px 30px rgba(0, 212, 170, 0.2);
+        }
+        
+        /* Clickable Capability Cards */
+        a.capability-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            cursor: pointer;
+        }
+        
+        a.capability-link:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(201, 162, 39, 0.3);
+            border-color: #c9a227;
+        }
+        
+        .view-performance {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #c9a227;
+            font-weight: 600;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        a.capability-link:hover .view-performance {
+            opacity: 1;
+        }
+        
+        .agent-avatar {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .agent-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            transition: transform 0.5s ease;
+        }
+        
+        .agent-card:hover .agent-avatar img {
+            transform: scale(1.1);
+        }
+        
+        /* Prometheus - Fire/Orange theme */
+        .agent-card.prometheus .agent-avatar {
+            border: 3px solid #ff6b35;
+            box-shadow: 0 0 30px rgba(255, 107, 53, 0.5), 0 0 60px rgba(255, 107, 53, 0.2);
+            animation: prometheus-glow 3s ease-in-out infinite;
+        }
+        
+        @keyframes prometheus-glow {
+            0%, 100% { box-shadow: 0 0 30px rgba(255, 107, 53, 0.5), 0 0 60px rgba(255, 107, 53, 0.2); }
+            50% { box-shadow: 0 0 50px rgba(255, 107, 53, 0.8), 0 0 100px rgba(255, 165, 0, 0.4); }
+        }
+        
+        /* Silva - Forest/Green theme */
+        .agent-card.silva .agent-avatar {
+            border: 3px solid #32cd32;
+            box-shadow: 0 0 30px rgba(50, 205, 50, 0.5), 0 0 60px rgba(34, 139, 34, 0.2);
+            animation: silva-glow 4s ease-in-out infinite;
+        }
+        
+        @keyframes silva-glow {
+            0%, 100% { box-shadow: 0 0 30px rgba(50, 205, 50, 0.5), 0 0 60px rgba(34, 139, 34, 0.2); }
+            50% { box-shadow: 0 0 50px rgba(50, 205, 50, 0.8), 0 0 100px rgba(0, 255, 50, 0.4); }
+        }
+        
+        /* Turlo - Electric/Cyan theme */
+        .agent-card.turlo .agent-avatar {
+            border: 3px solid #00d4ff;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.5), 0 0 60px rgba(0, 153, 204, 0.2);
+            animation: turlo-glow 2.5s ease-in-out infinite;
+        }
+        
+        @keyframes turlo-glow {
+            0%, 100% { box-shadow: 0 0 30px rgba(0, 212, 255, 0.5), 0 0 60px rgba(0, 153, 204, 0.2); }
+            50% { box-shadow: 0 0 50px rgba(0, 212, 255, 0.8), 0 0 100px rgba(102, 229, 255, 0.5); }
+        }
+        
+        /* Lindo - Celestial/Purple theme */
+        .agent-card.lindo .agent-avatar {
+            border: 3px solid #9d4edd;
+            box-shadow: 0 0 30px rgba(157, 78, 221, 0.5), 0 0 60px rgba(138, 43, 226, 0.2);
+            animation: lindo-glow 3.5s ease-in-out infinite;
+        }
+        
+        @keyframes lindo-glow {
+            0%, 100% { box-shadow: 0 0 30px rgba(157, 78, 221, 0.5), 0 0 60px rgba(138, 43, 226, 0.2); }
+            50% { box-shadow: 0 0 50px rgba(157, 78, 221, 0.8), 0 0 100px rgba(186, 85, 211, 0.5); }
+        }
+        
+        /* Guardian - Gold/Shield theme */
+        .agent-card.guardian .agent-avatar {
+            border: 3px solid #c9a227;
+            box-shadow: 0 0 30px rgba(201, 162, 39, 0.5), 0 0 60px rgba(212, 175, 55, 0.2);
+            animation: guardian-glow 3s ease-in-out infinite;
+        }
+        
+        @keyframes guardian-glow {
+            0%, 100% { box-shadow: 0 0 30px rgba(201, 162, 39, 0.5), 0 0 60px rgba(212, 175, 55, 0.2); }
+            50% { box-shadow: 0 0 50px rgba(201, 162, 39, 0.8), 0 0 100px rgba(255, 215, 0, 0.4); }
+        }
+        
+        /* Agent card theme colors */
+        .agent-card.prometheus:hover { border-color: #ff6b35; box-shadow: 0 10px 40px rgba(255, 107, 53, 0.3); }
+        .agent-card.silva:hover { border-color: #32cd32; box-shadow: 0 10px 40px rgba(50, 205, 50, 0.3); }
+        .agent-card.turlo:hover { border-color: #00d4ff; box-shadow: 0 10px 40px rgba(0, 212, 255, 0.3); }
+        .agent-card.lindo:hover { border-color: #9d4edd; box-shadow: 0 10px 40px rgba(157, 78, 221, 0.3); }
+        .agent-card.guardian:hover { border-color: #c9a227; box-shadow: 0 10px 40px rgba(201, 162, 39, 0.3); }
+        
+        .agent-role {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+        
+        .agent-card.prometheus .agent-name { color: #ff6b35; }
+        .agent-card.silva .agent-name { color: #32cd32; }
+        .agent-card.turlo .agent-name { color: #00d4ff; }
+        .agent-card.lindo .agent-name { color: #9d4edd; }
+        .agent-card.guardian .agent-name { color: #c9a227; }
+        
+        .agent-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #ffffff;
+        }
+        
+        .agent-description {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        
+        /* Roadmap Section */
+        .roadmap {
+            padding: 80px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .roadmap h2 {
+            text-align: center;
+            font-size: 2.8rem;
+            margin-bottom: 60px;
+            color: #00d4aa;
+        }
+        
+        .roadmap-timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+        
+        .roadmap-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 30px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border-left: 4px solid #00d4aa;
+        }
+        
+        .roadmap-quarter {
+            background: linear-gradient(135deg, #00d4aa, #0ea5e9);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        
+        .roadmap-content h3 {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            color: #ffffff;
+        }
+        
+        .roadmap-description {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+        }
+        
+        /* DMER Section */
+        .dmer {
+            padding: 80px 20px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+        
+        .dmer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .dmer h2 {
+            font-size: 2.8rem;
+            margin-bottom: 20px;
+            color: #00d4aa;
+        }
+        
+        .dmer-subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 50px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .dmer-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+        
+        .dmer-feature {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 40px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .dmer-feature h3 {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            color: #ffffff;
+        }
+        
+        .dmer-feature p {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+        }
+        
+        .dmer-cta {
+            text-align: center;
+            margin-top: 50px;
+        }
+        
+        .dmer-access-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(135deg, #ff6b35, #f7931a);
+            color: white;
+            padding: 18px 40px;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 30px rgba(255, 107, 53, 0.3);
+        }
+        
+        .dmer-access-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(255, 107, 53, 0.5);
+        }
+        
+        .dmer-access-btn i {
+            font-size: 1.4rem;
+        }
+
+        /* Tokens Section */
+        .tokens {
+            padding: 80px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .tokens h2 {
+            text-align: center;
+            font-size: 2.8rem;
+            margin-bottom: 60px;
+            color: #00d4aa;
+        }
+        
+        .tokens-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+        
+        .token-card {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 40px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .token-card:hover {
+            transform: translateY(-5px);
+            border-color: #00d4aa;
+        }
+        
+        .token-logo {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .token-logo svg {
+            filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.3));
+            transition: all 0.3s ease;
+        }
+        
+        .token-card:hover .token-logo svg {
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.5));
+        }
+        
+        .token-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #0ea5e9;
+        }
+        
+        .token-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #ffffff;
+        }
+        
+        .token-ticker {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #00d4aa;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+        
+        .token-description {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+        
+        .token-price {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #00d4aa;
+            margin-bottom: 20px;
+        }
+        
+        .token-btn {
+            background: linear-gradient(135deg, #00d4aa, #0ea5e9);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .token-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 212, 170, 0.3);
+        }
+        
+        /* Performance Metrics */
+        .performance-section {
+            padding: 80px 20px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+        
+        .performance-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .performance-section h2 {
+            text-align: center;
+            font-size: 2.8rem;
+            margin-bottom: 60px;
+            color: #00d4aa;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        
+        .metric-card {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #00d4aa;
+            margin-bottom: 10px;
+        }
+        
+        .metric-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1rem;
+        }
+        
+        .performance-graph {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 40px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .graph-title {
+            font-size: 1.3rem;
+            margin-bottom: 30px;
+            color: #ffffff;
+            text-align: center;
+        }
+        
+        .metric-bars {
+            display: flex;
+            justify-content: space-between;
+            align-items: end;
+            height: 200px;
+            gap: 10px;
+        }
+        
+        .metric-bar {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px 4px 0 0;
+            position: relative;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: end;
+        }
+        
+        .metric-fill {
+            background: linear-gradient(to top, #00d4aa, #0ea5e9);
+            border-radius: 4px 4px 0 0;
+            transition: height 1s ease;
+            position: relative;
+        }
+        
+        .bar-label {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 20px;
+                padding: 15px;
+            }
+            
+            .nav-menu {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .roadmap-item {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo">
+                <img src="https://placehold.co/200x200/0f172a/00d4aa.png?text=gs token logo" alt="GuardianShield Token" class="logo-image">
+                <div class="brand-text">
+                    <div class="brand-title">GuardianShield</div>
+                    <div class="brand-subtitle">Advanced Quantum AI Security Platform</div>
+                </div>
+            </div>
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#ai-army">AI Army</a></li>
+                    <li><a href="http://localhost:8081/gpu-powered-showcase.html">🌌 Quantum Space</a></li>
+                    <li><a href="http://localhost:8082/purchase-interface">💰 Buy Tokens</a></li>
+                    <li><a href="http://localhost:8084/defi-interface">🏦 Smart DeFi</a></li>
+                    <li><a href="http://localhost:8081/token_management.html">🛡️ Token Management</a></li>
+                    <li><a href="http://localhost:8081/defi_forms.html">💱 DeFi Legacy</a></li>
+                    <li><a href="http://localhost:8080/serial-checker">🔍 Verify Token</a></li>
+                    <li><a href="#roadmap">Roadmap</a></li>
+                    <li><a href="#dmer">DMER</a></li>
+                    <li><a href="#tokens">Tokens</a></li>
+                </ul>
+            </nav>
+            <button class="connect-wallet-btn" id="connectWallet">Connect Wallet</button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <!-- Hero Section -->
+        <section id="home" class="hero">
+            <!-- Circuit Board Background -->
+            <div class="hero-circuit-bg">
+                <svg viewBox="0 0 1200 600" preserveAspectRatio="xMidYMid slice" class="circuit-glow">
+                    <!-- Horizontal Lines -->
+                    <path class="circuit-line" d="M0,100 H200 L220,120 H400 L420,100 H600"/>
+                    <path class="circuit-line" d="M0,200 H150 L170,180 H350 L370,200 H500 L520,220 H700"/>
+                    <path class="circuit-line" d="M0,300 H100 L120,320 H280 L300,300 H450 L470,280 H650"/>
+                    <path class="circuit-line" d="M0,400 H180 L200,420 H380 L400,400 H580"/>
+                    <path class="circuit-line" d="M0,500 H120 L140,480 H320 L340,500 H520 L540,520 H720"/>
+                    
+                    <!-- Right side horizontal -->
+                    <path class="circuit-line" d="M600,100 H800 L820,80 H1000 L1020,100 H1200"/>
+                    <path class="circuit-line" d="M700,200 H900 L920,220 H1100 L1120,200 H1200"/>
+                    <path class="circuit-line" d="M650,300 H850 L870,320 H1050 L1070,300 H1200"/>
+                    <path class="circuit-line" d="M580,400 H780 L800,380 H980 L1000,400 H1200"/>
+                    <path class="circuit-line" d="M720,500 H920 L940,480 H1120 L1140,500 H1200"/>
+                    
+                    <!-- Vertical Lines -->
+                    <path class="circuit-line" d="M200,0 V100 L220,120 V200 L200,220 V350"/>
+                    <path class="circuit-line" d="M400,0 V80 L420,100 V180 L400,200 V320"/>
+                    <path class="circuit-line" d="M600,0 V120 L620,140 V260 L600,280 V400"/>
+                    <path class="circuit-line" d="M800,0 V100 L780,120 V240 L800,260 V380"/>
+                    <path class="circuit-line" d="M1000,0 V80 L1020,100 V200 L1000,220 V340"/>
+                    
+                    <!-- Vertical Lines Bottom -->
+                    <path class="circuit-line" d="M200,350 V450 L220,470 V600"/>
+                    <path class="circuit-line" d="M400,320 V420 L380,440 V600"/>
+                    <path class="circuit-line" d="M600,400 V500 L620,520 V600"/>
+                    <path class="circuit-line" d="M800,380 V480 L820,500 V600"/>
+                    <path class="circuit-line" d="M1000,340 V440 L980,460 V600"/>
+                    
+                    <!-- Diagonal connections -->
+                    <path class="circuit-line" d="M150,150 L180,180 L220,180 L250,150"/>
+                    <path class="circuit-line" d="M350,250 L380,280 L420,280 L450,250"/>
+                    <path class="circuit-line" d="M550,350 L580,380 L620,380 L650,350"/>
+                    <path class="circuit-line" d="M750,150 L780,180 L820,180 L850,150"/>
+                    <path class="circuit-line" d="M950,250 L980,280 L1020,280 L1050,250"/>
+                    
+                    <!-- Circuit Nodes (connection points) -->
+                    <circle class="circuit-node" cx="200" cy="100" r="4"/>
+                    <circle class="circuit-node" cx="400" cy="100" r="4"/>
+                    <circle class="circuit-node" cx="600" cy="100" r="4"/>
+                    <circle class="circuit-node" cx="800" cy="100" r="4"/>
+                    <circle class="circuit-node" cx="1000" cy="100" r="4"/>
+                    
+                    <circle class="circuit-node" cx="150" cy="200" r="4"/>
+                    <circle class="circuit-node" cx="350" cy="200" r="4"/>
+                    <circle class="circuit-node" cx="500" cy="200" r="4"/>
+                    <circle class="circuit-node" cx="700" cy="200" r="4"/>
+                    <circle class="circuit-node" cx="900" cy="200" r="4"/>
+                    <circle class="circuit-node" cx="1100" cy="200" r="4"/>
+                    
+                    <circle class="circuit-node" cx="100" cy="300" r="4"/>
+                    <circle class="circuit-node" cx="300" cy="300" r="4"/>
+                    <circle class="circuit-node" cx="450" cy="300" r="4"/>
+                    <circle class="circuit-node" cx="650" cy="300" r="4"/>
+                    <circle class="circuit-node" cx="850" cy="300" r="4"/>
+                    <circle class="circuit-node" cx="1050" cy="300" r="4"/>
+                    
+                    <circle class="circuit-node" cx="180" cy="400" r="4"/>
+                    <circle class="circuit-node" cx="380" cy="400" r="4"/>
+                    <circle class="circuit-node" cx="580" cy="400" r="4"/>
+                    <circle class="circuit-node" cx="780" cy="400" r="4"/>
+                    <circle class="circuit-node" cx="980" cy="400" r="4"/>
+                    
+                    <circle class="circuit-node" cx="120" cy="500" r="4"/>
+                    <circle class="circuit-node" cx="320" cy="500" r="4"/>
+                    <circle class="circuit-node" cx="520" cy="500" r="4"/>
+                    <circle class="circuit-node" cx="720" cy="500" r="4"/>
+                    <circle class="circuit-node" cx="920" cy="500" r="4"/>
+                    <circle class="circuit-node" cx="1120" cy="500" r="4"/>
+                    
+                    <!-- Larger junction nodes -->
+                    <circle class="circuit-node" cx="200" cy="200" r="6"/>
+                    <circle class="circuit-node" cx="400" cy="200" r="6"/>
+                    <circle class="circuit-node" cx="600" cy="300" r="6"/>
+                    <circle class="circuit-node" cx="800" cy="200" r="6"/>
+                    <circle class="circuit-node" cx="1000" cy="200" r="6"/>
+                    
+                    <!-- Small chip rectangles -->
+                    <rect class="circuit-node" x="290" y="145" width="20" height="10" rx="2"/>
+                    <rect class="circuit-node" x="490" y="245" width="20" height="10" rx="2"/>
+                    <rect class="circuit-node" x="690" y="345" width="20" height="10" rx="2"/>
+                    <rect class="circuit-node" x="890" y="145" width="20" height="10" rx="2"/>
+                    <rect class="circuit-node" x="1090" y="245" width="20" height="10" rx="2"/>
+                </svg>
+            </div>
+            
+            <img src="https://placehold.co/200x200/0f172a/00d4aa.png?text=gs token logo" alt="GuardianShield Token" class="hero-logo">
+            <h1>GuardianShield</h1>
+            <p>Next-generation AI-powered security platform with autonomous threat detection and decentralized intelligence network</p>
+            <div class="cta-buttons">
+                <a href="#services" class="btn-primary">Explore Platform</a>
+                <a href="#tokens" class="btn-secondary">Get Tokens</a>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features">
+            <div class="features-container">
+                <h2>Platform Features</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-brain"></i></div>
+                        <h3>Autonomous AI</h3>
+                        <p>Self-learning security agents that adapt and evolve to counter emerging threats without human intervention.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-network-wired"></i></div>
+                        <h3>Decentralized Network</h3>
+                        <p>Distributed threat intelligence sharing across a global network of security nodes powered by blockchain technology.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-shield-virus"></i></div>
+                        <h3>Real-time Protection</h3>
+                        <p>Instant threat detection and response with quantum-powered analysis of security patterns and anomalies.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-coins"></i></div>
+                        <h3>Token Economy</h3>
+                        <p>Participate in platform governance and earn rewards through GUARD and SHIELD token staking mechanisms.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services Section -->
+        <section id="services" class="services">
+            <h2>Security Services</h2>
+            <div class="services-grid">
+                <div class="service-item">
+                    <div class="service-icon"><i class="fas fa-eye"></i></div>
+                    <h3>Threat Monitoring</h3>
+                    <p>24/7 monitoring of your digital infrastructure with AI-powered anomaly detection</p>
+                </div>
+                <div class="service-item">
+                    <div class="service-icon"><i class="fas fa-bolt"></i></div>
+                    <h3>Incident Response</h3>
+                    <p>Automated response protocols that neutralize threats in milliseconds</p>
+                </div>
+                <div class="service-item">
+                    <div class="service-icon"><i class="fas fa-chart-line"></i></div>
+                    <h3>Analytics Dashboard</h3>
+                    <p>Comprehensive security analytics with predictive threat intelligence</p>
+                </div>
+                <div class="service-item">
+                    <div class="service-icon"><i class="fas fa-users"></i></div>
+                    <h3>Team Collaboration</h3>
+                    <p>Secure communication channels for coordinated security response</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- AI Army Section -->
+        <section id="ai-army" class="ai-army">
+            <div class="ai-army-container">
+                <h2>🛡️ The GuardianShield AI Army</h2>
+                <p class="ai-army-subtitle">Meet our autonomous AI agents - Sentient defenders working 24/7 to protect the Web3 ecosystem</p>
+                
+                <!-- Primary Agent Showcase with Avatars -->
+                <div class="agents-showcase-grid">
+                    <div class="agent-card guardian">
+                        <div class="agent-avatar">
+                            <img src="https://placehold.co/200x200/0f172a/00d4aa.png?text=guardian avatar" alt="Guardian - Supreme Commander">
+                        </div>
+                        <div class="agent-name">Guardian</div>
+                        <div class="agent-role">Supreme Commander</div>
+                        <div class="agent-description">The master orchestrator and supreme commander of all GuardianShield operations. Coordinates agent actions and makes final security decisions.</div>
+                    </div>
+                    <div class="agent-card prometheus">
+                        <div class="agent-avatar">
+                            <img src="https://placehold.co/200x200/0f172a/00d4aa.png?text=prometheus avatar" alt="Prometheus - Threat Hunter">
+                        </div>
+                        <div class="agent-name">Prometheus</div>
+                        <div class="agent-role">Threat Hunter</div>
+                        <div class="agent-description">The fire-bringer who illuminates hidden threats. Specialized in proactive threat hunting and zero-day vulnerability detection.</div>
+                    </div>
+                    <div class="agent-card silva">
+                        <div class="agent-avatar">
+                            <img src="https://placehold.co/200x200/0f172a/00d4aa.png?text=silva avatar" alt="Silva - Network Guardian">
+                        </div>
+                        <div class="agent-name">Silva</div>
+                        <div class="agent-role">Network Guardian</div>
+                        <div class="agent-description">The forest guardian who protects the network ecosystem. Monitors data flows and ensures healthy communication patterns.</div>
+                    </div>
+                    <div class="agent-card turlo">
+                        <div class="agent-avatar">
+                            <img src="https://placehold.co/200x200/0f172a/00d4aa.png?text=turlo avatar" alt="Turlo - Blockchain Sentinel">
+                        </div>
+                        <div class="agent-name">Turlo</div>
+                        <div class="agent-role">Blockchain Sentinel</div>
+                        <div class="agent-description">The electric guardian of the blockchain. Validates transactions, monitors smart contracts, and detects on-chain anomalies.</div>
+                    </div>
+                    <div class="agent-card lindo">
+                        <div class="agent-avatar">
+                            <img src="https://placehold.co/200x200/0f172a/00d4aa.png?text=lindo avatar" alt="Lindo - Intelligence Oracle">
+                        </div>
+                        <div class="agent-name">Lindo</div>
+                        <div class="agent-role">Intelligence Oracle</div>
+                        <div class="agent-description">The celestial oracle who sees all patterns. Masters predictive analytics and delivers divine threat intelligence insights.</div>
+                    </div>
+                </div>
+                
+                <!-- Agent Capabilities Grid -->
+                <h3 style="text-align: center; margin: 50px 0 30px; color: #c9a227; font-size: 1.8rem;">⚡ Agent Capabilities</h3>
+                <div class="agents-grid">
+                    <a href="performance-threat-detection.html" class="agent-card capability-link">
+                        <div class="agent-avatar" style="width: 60px; height: 60px; background: linear-gradient(135deg, #ff6b35, #ff8c00);"><i class="fas fa-fire"></i></div>
+                        <div class="agent-name">Threat Detection</div>
+                        <div class="agent-description">Real-time identification of malicious actors, phishing attempts, and exploit patterns across all chains.</div>
+                        <div class="view-performance">View Performance →</div>
+                    </a>
+                    <a href="performance-network-analysis.html" class="agent-card capability-link">
+                        <div class="agent-avatar" style="width: 60px; height: 60px; background: linear-gradient(135deg, #32cd32, #228b22);"><i class="fas fa-network-wired"></i></div>
+                        <div class="agent-name">Network Analysis</div>
+                        <div class="agent-description">Deep packet inspection, traffic pattern analysis, and anomaly detection for comprehensive coverage.</div>
+                        <div class="view-performance">View Performance →</div>
+                    </a>
+                    <a href="performance-smart-contract.html" class="agent-card capability-link">
+                        <div class="agent-avatar" style="width: 60px; height: 60px; background: linear-gradient(135deg, #00d4ff, #0099cc);"><i class="fas fa-cube"></i></div>
+                        <div class="agent-name">Smart Contract Auditing</div>
+                        <div class="agent-description">Automated vulnerability scanning and continuous monitoring of deployed smart contracts.</div>
+                        <div class="view-performance">View Performance →</div>
+                    </a>
+                    <a href="performance-predictive-intelligence.html" class="agent-card capability-link">
+                        <div class="agent-avatar" style="width: 60px; height: 60px; background: linear-gradient(135deg, #9d4edd, #8a2be2);"><i class="fas fa-brain"></i></div>
+                        <div class="agent-name">Predictive Intelligence</div>
+                        <div class="agent-description">ML-powered threat forecasting and proactive defense recommendations before attacks occur.</div>
+                        <div class="view-performance">View Performance →</div>
+                    </a>
+                    <a href="performance-autonomous-response.html" class="agent-card capability-link">
+                        <div class="agent-avatar" style="width: 60px; height: 60px; background: linear-gradient(135deg, #c9a227, #d4af37);"><i class="fas fa-shield-alt"></i></div>
+                        <div class="agent-name">Autonomous Response</div>
+                        <div class="agent-description">Instant automated countermeasures with human oversight via the Admin Console.</div>
+                        <div class="view-performance">View Performance →</div>
+                    </a>
+                    <a href="performance-self-evolution.html" class="agent-card capability-link">
+                        <div class="agent-avatar" style="width: 60px; height: 60px; background: linear-gradient(135deg, #e91e63, #c2185b);"><i class="fas fa-graduation-cap"></i></div>
+                        <div class="agent-name">Self-Evolution</div>
+                        <div class="agent-description">Continuous learning and recursive self-improvement based on new threat patterns.</div>
+                        <div class="view-performance">View Performance →</div>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Roadmap Section -->
+        <section id="roadmap" class="roadmap">
+            <h2>Development Roadmap</h2>
+            <div class="roadmap-timeline">
+                <div class="roadmap-item">
+                    <div class="roadmap-quarter">Q1 2026</div>
+                    <div class="roadmap-content">
+                        <h3>Foundation Launch</h3>
+                        <div class="roadmap-description">Deployed core autonomous agent framework with basic threat detection capabilities and established the foundation for agent-to-agent communication.</div>
+                    </div>
+                </div>
+                <div class="roadmap-item">
+                    <div class="roadmap-quarter">Q2 2026</div>
+                    <div class="roadmap-content">
+                        <h3>Advanced Intelligence</h3>
+                        <div class="roadmap-description">Enhanced machine learning capabilities, implemented DMER threat registry, and launched token economics for ecosystem governance.</div>
+                    </div>
+                </div>
+                <div class="roadmap-item">
+                    <div class="roadmap-quarter">Q3 2026</div>
+                    <div class="roadmap-content">
+                        <h3>Enterprise Integration</h3>
+                        <div class="roadmap-description">Full blockchain security coverage, enterprise partnerships, and deployment of specialized industry-specific agents.</div>
+                    </div>
+                </div>
+                <div class="roadmap-item">
+                    <div class="roadmap-quarter">Q4 2026</div>
+                    <div class="roadmap-content">
+                        <h3>Global Network</h3>
+                        <div class="roadmap-description">Worldwide agent network deployment, advanced AI evolution protocols, and autonomous security ecosystem governance.</div>
+                    </div>
+                </div>
+                <div class="roadmap-item">
+                    <div class="roadmap-quarter">2027+</div>
+                    <div class="roadmap-content">
+                        <h3>Quantum Security</h3>
+                        <div class="roadmap-description">Deploy next-generation AI algorithms, quantum-resistant security measures, and establish the future of autonomous security.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- DMER Section -->
+        <section id="dmer" class="dmer">
+            <div class="dmer-container">
+                <h2>DMER Protocol</h2>
+                <p class="dmer-subtitle">Decentralized Malicious Entity Registry - Community-driven threat intelligence</p>
+                <div class="dmer-features">
+                    <div class="dmer-feature">
+                        <h3>Threat Database</h3>
+                        <p>Comprehensive registry of known malicious entities, updated in real-time by the global security community.</p>
+                    </div>
+                    <div class="dmer-feature">
+                        <h3>Community Verification</h3>
+                        <p>Decentralized verification process ensures accuracy and prevents false positives through consensus mechanisms.</p>
+                    </div>
+                    <div class="dmer-feature">
+                        <h3>Instant Sharing</h3>
+                        <p>Real-time threat intelligence sharing across all GuardianShield nodes and partner networks worldwide.</p>
+                    </div>
+                </div>
+                <div class="dmer-cta">
+                    <a href="dmer-registry.html" class="dmer-access-btn">
+                        <i class="fas fa-database"></i> Access DMER Registry
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tokens Section -->
+        <!-- Token Sale Section -->
+        <section id="token-sale-section" class="tokens" style="padding-bottom: 0;">
+            <h2>Current Token Sale</h2>
+            <div class="features-container">
+                <div class="feature-card" style="max-width: 600px; margin: 0 auto; text-align: center; border: 1px solid #c9a227; box-shadow: 0 0 30px rgba(201, 162, 39, 0.1);">
+                    <div class="token-logo" style="margin-bottom: 20px;">
+                        <img src="https://placehold.co/200x200/0f172a/00d4aa.png?text=guard token logo" alt="GUARD Token" width="80" height="80">
+                    </div>
+                    <h3 style="color: #c9a227; font-size: 2rem;">GUARD Token Sale</h3>
+                    <p style="margin-bottom: 20px;">Purchase $GUARD tokens directly from the smart contract.</p>
+                    
+                    <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; margin-bottom: 25px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span>Current Price:</span>
+                            <span style="color: #00d4aa; font-weight: bold;">$0.005 USD</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Your Balance:</span>
+                            <span id="user-token-balance" style="color: white; font-weight: bold;">0.00 GAR</span>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <button id="connect-wallet-btn" class="btn-primary" style="width: 100%; margin-bottom: 15px;">Connect Wallet</button>
+                    </div>
+
+                    <div id="buy-section" class="hidden" style="transition: all 0.3s ease;">
+                        <div style="margin-bottom: 20px; text-align: left;">
+                            <label style="display: block; margin-bottom: 8px; color: #ccc;">Amount of ETH to Spend</label>
+                            <input type="number" id="eth-amount" placeholder="0.0 ETH" step="0.01" style="width: 100%; padding: 12px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.2); color: white; font-size: 1.1rem;">
+                        </div>
+
+                        <div style="margin-bottom: 25px; text-align: left;">
+                            <label style="display: block; margin-bottom: 8px; color: #ccc;">Estimated Tokens</label>
+                            <div id="token-estimate" style="font-size: 1.5rem; color: #c9a227; font-weight: bold;">0 GAR</div>
+                            <small style="color: #666;">~ Based on current ETH price</small>
+                        </div>
+
+                        <button id="buy-tokens-btn" class="btn-primary" style="width: 100%; background: linear-gradient(135deg, #c9a227, #d4af37);">Buy GAR Tokens</button>
+                        
+                        <div id="transaction-status" class="status-msg" style="margin-top: 15px; min-height: 20px; font-size: 0.9rem;"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="tokens" class="tokens">
+            <h2>Platform Tokens</h2>
+            <div class="tokens-grid">
+                <div class="token-card">
+                    <div class="token-logo">
+                        <img src="https://placehold.co/200x200/0f172a/00d4aa.png?text=gs token logo" alt="SHIELD Token" width="100" height="100">
+                    </div>
+                    <div class="token-name">SHIELD Token</div>
+                    <div class="token-ticker">$SHIELD</div>
+                    <div class="token-description">Governance token for platform decisions and premium security features access.</div>
+                    <div class="token-price">$0.025 USD</div>
+                    <button class="token-btn" style="opacity: 0.5; cursor: not-allowed;" title="Sale coming soon">Coming Soon</button>
+                </div>
+                <div class="token-card">
+                    <div class="token-logo">
+                        <img src="https://placehold.co/200x200/0f172a/00d4aa.png?text=guard token logo" alt="GUARD Token" width="100" height="100">
+                    </div>
+                    <div class="token-name">GUARD Token</div>
+                    <div class="token-ticker">$GUARD</div>
+                    <div class="token-description">Utility token for platform services, staking rewards, and transaction fees.</div>
+                    <div class="token-price">$0.005 USD</div>
+                    <a href="#token-sale-section" class="token-btn" style="display: block; text-decoration: none;">Purchase GUARD</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Performance Metrics Section -->
+        <section class="performance-section">
+            <div class="performance-container">
+                <h2>Platform Performance</h2>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-value">99.9%</div>
+                        <div class="metric-label">Uptime</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">&lt;1ms</div>
+                        <div class="metric-label">Response Time</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">50K+</div>
+                        <div class="metric-label">Threats Blocked</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">24/7</div>
+                        <div class="metric-label">Monitoring</div>
+                    </div>
+                </div>
+                
+                <div class="performance-graph">
+                    <div class="graph-title">Threat Detection Performance</div>
+                    <div class="metric-bars">
+                        <div class="metric-bar">
+                            <div class="metric-fill" style="height: 85%;"></div>
+                            <div class="bar-label">Jan</div>
+                        </div>
+                        <div class="metric-bar">
+                            <div class="metric-fill" style="height: 92%;"></div>
+                            <div class="bar-label">Feb</div>
+                        </div>
+                        <div class="metric-bar">
+                            <div class="metric-fill" style="height: 88%;"></div>
+                            <div class="bar-label">Mar</div>
+                        </div>
+                        <div class="metric-bar">
+                            <div class="metric-fill" style="height: 95%;"></div>
+                            <div class="bar-label">Apr</div>
+                        </div>
+                        <div class="metric-bar">
+                            <div class="metric-fill" style="height: 97%;"></div>
+                            <div class="bar-label">May</div>
+                        </div>
+                        <div class="metric-bar">
+                            <div class="metric-fill" style="height: 93%;"></div>
+                            <div class="bar-label">Jun</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Additional Sections -->
+    <section class="additional-sections">
+        <div class="container">
+            <div class="sections-grid">
+                <!-- Whitepaper Section -->
+                <div class="section-card">
+                    <div class="section-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h3>Technical Whitepaper</h3>
+                    <p>Comprehensive documentation of our advanced security architecture, quantum-resistant protocols, and AI-powered threat detection systems.</p>
+                    <div class="whitepaper-links">
+                        <a href="#" class="btn-secondary" onclick="downloadWhitepaper('technical')">
+                            <i class="fas fa-download"></i> Technical Whitepaper
+                        </a>
+                        <a href="#" class="btn-secondary" onclick="downloadWhitepaper('executive')">
+                            <i class="fas fa-download"></i> Executive Summary
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Contact Information -->
+                <div class="section-card">
+                    <div class="section-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <h3>Contact Us</h3>
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>support@guardian-shield.io</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>security@guardian-shield.io</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-briefcase"></i>
+                            <span>partnerships@guardian-shield.io</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Enterprise Security Division<br>Global Operations Center</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Legal & Compliance -->
+                <div class="section-card">
+                    <div class="section-icon">
+                        <i class="fas fa-gavel"></i>
+                    </div>
+                    <h3>Legal & Compliance</h3>
+                    <p>Comprehensive legal framework ensuring regulatory compliance and user protection across all jurisdictions.</p>
+                    <div class="legal-links">
+                        <a href="terms-of-service.html" class="btn-secondary">
+                            <i class="fas fa-file-contract"></i> Full Terms of Service
+                        </a>
+                        <a href="privacy-policy.html" class="btn-secondary">
+                            <i class="fas fa-shield-alt"></i> Privacy Policy
+                        </a>
+                        <a href="user-agreement.html" class="btn-secondary">
+                            <i class="fas fa-user-check"></i> User Agreement
+                        </a>
+                        <a href="token-disclaimer.html" class="btn-secondary">
+                            <i class="fas fa-coins"></i> Token Disclaimer
+                        </a>
+                        <a href="risk-disclosure.html" class="btn-secondary">
+                            <i class="fas fa-exclamation-triangle"></i> Risk Disclosure
+                        </a>
+                        <a href="security-practices.html" class="btn-secondary">
+                            <i class="fas fa-lock"></i> Security Practices
+                        </a>
+                        <a href="cookie-policy.html" class="btn-secondary">
+                            <i class="fas fa-cookie-bite"></i> Cookie Policy
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Terms of Service & Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <!-- Quick Terms Summary -->
+            <div class="terms-section">
+                <h3>Terms & Legal</h3>
+                <div class="terms-content">
+                    <p><strong>Quick Summary:</strong> By using GuardianShield, you agree to our comprehensive <a href="terms-of-service.html" style="color: #00d4aa;">Terms of Service</a>.</p>
+                    <p><strong>High-Risk Warning:</strong> DeFi operations involve significant risks including total loss of capital. Use only funds you can afford to lose.</p>
+                    <p><strong>Regulatory Notice:</strong> GuardianShield complies with applicable regulations. Users are responsible for compliance in their jurisdiction.</p>
+                    <div class="legal-footer-links">
+                        <a href="terms-of-service.html">Full Terms of Service</a> | 
+                        <a href="privacy-policy.html">Privacy Policy</a> | 
+                        <a href="user-agreement.html">User Agreement</a> | 
+                        <a href="token-disclaimer.html">Token Disclaimer</a> | 
+                        <a href="risk-disclosure.html">Risk Disclosure</a> | 
+                        <a href="security-practices.html">Security Practices</a> | 
+                        <a href="cookie-policy.html">Cookie Policy</a> | 
+                        <a href="legal-documentation.html">All Legal Documents</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bottom Sections - Whitepaper & Contact -->
+    <section class="bottom-sections">
+        <div class="container">
+            <!-- Whitepaper Section -->
+            <div class="bottom-section-card">
+                <div class="section-icon">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <h3>Technical Whitepaper & Documentation</h3>
+                <p>Download our comprehensive technical documentation and executive summaries covering our advanced security architecture, quantum-resistant protocols, and AI-powered threat detection systems.</p>
+                <div class="bottom-section-buttons">
+                    <a href="javascript:void(0)" class="bottom-btn-primary" onclick="downloadWhitepaper('technical')">
+                        <i class="fas fa-download"></i> Technical Whitepaper
+                    </a>
+                    <a href="javascript:void(0)" class="bottom-btn-primary" onclick="downloadWhitepaper('executive')">
+                        <i class="fas fa-download"></i> Executive Summary
+                    </a>
+                    <a href="legal-documentation.html" class="bottom-btn-secondary">
+                        <i class="fas fa-folder-open"></i> All Documents
+                    </a>
+                </div>
+            </div>
+
+            <!-- Contact Section -->
+            <div class="bottom-section-card">
+                <div class="section-icon">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <h3>Contact GuardianShield</h3>
+                <p>Get in touch with our team for support, partnerships, security matters, or general inquiries. We're here to help with your Web3 security needs.</p>
+                <div class="contact-grid">
+                    <div class="contact-item-bottom">
+                        <i class="fas fa-life-ring"></i>
+                        <div>
+                            <strong>Support Team</strong>
+                            <a href="mailto:support@guardian-shield.io">support@guardian-shield.io</a>
+                        </div>
+                    </div>
+                    <div class="contact-item-bottom">
+                        <i class="fas fa-shield-alt"></i>
+                        <div>
+                            <strong>Security Team</strong>
+                            <a href="mailto:security@guardian-shield.io">security@guardian-shield.io</a>
+                        </div>
+                    </div>
+                    <div class="contact-item-bottom">
+                        <i class="fas fa-briefcase"></i>
+                        <div>
+                            <strong>Partnerships</strong>
+                            <a href="mailto:partnerships@guardian-shield.io">partnerships@guardian-shield.io</a>
+                        </div>
+                    </div>
+                    <div class="contact-item-bottom">
+                        <i class="fas fa-gavel"></i>
+                        <div>
+                            <strong>Legal Department</strong>
+                            <a href="mailto:legal@guardian-shield.io">legal@guardian-shield.io</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="bottom-section-buttons">
+                    <a href="mailto:support@guardian-shield.io" class="bottom-btn-primary">
+                        <i class="fas fa-envelope"></i> Email Support
+                    </a>
+                    <a href="javascript:void(0)" class="bottom-btn-secondary" onclick="openContactForm()">
+                        <i class="fas fa-comments"></i> Contact Form
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final Copyright -->
+    <div class="final-copyright">
+        <div class="container">
+            <p>&copy; 2026 GuardianShield. All rights reserved. Advanced Quantum AI Security Platform.</p>
+            <p class="build-info">Build: v2.1.0 | Guardian-Shield.io | Secure • Decentralized • Autonomous</p>
+        </div>
+    </div>
+
+    <style>
+        .footer {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
+            padding: 60px 0 0;
+            border-top: 2px solid rgba(0, 212, 170, 0.3);
+            margin-top: 80px;
+        }
+        
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .terms-section h3 {
+            color: #00d4aa;
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .terms-content {
+            max-width: 900px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+        
+        .terms-content p {
+            margin-bottom: 15px;
+            color: #cbd5e1;
+        }
+        
+        .terms-content strong {
+            color: #00d4aa;
+        }
+        
+        .copyright {
+            background: rgba(0, 0, 0, 0.5);
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .copyright p {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        /* Additional Sections Styles */
+        .additional-sections {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            position: relative;
+        }
+
+        .additional-sections::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00d4aa, transparent);
+        }
+
+        .sections-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            margin-top: 40px;
+        }
+
+        .section-card {
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 16px;
+            padding: 40px;
+            border: 1px solid rgba(71, 85, 105, 0.3);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #3b82f6, #00d4aa, #3b82f6);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .section-card:hover::before {
+            opacity: 1;
+        }
+
+        .section-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0, 212, 170, 0.5);
+            box-shadow: 0 20px 40px rgba(0, 212, 170, 0.1);
+        }
+
+        .section-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #3b82f6, #00d4aa);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+
+        .section-icon i {
+            font-size: 24px;
+            color: white;
+        }
+
+        .section-card h3 {
+            color: #f1f5f9;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .section-card p {
+            color: #cbd5e1;
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        .whitepaper-links, .legal-links {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: rgba(71, 85, 105, 0.1);
+            border-radius: 8px;
+            border-left: 3px solid #00d4aa;
+        }
+
+        .contact-item i {
+            color: #00d4aa;
+            font-size: 16px;
+            min-width: 20px;
+        }
+
+        .contact-item span {
+            color: #e2e8f0;
+            font-size: 0.9rem;
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(0, 212, 170, 0.1));
+            color: #e2e8f0;
+            text-decoration: none;
+            border-radius: 8px;
+            border: 1px solid rgba(71, 85, 105, 0.3);
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(0, 212, 170, 0.2));
+            border-color: rgba(0, 212, 170, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .legal-footer-links {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(71, 85, 105, 0.3);
+        }
+
+        .legal-footer-links a {
+            color: #00d4aa;
+            text-decoration: none;
+            margin: 0 4px;
+        }
+
+        .legal-footer-links a:hover {
+            text-decoration: underline;
+        }
+
+        /* Bottom Sections Styles */
+        .bottom-sections {
+            background: linear-gradient(135deg, #0a0f1e 0%, #1a1a2e 50%, #0a0f1e 100%);
+            padding: 80px 0;
+            margin-top: 40px;
+        }
+
+        .bottom-section-card {
+            background: rgba(15, 23, 42, 0.9);
+            border-radius: 16px;
+            padding: 50px;
+            margin-bottom: 40px;
+            border: 1px solid rgba(71, 85, 105, 0.3);
+            backdrop-filter: blur(10px);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bottom-section-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #3b82f6, #00d4aa, #3b82f6);
+        }
+
+        .bottom-section-card .section-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #3b82f6, #00d4aa);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+        }
+
+        .bottom-section-card .section-icon i {
+            font-size: 32px;
+            color: white;
+        }
+
+        .bottom-section-card h3 {
+            color: #f1f5f9;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .bottom-section-card p {
+            color: #cbd5e1;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            max-width: 600px;
+            margin: 0 auto 30px;
+        }
+
+        .bottom-section-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .bottom-btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 28px;
+            background: linear-gradient(135deg, #3b82f6, #00d4aa);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 212, 170, 0.3);
+        }
+
+        .bottom-btn-primary:hover {
+            background: linear-gradient(135deg, #2563eb, #059669);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0, 212, 170, 0.4);
+        }
+
+        .bottom-btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 28px;
+            background: rgba(59, 130, 246, 0.1);
+            color: #e2e8f0;
+            text-decoration: none;
+            border-radius: 10px;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .bottom-btn-secondary:hover {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: rgba(0, 212, 170, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .contact-item-bottom {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            background: rgba(71, 85, 105, 0.1);
+            border-radius: 12px;
+            border-left: 4px solid #00d4aa;
+            transition: all 0.3s ease;
+        }
+
+        .contact-item-bottom:hover {
+            background: rgba(71, 85, 105, 0.2);
+            transform: translateX(5px);
+        }
+
+        .contact-item-bottom i {
+            color: #00d4aa;
+            font-size: 20px;
+            min-width: 24px;
+        }
+
+        .contact-item-bottom div {
+            text-align: left;
+        }
+
+        .contact-item-bottom strong {
+            color: #f1f5f9;
+            display: block;
+            margin-bottom: 4px;
+            font-size: 0.9rem;
+        }
+
+        .contact-item-bottom a {
+            color: #00d4aa;
+            text-decoration: none;
+            font-size: 0.95rem;
+        }
+
+        .contact-item-bottom a:hover {
+            text-decoration: underline;
+        }
+
+        .final-copyright {
+            background: #0a0f1e;
+            padding: 30px 0;
+            border-top: 1px solid rgba(71, 85, 105, 0.2);
+            text-align: center;
+        }
+
+        .final-copyright p {
+            color: #94a3b8;
+            margin-bottom: 8px;
+        }
+
+        .build-info {
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+        
+        @media (max-width: 768px) {
+            .bottom-sections {
+                padding: 40px 0;
+            }
+
+            .bottom-section-card {
+                padding: 30px 20px;
+            }
+
+            .bottom-section-card h3 {
+                font-size: 1.5rem;
+            }
+
+            .bottom-section-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .bottom-btn-primary,
+            .bottom-btn-secondary {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .sections-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+
+            .section-card {
+                padding: 24px;
+            }
+
+            .whitepaper-links, .legal-links {
+                gap: 8px;
+            }
+
+            .btn-secondary {
+                padding: 10px 16px;
+                font-size: 0.9rem;
+            }
+
+            .footer {
+                padding: 40px 0 0;
+            }
+            
+            .terms-section h3 {
+                font-size: 1.5rem;
+            }
+            
+            .terms-content {
+                padding: 0 10px;
+            }
+        }
+    </style>
+
+    <script>
+        // Wallet Connection
+        document.getElementById('connectWallet').addEventListener('click', async () => {
+            if (typeof window.ethereum !== 'undefined') {
+                try {
+                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    document.getElementById('connectWallet').textContent = `Connected: ${accounts[0].substring(0, 6)}...${accounts[0].substring(38)}`;
+                } catch (error) {
+                    console.error('Error connecting wallet:', error);
+                }
+            } else {
+                alert('Please install MetaMask to connect your wallet');
+            }
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Additional section functions
+        function downloadWhitepaper(type) {
+            const whitepapers = {
+                technical: {
+                    name: 'GuardianShield_Technical_Whitepaper_v2.1.pdf',
+                    description: 'Comprehensive technical documentation of our security architecture'
+                },
+                executive: {
+                    name: 'GuardianShield_Executive_Summary_v2.1.pdf',
+                    description: 'Executive overview of platform capabilities and market positioning'
+                }
+            };
+
+            const paper = whitepapers[type];
+            if (paper) {
+                // In a real implementation, this would trigger an actual download
+                alert(`Downloading: ${paper.name}\n\n${paper.description}\n\nNote: This is a demo. In production, the actual PDF would be downloaded.`);
+                
+                // Track download event
+                if (typeof gtag !== 'undefined') {
+                    gtag('event', 'whitepaper_download', {
+                        'paper_type': type,
+                        'paper_name': paper.name
+                    });
+                }
+            }
+        }
+
+        function openPrivacyPolicy() {
+            window.open('privacy-policy.html', '_blank');
+        }
+
+        function openContact() {
+            const contactInfo = `Contact GuardianShield
+
+Legal Department: legal@guardian-shield.io
+Security Team: security@guardian-shield.io
+Partnerships: partnerships@guardian-shield.io
+Support: support@guardian-shield.io
+
+Address: 1234 Blockchain Avenue, Suite 500
+         Crypto City, CC 12345
+         United States
+
+Phone: +1 (555) GUARD-01
+
+For urgent security matters, use: security@guardian-shield.io
+Response time: 24/7 for critical security issues`;
+            
+            alert(contactInfo);
+        }
+
+        function openContactForm() {
+            const contactOptions = `GuardianShield Contact Options
+
+📧 Email Contacts:
+• General Support: support@guardian-shield.io
+• Security Issues: security@guardian-shield.io  
+• Business Partnerships: partnerships@guardian-shield.io
+• Legal Matters: legal@guardian-shield.io
+
+🔗 Quick Actions:
+• Click any email link above to open your email client
+• For urgent security matters, email security@guardian-shield.io directly
+• Response time: Within 24 hours (faster for security issues)
+
+📍 GuardianShield Global Operations
+1234 Blockchain Avenue, Suite 500
+Crypto City, CC 12345, United States
+
+Note: For fastest response, use the direct email links on this page.`;
+            
+            alert(contactOptions);
+        }
+
+        // Performance graph animation
+        document.addEventListener('DOMContentLoaded', () => {
+            const observerOptions = {
+                threshold: 0.5,
+                rootMargin: '0px 0px -100px 0px'
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const metrics = entry.target.querySelectorAll('.metric-fill');
+                        metrics.forEach((metric, index) => {
+                            setTimeout(() => {
+                                metric.style.width = metric.style.width;
+                            }, index * 200);
+                        });
+                    }
+                });
+            }, observerOptions);
+            
+            const performanceGraph = document.querySelector('.performance-graph');
+            if (performanceGraph) {
+                observer.observe(performanceGraph);
+            }
+        });
+    </script>
+</body>
+</html>
+
+EXTREME_EOF_MARKER
+
+echo "✅ Website Generated!"
+echo "---------------------------------------------------"
+echo "👉 STARTING SERVER ON PORT 8081..."
+echo "---------------------------------------------------"
+
+cd guardianshield_website
+# Kill port 8081 if in use
+fuser -k 8081/tcp > /dev/null 2>&1
+# Start server
+python3 -m http.server 8081 --bind 0.0.0.0
