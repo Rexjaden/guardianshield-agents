@@ -187,10 +187,12 @@ echo "📜 View Thoughts: docker logs -f $CONTAINER_NAME"
 echo "---------------------------------------------------"
 """
 
-    with open('DEPLOY_BRAIN_PACKAGE.sh', 'w', encoding='utf-8') as f:
+    # Force Line Feed (LF) for Linux compatibility
+    # This prevents "No such file or directory" errors caused by Windows CRLF (\r\n)
+    with open('DEPLOY_BRAIN_PACKAGE.sh', 'w', encoding='utf-8', newline='\n') as f:
         f.write(script_content)
     
-    print("DEPLOY_BRAIN_PACKAGE.sh created successfully.")
+    print("DEPLOY_BRAIN_PACKAGE.sh created successfully (with LF line endings).")
 
 if __name__ == "__main__":
     create_brain_package()
